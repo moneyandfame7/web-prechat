@@ -24,6 +24,5 @@ dist-ssr
 *.sw?
 
 .env
-vite-env.d.ts
 todo.txt
 analyse.html
