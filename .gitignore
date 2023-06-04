@@ -26,3 +26,4 @@ dist-ssr
 .env
 vite-env.d.ts
 todo.txt
+analyse.html

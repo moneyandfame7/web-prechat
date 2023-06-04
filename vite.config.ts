@@ -1,6 +1,7 @@
 import preact from '@preact/preset-vite'
 import autoprefixer from 'autoprefixer'
-import { defineConfig } from 'vite'
+import { visualizer } from 'rollup-plugin-visualizer'
+import { PluginOption, defineConfig } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 
 import { APP_NAME, BASE_URL } from './src/config'
@@ -16,7 +17,14 @@ export default defineConfig({
           baseUrl: BASE_URL
         }
       }
-    })
+    }),
+    visualizer({
+      template: 'network', // or sunburst
+      open: true,
+      gzipSize: true,
+      brotliSize: true,
+      filename: 'analyse.html' // will be saved in project's root
+    }) as PluginOption
   ],
   css: {
     postcss: {
