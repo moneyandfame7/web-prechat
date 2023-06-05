@@ -50,18 +50,18 @@ export const MountTransition: FC<MountTransitionProps> = ({
     const needToUpdate = !existIn(children)
 
     if (needToUpdate) {
-      console.log('[TRANSITION]: NEW COMPONENT WAS ADDED TO LIST')
+      // console.log('[TRANSITION]: NEW COMPONENT WAS ADDED TO LIST')
       setElements((prev) => [...prev, children])
     } else {
-      console.log('[TRANSITION]: COMPONENT ALREADY EXIST IN LIST')
+      // console.log('[TRANSITION]: COMPONENT ALREADY EXIST IN LIST')
     }
   }, [children])
 
   const renderContent = useCallback(() => {
+    console.log('[TRANSITION]: RERENDER')
     return elements.map((el) => {
       const key = getKey(el)
       const isActive = activeKey === key
-      console.log('[TRANSITION]: Rerender')
       return (
         <Transition
           appear

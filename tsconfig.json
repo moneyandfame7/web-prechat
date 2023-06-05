@@ -20,12 +20,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
     "types": ["vite/client"],
     "baseUrl": "src",
     "paths": {
       "@components/*": ["./components/*"],
       "@hooks": ["./hooks"],
-      "@containers": ["./containers"],
+      "@containers/*": ["./containers/*"],
       "@modules/*": ["./modules/*"],
       "@types": ["./types"],
       "@lib/*": ["./lib/*"]

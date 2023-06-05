@@ -2,8 +2,11 @@ import preact from '@preact/preset-vite'
 
 import autoprefixer from 'autoprefixer'
 import { visualizer } from 'rollup-plugin-visualizer'
-import { PluginOption, defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
+import { VitePWA } from 'vite-plugin-pwa'
+
+import manifest from './manifest.json'
 
 // https://vitejs.dev/config/
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -31,7 +34,17 @@ export default ({ mode }) => {
         gzipSize: true,
         brotliSize: true,
         filename: 'analyse.html' // will be saved in project's root
-      }) as PluginOption
+      }) as any,
+      VitePWA({
+        manifest,
+        includeAssets: ['/icons/preact.svg', '/icons/vite.svg'],
+        devOptions: {
+          enabled: true
+        },
+        workbox: {
+          globPatterns: ['**/*.{js,ts,css,html}'] /* .{svg,png,jpg,gif} */
+        }
+      })
     ],
     css: {
       postcss: {

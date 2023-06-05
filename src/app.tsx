@@ -1,4 +1,4 @@
-import { FC } from 'preact/compat'
+import { FC, useEffect } from 'preact/compat'
 
 import { signal, useComputed, useSignal } from '@preact/signals'
 
@@ -9,6 +9,7 @@ import Lock from '@modules/lockscreen'
 import Main from '@modules/main'
 
 import './app.scss'
+import { ServiceWorker } from './serviceWorker'
 
 enum ActiveScreen {
   Auth = 'Auth',
@@ -18,13 +19,13 @@ enum ActiveScreen {
 
 const counter = signal(16)
 
-counter.subscribe((v) => {
-  // eslint-disable-next-line no-console
-  console.log({ v })
-})
+// counter.subscribe((v) => {
+//   // eslint-disable-next-line no-console
+//   console.log({ v })
+// })
 export const App: FC = () => {
   const activeScreen = useSignal(ActiveScreen.Auth)
-
+  // const location = useLocation()
   const renderContent = useComputed(() => {
     switch (activeScreen.value) {
       case ActiveScreen.Auth:
@@ -35,9 +36,27 @@ export const App: FC = () => {
         return <Main key={ActiveScreen.Main} />
     }
   })
+  useEffect(() => {
+    if (window.location.hash.length < 5) {
+      const newPath = window.location.pathname + window.location.search
+      window.history.replaceState(null, '', newPath)
+    }
+    const handleLocationChange = () => {
+      const { hash } = window.location
 
-  // eslint-disable-next-line no-console
-  console.log('[APP]: Rerender', { renderContent })
+      if (hash.length > 5) {
+        console.log('OKEYYYY)))')
+      } else {
+        const newPath = window.location.pathname + window.location.search
+        window.history.replaceState(null, '', newPath)
+      }
+    }
+    window.addEventListener('popstate', handleLocationChange)
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange)
+    }
+  }, [])
   return (
     <ErrorCatcher>
       <>
@@ -85,31 +104,11 @@ export const App: FC = () => {
             minHeight: 400
           }}
         >
-          {/* {renderContent.value} */}
           <MountTransition shouldCleanup={true} activeKey={activeScreen.value}>
             {renderContent.value}
           </MountTransition>
-          {/* <Transition
-            withMount
-            isVisible={activeScreen.value === ActiveScreen.Auth}
-            className="transition"
-            duration={150}
-          >
-            <Auth key="SOSI HUI" />
-          </Transition> */}
-          {/* Rewrite with TransitionContainer + add mode wait? */}
-          {/* 
-        <Transition
-          withMount
-          isVisible={!state}
-          duration={150}
-          className="transition"
-        >
-          <div
-            style={{ backgroundColor: 'red', width: 300, height: 300 }}
-          ></div>
-        </Transition> */}
         </div>
+        <ServiceWorker />
       </>
     </ErrorCatcher>
   )

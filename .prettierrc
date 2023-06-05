@@ -9,7 +9,7 @@
     "^@preact/(.*)$",
     "<THIRD_PARTY_MODULES>",
     "^[./]",
-    "^[../].*\\.scss$"
+    "^(.*\\.s?css)$"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
