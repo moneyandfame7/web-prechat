@@ -6,7 +6,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import { VitePWA } from 'vite-plugin-pwa'
 
-import manifest from './manifest.json'
+import manifest from './public/manifest.json'
 
 // https://vitejs.dev/config/
 // eslint-disable-next-line import/no-anonymous-default-export

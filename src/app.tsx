@@ -66,7 +66,7 @@ export const App: FC = () => {
             activeScreen.value = ActiveScreen.Lock
           }}
         >
-          Just click on me
+          Just click on mee
         </button>
         <button
           onMouseDown={(e) => {

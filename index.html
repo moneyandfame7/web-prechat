@@ -2,22 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <title><%- appName %></title>
+
     <meta property="title" content="<%- appName%>" />
+    <meta
+      name="description"
+      content="Web chat based on Preact ( Fast 3kB alternative to React with the same modern API )"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="icon" type="images/svg+xml" href="/icons/preact.svg" />
+    <link rel="manifest" id="the-manifest-placeholder" href="/manifest.json" />
+    <meta name="theme-color" content="#ffffff" />
+
     <link
       rel="apple-touch-icon"
       sizes="192x192"
       href="/images/icon-192x192.png"
     />
     <lin rel="canonical" href="<%- appUrl%>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Web chat based on Preact ( Fast 3kB alternative to React with the same modern API )"
-    />
+
     <meta name="keywords" content="Preact, react, web chat, spa" />
     <meta name="google" content="notranslate" />
+    <meta name="mobile-web-app-title" content="<%- appName %>" />
+    <meta name="apple-mobile-web-app-title" content="<%- .appTitle %>" />
 
     <!-- open graph -->
     <meta property="og:title" content="<%- appName%>" />
@@ -41,8 +49,6 @@
     <meta property="twitter:type" content="website" />
     <meta property="twitter:image" content="/images/banner.jpg" />
     <meta name="twitter:image:alt" content="<%- appName%>" />
-
-    <title><%- appName %></title>
   </head>
   <body>
     <div id="app"></div>
