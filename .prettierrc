@@ -1,10 +1,16 @@
 {
-  "printWidth": 120,
+  "printWidth": 80,
   "jsxSingleQuote": false,
   "singleQuote": true,
   "trailingComma": "none",
   "semi": false,
-  "importOrder": ["^preact", "^preact/(.*)$", "<THIRD_PARTY_MODULES>", "^[./]"],
+  "importOrder": [
+    "^(preact|preact)/(.*)$",
+    "^@preact/(.*)$",
+    "<THIRD_PARTY_MODULES>",
+    "^[./]",
+    "^[../].*\\.scss$"
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true
 }

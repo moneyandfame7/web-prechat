@@ -1,0 +1,53 @@
+h1 {
+  font-weight: 700;
+}
+:root {
+  --transition-duration: 300ms; // Значення за замовчуванням
+}
+.transition {
+  position: absolute;
+  top: 0;
+  left: 0;
+  &-enter {
+    opacity: 0;
+    transform: scale(0.9);
+    &-active {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity var(--transition-duration) ease-in-out, transform var(--transition-duration) ease-in-out;
+    }
+    &-done {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  &-appear {
+    opacity: 0;
+    transform: scale(0.8);
+    &-active {
+      opacity: 1;
+      transform: scale(1);
+      transition: opacity var(--transition-duration) ease-in-out, transform var(--transition-duration) ease-in-out;
+    }
+    &-done {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  &-exit {
+    opacity: 1;
+    transform: scale(1);
+
+    &-active {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity var(--transition-duration) ease-in-out, transform var(--transition-duration) ease-in-out;
+    }
+    &-done {
+      // opacity: 0;
+      /* for perfomance? */
+      display: none;
+      transform: scale(0.8);
+    }
+  }
+}

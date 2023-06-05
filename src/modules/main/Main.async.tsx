@@ -1,0 +1,22 @@
+import { FC, Suspense, lazy, memo } from 'preact/compat'
+
+function timeout<T>(time: number) {
+  return (value: T) =>
+    new Promise<T>((res) => {
+      setTimeout(() => res(value), time)
+    })
+}
+
+const Main = lazy(() =>
+  import('./Main').then((module) => module.default).then(timeout(5000))
+)
+
+const MainAsync: FC = () => {
+  return (
+    <Suspense fallback="Loading main...">
+      <Main />
+    </Suspense>
+  )
+}
+
+export default memo(MainAsync)
