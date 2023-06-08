@@ -7,8 +7,8 @@ import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
 
+import { ServiceWorker } from '../serviceWorker'
 import './app.scss'
-import { ServiceWorker } from './serviceWorker'
 
 enum ActiveScreen {
   Auth = 'Auth',

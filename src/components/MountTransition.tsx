@@ -10,7 +10,8 @@ import {
 
 import { useSignal } from '@preact/signals'
 
-import '../app.scss'
+import 'modules/app.scss'
+
 import { Transition } from './Transition'
 
 function getKey(el: VNode) {
