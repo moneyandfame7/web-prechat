@@ -1,12 +1,12 @@
 {
   "name": "prechat",
-  "version": "1.0.2",
+  "version": "1.0.0",
   "type": "module",
   "author": "Davyd ( davidoo1234e@gmail.com )",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "build": "yarn version --patch && tsc && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint --ext .tsx,.ts src",
     "lint:fix": "eslint --ext .tsx,.ts src --fix"
