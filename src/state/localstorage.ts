@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 export class LocalStorageWrapper {
   public static get<T>(key: string) {
     try {

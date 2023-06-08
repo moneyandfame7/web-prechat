@@ -27,3 +27,4 @@ dist-ssr
 .env
 todo.txt
 analyse.html
+src/env.d.ts

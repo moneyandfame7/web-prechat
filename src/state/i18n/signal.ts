@@ -13,7 +13,6 @@ interface I18NProperties {
 }
 
 function initializeI18n() {
-  console.log('CHANGE LANGUAGE 🇺🇦')
   const lng = getGlobalState((state) => state.language)
 
   changeLanguage(lng)

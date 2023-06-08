@@ -15,5 +15,3 @@ createAction('changeTheme', (state, payload) => {
 createAction('changeLanguage', (state, payload) => {
   state.language = payload
 })
-
-console.log('[ACTIONS]: Settings created 🤝')

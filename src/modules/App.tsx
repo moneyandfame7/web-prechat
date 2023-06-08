@@ -32,8 +32,9 @@ const Application: FC = () => {
 
   return (
     <>
+      <p>{import.meta.env.VITE_APP_VERSION}</p>
       <ServiceWorker />
-      <div style={{ marginLeft: 300, position: 'relative' }}>
+      <div style={{ position: 'relative' }}>
         <MountTransition
           activeKey={activeScreen.value}
           shouldCleanup
