@@ -5,11 +5,10 @@
   "trailingComma": "none",
   "semi": false,
   "importOrder": [
-    "^(preact|preact)/(.*)$",
+    "^(preact|(preact)/(.*)$)",
     "^@preact/(.*)$",
     "<THIRD_PARTY_MODULES>",
-    "^[./]",
-    "^(.*\\.s?css)$"
+    "^[./]"
   ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true

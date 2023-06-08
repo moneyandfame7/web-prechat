@@ -6,7 +6,6 @@ const AuthPhoneNumber: FC = () => {
   return (
     <>
       <h1>Prechat auth number</h1>
-      <input class="form-input" placeholder="ШВИДКО КАЖИ!" />
     </>
   )
 }

@@ -57,12 +57,14 @@ export default ({ mode }) => {
         react: 'preact/compat',
         'react-dom': 'preact/compat',
         /* common folders */
-        '@components': '/src/components',
-        '@hooks': '/src/hooks',
-        '@containers': '/src/containers',
-        '@modules': '/src/modules',
-        '@types': '/src/types',
-        '@lib': '/src/lib'
+        components: '/src/components',
+        hooks: '/src/hooks',
+        containers: '/src/containers',
+        modules: '/src/modules',
+        types: '/src/types',
+        lib: '/src/lib',
+        api: '/src/api',
+        state: '/src/state'
       }
     },
     server: {
