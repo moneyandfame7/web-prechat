@@ -23,7 +23,6 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "types": ["vite/client"],
-    "typeRoots": ["./src/index.d.ts"],
     "baseUrl": "src",
     "paths": {
       "components/*": ["./components/*"],
