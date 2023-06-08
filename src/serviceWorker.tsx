@@ -1,7 +1,7 @@
+/* eslint-disable no-console */
 import { FC, memo } from 'preact/compat'
 import { useCallback, useEffect } from 'preact/hooks'
 
-import { increment, testStore } from 'state/test'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 
 const ServiceWorker: FC = memo(() => {
@@ -26,11 +26,7 @@ const ServiceWorker: FC = memo(() => {
       )
     } else if (needRefresh) {
       console.log('[🇺🇦 APP] - A new update is available!')
-      // Create here a toast or a modal with:
-      // <button onClick={updateServiceWorker}>Update app</button>
-      // <button onClick={close}>Close</button>
     }
-    // console.log('AYYYY')
   }, [close, needRefresh, offlineReady, updateServiceWorker])
   return (
     <>
@@ -46,14 +42,9 @@ const ServiceWorker: FC = memo(() => {
             zIndex: 1
           }}
         >
-          <h1>Need to refresh! {testStore.counter}</h1>
-          <button onClick={() => updateServiceWorker(true)}>Reload</button>
-          <button onClick={close}>Close</button>
-          <button onMouseDown={testStore.inc}>
-            Increment with action from store
+          <button onClick={() => updateServiceWorker(false)}>
+            Update Prechat
           </button>
-
-          <button onMouseDown={increment}>Increment with other function</button>
         </div>
       )}
     </>
