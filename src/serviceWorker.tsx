@@ -1,15 +1,19 @@
-import { FC } from 'preact/compat'
+import { FC, memo } from 'preact/compat'
 import { useCallback, useEffect } from 'preact/hooks'
 
+import { increment, testStore } from 'state/test'
 import { useRegisterSW } from 'virtual:pwa-register/react'
 
-export const ServiceWorker: FC = () => {
+const ServiceWorker: FC = memo(() => {
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker
-  } = useRegisterSW()
-  console.log('SW RERENDER')
+  } = useRegisterSW({
+    onRegisteredSW(_, registration) {
+      console.log('[🇺🇦 APP] - Service Worker at', registration?.scope)
+    }
+  })
   const close = useCallback(() => {
     setOfflineReady(false)
     setNeedRefresh(false)
@@ -26,8 +30,8 @@ export const ServiceWorker: FC = () => {
       // <button onClick={updateServiceWorker}>Update app</button>
       // <button onClick={close}>Close</button>
     }
+    // console.log('AYYYY')
   }, [close, needRefresh, offlineReady, updateServiceWorker])
-
   return (
     <>
       {needRefresh && (
@@ -38,14 +42,22 @@ export const ServiceWorker: FC = () => {
             left: 0,
             backgroundColor: 'pink',
             width: '100%',
-            height: '100%'
+            height: '100%',
+            zIndex: 1
           }}
         >
-          <h1>Need to refresh!</h1>
+          <h1>Need to refresh! {testStore.counter}</h1>
           <button onClick={() => updateServiceWorker(true)}>Reload</button>
           <button onClick={close}>Close</button>
+          <button onMouseDown={testStore.inc}>
+            Increment with action from store
+          </button>
+
+          <button onMouseDown={increment}>Increment with other function</button>
         </div>
       )}
     </>
   )
-}
+})
+
+export { ServiceWorker }

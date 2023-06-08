@@ -19,6 +19,7 @@ module.exports = defineConfig({
         'react/no-unused-state': 'error',
         '@typescript-eslint/explicit-member-accessibility': 'error',
         '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-extra-semi': 'off',
         'react-hooks/exhaustive-deps': 'off',
