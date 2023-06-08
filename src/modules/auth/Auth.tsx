@@ -2,7 +2,7 @@ import { FC, memo } from 'preact/compat'
 
 import { useSignal } from '@preact/signals'
 
-import { LanguageSwitch } from 'components'
+import { LanguageSwitch } from 'components/LanguageSwitch'
 import 'state/global/actions/imporant'
 import { t } from 'state/i18n'
 
