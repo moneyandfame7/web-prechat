@@ -1,6 +1,6 @@
 import { FC, memo, useEffect, useState } from 'preact/compat'
 
-import { CSSTransition } from '@lib/css-transition'
+import { CSSTransition } from 'lib/css-transition'
 import { ComponentChildren } from 'preact'
 
 interface TransitionProps {

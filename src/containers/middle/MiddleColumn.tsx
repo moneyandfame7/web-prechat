@@ -1,6 +1,6 @@
 import { FC } from 'preact/compat'
 
-import { useHashLocation } from '@hooks'
+import { useHashLocation } from 'hooks'
 
 export const MiddleColumn: FC = () => {
   const [hash] = useHashLocation()
