@@ -1,8 +1,9 @@
 {
-  "printWidth": 80,
+  "printWidth": 100,
   "jsxSingleQuote": false,
   "singleQuote": true,
   "trailingComma": "none",
+  "quoteProps": "preserve",
   "semi": false,
   "importOrder": [
     "^(preact|(preact)/(.*)$)",

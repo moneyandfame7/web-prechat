@@ -2,9 +2,7 @@ import { FC, memo } from 'preact/compat'
 
 import { useSignal } from '@preact/signals'
 
-import { LanguageSwitch } from 'components/LanguageSwitch'
 import 'state/global/actions/imporant'
-import { t } from 'state/i18n'
 
 import AuthCode from './AuthCode.async'
 import AuthPassword from './AuthPassword.async'
@@ -34,10 +32,8 @@ const Auth: FC = () => {
     }
   }
   return (
-    <div className="Auth">
-      <LanguageSwitch />
-      <h1>{t('Hello')}</h1>
-      {renderScreen()}
+    <div class="scrollable">
+      <div class="Auth">{renderScreen()}</div>
     </div>
   )
 }

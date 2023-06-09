@@ -49,6 +49,11 @@ export default ({ mode }) => {
     css: {
       postcss: {
         plugins: [autoprefixer]
+      },
+      preprocessorOptions: {
+        scss: {
+          additionalData: '@import "./src/css/_mixins.scss";'
+        }
       }
     },
     resolve: {
@@ -64,7 +69,8 @@ export default ({ mode }) => {
         types: '/src/types',
         lib: '/src/lib',
         api: '/src/api',
-        state: '/src/state'
+        state: '/src/state',
+        assets: '/src/assets'
       }
     },
     server: {

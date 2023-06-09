@@ -1,7 +1,7 @@
+import { ComponentChildren } from 'preact'
 import { FC, memo, useEffect, useState } from 'preact/compat'
 
 import { CSSTransition } from 'lib/css-transition'
-import { ComponentChildren } from 'preact'
 
 interface TransitionProps {
   withMount: boolean
@@ -33,7 +33,7 @@ export const Transition: FC<TransitionProps> = memo(
       >
         <div
           className="YA CHMO"
-          style={{ '--transition-duration': `${duration}ms` }}
+          style={{ '--transition-duration': `${duration}ms`, height: '100%' }}
         >
           {children}
         </div>

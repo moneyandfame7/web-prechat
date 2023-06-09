@@ -1,4 +1,4 @@
-import { FC } from 'preact/compat'
+import { FC, useEffect } from 'preact/compat'
 
 import { useComputed, useSignal } from '@preact/signals'
 
@@ -6,6 +6,7 @@ import { MountTransition } from 'components/MountTransition'
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
+import { initializeGlobalState } from 'state/global/initialize'
 
 import { ServiceWorker } from '../serviceWorker'
 import './app.scss'
@@ -29,12 +30,13 @@ const Application: FC = () => {
         return <Main key={ActiveScreen.Main} />
     }
   })
-
+  useEffect(() => {
+    initializeGlobalState()
+  }, [])
   return (
     <>
-      <p>{import.meta.env.VITE_APP_VERSION}</p>
       <ServiceWorker />
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <MountTransition
           activeKey={activeScreen.value}
           shouldCleanup
