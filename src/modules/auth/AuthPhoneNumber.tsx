@@ -35,6 +35,19 @@ const AuthPhoneNumber: FC = () => {
         // placeholder="Aooo"
       />
       <InputText
+        // label="Enter password"
+        onInput={(value) => {
+          setPhone(value)
+        }}
+        placeholder="Search"
+        error="Lox ebaniy aahhaha"
+        // disabled
+        maxLength={10}
+        // error="ALALLALALAL"
+        value={phone}
+        // placeholder="Aooo"
+      />
+      <InputText
         label="Enter password"
         onInput={(value) => {
           setPhone(value)
@@ -42,7 +55,8 @@ const AuthPhoneNumber: FC = () => {
         // placeholder="Search"
         // error="Lox ebaniy aahhaha"
         // disabled
-        maxLength={10}
+        // maxLength={10}
+        // error="ALALLALALAL"
         value={phone}
         // placeholder="Aooo"
       />

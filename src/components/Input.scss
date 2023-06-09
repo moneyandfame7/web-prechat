@@ -9,7 +9,6 @@
     padding-left: 20px;
     height: 50px;
     width: 100%;
-    border: none;
     border: 1px solid var(--color-border);
     background-color: transparent;
     transition: border-color 0.2s ease-out;
@@ -54,6 +53,7 @@
       }
     }
     &:focus {
+      caret-color: var(--color-primary);
       ~ .input-border {
         opacity: 1;
       }
@@ -72,10 +72,19 @@
   }
 
   &.error {
-    input::placeholder,
+    input {
+      caret-color: var(--color-error) !important;
+      &::placeholder {
+        color: var(--color-error-secondary) !important;
+      }
+    }
+
+    // input::placeholder,
+    .length-indicator,
     label {
       color: var(--color-error) !important;
     }
+
     input,
     .input-border,
     input:focus ~ .input-border {
@@ -84,9 +93,10 @@
   }
 
   &.disabled {
-    opacity: 0.4;
+    opacity: 0.6;
     pointer-events: none;
-    cursor: not-allowed;
+    background-color: var(--color-background-secondary);
+    border-radius: 12px;
   }
 
   &.not-empty label {

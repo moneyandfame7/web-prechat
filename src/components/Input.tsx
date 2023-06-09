@@ -1,4 +1,4 @@
-import { FC, TargetedEvent, useCallback } from 'preact/compat'
+import { FC, TargetedEvent } from 'preact/compat'
 
 import { useSignal } from '@preact/signals'
 
@@ -8,7 +8,7 @@ import './Input.scss'
 
 interface InputProps {
   id?: string
-  value?: string
+  value: string
   error?: string
   label?: string
   disabled?: boolean
@@ -34,20 +34,20 @@ export const InputText: FC<InputProps> = ({
   const valueLength = useSignal(maxLength)
   const labelText = error || label
 
-  const handleOnInput = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+  const handleOnInput = (e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()
+    const { value } = e.currentTarget
     if (typeof valueLength.value !== 'undefined' && typeof maxLength !== 'undefined') {
-      valueLength.value = maxLength - e.currentTarget.value.length
-      console.log({ maxLength }, e.currentTarget.value.length)
+      valueLength.value = maxLength - value.length
     }
     onInput(e.currentTarget.value)
-  }, [])
+  }
+
   const buildedClassname = clsx('input-container', {
     'not-empty': value,
     'error': Boolean(error),
     'disabled': disabled
   })
-  console.log({ value })
   return (
     <div className={buildedClassname}>
       <input

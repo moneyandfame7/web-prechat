@@ -8,14 +8,10 @@ import type { Theme } from 'state/global/types'
 const ThemeSwitch: FC = () => {
   const { changeTheme } = getActions()
   const $theme = getGlobalState((state) => state.$theme)
-  const handleChangeTheme = useCallback(
-    (e: TargetedEvent<HTMLSelectElement, Event>) => {
-      const { value } = e.currentTarget
-      console.log({ value })
-      changeTheme(value as Theme)
-    },
-    []
-  )
+  const handleChangeTheme = useCallback((e: TargetedEvent<HTMLSelectElement, Event>) => {
+    const { value } = e.currentTarget
+    changeTheme(value as Theme)
+  }, [])
   return (
     <select onChange={handleChangeTheme} value={$theme}>
       <option value="system">System</option>

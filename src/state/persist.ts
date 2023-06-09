@@ -21,6 +21,7 @@ export function createPersistSignal<T extends object>(
     persistedObject[key] = initialState[key]
   })
   if (!persistedState) {
+    // eslint-disable-next-line array-callback-return
     whitelist.map((key) => {
       persistedObject[key] = initialState[key]
     })

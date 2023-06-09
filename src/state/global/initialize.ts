@@ -13,6 +13,7 @@ function initializeSettings() {
 }
 
 export function initializeGlobalState() {
-  console.log('INITIALIZE')
+  // eslint-disable-next-line no-console
+  console.log('Initialize state')
   initializeSettings()
 }
