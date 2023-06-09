@@ -1,0 +1,132 @@
+.input-container {
+  position: relative;
+  margin-bottom: 1.5rem;
+  width: 100%;
+
+  input {
+    font-size: 16px;
+    border-radius: 12px;
+    padding-left: 20px;
+    height: 50px;
+    width: 100%;
+    border: none;
+    border: 1px solid var(--color-border);
+    background-color: transparent;
+    transition: border-color 0.2s ease-out;
+
+    &::placeholder {
+      transition: color 0.2s ease-out;
+    }
+
+    &:autofill,
+    &:-webkit-autofill-strong-password,
+    &:-webkit-autofill-strong-password-viewable,
+    &:-webkit-autofill-and-obscured {
+      box-shadow: inset 0 0 0 10rem var(--color-background);
+      -webkit-text-fill-color: var(--color-text);
+    }
+
+    &::-webkit-strong-password-auto-fill-button {
+      opacity: 0;
+      width: 0 !important;
+      overflow: hidden !important;
+      max-width: 0 !important;
+      min-width: 0 !important;
+      clip: rect(0, 0, 0, 0);
+      position: absolute;
+    }
+
+    &::-ms-clear,
+    &::-ms-reveal {
+      display: none;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:hover {
+      border-color: var(--color-primary);
+      ~ label,
+      &::placeholder,
+      ~ .length-indicator {
+        color: var(--color-primary);
+      }
+    }
+    &:focus {
+      ~ .input-border {
+        opacity: 1;
+      }
+      &::placeholder,
+      ~ label,
+      ~ .length-indicator {
+        color: var(--color-primary);
+      }
+    }
+
+    &:placeholder-shown ~ label,
+    &:focus ~ label {
+      transform: scale(0.75) translate(-5px, -35px);
+      background-color: var(--color-background);
+    }
+  }
+
+  &.error {
+    input::placeholder,
+    label {
+      color: var(--color-error) !important;
+    }
+    input,
+    .input-border,
+    input:focus ~ .input-border {
+      border-color: var(--color-error) !important;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  &.not-empty label {
+    transform: scale(0.75) translate(-5px, -35px);
+    background-color: var(--color-background);
+  }
+
+  .input-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    border-radius: 12px;
+    border: 2px solid var(--color-primary);
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+  }
+
+  label {
+    position: absolute;
+    left: 20px;
+    top: 15px;
+    transform-origin: left center;
+    padding: 0px 5px;
+    scale: 1;
+    color: var(--color-placeholder);
+    pointer-events: none;
+    transition: transform 0.2s ease-out, color 0.2s ease-out;
+  }
+
+  .length-indicator {
+    position: absolute;
+    right: 20px;
+    top: -8px;
+    transform-origin: left center;
+    padding: 0px 5px;
+    font-size: 14px;
+    color: var(--color-placeholder);
+    background-color: var(--color-background);
+  }
+}

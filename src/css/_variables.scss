@@ -1,0 +1,24 @@
+$color-text-secondary: #6d6b6b;
+$color-scrollbar: rgb(174, 174, 174);
+$color-primary: #3290ec;
+$color-placeholder: #999;
+$color-border: #d5d7db;
+$color-error: rgb(237, 24, 24);
+// $color-error-secondary: rgb(205 50 50);
+:root {
+  --color-background: #fff;
+  --color-text-secondary: #{$color-text-secondary};
+  --color-scrollbar: #{$color-scrollbar};
+  --color-primary: #{$color-primary};
+  --color-placeholder: #{$color-placeholder};
+  --color-border: #{$color-border};
+  --color-error: #{$color-error};
+  // --color-error-secondary: #{$color-error-secondary};
+  &.dark {
+    --color-background: #000;
+    --color-text-secondary: red;
+    --color-scrollbar: rgb(72, 72, 72);
+    --color-primary: purple;
+    --color-error: red;
+  }
+}
