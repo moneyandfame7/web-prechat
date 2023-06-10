@@ -31,7 +31,6 @@ const Application: FC = () => {
   })
   useEffect(() => {
     initializeGlobalState()
-    console.log('DEVVVV')
   }, [])
   return (
     <>

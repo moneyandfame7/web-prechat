@@ -56,7 +56,7 @@ export const Transition: FC<TransitionProps> = memo(
         classNames={type}
         alwaysMounted={!withMount}
       >
-        <div class="transition-inner">{children}</div>
+        <div class="transition">{children}</div>
       </CSSTransition>
     )
   }

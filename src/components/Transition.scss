@@ -1,15 +1,15 @@
-.transition {
+.transition-base {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
 }
-.transition-inner {
+.transition {
   height: 100%;
   width: 100%;
 }
 .zoomFade {
-  @extend .transition;
+  @extend .transition-base;
   &-enter {
     opacity: 0;
     transform: scale(0.5);
@@ -58,7 +58,7 @@
 }
 
 .fade {
-  @extend .transition;
+  @extend .transition-base;
   &-enter {
     opacity: 0;
     &-active {
@@ -95,7 +95,7 @@
 }
 
 .slide {
-  @extend .transition;
+  @extend .transition-base;
   &-enter {
     transform: translateX(200%);
     &-active {
@@ -130,40 +130,3 @@
     }
   }
 }
-
-// .slideReverse {
-//   @extend .transition;
-//   &-enter {
-//     transform: translateX(0);
-//     &-active {
-//       transform: translateX(200%);
-//       transition: transform var(--transition-duration-slide) ease-in-out;
-//     }
-//     &-done {
-//       transform: translateX(200%);
-//     }
-//   }
-//   &-appear {
-//     transform: translateX(0);
-//     &-active {
-//       transform: translateX(200%);
-//       transition: transform var(--transition-duration-slide) ease-in-out;
-//     }
-//     &-done {
-//       transform: translateX(200%);
-//     }
-//   }
-//   &-exit {
-//     transform: translateX(200%);
-
-//     &-active {
-//       transform: translateX(0);
-//       transition: transform var(--transition-duration-slide) ease-in-out;
-//     }
-//     &-done {
-//       /* display instead opacity for perfomance */
-//       display: none !important; /* for avoid conflicts !important */
-//       transform: translateX(0);
-//     }
-//   }
-// }
