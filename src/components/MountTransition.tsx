@@ -1,18 +1,8 @@
 /* eslint-disable no-console */
 import { VNode } from 'preact'
-import {
-  FC,
-  isValidElement,
-  useCallback,
-  useEffect,
-  useState
-} from 'preact/compat'
+import { FC, isValidElement, useCallback, useEffect, useRef, useState } from 'preact/compat'
 
-import { useSignal } from '@preact/signals'
-
-import 'modules/app.scss'
-
-import { Transition } from './Transition'
+import { Transition, TransitionType } from './Transition'
 
 function getKey(el: VNode) {
   if (!isValidElement(el) || !el.key) {
@@ -27,21 +17,36 @@ function compareKeys(el1: VNode, el2: VNode) {
   }
   return el1.key === el2.key
 }
-type AnimationName = 'fade'
 interface MountTransitionProps {
   children: VNode
+  /* Remove from dom or not */
   shouldCleanup: boolean
   activeKey: string
-  name: AnimationName
+  name: TransitionType
+  className?: string
+  initial?: boolean
+  duration?: number
 }
 
+const getTransitionType = (isActive: boolean, name: TransitionType) => {
+  switch (name) {
+    case 'zoomSlideReverse':
+      return isActive ? 'zoomFade' : 'slide'
+    case 'zoomSlide':
+      return isActive ? 'slide' : 'zoomFade'
+    default:
+      return name
+  }
+}
 export const MountTransition: FC<MountTransitionProps> = ({
   children,
   shouldCleanup,
-  activeKey
-  // name
+  activeKey,
+  className,
+  name,
+  initial = true
 }) => {
-  const renderCount = useSignal(0)
+  const renderCount = useRef(0)
   const [elements, setElements] = useState<VNode[]>([children])
   const existIn = useCallback(
     (element: VNode) => {
@@ -50,40 +55,36 @@ export const MountTransition: FC<MountTransitionProps> = ({
     [elements]
   )
   useEffect(() => {
-    renderCount.value = 1
+    renderCount.current = 1
   }, [])
 
   useEffect(() => {
     const needToUpdate = !existIn(children)
-
+    console.log({ elements, children })
     if (needToUpdate) {
       setElements((prev) => [...prev, children])
-    } else {
-      // console.log('[TRANSITION]: COMPONENT ALREADY EXIST IN LIST')
     }
+    /* Already in elements list */
   }, [children])
-
   const renderContent = useCallback(() => {
     return elements.map((el) => {
       const key = getKey(el)
       const isActive = activeKey === key
       return (
         <Transition
-          appear={renderCount.value > 1}
+          /* avoid transition for first component render, but for other - ok */
+          appear={initial || renderCount.current > 0}
           key={key}
           withMount={shouldCleanup}
-          duration={150}
+          // duration={initial ? duration || getTransitionDuration(name) + 1000 : undefined}
           isVisible={isActive}
-          className="transition"
+          className={className}
+          type={getTransitionType(isActive, name)}
         >
           {el}
         </Transition>
       )
     })
   }, [elements, activeKey, shouldCleanup])
-  return (
-    <div data-component="Transition" style={{ height: '100%', width: '100%' }}>
-      {renderContent()}
-    </div>
-  )
+  return <>{renderContent()}</>
 }

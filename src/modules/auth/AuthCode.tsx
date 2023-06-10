@@ -43,7 +43,7 @@ const AuthCode: FC = () => {
   //   resetCaptcha()
   //   sendCode(number)
   // }
-  return <input placeholder="Code" />
+  return <h1>Code</h1>
 }
 
 export default memo(AuthCode)

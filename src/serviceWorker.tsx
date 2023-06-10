@@ -12,7 +12,8 @@ const ServiceWorker: FC = memo(() => {
   } = useRegisterSW({
     onRegisteredSW(_, registration) {
       console.log('[🇺🇦 APP] - Service Worker at', registration?.scope)
-    }
+    },
+    immediate: true
   })
   const close = useCallback(() => {
     setOfflineReady(false)
@@ -21,9 +22,7 @@ const ServiceWorker: FC = memo(() => {
 
   useEffect(() => {
     if (offlineReady) {
-      console.log(
-        '[🇺🇦 APP] - Your app has been installed, it now works offline!'
-      )
+      console.log('[🇺🇦 APP] - Your app has been installed, it now works offline!')
     } else if (needRefresh) {
       console.log('[🇺🇦 APP] - A new update is available!')
     }
@@ -42,9 +41,7 @@ const ServiceWorker: FC = memo(() => {
             zIndex: 1
           }}
         >
-          <button onClick={() => updateServiceWorker(false)}>
-            Update Prechat
-          </button>
+          <button onClick={() => updateServiceWorker(false)}>Update Prechat</button>
         </div>
       )}
     </>

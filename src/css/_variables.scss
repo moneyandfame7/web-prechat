@@ -5,12 +5,15 @@ $color-placeholder: #999;
 $color-border: #d5d7db;
 $color-error: rgb(237, 24, 24);
 $color-error-secondary: rgba(233, 52, 52, 0.751);
-// $color-error-secondary: rgb(205 50 50);
 
 $color-background: #fff;
 $color-background-secondary: #dedede;
 
 $border-radius-input: 12px;
+
+$transition-duration-zoom-fade: 150ms;
+$transition-duration-fade: 200ms;
+$transition-duration-slide: 200ms;
 :root {
   --color-background: #{$color-background};
   --color-background-secondary: #{$color-background-secondary};
@@ -21,6 +24,10 @@ $border-radius-input: 12px;
   --color-border: #{$color-border};
   --color-error: #{$color-error};
   --color-error-secondary: #{$color-error-secondary};
+
+  --transition-duration-zoom-fade: #{$transition-duration-zoom-fade};
+  --transition-duration-fade: #{$transition-duration-fade};
+  --transition-duration-slide: #{$transition-duration-slide};
   &.dark {
     --color-background: #000;
     --color-text-secondary: red;

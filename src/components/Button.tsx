@@ -9,17 +9,23 @@ interface ButtonProps {
   loadingText?: string
   isDisabled?: boolean
   variant?: 'contained' | 'transparent'
+  onClick: () => void
 }
 export const Button: FC<ButtonProps> = ({
   isLoading = false,
   // loadingText,
   isDisabled = false,
   // variant = 'contained',
-  children
+  children,
+  onClick
 }) => {
   const buildClass = clsx('button', {
     'loading': isLoading,
     'disabled': isDisabled
   })
-  return <button class={buildClass}>{children}</button>
+  return (
+    <button class={buildClass} onMouseDown={onClick}>
+      {children}
+    </button>
+  )
 }

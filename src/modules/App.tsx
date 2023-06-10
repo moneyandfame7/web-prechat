@@ -9,7 +9,6 @@ import Main from 'modules/main'
 import { initializeGlobalState } from 'state/global/initialize'
 
 import { ServiceWorker } from '../serviceWorker'
-import './app.scss'
 
 enum ActiveScreen {
   Auth = 'Auth',
@@ -32,16 +31,13 @@ const Application: FC = () => {
   })
   useEffect(() => {
     initializeGlobalState()
+    console.log('DEVVVV')
   }, [])
   return (
     <>
       <ServiceWorker />
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-        <MountTransition
-          activeKey={activeScreen.value}
-          shouldCleanup
-          name="fade"
-        >
+        <MountTransition activeKey={activeScreen.value} shouldCleanup name="fade" initial={false}>
           {renderContent.value}
         </MountTransition>
       </div>
