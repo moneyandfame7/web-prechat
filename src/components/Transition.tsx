@@ -13,7 +13,6 @@ export type TransitionType =
   | 'zoomSlideReverse'
   | 'custom'
   | 'slide'
-  | ''
 
 interface TransitionProps {
   withMount: boolean
@@ -21,10 +20,6 @@ interface TransitionProps {
   duration?: number
   children: ComponentChildren
   appear: boolean
-  /**
-   * @todo rewrite with type: "fade" | "scale" | "slide" | and maybe "other" and then use classname?
-   */
-  /* if willBeExit:zoom, if willBeEntered: fade, щось типу такого */
   type: TransitionType
   className?: string
 }
@@ -32,11 +27,10 @@ interface TransitionProps {
 const getTransitionDuration = (type: TransitionType) => {
   switch (type) {
     case 'fade':
-      return 150
-    case 'zoomFade':
-      return 150
     case 'slide':
       return 200
+    case 'zoomFade':
+      return 150
     default:
       return 400
   }
@@ -48,6 +42,7 @@ export const Transition: FC<TransitionProps> = memo(
     useEffect(() => {
       setIsMouted(isVisible)
     }, [isVisible])
+
     return (
       <CSSTransition
         appear={appear}

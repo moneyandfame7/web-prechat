@@ -96,6 +96,7 @@
 
 .slide {
   @extend .transition-base;
+  will-change: transform;
   &-enter {
     transform: translateX(200%);
     &-active {

@@ -74,7 +74,12 @@ const Auth: FC = () => {
       </Button>
       <div class="Auth">
         <div class="Auth_inner">
-          <MountTransition activeKey={activeScreen.value} shouldCleanup name="fade" initial={false}>
+          <MountTransition
+            activeKey={activeScreen.value}
+            shouldCleanup={true}
+            name="fade"
+            initial={false}
+          >
             {renderScreen()}
           </MountTransition>
         </div>

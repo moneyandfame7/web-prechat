@@ -2,6 +2,7 @@ import { FC, useEffect } from 'preact/compat'
 
 import { useComputed, useSignal } from '@preact/signals'
 
+import { ErrorCatcher } from 'components/ErrorCatcher'
 import { MountTransition } from 'components/MountTransition'
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
@@ -33,14 +34,14 @@ const Application: FC = () => {
     initializeGlobalState()
   }, [])
   return (
-    <>
+    <ErrorCatcher>
       <ServiceWorker />
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <MountTransition activeKey={activeScreen.value} shouldCleanup name="fade" initial={false}>
           {renderContent.value}
         </MountTransition>
       </div>
-    </>
+    </ErrorCatcher>
   )
 }
 

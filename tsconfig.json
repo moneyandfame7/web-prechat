@@ -6,7 +6,6 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
 
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
@@ -15,7 +14,6 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
 
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -25,14 +23,15 @@
     "types": ["vite/client"],
     "baseUrl": "src",
     "paths": {
-      "components/*": ["./components/*"],
-      "hooks": ["./hooks"],
-      "containers/*": ["./containers/*"],
-      "modules/*": ["./modules/*"],
-      "types": ["./types"],
-      "lib/*": ["./lib/*"],
-      "state/*": ["./state/*"],
-      "assets/*": ["./assets/*"]
+      // "components/*": ["./components/*"],
+      // "hooks": ["./hooks"],
+      // "containers/*": ["./containers/*"],
+      // "modules/*": ["./modules/*"],
+      // "types": ["./types"],
+      // "lib/*": ["./lib/*"],
+      // "state/*": ["./state/*"],
+      // "assets/*": ["./assets/*"],
+      // "assets/*": ["./assets/*"],
     }
   },
   "include": ["src"],

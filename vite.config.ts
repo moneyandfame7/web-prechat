@@ -59,18 +59,20 @@ export default ({ mode }) => {
     resolve: {
       alias: {
         /* For avoid conflicts with react-libraries */
-        react: 'preact/compat',
+        'react': 'preact/compat',
         'react-dom': 'preact/compat',
+
         /* common folders */
-        components: '/src/components',
-        hooks: '/src/hooks',
-        containers: '/src/containers',
-        modules: '/src/modules',
-        types: '/src/types',
-        lib: '/src/lib',
-        api: '/src/api',
-        state: '/src/state',
-        assets: '/src/assets'
+        'components': '/src/components',
+        'hooks': '/src/hooks',
+        'containers': '/src/containers',
+        'modules': '/src/modules',
+        'types': '/src/types',
+        'lib': '/src/lib',
+        'api': '/src/api',
+        'state': '/src/state',
+        'assets': '/src/assets',
+        'common': '/src/common'
       }
     },
     server: {
