@@ -1,6 +1,7 @@
 import { VNode } from 'preact'
 import { FC, isValidElement, memo, useCallback, useEffect, useRef, useState } from 'preact/compat'
 
+import { usePrevious } from 'hooks'
 import { throwDebugError } from 'common/functions'
 
 import { Transition, TransitionType } from './Transition'
@@ -18,16 +19,6 @@ function compareKeys(el1: VNode, el2: VNode) {
   }
   return el1.key === el2.key
 }
-interface MountTransitionProps {
-  children: VNode
-  /* Whether remove from dom */
-  shouldCleanup: boolean
-  activeKey: string
-  name: TransitionType
-  className?: string
-  initial?: boolean
-  duration?: number
-}
 
 function getTransitionType(isActive: boolean, name: TransitionType) {
   switch (name) {
@@ -35,14 +26,48 @@ function getTransitionType(isActive: boolean, name: TransitionType) {
       return isActive ? 'zoomFade' : 'slide'
     case 'zoomSlide':
       return isActive ? 'slide' : 'zoomFade'
+    case 'slideReverse':
+      return isActive ? 'slideFromRight' : 'slideFromLeft'
     default:
       return name
   }
 }
+
+function getClassnameByKey(key: string, classNames?: Record<string, string> | string) {
+  if (!classNames) {
+    return
+  } else if (typeof classNames === 'string') {
+    return classNames
+  }
+  return classNames[key]
+}
+
+interface MountTransitionProps {
+  children: VNode
+  /* Whether remove from dom */
+  shouldCleanup: boolean
+  activeKey: string
+  name?: TransitionType
+  classNames?: Record<string, string> | string
+  initial?: boolean
+  duration?: number
+  getTransitionForNew?: (newEl: VNode, current: VNode) => TransitionType
+}
 export const MountTransition: FC<MountTransitionProps> = memo(
-  ({ children, shouldCleanup, activeKey, className, name, initial = true }) => {
+  ({
+    children,
+    shouldCleanup,
+    activeKey,
+    classNames,
+    name,
+    initial = true,
+    getTransitionForNew
+  }) => {
     const renderCount = useRef(0)
+    const [transition, setTransition] = useState<TransitionType>(name || 'fade')
     const [elements, setElements] = useState<VNode[]>([children])
+    const willHide = usePrevious(children)
+
     const existIn = useCallback(
       (element: VNode) => {
         return elements.find((el) => compareKeys(el, element))
@@ -50,15 +75,26 @@ export const MountTransition: FC<MountTransitionProps> = memo(
       [elements]
     )
     useEffect(() => {
+      if (!name && !getTransitionForNew) {
+        throwDebugError('[MountTransition]: Transition name or function not provided')
+      }
       renderCount.current = 1
     }, [])
+
     useEffect(() => {
       const needToUpdate = !existIn(children)
       if (needToUpdate) {
         setElements((prev) => [...prev, children])
       }
     }, [children])
+
     const renderContent = useCallback(() => {
+      if (willHide && children.key !== willHide?.key) {
+        const gettedTransition = getTransitionForNew?.(children, willHide)
+        if (gettedTransition) {
+          setTransition(gettedTransition)
+        }
+      }
       return elements.map((el) => {
         const key = getKey(el)
         const isActive = activeKey === key
@@ -70,14 +106,15 @@ export const MountTransition: FC<MountTransitionProps> = memo(
             withMount={shouldCleanup}
             // duration={initial ? duration || getTransitionDuration(name) + 1000 : undefined}
             isVisible={isActive}
-            className={className}
-            type={getTransitionType(isActive, name)}
+            className={getClassnameByKey(key, classNames)}
+            type={getTransitionType(isActive, transition)}
           >
             {el}
           </Transition>
         )
       })
-    }, [elements, activeKey, shouldCleanup])
+    }, [elements, activeKey, shouldCleanup, transition, children, willHide])
+
     return <>{renderContent()}</>
   }
 )

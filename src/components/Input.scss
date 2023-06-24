@@ -1,13 +1,14 @@
 .input-container {
   position: relative;
-  margin-bottom: 1.5rem;
   width: 100%;
 
   input {
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-size: 16px;
-    border-radius: 12px;
-    padding-left: 20px;
-    height: 50px;
+    border-radius: var(--input-border-radius);
+    padding: 0 20px;
+    height: var(--input-base-height);
     width: 100%;
     border: 1px solid var(--color-border);
     background-color: transparent;
@@ -48,7 +49,8 @@
       border-color: var(--color-primary);
       ~ label,
       &::placeholder,
-      ~ .length-indicator {
+      ~ .length-indicator,
+      ~ .fa-chevron-down {
         color: var(--color-primary);
       }
     }
@@ -60,6 +62,10 @@
       &::placeholder,
       ~ label,
       ~ .length-indicator {
+        color: var(--color-primary);
+      }
+      ~ .fa-chevron-down {
+        transform: rotate(180deg);
         color: var(--color-primary);
       }
     }
@@ -83,6 +89,7 @@
     .length-indicator,
     label {
       color: var(--color-error) !important;
+      font-weight: 300;
     }
 
     input,
@@ -95,13 +102,16 @@
   &.disabled {
     opacity: 0.6;
     pointer-events: none;
-    background-color: var(--color-background-secondary);
     border-radius: 12px;
   }
 
   &.not-empty label {
     transform: scale(0.75) translate(-5px, -35px);
     background-color: var(--color-background);
+  }
+
+  &.with-arrow input {
+    padding-right: 40px;
   }
 
   .input-border {
@@ -127,6 +137,7 @@
     color: var(--color-placeholder);
     pointer-events: none;
     transition: transform 0.2s ease-out, color 0.2s ease-out;
+    white-space: nowrap;
   }
 
   .length-indicator {
@@ -138,5 +149,23 @@
     font-size: 14px;
     color: var(--color-placeholder);
     background-color: var(--color-background);
+  }
+
+  .input-spinner {
+    position: absolute;
+    right: 16px;
+    top: 28%;
+    left: auto;
+    width: max-content;
+    height: max-content;
+  }
+
+  .fa-chevron-down {
+    left: auto;
+    width: max-content;
+    height: max-content;
+    position: absolute;
+    right: 20px;
+    top: 35%;
   }
 }

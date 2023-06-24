@@ -71,6 +71,7 @@
   }
   &-appear {
     opacity: 0;
+
     &-active {
       opacity: 1;
       transition: opacity 350ms ease;
@@ -87,9 +88,8 @@
       transition: opacity var(--transition-duration-fade) ease-in-out;
     }
     &-done {
-      display: none !important;
       /* display instead opacity for perfomance */
-      // display: none !important; /* for avoid conflicts !important */
+      display: none !important;
     }
   }
 }
@@ -98,36 +98,36 @@
   @extend .transition-base;
   will-change: transform;
   &-enter {
-    transform: translateX(200%);
+    transform: translate3d(200%, 0, 0);
     &-active {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
       transition: transform var(--transition-duration-slide) ease-in-out;
     }
     &-done {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
     }
   }
   &-appear {
-    transform: translateX(200%);
+    transform: translate3d(200%, 0, 0);
     &-active {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
       transition: transform var(--transition-duration-slide) ease-in-out;
     }
     &-done {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
     }
   }
   &-exit {
-    transform: translateX(0);
+    transform: translate3d(0, 0, 0);
 
     &-active {
-      transform: translateX(200%);
+      transform: translate3d(200%, 0, 0);
       transition: transform var(--transition-duration-slide) ease-in-out;
     }
     &-done {
       /* display instead opacity for perfomance */
       display: none !important; /* for avoid conflicts !important */
-      transform: translateX(200%);
+      transform: translate3d(200%, 0, 0);
     }
   }
 }

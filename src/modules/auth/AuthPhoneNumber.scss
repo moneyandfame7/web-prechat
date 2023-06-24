@@ -1,5 +1,16 @@
-.form-input {
-  &::placeholder {
-    color: aqua;
+.Auth_phone {
+  .Button-contained {
+    margin-bottom: 20px;
+  }
+  .Logo {
+    margin: 0px auto;
+  }
+  .Checkbox {
+    margin: 20px 0 30px;
+    padding: 0 20px;
+  }
+  .spinner.spinner-large {
+    display: block;
+    margin: 100px auto;
   }
 }

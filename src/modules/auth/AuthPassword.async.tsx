@@ -1,4 +1,4 @@
-import { FC, Suspense, lazy, memo } from 'preact/compat'
+import { type FC, Suspense, lazy, memo } from 'preact/compat'
 
 const AuthPasswordAsync: FC = () => {
   const AuthPassword = lazy(() => import('./AuthPassword'))

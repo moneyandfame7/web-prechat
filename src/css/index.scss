@@ -1,6 +1,7 @@
 @import "variables";
 @import "reset";
 @import "typography";
+@import "../assets/icons/css/all.css";
 #app {
   height: 100%;
   width: 100%;
@@ -17,6 +18,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+
   &.scroll-hidden {
     &::-webkit-scrollbar {
       width: 0;
@@ -36,18 +38,21 @@ body {
 
   /* Handle */
   &::-webkit-scrollbar-thumb {
+    box-shadow: 0 0 1px rgba(255, 255, 255, 0.01);
     display: none;
     scrollbar-width: none;
     border-radius: 0.75rem;
     width: 5px;
     transition-duration: 0.4s;
   }
+  &:hover {
+    scrollbar-color: $color-scrollbar transparent;
 
-  /* Scrollbar Stuffs */
-  &:hover::-webkit-scrollbar-thumb {
-    background-color: $color-scrollbar;
-    scrollbar-width: thin;
-    display: initial;
+    &::-webkit-scrollbar-thumb {
+      background-color: $color-scrollbar;
+      scrollbar-width: thin;
+      display: initial;
+    }
   }
 }
 .text-center {

@@ -1,15 +1,17 @@
-import { FC, useEffect } from 'preact/compat'
+import { FC, useCallback, useEffect, useState } from 'preact/compat'
 
-import { useComputed, useSignal } from '@preact/signals'
+import { initializeApplication } from 'state/initialize'
+import { getGlobalState } from 'state/signal'
 
-import { ErrorCatcher } from 'components/ErrorCatcher'
-import { MountTransition } from 'components/MountTransition'
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
-import { initializeGlobalState } from 'state/global/initialize'
+
+import { ErrorCatcher } from 'components/ErrorCatcher'
+import { MountTransition } from 'components/MountTransition'
 
 import { ServiceWorker } from '../serviceWorker'
+// import { PageLoader } from 'components/PageLoader'
 
 enum ActiveScreen {
   Auth = 'Auth',
@@ -18,10 +20,26 @@ enum ActiveScreen {
 }
 
 const Application: FC = () => {
-  const activeScreen = useSignal(ActiveScreen.Auth)
-  // const location = useLocation()
-  const renderContent = useComputed(() => {
-    switch (activeScreen.value) {
+  const [activeScreen, setActiveScreen] = useState(ActiveScreen.Auth)
+  const state = getGlobalState((state) => state)
+
+  useEffect(() => {
+    initializeApplication()
+  }, [])
+
+  useEffect(() => {
+    switch (state.auth.isAuthorized) {
+      case true:
+        setActiveScreen(ActiveScreen.Main)
+        break
+      case false:
+        setActiveScreen(ActiveScreen.Auth)
+        break
+    }
+  }, [state.auth.isAuthorized])
+
+  const renderContent = useCallback(() => {
+    switch (activeScreen) {
       case ActiveScreen.Auth:
         return <Auth key={ActiveScreen.Auth} />
       case ActiveScreen.Lock:
@@ -29,19 +47,21 @@ const Application: FC = () => {
       case ActiveScreen.Main:
         return <Main key={ActiveScreen.Main} />
     }
-  })
-  useEffect(() => {
-    initializeGlobalState()
-  }, [])
+  }, [activeScreen])
+
   return (
+    // <PageLoader on={state.initialization}>
     <ErrorCatcher>
-      <ServiceWorker />
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-        <MountTransition activeKey={activeScreen.value} shouldCleanup name="fade" initial={false}>
-          {renderContent.value}
-        </MountTransition>
-      </div>
+      <>
+        <ServiceWorker />
+        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+          <MountTransition activeKey={activeScreen} shouldCleanup name="fade" initial={false}>
+            {renderContent()}
+          </MountTransition>
+        </div>
+      </>
     </ErrorCatcher>
+    // </PageLoader>
   )
 }
 

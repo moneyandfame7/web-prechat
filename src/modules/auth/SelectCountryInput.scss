@@ -1,0 +1,18 @@
+.select-container {
+  position: relative;
+  .Menu {
+    top: calc(var(--input-base-height) + 5px);
+    max-height: 350px;
+  }
+}
+
+.country-emoji {
+  font-size: 30px;
+}
+.country-name {
+  flex: 1;
+  padding: 0 20px;
+}
+.country-code {
+  color: var(--color-text-secondary);
+}

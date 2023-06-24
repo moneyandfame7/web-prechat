@@ -1,7 +1,7 @@
 import { FC, memo } from 'preact/compat'
 
 import { MiddleColumn } from 'containers/middle'
-import 'state/global/actions/all'
+import 'state/actions/all'
 
 const Main: FC = () => {
   return (

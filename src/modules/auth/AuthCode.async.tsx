@@ -1,11 +1,11 @@
-import { FC, Suspense, lazy, memo } from 'preact/compat'
+import { type FC, Suspense, lazy, memo } from 'preact/compat'
 
-const AuthCodeAsync: FC = () => {
+const AuthCodeAsync: FC = (props) => {
   const AuthCode = lazy(() => import('./AuthCode'))
 
   return (
     <Suspense fallback="Loading...">
-      <AuthCode />
+      <AuthCode {...props} />
     </Suspense>
   )
 }

@@ -1,3 +1,55 @@
 .grecaptcha-badge {
   visibility: hidden;
 }
+.Auth_code {
+  padding-top: 150px;
+  position: relative;
+  .emoji {
+    font-size: 120px;
+    text-align: center;
+    transition: transform 0.2s ease-out;
+    margin-bottom: 30px;
+    will-change: transform;
+    &.animated {
+      animation: 0.5s infinite alternate emojiRotate;
+    }
+  }
+  .emoji-mart-emoji {
+    font-size: 120px;
+    text-align: center;
+    display: block;
+    will-change: transform;
+    transition: transform 0.2s ease-out;
+    &.animated {
+      animation: 0.5s infinite alternate emojiRotate;
+    }
+  }
+  .spinner {
+    margin: 72px auto;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 44%;
+  }
+  .title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .fa-pencil {
+      font-size: 20px;
+
+      cursor: pointer;
+      padding: 15px;
+    }
+  }
+}
+
+@keyframes emojiRotate {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(5deg);
+  }
+}

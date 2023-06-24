@@ -1,0 +1,13 @@
+.UploadPhoto {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .fa-images {
+    color: #fff;
+    font-size: 35px;
+  }
+}

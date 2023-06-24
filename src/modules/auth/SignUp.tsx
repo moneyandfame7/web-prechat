@@ -1,17 +1,74 @@
-import { FC, memo } from 'preact/compat'
+import { FC, TargetedEvent, memo, useCallback, useState } from 'preact/compat'
+
+import { getActions } from 'state/action'
+
+import { t } from 'lib/i18n'
+
+import { Button } from 'components/Button'
+import { InputText } from 'components/Input'
+import { UploadPhoto } from 'components/UploadPhoto'
+import { Checkbox } from 'components/Checkbox'
+
+import './SignUp.scss'
 
 const SignUp: FC = () => {
+  const { signUp } = getActions()
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [photo, setPhoto] = useState<File>()
+  const [silentSignUp, setSilentSignUp] = useState(false)
+  const handleChangeName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    e.preventDefault()
+
+    setFirstName(e.currentTarget.value)
+  }, [])
+  const handleChangeLastName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    e.preventDefault()
+
+    setLastName(e.currentTarget.value)
+  }, [])
+
+  const handleChangeSilentSignUp = useCallback(() => {
+    setSilentSignUp((prev) => !prev)
+  }, [])
+
+  const handleSubmit = useCallback(
+    (e: TargetedEvent<HTMLFormElement, Event>) => {
+      e.preventDefault()
+      signUp({
+        firstName,
+        lastName: lastName.length === 0 ? undefined : lastName,
+        photo,
+        silent: silentSignUp
+      })
+    },
+    [silentSignUp, lastName]
+  )
+
+  const handleUploadPhoto = () => {
+    setPhoto(5 as any)
+  }
   return (
-    <div style={{ backgroundColor: 'red', height: '100%' }}>
-      <h1>Sign up</h1>
-      <p>lorem ipsum dorem</p>
-      <p>lorem ipsum dorem</p>
-      <p>lorem ipsum dorem</p>
-      <p>lorem ipsum dorem</p>
-      <p>lorem ipsum dorem</p>
-      <p>lorem ipsum dorem</p>
-      <p>lorem ipsum dorem</p>
-    </div>
+    <>
+      <UploadPhoto />
+      <div onClick={handleUploadPhoto}></div>
+      <h1 class="title">Sign up</h1>
+      <p class="subtitle">{t('Auth.SignUp')}</p>
+      <form onSubmit={handleSubmit}>
+        <InputText label={t('Name').value} value={firstName} onInput={handleChangeName} />
+        <InputText
+          label={t('LastNameOptional').value}
+          value={lastName}
+          onInput={handleChangeLastName}
+        />
+        <Checkbox
+          label={t('Auth.SilentAuth').value}
+          onToggle={handleChangeSilentSignUp}
+          checked={silentSignUp}
+        />
+        {firstName.length > 3 && <Button type="submit">{t('Auth.StartMessaging')}</Button>}
+      </form>
+    </>
   )
 }
 

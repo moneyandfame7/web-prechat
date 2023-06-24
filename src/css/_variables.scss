@@ -1,15 +1,26 @@
 $color-text-secondary: #6d6b6b;
-$color-scrollbar: rgb(174, 174, 174);
+$color-scrollbar: rgb(207, 207, 207);
 $color-primary: #3290ec;
+$color-primary-lighter: #4da4f5;
+$color-primary-hover: darken($color-primary, 5%);
+$color-primary-transparent: rgba(78, 163, 252, 0.13);
+
 $color-placeholder: #999;
 $color-border: #d5d7db;
 $color-error: rgb(237, 24, 24);
 $color-error-secondary: rgba(233, 52, 52, 0.751);
 
+$color-warn: #ffd3009e;
+
+$color-neutral: #707579;
+$color-neutral-secondary: #94989b;
+
 $color-background: #fff;
 $color-background-secondary: #dedede;
+$color-background-transparent: rgba(255 255 255/90%);
 
-$border-radius-input: 12px;
+$input-border-radius: 12px;
+$input-base-height: 50px;
 
 $transition-duration-zoom-fade: 150ms;
 $transition-duration-fade: 200ms;
@@ -17,22 +28,39 @@ $transition-duration-slide: 200ms;
 :root {
   --color-background: #{$color-background};
   --color-background-secondary: #{$color-background-secondary};
+  --color-background-transparent: #{$color-background-transparent};
   --color-text-secondary: #{$color-text-secondary};
   --color-scrollbar: #{$color-scrollbar};
+
   --color-primary: #{$color-primary};
+  --color-primary-lighter: #{$color-primary-lighter};
+  --color-primary-hover: #{$color-primary-hover};
+  --color-primary-transparent: #{$color-primary-transparent};
+
   --color-placeholder: #{$color-placeholder};
   --color-border: #{$color-border};
   --color-error: #{$color-error};
   --color-error-secondary: #{$color-error-secondary};
+
+  --color-warn: #{$color-warn};
+
+  --color-neutral: #{$color-neutral};
+  --color-neutral-secondary: #{$color-neutral-secondary};
+
+  --input-border-radius: #{$input-border-radius};
+  --input-base-height: #{$input-base-height};
 
   --transition-duration-zoom-fade: #{$transition-duration-zoom-fade};
   --transition-duration-fade: #{$transition-duration-fade};
   --transition-duration-slide: #{$transition-duration-slide};
   &.dark {
     --color-background: #000;
+    --color-background-transparent: rgba(0 0 0/90%);
     --color-text-secondary: red;
+
     --color-scrollbar: rgb(72, 72, 72);
-    --color-primary: purple;
+    --color-primary: #8774e1;
+    --color-primary-lighter: #9383e1;
     --color-error: red;
   }
 }

@@ -5,6 +5,7 @@ import Transition from './Transition'
 import { computeClassName, joinClassNames } from './helpers'
 import { type CSSTransitionProps, Phase, type TransitionState } from './types'
 
+/* Taken from https://github.com/fakundo/preact-transitioning and modified */
 export const CSSTransition = memo((props: CSSTransitionProps): VNode => {
   const { children, classNames, ...rest } = props
 
@@ -23,7 +24,6 @@ export const CSSTransition = memo((props: CSSTransitionProps): VNode => {
         computeClassName(phase, classNames)
       )
 
-      // console.log({ className, finalClassName })
       return cloneElement(children, { className: finalClassName })
     }
   )

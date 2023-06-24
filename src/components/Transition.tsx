@@ -1,5 +1,6 @@
 import { ComponentChildren } from 'preact'
 import { FC, memo, useEffect, useState } from 'preact/compat'
+import clsx from 'clsx'
 
 import { CSSTransition } from 'lib/css-transition'
 
@@ -9,16 +10,18 @@ export type TransitionType =
   | 'zoomFade'
   | 'fade'
   | 'slide'
+  | 'slideReverse'
+  | 'slideFromRight'
+  | 'slideFromLeft'
   | 'zoomSlide'
   | 'zoomSlideReverse'
   | 'custom'
-  | 'slide'
 
 interface TransitionProps {
   withMount: boolean
   isVisible: boolean
   duration?: number
-  children: ComponentChildren
+  children?: ComponentChildren
   appear: boolean
   type: TransitionType
   className?: string
@@ -36,13 +39,14 @@ const getTransitionDuration = (type: TransitionType) => {
   }
 }
 export const Transition: FC<TransitionProps> = memo(
-  ({ withMount, isVisible, children, duration, appear, type }) => {
+  ({ withMount, isVisible, children, duration, appear, type, className }) => {
     const [isMounted, setIsMouted] = useState(isVisible)
 
     useEffect(() => {
       setIsMouted(isVisible)
     }, [isVisible])
 
+    const transitionClassname = clsx(className && className, 'transition')
     return (
       <CSSTransition
         appear={appear}
@@ -51,7 +55,7 @@ export const Transition: FC<TransitionProps> = memo(
         classNames={type}
         alwaysMounted={!withMount}
       >
-        <div class="transition">{children}</div>
+        <div class={transitionClassname}>{children}</div>
       </CSSTransition>
     )
   }
