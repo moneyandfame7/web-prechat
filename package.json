@@ -20,16 +20,12 @@
     "firebase": "^9.22.1",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.13.1",
-    "lodash.clonedeep": "^4.5.0",
-    "lodash.pick": "^4.4.0",
     "omit-deep-lodash": "^1.1.7",
     "preact": "^10.13.2",
     "wouter-preact": "^2.11.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.5.0",
-    "@types/lodash.clonedeep": "^4.5.7",
-    "@types/lodash.pick": "^4.4.7",
     "@types/node": "^20.2.5",
     "@types/omit-deep-lodash": "^1.1.1",
     "autoprefixer": "^10.4.14",
@@ -42,7 +38,6 @@
     "sass": "^1.62.1",
     "typescript": "*",
     "vite": "^4.3.9",
-    "vite-plugin-chunk-split": "^0.4.7",
     "vite-plugin-html": "^3.2.0",
     "vite-plugin-pwa": "^0.16.3",
     "workbox-window": "^7.0.0"
