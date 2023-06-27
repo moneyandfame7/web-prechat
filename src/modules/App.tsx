@@ -11,8 +11,9 @@ import Main from 'modules/main'
 
 import { ServiceWorker } from '../serviceWorker'
 
-import './App.scss'
 import { Spinner } from 'components/Spinner'
+import './App.scss'
+
 enum ActiveScreen {
   Auth = 'Auth',
   Lock = 'Lock',

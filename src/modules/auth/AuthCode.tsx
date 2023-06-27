@@ -5,13 +5,14 @@ import { AuthScreens } from 'types/state'
 
 import { getGlobalState } from 'state/signal'
 import { getActions } from 'state/action'
+import { updateGlobalState } from 'state/persist'
+
 import { t } from 'lib/i18n'
 
 import { InputText } from 'components/Input'
 import { Spinner } from 'components/Spinner'
 
 import './AuthCode.scss'
-import { updateGlobalState } from 'state/persist'
 
 const AuthCode: FC = () => {
   const { auth } = getGlobalState()
