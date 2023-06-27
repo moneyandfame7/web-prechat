@@ -1,9 +1,11 @@
-import { DeepSignal } from 'deepsignal'
+import type { DeepSignal } from 'deepsignal'
 
+import { ConfirmationResult, RecaptchaVerifier } from 'firebase/auth'
+
+import lang from 'lib/i18n/lang'
 import type { SupportedLanguages } from 'types/lib'
 import type { Country } from 'types/api'
 import type { Connection } from 'types/request'
-import { ConfirmationResult, RecaptchaVerifier } from 'firebase/auth'
 
 export type Theme = 'light' | 'dark' | 'system'
 
@@ -14,38 +16,34 @@ export enum AuthScreens {
   SignUp = 'SignUp'
 }
 
-export type AuthPhase = 'waitPhone' | 'waitCode' | 'waitPassword' | 'waitSignup'
-
-export interface Settings {
+export interface SettingsState {
   theme: Theme
-  language: SupportedLanguages
+  i18n: {
+    lang_code: SupportedLanguages
+    countries: Country[]
+    pack: typeof lang
+  }
   suggestedLanguage?: SupportedLanguages
 }
-
 export interface AuthState {
   rememberMe: boolean
   connection?: Connection
   phoneNumber?: string
   captcha?: RecaptchaVerifier
   confirmResult?: ConfirmationResult
-  captchaId?: number
   error?: string
   loading?: boolean
-  /* If false - sign up, else - password or main screen */
   userId?: string
-  isAuthorized: boolean
   screen: AuthScreens
-  /* Firebase auth token for verify phone number during sign up*/
   token?: string
-  hasActiveSessions: boolean
   passwordHint?: string
   email?: string
+  session?: string
 }
-
-export interface GlobalStateProperties {
-  countryList: Country[]
-  settings: Settings
+export interface GlobalState {
+  settings: SettingsState
   auth: AuthState
   initialization: boolean
 }
-export type GlobalState = DeepSignal<GlobalStateProperties>
+
+export type SignalGlobalState = DeepSignal<GlobalState>

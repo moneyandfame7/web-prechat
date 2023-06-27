@@ -14,16 +14,7 @@
       animation: 0.5s infinite alternate emojiRotate;
     }
   }
-  .emoji-mart-emoji {
-    font-size: 120px;
-    text-align: center;
-    display: block;
-    will-change: transform;
-    transition: transform 0.2s ease-out;
-    &.animated {
-      animation: 0.5s infinite alternate emojiRotate;
-    }
-  }
+
   .spinner {
     margin: 72px auto;
     display: block;

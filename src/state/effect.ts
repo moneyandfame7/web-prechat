@@ -1,11 +1,11 @@
 import { getGlobalState } from './signal'
-import type { GlobalState, GlobalStateProperties } from 'types/state'
+import type { GlobalState, SignalGlobalState } from 'types/state'
 
-type EffectFor = keyof GlobalStateProperties
+type EffectFor = keyof GlobalState
 
 type EffectCallback<Name extends EffectFor> = (
-  state: GlobalState,
-  newValue: GlobalStateProperties[Name]
+  state: SignalGlobalState,
+  newValue: SignalGlobalState[Name]
 ) => void
 type EffectUnsubscribe = () => void
 type Effects = Record<EffectFor, EffectUnsubscribe>
@@ -18,7 +18,7 @@ export function createEffect<Name extends EffectFor>(name: Name, callback: Effec
   }
   const state = getGlobalState()
   const created = state[`$${name}`]!.subscribe((val) => {
-    callback(state, val as GlobalStateProperties[Name])
+    callback(state, val as GlobalState[Name])
   })
 
   effects[name] = created

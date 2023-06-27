@@ -1,4 +1,4 @@
-import type { AuthScreens, GlobalState, Theme } from 'types/state'
+import type { SignalGlobalState, Theme } from 'types/state'
 import type { SupportedLanguages } from 'types/lib'
 
 import { getGlobalState } from './signal'
@@ -18,13 +18,14 @@ interface ActionPayloads {
   /* Ui */
   changeTheme: Theme
   changeLanguage: SupportedLanguages
-  changeAuthScreen: AuthScreens
   setAuthRememberMe: boolean
 
   /* Api */
+  getLanguageWithCountries: SupportedLanguages
+  getLanguage: SupportedLanguages
   getCountries: SupportedLanguages
-  getConnection: void
 
+  getConnection: void
   sendPhone: string
   verifyCode: string
 }
@@ -37,7 +38,7 @@ const actions = {} as Actions
 
 export function createAction<Name extends ActionNames>(
   name: Name,
-  handler: (state: GlobalState, payload: ActionPayloads[Name]) => void | Promise<void>
+  handler: (state: SignalGlobalState, payload: ActionPayloads[Name]) => void | Promise<void>
 ) {
   if (actions[name]) {
     // eslint-disable-next-line no-console

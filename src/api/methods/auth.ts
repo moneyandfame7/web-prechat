@@ -1,39 +1,17 @@
 import { client } from 'api/client'
 import { makeRequest } from 'api/request'
-import {
-  MUTATION_SEND_PHONE,
-  MUTATION_SIGN_IN,
-  MUTATION_SIGN_UP,
-  QUERY_FETCH_COUNTRIES
-} from 'api/graphql'
+import { MUTATION_SEND_PHONE, MUTATION_SIGN_IN, MUTATION_SIGN_UP } from 'api/graphql'
 
 import type {
-  Country,
   SendPhoneResponse,
   SignInInput,
   SignInResponse,
   SignUpInput,
   SignUpResponse
 } from 'types/api'
-import type { SupportedLanguages } from 'types/lib'
-
-export async function fetchCountries(language: SupportedLanguages) {
-  const {
-    data: { countries }
-  } = await client.query<{
-    countries: Country[]
-  }>({
-    query: QUERY_FETCH_COUNTRIES,
-    fetchPolicy: 'cache-first',
-    variables: {
-      language
-    }
-  })
-  return { countries }
-}
 
 export async function fetchConnection() {
-  return makeRequest('connection')
+  return makeRequest('connection', 'prechat-important', true, 60 * 60 * 1000)
 }
 
 export async function sendPhone(phone: string) {

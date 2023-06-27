@@ -80,7 +80,6 @@ export const MountTransition: FC<MountTransitionProps> = memo(
       }
       renderCount.current = 1
     }, [])
-
     useEffect(() => {
       const needToUpdate = !existIn(children)
       if (needToUpdate) {

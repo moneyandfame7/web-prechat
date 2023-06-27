@@ -9,13 +9,12 @@ import {
   useState
 } from 'preact/compat'
 
-import { setLanguage, t, useTranslateForString } from 'lib/i18n'
-
+import { changeLanguage, t, useTranslateString } from 'lib/i18n'
 import { getActions } from 'state/action'
 import { getGlobalState } from 'state/signal'
-import { selectSuggestedCountry } from 'state/selectors/auth'
+import { selectCountryByPhone, selectSuggestedCountry } from 'state/selectors/auth'
+import { updateGlobalState } from 'state/persist'
 
-import { AuthScreens } from 'types/state'
 import type { Country } from 'types/api'
 
 import { Button } from 'components/Button'
@@ -30,36 +29,32 @@ import './AuthPhoneNumber.scss'
 const IS_PHONE_VAL_REG = /^\+\d{1,4}\s?\d{7,}$/
 
 const AuthPhoneNumber: FC = () => {
-  const { getCountries, sendPhone, changeAuthScreen } = getActions()
+  const { getCountries, sendPhone } = getActions()
   const state = getGlobalState()
   const phoneInputRef = useRef<HTMLInputElement>(null)
 
-  const [phone, setPhone] = useState<string>('+380684178101')
-  const [country, setCountry] = useState<Country | undefined>()
+  const [phone, setPhone] = useState<string>(state.auth.phoneNumber || '')
+  const [country, setCountry] = useState<Country | undefined>(selectCountryByPhone(state))
 
   useEffect(() => {
-    getCountries(state.settings.language)
-  }, [state.settings.language])
+    getCountries(state.settings.i18n.lang_code)
+  }, [state.settings.i18n.lang_code])
 
   useEffect(() => {
-    if (state.auth.connection && state.countryList.length) {
+    if (state.auth.connection && state.settings.i18n.countries.length) {
       const suggestedCountry = selectSuggestedCountry(state)
       if (suggestedCountry && !country && !phone.length) {
         setCountry(suggestedCountry)
         setPhone(suggestedCountry?.dial_code)
       }
     }
-  }, [state.auth.connection, state.countryList])
-
-  useEffect(() => {
-    if (state.auth.phoneNumber) {
-      changeAuthScreen(AuthScreens.Code)
-    }
-  }, [state.auth.phoneNumber])
+  }, [state.auth.connection, state.settings.i18n.countries])
 
   const handleChangePhone = useCallback(
     (phone: string) => {
-      const country = state.countryList.find((country) => country.dial_code === phone.trim())
+      const country = state.settings.i18n.countries.find(
+        (country) => country.dial_code === phone.trim()
+      )
 
       if (country) {
         setCountry(country)
@@ -68,9 +63,8 @@ const AuthPhoneNumber: FC = () => {
         setPhone(phone)
       }
     },
-    [state.countryList]
+    [state.settings.i18n.countries]
   )
-
   const handleSelectCountry = useCallback(
     (country: Country) => {
       setCountry(country)
@@ -79,22 +73,26 @@ const AuthPhoneNumber: FC = () => {
       }, 250)
       setPhone(country.dial_code)
     },
-    [phone, phoneInputRef]
+    [phoneInputRef]
   )
 
   const handleChangeLanguage = async () => {
     if (state.settings.suggestedLanguage) {
-      await setLanguage(state.settings.suggestedLanguage)
+      await changeLanguage(state.settings.suggestedLanguage)
     }
   }
 
-  const handleChangeRememberMe = useCallback(() => {
-    state.auth.rememberMe = !state.auth.rememberMe
-  }, [state.auth.rememberMe])
+  const handleChangeRememberMe = useCallback((checked: boolean) => {
+    updateGlobalState({
+      auth: {
+        rememberMe: checked
+      }
+    })
+  }, [])
 
   const isValidPhone = useMemo(() => IS_PHONE_VAL_REG.test(phone.trim()), [phone])
 
-  const translateString = useTranslateForString(
+  const translateString = useTranslateString(
     'Auth.ContinueOnLanguage',
     state.settings.suggestedLanguage
   )
@@ -104,23 +102,15 @@ const AuthPhoneNumber: FC = () => {
 
     sendPhone(phone)
   }
-
   return (
     <>
       <Logo />
-      <Button
-        onClick={() => {
-          changeAuthScreen(AuthScreens.SignUp)
-        }}
-      >
-        Alo
-      </Button>
       <h1 class="title text-center">{t('Auth.Signin')}</h1>
       <p class="subtitle text-center">{t('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>
         <SelectCountryInput
-          loading={!state.countryList?.length || !state.auth.connection}
-          countryList={state.countryList}
+          loading={!state.settings.i18n.countries.length || !state.auth.connection}
+          countryList={state.settings.i18n.countries}
           handleSelect={handleSelectCountry}
           selectedCountry={country}
         />
@@ -131,9 +121,9 @@ const AuthPhoneNumber: FC = () => {
           value={phone}
         />
         <Checkbox
-          label="Remember me"
+          label={t('RememberMe')}
           onToggle={handleChangeRememberMe}
-          checked={state.auth.rememberMe}
+          checked={state.auth.$rememberMe!}
         />
         {isValidPhone && (
           <Button type="submit" isLoading={state.auth.loading}>
@@ -141,7 +131,7 @@ const AuthPhoneNumber: FC = () => {
           </Button>
         )}
 
-        {translateString && state.settings.suggestedLanguage !== state.settings.language && (
+        {translateString && state.settings.suggestedLanguage !== state.settings.i18n.lang_code && (
           <Button variant="transparent" onClick={handleChangeLanguage}>
             {translateString}
           </Button>

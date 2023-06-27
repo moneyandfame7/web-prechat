@@ -1,34 +1,31 @@
 /* eslint-disable no-console */
-import { batch } from '@preact/signals'
-
 import * as firebase from 'lib/firebase'
+
 import { callApi } from 'api/provider'
+
 import { AuthScreens } from 'types/state'
-import type { Country, SignUpInput } from 'types/api'
+import type { SignUpInput } from 'types/api'
 import type { SupportedLanguages } from 'types/lib'
 
 import { createAction } from 'state/action'
 import { LANGUAGES_CODE_ARRAY } from 'state/helpers/settings'
 
-import { omit } from 'common/functions'
 import { USER_BROWSER, USER_PLATFORM } from 'common/config'
+import { updateGlobalState } from 'state/persist'
 
-createAction('getCountries', async (state, payload) => {
-  const { countries } = await callApi('fetchCountries', payload)
-  if (!countries.length) return
-
-  const withoutTypename = countries.map((country) => omit(country, '__typename' as any))
-  state.countryList = withoutTypename as Country[]
-})
-
-createAction('getConnection', async (state) => {
+createAction('getConnection', async () => {
   const connection = await callApi('fetchConnection')
+
   const suggestedLanguage = connection.countryCode.toLowerCase() as SupportedLanguages
   const existLanguage = LANGUAGES_CODE_ARRAY.find((code) => code === suggestedLanguage)
 
-  batch(() => {
-    state.auth.connection = connection
-    state.settings.suggestedLanguage = existLanguage ? suggestedLanguage : 'pl'
+  updateGlobalState({
+    auth: {
+      connection
+    },
+    settings: {
+      suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
+    }
   })
 })
 
@@ -42,55 +39,84 @@ createAction('sendPhone', async (state, payload) => {
   const data = response.data.sendPhone
 
   console.log('[API]: Code from firebase was sent')
-  await firebase.sendCode(state.auth, state.settings.language, payload)
-  batch(() => {
-    state.auth.userId = data.userId
-    state.auth.phoneNumber = payload
-    state.auth.loading = false
-  })
+  await firebase.sendCode(state.auth, state.settings.i18n.lang_code, payload)
+
+  console.log('[AUTH]: Remember me:', state.auth.rememberMe)
+
+  updateGlobalState(
+    {
+      auth: {
+        userId: data.userId,
+        phoneNumber: payload,
+        loading: false,
+        screen: AuthScreens.Code
+      }
+    },
+    state.auth.rememberMe
+  )
 })
 
 createAction('verifyCode', async (state, payload) => {
-  const credentials = await firebase.verifyCode(state.auth, state.settings.language, payload)
+  const credentials = await firebase.verifyCode(state.auth, state.settings.i18n.lang_code, payload)
   const token = await credentials?.user.getIdToken()
   if (!token || state.auth.error) {
+    console.warn('[AUTH]: No token or auth error')
     return
   }
   const { data } = await callApi('getTwoFa', token)
   if (!state.auth.userId) {
-    batch(() => {
-      state.auth.token = token
-      state.auth.screen = AuthScreens.SignUp
+    updateGlobalState({
+      auth: {
+        token,
+        screen: AuthScreens.SignUp
+      }
     })
     return
   } else if (data.getTwoFa) {
-    batch(() => {
-      state.auth.passwordHint = data.getTwoFa!.hint
-      state.auth.email = data.getTwoFa!.email
-      state.auth.screen = AuthScreens.Password
+    updateGlobalState({
+      auth: {
+        passwordHint: data.getTwoFa.hint,
+        email: data.getTwoFa.email,
+        screen: AuthScreens.Password
+      }
     })
     return
   } else {
-    const { data } = await callApi('signIn', {
+    const signInPayload = {
+      userId: state.auth.userId,
       token,
       connection: {
-        ...state.auth.$connection!.value!,
+        ...state.auth.connection!,
         browser: USER_BROWSER,
         platform: USER_PLATFORM
-      },
-      userId: state.auth.userId
-    })
+      }
+    }
+    /* винести signIn в окремий action?? */
+    const { data } = await callApi('signIn', signInPayload)
     if (!data?.signIn) {
       console.warn('[API]: Sign In error')
       return
     }
-    if (state.auth.rememberMe) {
-      /* persist session */
-      /* in localstorage, session_in, or user_auth, smth like  */
+
+    if (!state.auth.rememberMe) {
+      /* або тут прибирати state, або навпаки тільки тут оновлювати його в db */
+      // database.auth.change({
+      //   rememberMe: state.auth.rememberMe,
+      //   session: data.signIn.session,
+      //   phoneNumber: state.auth.phoneNumber,
+      //   email: state.auth.email
+      // })
     }
-    state.auth.isAuthorized = true
+
+    updateGlobalState(
+      {
+        auth: {
+          session: data.signIn.session
+        }
+      },
+      state.auth.rememberMe
+    )
   }
-  return
 })
 
 createAction('signUp', async (state, payload) => {
@@ -101,10 +127,7 @@ createAction('signUp', async (state, payload) => {
 
     return
   }
-  if (!state.auth.$connection) {
-    state.auth.connection = await callApi('fetchConnection')
-    console.log('[API]: CONNECTION HAS BEEN FETCHED, BECAUSE NOT EXIST')
-  }
+
   const input: SignUpInput['input'] = {
     silent,
     firstName,
@@ -119,4 +142,5 @@ createAction('signUp', async (state, payload) => {
   }
   const response = await callApi('signUp', { input, photo })
   console.log({ response })
+  /* доробити це */
 })

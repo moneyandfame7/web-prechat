@@ -1,16 +1,21 @@
-/* eslint-disable no-console */
 import { DeepSignal } from 'deepsignal'
-import { FirebaseError } from 'firebase/app'
+/* eslint-disable no-console */
+
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
+import { FirebaseError } from 'firebase/app'
 
 import type { SupportedLanguages } from 'types/lib'
-import type { GlobalState, AuthState } from 'types/state'
+import type { AuthState } from 'types/state'
 
-import { throwFirebaseError, getFirebaseErrorMessage } from './errors'
 import { authentication } from './config'
+import { throwFirebaseError, getFirebaseErrorMessage } from './errors'
 
-export function generateRecaptcha(state: GlobalState) {
-  state.auth.captcha = new RecaptchaVerifier(
+export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
+  if (auth.captcha) {
+    await resetCaptcha(auth)
+    return
+  }
+  auth.captcha = new RecaptchaVerifier(
     'auth-recaptcha',
     {
       size: 'invisible',
@@ -20,7 +25,7 @@ export function generateRecaptcha(state: GlobalState) {
     },
     authentication
   )
-  return state.auth.captcha.render()
+  auth.captcha.render()
 }
 
 export async function sendCode(
@@ -36,7 +41,6 @@ export async function sendCode(
   }
   try {
     const res = await signInWithPhoneNumber(authentication, phone, auth.captcha)
-    console.log({ res })
 
     auth.confirmResult = res
   } catch (err) {
@@ -53,16 +57,27 @@ export async function verifyCode(
     auth.loading = true
 
     const response = await auth.confirmResult?.confirm(code)
+    console.log(response)
     if (!response) {
       throw new FirebaseError(
         getFirebaseErrorMessage('auth/invalid-credential', language),
         'Response not found'
       )
     }
-    console.log({ response })
     auth.loading = false
     return response
   } catch (err) {
+    console.log(err)
     throwFirebaseError(auth, language, err)
+  }
+}
+
+export async function resetCaptcha(auth: DeepSignal<AuthState>) {
+  if (auth.captcha) {
+    auth.captcha.clear()
+    const captchaWrapper = document.getElementById('auth-recaptcha-wrapper')
+    if (captchaWrapper) {
+      captchaWrapper.innerHTML = `<div id="auth-recaptcha" />`
+    }
   }
 }

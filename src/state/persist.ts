@@ -1,45 +1,99 @@
-import { Signal } from '@preact/signals'
+import type { DeepPartial, DeepPartialPersist } from 'types/common'
+import type { SettingsState, AuthState, SignalGlobalState, GlobalState } from 'types/state'
 
-import { deepSignal } from 'deepsignal'
+import { getGlobalState } from './signal'
+import { database } from './database'
 
-import { LocalStorageWrapper } from './localstorage'
+type PickPersistProperties = Partial<Record<keyof GlobalState, boolean | object>>
 
-export interface PersistConfig<T> {
-  whitelist: Array<keyof T>
-  key: string
+type PersistedProperties<T extends PickPersistProperties> = {
+  [K in keyof T]: K extends keyof GlobalState
+    ? T[K] extends boolean
+      ? GlobalState[K]
+      : Pick<GlobalState[K], keyof T[K]>
+    : never
 }
-type PersistedState<T> = { [K in keyof T]: unknown }
-export function createPersistSignal<T extends object>(
-  initialState: T,
-  storageKey: string,
-  whitelist: Array<keyof T>
-) {
-  const persistedState = LocalStorageWrapper.get<PersistedState<T>>(storageKey)
-  const persistedObject = {} as Record<keyof T, unknown>
-  // eslint-disable-next-line array-callback-return
-  whitelist.map((key) => {
-    persistedObject[key] = initialState[key]
-  })
-  if (!persistedState) {
-    // eslint-disable-next-line array-callback-return
-    whitelist.map((key) => {
-      persistedObject[key] = initialState[key]
-    })
-    LocalStorageWrapper.set(storageKey, persistedObject)
+/**
+ * @todo додати тут мб тип якийсь
+ */
+const PERSISTED_PROPERTIES = {
+  auth: {
+    rememberMe: true,
+    phoneNumber: true,
+    userId: true,
+    passwordHint: true,
+    email: true,
+    session: true
+  },
+  settings: true
+}
+export type PersistGlobalState = PersistedProperties<typeof PERSISTED_PROPERTIES>
+
+export function updateGlobalState(object: DeepPartial<GlobalState>, persist = true) {
+  const state = getGlobalState()
+  if (object.auth) {
+    updateAuthState(state, object.auth)
   }
-  const signal = deepSignal<T>({
-    ...initialState,
-    ...persistedState
+
+  if (object.settings) {
+    updateSettingsState(state, object.settings)
+  }
+  const test = getPersistedState(state, PERSISTED_PROPERTIES as DeepPartialPersist<GlobalState>)
+
+  if (persist) {
+    database.settings.change(test.settings)
+    database.auth.change(test.auth)
+  }
+}
+
+function getPersistedState<T>(
+  state: T,
+  persistedProperties: DeepPartialPersist<T>
+): PersistGlobalState {
+  const persistedState: Partial<T> = {}
+
+  for (const key in persistedProperties) {
+    if (persistedProperties[key] === true) {
+      persistedState[key] = state[key]
+    } else if (typeof persistedProperties[key] === 'object' && typeof state[key] === 'object') {
+      const nestedPersistedState = getPersistedState(state[key], (persistedProperties as any)[key])
+      if (Object.keys(nestedPersistedState).length > 0) {
+        ;(persistedState as any)[key] = nestedPersistedState
+      }
+    }
+  }
+
+  return persistedState as unknown as PersistGlobalState
+}
+
+function updateAuthState<S extends SignalGlobalState, U extends DeepPartial<AuthState>>(
+  state: S,
+  auth: U
+) {
+  Object.assign<S, { auth: U }>(state, {
+    auth: {
+      ...state.auth,
+      ...auth
+    }
   })
-  // eslint-disable-next-line array-callback-return
-  whitelist.map((key) => {
-    // ну і піздець
-    ;(signal as Record<string, Signal>)[`$${String(key)}`].subscribe((val) => {
-      LocalStorageWrapper.set(storageKey, {
-        ...persistedObject,
-        [key]: val
-      })
-    })
+}
+
+function updateSettingsState<S extends SignalGlobalState, U extends DeepPartial<SettingsState>>(
+  state: S,
+  settings: U
+) {
+  Object.assign<S, { settings: U }>(state, {
+    settings: {
+      ...state.settings,
+      ...settings,
+      i18n: {
+        ...state.settings.i18n,
+        ...settings.i18n,
+        pack: {
+          ...state.settings.i18n.pack,
+          ...settings.i18n?.pack
+        }
+      }
+    }
   })
-  return signal
 }

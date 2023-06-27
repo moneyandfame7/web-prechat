@@ -1,6 +1,7 @@
 import preact from '@preact/preset-vite'
 
 import autoprefixer from 'autoprefixer'
+import { chunkSplitPlugin } from 'vite-plugin-chunk-split'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig, loadEnv } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
@@ -18,7 +19,10 @@ export default ({ mode }) => {
       cssCodeSplit: true
     },
     plugins: [
-      preact(),
+      chunkSplitPlugin({
+        strategy: 'all-in-one'
+      }),
+      preact({ include: '**/*.tsx' }),
       createHtmlPlugin({
         inject: {
           data: {
@@ -37,13 +41,16 @@ export default ({ mode }) => {
       }) as any,
       VitePWA({
         manifest,
-        includeAssets: ['/icons/preact.svg', '/icons/vite.svg'],
+        // includeAssets: ['/icons/preact.svg', '/icons/vite.svg'],
         devOptions: {
           enabled: true
         },
         workbox: {
-          globPatterns: ['**/*.{js,ts,css,html}'] /* .{svg,png,jpg,gif} */
+          globDirectory: 'dist'
         }
+        // workbox: {
+        //   globPatterns: ['**/*.{js,ts,css,html}'] /* .{svg,png,jpg,gif} */
+        // }
       })
     ],
     css: {

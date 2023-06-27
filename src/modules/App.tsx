@@ -1,42 +1,35 @@
-import { FC, useCallback, useEffect, useState } from 'preact/compat'
+import { FC, useCallback, useEffect } from 'preact/compat'
 
-import { initializeApplication } from 'state/initialize'
-import { getGlobalState } from 'state/signal'
+import { getGlobalState, resetGlobalState } from 'state/signal'
+
+import { ErrorCatcher } from 'components/ErrorCatcher'
+import { MountTransition } from 'components/MountTransition'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
 
-import { ErrorCatcher } from 'components/ErrorCatcher'
-import { MountTransition } from 'components/MountTransition'
-
 import { ServiceWorker } from '../serviceWorker'
-// import { PageLoader } from 'components/PageLoader'
 
+import './App.scss'
+import { Spinner } from 'components/Spinner'
 enum ActiveScreen {
   Auth = 'Auth',
   Lock = 'Lock',
-  Main = 'Main'
+  Main = 'Main',
+  Loading = 'Loading'
 }
 
 const Application: FC = () => {
-  const [activeScreen, setActiveScreen] = useState(ActiveScreen.Auth)
-  const state = getGlobalState((state) => state)
-
-  useEffect(() => {
-    initializeApplication()
-  }, [])
-
-  useEffect(() => {
-    switch (state.auth.isAuthorized) {
-      case true:
-        setActiveScreen(ActiveScreen.Main)
-        break
-      case false:
-        setActiveScreen(ActiveScreen.Auth)
-        break
-    }
-  }, [state.auth.isAuthorized])
+  const state = getGlobalState()
+  let activeScreen: ActiveScreen
+  if (state.initialization) {
+    activeScreen = ActiveScreen.Loading
+  } else if (Boolean(state.auth.session)) {
+    activeScreen = ActiveScreen.Main
+  } else {
+    activeScreen = ActiveScreen.Auth
+  }
 
   const renderContent = useCallback(() => {
     switch (activeScreen) {
@@ -46,6 +39,12 @@ const Application: FC = () => {
         return <Lock key={ActiveScreen.Lock} />
       case ActiveScreen.Main:
         return <Main key={ActiveScreen.Main} />
+      case ActiveScreen.Loading:
+        return (
+          <div key={ActiveScreen.Loading} class="PageLoader">
+            <Spinner size="large" color="primary" />
+          </div>
+        )
     }
   }, [activeScreen])
 

@@ -1,6 +1,7 @@
 import { FC, RefObject, TargetedEvent, useCallback } from 'preact/compat'
 
 import { InputText } from 'components/Input'
+import { t } from 'lib/i18n'
 
 interface PhoneNumberInputProps {
   onInput: (phone: string) => void
@@ -45,7 +46,7 @@ export const PhoneNumberInput: FC<PhoneNumberInputProps> = ({
     <InputText
       autoFocus={autoFocus}
       elRef={elRef}
-      label="Phone Number"
+      label={t('PhoneNumber')}
       value={value}
       onInput={handleInput}
       onKeyDown={handleKeydown}

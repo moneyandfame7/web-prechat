@@ -1,5 +1,5 @@
 import { FC, Ref, TargetedEvent } from 'preact/compat'
-import { useSignal } from '@preact/signals'
+import { Signal, useSignal } from '@preact/signals'
 
 import clsx from 'clsx'
 
@@ -15,7 +15,7 @@ interface InputProps {
   id?: string
   value: string
   error?: string
-  label?: string
+  label?: string | Signal<string>
   disabled?: boolean
   placeholder?: string
   onInput: InputHandler

@@ -1,14 +1,18 @@
 import { deepSignal } from 'deepsignal'
 
-import { AuthScreens, type GlobalState, type GlobalStateProperties } from 'types/state'
-import type { DeepPartial } from 'types/common'
+import { AuthScreens, SignalGlobalState, type GlobalState } from 'types/state'
 
-import { LocalStorageWrapper } from './localstorage'
+import lang from 'lib/i18n/lang'
+import { database } from './database'
 
-const initialState: GlobalStateProperties = {
+const initialState: GlobalState = {
   settings: {
     theme: 'light',
-    language: 'en',
+    i18n: {
+      lang_code: 'en',
+      countries: [],
+      pack: lang
+    },
     suggestedLanguage: undefined
   },
   auth: {
@@ -16,34 +20,21 @@ const initialState: GlobalStateProperties = {
     phoneNumber: undefined,
     rememberMe: true,
     userId: undefined,
-    isAuthorized: false,
     loading: false,
     screen: AuthScreens.PhoneNumber,
     token: undefined,
-    hasActiveSessions: false
+    session: undefined
   },
-  countryList: [],
   initialization: false
 }
 
-const globalState = deepSignal(
-  LocalStorageWrapper.get<GlobalStateProperties>('prechat-state') || initialState
-)
+const globalState = deepSignal(initialState)
 
-export function getGlobalState(): GlobalState
-export function getGlobalState<State>(selector: (state: GlobalState) => State): State
-export function getGlobalState<State>(selector?: (state: GlobalState) => State) {
+export function getGlobalState(): SignalGlobalState
+export function getGlobalState<State>(selector: (state: SignalGlobalState) => State): State
+export function getGlobalState<State>(selector?: (state: SignalGlobalState) => State) {
   if (typeof selector === 'function') {
     return selector(globalState)
   }
   return globalState
-}
-
-/* можливо замість createPersistSignal використовувати ось це */
-export function updateGlobalState(properties: DeepPartial<GlobalStateProperties>) {
-  // eslint-disable-next-line no-console
-  console.log({ properties })
-  // Object.assign(current, properties)
-  // console.log(current, properties)
-  // LocalStorageWrapper.set('prechat-state', test)
 }

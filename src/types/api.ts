@@ -1,3 +1,4 @@
+import { LanguagePack } from './lib'
 import type { Connection } from './request'
 
 export type Platform = 'macOS' | 'iOS' | 'Windows' | 'Android' | 'Linux' | 'Unknown'
@@ -28,6 +29,10 @@ export interface Session {
   hash: string
 }
 
+export interface FetchLanguage {
+  pack: LanguagePack
+  countries: Country[]
+}
 export type SessionData = Connection & { browser: string; platform: string }
 
 export interface TwoFactorAuth {
@@ -53,7 +58,7 @@ export interface SignUpInput {
   photo?: File
 }
 export interface SignUpResponse {
-  session: Session
+  session: string
 }
 
 export interface SignInInput {
@@ -62,5 +67,5 @@ export interface SignInInput {
   userId: string
 }
 export interface SignInResponse {
-  session: Session
+  session: string
 }

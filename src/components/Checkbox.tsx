@@ -1,16 +1,21 @@
-import { FC } from 'preact/compat'
+import { FC, TargetedEvent, useCallback } from 'preact/compat'
+import { Signal } from '@preact/signals'
 
 import './Checkbox.scss'
 
 interface CheckboxProps {
-  label?: string
-  onToggle: () => void
-  checked: boolean
+  label?: string | Signal<string>
+  onToggle: (checked: boolean) => void
+  checked: boolean | Signal<boolean>
 }
 export const Checkbox: FC<CheckboxProps> = ({ label, onToggle, checked }) => {
+  const handleChange = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    onToggle(e.currentTarget.checked)
+  }, [])
+
   return (
     <label class="Checkbox">
-      <input type="checkbox" onChange={onToggle} checked={checked} />
+      <input type="checkbox" onChange={handleChange} checked={checked} />
       {label}
     </label>
   )

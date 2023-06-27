@@ -55,14 +55,10 @@ const SignUp: FC = () => {
       <h1 class="title">Sign up</h1>
       <p class="subtitle">{t('Auth.SignUp')}</p>
       <form onSubmit={handleSubmit}>
-        <InputText label={t('Name').value} value={firstName} onInput={handleChangeName} />
-        <InputText
-          label={t('LastNameOptional').value}
-          value={lastName}
-          onInput={handleChangeLastName}
-        />
+        <InputText label={t('Name')} value={firstName} onInput={handleChangeName} />
+        <InputText label={t('LastNameOptional')} value={lastName} onInput={handleChangeLastName} />
         <Checkbox
-          label={t('Auth.SilentAuth').value}
+          label={t('Auth.SilentAuth')}
           onToggle={handleChangeSilentSignUp}
           checked={silentSignUp}
         />

@@ -16,7 +16,3 @@ createAction('changeTheme', (state, payload) => {
       break
   }
 })
-
-createAction('changeLanguage', (state, payload) => {
-  state.settings.language = payload
-})

@@ -40,7 +40,6 @@ function getAuthScreenTransition(newEl: VNode, current: VNode): TransitionType {
 }
 const Auth: FC = () => {
   const { auth } = getGlobalState()
-
   useEffect(() => {
     initializeAuth()
   }, [])
@@ -73,7 +72,9 @@ const Auth: FC = () => {
           >
             {renderScreen()}
           </MountTransition>
-          <div id="auth-recaptcha" />
+          <div id="auth-recaptcha-wrapper">
+            <div id="auth-recaptcha" />
+          </div>
         </div>
       </div>
     </div>

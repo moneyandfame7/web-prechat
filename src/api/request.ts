@@ -1,20 +1,39 @@
+import * as cache from 'common/cache'
+
 import type { Connection } from 'types/request'
 
-const requestsUrls = {
-  connection: 'https://freeipapi.com/api/json',
-  emojis: 'https://cdn.jsdelivr.net/npm/@emoji-mart/data'
-}
-
-type RequestResponse = {
+interface RequestResponse {
   connection: Connection
-  emojis: any
 }
-type RequestName = keyof typeof requestsUrls & keyof RequestResponse
 
-export async function makeRequest<T extends RequestName>(name: T) {
+const requestsUrls: Record<keyof RequestResponse, string> = {
+  connection: 'https://freeipapi.com/api/json'
+}
+
+type RequestName = keyof RequestResponse
+
+export async function makeRequest<T extends RequestName>(
+  name: T,
+  cacheName?: cache.CacheName,
+  withCache?: boolean,
+  expiration?: number
+) {
   try {
-    const response = await fetch(requestsUrls[name])
-    return (await response.json()) as RequestResponse[typeof name]
+    if (!withCache || !cacheName) {
+      const response = await fetch(requestsUrls[name])
+
+      return (await response.json()) as RequestResponse[typeof name]
+    }
+    let response = await cache.getFromCache(cacheName, name)
+
+    if (!response) {
+      response = await fetch(requestsUrls[name])
+
+      await cache.addToCache({ name: cacheName, key: name, value: response.clone(), expiration })
+    }
+    return (await (response instanceof Response
+      ? response.json()
+      : response)) as RequestResponse[typeof name]
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message)

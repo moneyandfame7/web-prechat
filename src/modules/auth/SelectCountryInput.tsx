@@ -9,6 +9,8 @@ import {
   useState
 } from 'preact/compat'
 
+import { t } from 'lib/i18n'
+
 import type { Country } from 'types/api'
 
 import { ClickAwayListener } from 'components/ClickAwayListener'
@@ -99,14 +101,13 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
           elRef={inputRef}
           onFocus={handleOnFocus}
           onInput={handleChange}
-          // onBlur={handleOnBlur}
           value={stringName}
-          label="Country"
+          label={t('Country')}
           loading={loading}
           withArrow
         />
         <ClickAwayListener onClickAway={handleOnBlur}>
-          <Menu isOpen={isOpen} withMount={false}>
+          <Menu isOpen={isOpen} withMount={true}>
             {renderItems}
           </Menu>
         </ClickAwayListener>
