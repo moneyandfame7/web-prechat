@@ -3,7 +3,6 @@ import { deepSignal } from 'deepsignal'
 import { AuthScreens, SignalGlobalState, type GlobalState } from 'types/state'
 
 import lang from 'lib/i18n/lang'
-import { database } from './database'
 
 const initialState: GlobalState = {
   settings: {

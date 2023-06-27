@@ -1,6 +1,6 @@
-import { FC, useCallback, useEffect } from 'preact/compat'
+import { FC, useCallback } from 'preact/compat'
 
-import { getGlobalState, resetGlobalState } from 'state/signal'
+import { getGlobalState } from 'state/signal'
 
 import { ErrorCatcher } from 'components/ErrorCatcher'
 import { MountTransition } from 'components/MountTransition'
