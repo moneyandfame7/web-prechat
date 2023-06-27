@@ -1,20 +1,22 @@
+/* eslint-disable no-console */
 import { Signal, useSignal } from '@preact/signals'
 import { useEffect } from 'preact/hooks'
 
 import { callApi } from 'api/provider'
-import type { LanguagePackKeys, SupportedLanguages } from 'types/lib'
+import type { LanguagePack, LanguagePackKeys, SupportedLanguages } from 'types/lib'
 
 import * as cache from 'common/cache'
 
 import { getGlobalState } from 'state/signal'
 import { updateGlobalState } from 'state/persist'
+import { DEBUG } from 'common/config'
 
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
 
   const translate = i18n.pack[`$${key}`] as unknown as Signal<string>
 
-  if (!translate?.value) {
+  if (!translate?.value && DEBUG) {
     console.error(`[UI]: Translation for «${key}» not found`)
     // throw new Error('[UI]: Translation not found')
   }
@@ -22,15 +24,23 @@ export function t(key: LanguagePackKeys): Signal<string> {
 }
 
 export async function changeLanguage(language: SupportedLanguages) {
-  // let newPack: LanguagePack
+  let data = (await cache.getFromCache('prechat-i18n-pack', language)) as LanguagePack
 
-  /* check in caches.api, if not exist - fetch */
-  const { data } = await callApi('fetchLanguage', language)
-  console.log('AY')
+  if (!data) {
+    const response = await callApi('fetchLanguage', language)
+    data = response.data.language.pack
+
+    cache.addToCache({
+      name: 'prechat-i18n-pack',
+      key: language,
+      value: data
+    })
+  }
+
   updateGlobalState({
     settings: {
       i18n: {
-        pack: data.language.pack,
+        pack: data,
         lang_code: language
       }
     }

@@ -14,6 +14,7 @@ export const CSSTransition = memo((props: CSSTransitionProps): VNode => {
     /**
      * @todo пофіксити це? тут немає children, але він потрібен для створення..
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rest as any,
     (_state: TransitionState, phase: Phase) => {
       const { className } = children.props

@@ -15,7 +15,6 @@ const SignUp: FC = () => {
   const { signUp } = getActions()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
-  const [photo, setPhoto] = useState<File>()
   const [silentSignUp, setSilentSignUp] = useState(false)
   const handleChangeName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()
@@ -38,20 +37,16 @@ const SignUp: FC = () => {
       signUp({
         firstName,
         lastName: lastName.length === 0 ? undefined : lastName,
-        photo,
+        // photo,
         silent: silentSignUp
       })
     },
     [silentSignUp, lastName]
   )
 
-  const handleUploadPhoto = () => {
-    setPhoto(5 as any)
-  }
   return (
     <>
       <UploadPhoto />
-      <div onClick={handleUploadPhoto}></div>
       <h1 class="title">Sign up</h1>
       <p class="subtitle">{t('Auth.SignUp')}</p>
       <form onSubmit={handleSubmit}>

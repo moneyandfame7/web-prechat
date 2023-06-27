@@ -1,7 +1,6 @@
 import preact from '@preact/preset-vite'
 
 import autoprefixer from 'autoprefixer'
-import { chunkSplitPlugin } from 'vite-plugin-chunk-split'
 import { visualizer } from 'rollup-plugin-visualizer'
 import { defineConfig, loadEnv } from 'vite'
 import { createHtmlPlugin } from 'vite-plugin-html'
@@ -19,9 +18,6 @@ export default ({ mode }) => {
       cssCodeSplit: true
     },
     plugins: [
-      chunkSplitPlugin({
-        strategy: 'all-in-one'
-      }),
       preact({ include: '**/*.tsx' }),
       createHtmlPlugin({
         inject: {

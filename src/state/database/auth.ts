@@ -38,7 +38,9 @@ export default class AuthTable {
   public async get() {
     const records = await this.table.toArray()
     const auth: DeepPartial<PersistGlobalState['auth']> = {}
+    // eslint-disable-next-line array-callback-return
     records.map(({ key, value }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       auth[key] = value as any
     })
 

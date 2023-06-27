@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth, inMemoryPersistence } from 'firebase/auth'
+import { inMemoryPersistence, initializeAuth } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_KEY,
@@ -14,5 +14,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const firebaseApp = initializeApp(firebaseConfig)
 
-export const authentication = getAuth(firebaseApp)
-authentication.setPersistence(inMemoryPersistence)
+export const authentication = initializeAuth(firebaseApp, {
+  persistence: inMemoryPersistence
+})

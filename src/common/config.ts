@@ -24,6 +24,7 @@ function detectPlatform(): Platform | undefined {
   }
 }
 function detectBrowser(): string | undefined {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((window as any)?.opr?.addons || (window as any)?.opera || userAgent.indexOf(' OPR/') >= 0) {
     return `Opera ${userAgent.substring(userAgent.indexOf('OPR/') + 4)}`
   } else if (userAgent.indexOf('Edge') >= 0) {

@@ -12,6 +12,7 @@ async function init() {
   const start = Date.now()
 
   await initializeApplication().then(() => {
+    // eslint-disable-next-line no-console
     console.log('Initializing', Date.now() - start, 'ms')
   })
 }

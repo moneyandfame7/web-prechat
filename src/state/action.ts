@@ -46,10 +46,8 @@ export function createAction<Name extends ActionNames>(
     return
   }
   const globalState = getGlobalState()
-  /**
-   * @todo fix any, idk how
-   */
-  actions[name] = (payload: any) => handler(globalState, payload)
+
+  actions[name] = (payload: unknown) => handler(globalState, payload as ActionPayloads[Name])
 }
 
 export function getActions(): Actions

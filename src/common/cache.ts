@@ -13,6 +13,7 @@ export type CacheName =
   | 'prechat-avatars'
   | 'prechat-important'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type CacheTypeToSave = Response | Record<string, any> | string | number
 
 interface CacheOptions {

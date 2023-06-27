@@ -56,8 +56,10 @@ function getPersistedState<T>(
     if (persistedProperties[key] === true) {
       persistedState[key] = state[key]
     } else if (typeof persistedProperties[key] === 'object' && typeof state[key] === 'object') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const nestedPersistedState = getPersistedState(state[key], (persistedProperties as any)[key])
       if (Object.keys(nestedPersistedState).length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(persistedState as any)[key] = nestedPersistedState
       }
     }

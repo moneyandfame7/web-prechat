@@ -44,7 +44,9 @@ export default class SettingsTable {
   public async get() {
     const records = await this.table.toArray()
     const settings: DeepPartial<PersistGlobalState['settings']> = {}
+    // eslint-disable-next-line array-callback-return
     records.map(({ key, value }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       settings[key] = value as any
     })
 
