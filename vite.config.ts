@@ -14,11 +14,8 @@ export default ({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
   const { VITE_APP_NAME, VITE_APP_URL, VITE_APP_IMAGE } = process.env as Record<string, string>
   return defineConfig({
-    build: {
-      cssCodeSplit: true
-    },
     plugins: [
-      preact({ include: '**/*.tsx' }),
+      preact(),
       createHtmlPlugin({
         inject: {
           data: {
