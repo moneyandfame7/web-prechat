@@ -15,7 +15,7 @@ import AuthCode from './AuthCode.async'
 import AuthPassword from './AuthPassword.async'
 import AuthPhoneNumber from './AuthPhoneNumber'
 
-import './Auth.scss'
+// import './Auth.scss'
 
 const classNames = {
   [AuthScreens.Code]: 'Auth_code',
