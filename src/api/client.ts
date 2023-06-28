@@ -9,7 +9,8 @@ const cache = new InMemoryCache({})
 const httpLink = createHttpLink({
   uri: import.meta.env.VITE_API_URL
 })
-export const linkHeaders = setContext(async (_, { headers }) => {
+
+const linkHeaders = setContext(async (_, { headers }) => {
   const { auth, settings } = getGlobalState()
 
   return {
@@ -22,13 +23,13 @@ export const linkHeaders = setContext(async (_, { headers }) => {
 })
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: import.meta.env.VITE_API_WS_URL,
+    url: import.meta.env.VITE_API_URL + '/subsriptions',
     connectionParams: async () => ({
       isWebsocket: true
     })
   })
 )
-export const withSubLink = split(
+const withSubLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query)
     return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
