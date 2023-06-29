@@ -55,7 +55,6 @@ export async function verifyCode(
 ) {
   try {
     const response = await auth.confirmResult?.confirm(code)
-    console.log(response)
     if (!response) {
       throw new FirebaseError(
         getFirebaseErrorMessage('auth/invalid-credential', language),

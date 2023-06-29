@@ -1,6 +1,6 @@
 import { deepSignal } from 'deepsignal'
 
-import { AuthScreens, SignalGlobalState, type GlobalState } from 'types/state'
+import { AuthScreens, type SignalGlobalState, type GlobalState } from 'types/state'
 
 import lang from 'lib/i18n/lang'
 

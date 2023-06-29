@@ -2,20 +2,19 @@ import { VNode } from 'preact'
 import { FC, isValidElement, memo, useCallback, useEffect, useRef, useState } from 'preact/compat'
 
 import { usePrevious } from 'hooks'
-import { throwDebugError } from 'common/functions'
 
 import { Transition, TransitionType } from './Transition'
 
 function getKey(el: VNode) {
   if (!isValidElement(el) || !el.key) {
-    throwDebugError('[MountTransition] Was provided invalid element or not provided element key.')
+    throw new Error('[MountTransition] Was provided invalid element or not provided element key.')
   }
   return el.key as string
 }
 
 function compareKeys(el1: VNode, el2: VNode) {
   if (!el1.key || !el2.key) {
-    throwDebugError('[MountTransition] Element key not provided')
+    throw new Error('[MountTransition] Element key not provided')
   }
   return el1.key === el2.key
 }
@@ -76,7 +75,7 @@ export const MountTransition: FC<MountTransitionProps> = memo(
     )
     useEffect(() => {
       if (!name && !getTransitionForNew) {
-        throwDebugError('[MountTransition]: Transition name or function not provided')
+        throw new Error('[MountTransition]: Transition name or function not provided')
       }
       renderCount.current = 1
     }, [])

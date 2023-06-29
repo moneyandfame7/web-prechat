@@ -15,7 +15,7 @@ export async function initializeAuth() {
   state.auth.loading = false
 }
 
-export async function initializeGlobalState() {
+async function initializeGlobalState() {
   const persisted = await database.getInitialState()
   updateGlobalState(persisted)
 }

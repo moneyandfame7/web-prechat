@@ -4,6 +4,7 @@ import { getGlobalState } from 'state/signal'
 
 import { ErrorCatcher } from 'components/ErrorCatcher'
 import { MountTransition } from 'components/MountTransition'
+import { Spinner } from 'components/Spinner'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
@@ -11,7 +12,6 @@ import Main from 'modules/main'
 
 import { ServiceWorker } from '../serviceWorker'
 
-import { Spinner } from 'components/Spinner'
 import './App.scss'
 
 enum ActiveScreen {

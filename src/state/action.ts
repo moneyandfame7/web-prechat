@@ -1,16 +1,19 @@
 import type { SignalGlobalState, Theme } from 'types/state'
 import type { SupportedLanguages } from 'types/lib'
-import type { SignUpPayload } from 'types/action'
+import type { SignInPayload, SignUpPayload } from 'types/action'
+import { DEBUG } from 'common/config'
 
 import { getGlobalState } from './signal'
-import { DEBUG } from 'common/config'
 
 /**
  * The idea for actions was taken from this repository because I really liked it
  * https://github.com/Ajaxy/telegram-tt
  */
 interface ActionPayloads {
+  /* Auth  */
   signUp: SignUpPayload
+  signIn: SignInPayload
+
   uploadAvatar: File
   /* Ui */
   changeTheme: Theme
@@ -35,7 +38,11 @@ const actions = {} as Actions
 
 export function createAction<Name extends ActionNames>(
   name: Name,
-  handler: (state: SignalGlobalState, payload: ActionPayloads[Name]) => void | Promise<void>
+  handler: (
+    state: SignalGlobalState,
+    actions: Actions,
+    payload: ActionPayloads[Name]
+  ) => void | Promise<void>
 ) {
   if (actions[name]) {
     // eslint-disable-next-line no-console
@@ -47,9 +54,9 @@ export function createAction<Name extends ActionNames>(
   actions[name] = (payload: unknown) => {
     if (DEBUG) {
       // eslint-disable-next-line no-console
-      console.warn(`Was called action with name ${name}`)
+      console.warn(`Was called action with name «${name}»`)
     }
-    handler(globalState, payload as ActionPayloads[Name])
+    handler(globalState, actions, payload as ActionPayloads[Name])
   }
 }
 

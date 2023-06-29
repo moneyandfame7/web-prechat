@@ -1,4 +1,4 @@
-import * as cache from 'common/cache'
+import * as cache from 'lib/cache'
 
 import type { Connection } from 'types/request'
 
@@ -24,12 +24,12 @@ export async function makeRequest<T extends RequestName>(
 
       return (await response.json()) as RequestResponse[typeof name]
     }
-    let response = await cache.getFromCache(cacheName, name)
+    let response = await cache.get(cacheName, name)
 
     if (!response) {
       response = await fetch(requestsUrls[name])
 
-      await cache.addToCache({ name: cacheName, key: name, value: response.clone(), expiration })
+      await cache.add({ name: cacheName, key: name, value: response.clone(), expiration })
     }
     return (await (response instanceof Response
       ? response.json()

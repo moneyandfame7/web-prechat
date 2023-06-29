@@ -6,7 +6,9 @@ import { updateGlobalState } from 'state/persist'
 
 import type { FetchLanguage } from 'types/api'
 
-createAction('getLanguageWithCountries', async ({ settings: { i18n } }, payload) => {
+/* I18n queries */
+
+createAction('getLanguageWithCountries', async ({ settings: { i18n } }, _, payload) => {
   if (i18n.countries.length && Object.keys(i18n.pack).length) {
     return
   }
@@ -26,7 +28,7 @@ createAction('getLanguageWithCountries', async ({ settings: { i18n } }, payload)
   })
 })
 
-createAction('getCountries', async ({ settings: { i18n } }, payload) => {
+createAction('getCountries', async ({ settings: { i18n } }, _, payload) => {
   if (i18n.lang_code !== payload) {
     const { data } = await callApi('fetchCountries', payload)
 

@@ -13,9 +13,7 @@ type PersistedProperties<T extends PickPersistProperties> = {
       : Pick<GlobalState[K], keyof T[K]>
     : never
 }
-/**
- * @todo додати тут мб тип якийсь
- */
+
 const PERSISTED_PROPERTIES = {
   auth: {
     rememberMe: true,
@@ -29,6 +27,7 @@ const PERSISTED_PROPERTIES = {
 }
 export type PersistGlobalState = PersistedProperties<typeof PERSISTED_PROPERTIES>
 
+/* Persist state  */
 export function updateGlobalState(object: DeepPartial<GlobalState>, persist = true) {
   const state = getGlobalState()
   if (object.auth) {
@@ -54,6 +53,7 @@ export function forceUpdateState(state: SignalGlobalState) {
   database.settings.change(persisted.settings)
 }
 
+/* Reduce object  */
 function getPersistedState<T>(
   state: T,
   persistedProperties: DeepPartialPersist<T>
@@ -76,6 +76,7 @@ function getPersistedState<T>(
   return persistedState as unknown as PersistGlobalState
 }
 
+/* Updates  */
 function updateAuthState<S extends SignalGlobalState, U extends DeepPartial<AuthState>>(
   state: S,
   auth: U

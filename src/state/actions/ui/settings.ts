@@ -1,7 +1,7 @@
-import { createAction } from '../../action'
-import { PREFERRED_THEME } from './../../helpers/settings'
+import { createAction } from 'state/action'
+import { PREFERRED_THEME } from 'state/helpers/settings'
 
-createAction('changeTheme', (state, payload) => {
+createAction('changeTheme', (state, _, payload) => {
   switch (payload) {
     case 'dark':
       state.settings.theme = payload

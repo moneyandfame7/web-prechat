@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { logDebugInfo } from 'lib/logger'
 import { FC, memo } from 'preact/compat'
 import { useCallback, useEffect } from 'preact/hooks'
 
@@ -11,7 +12,7 @@ const ServiceWorker: FC = memo(() => {
     updateServiceWorker
   } = useRegisterSW({
     onRegisteredSW(_, registration) {
-      console.log('[🇺🇦 APP] - Service Worker at', registration?.scope)
+      logDebugInfo('[🇺🇦 APP] - Service Worker at', registration?.scope)
     },
     immediate: true
   })
@@ -22,9 +23,9 @@ const ServiceWorker: FC = memo(() => {
 
   useEffect(() => {
     if (offlineReady) {
-      console.log('[🇺🇦 APP] - Your app has been installed, it now works offline!')
+      logDebugInfo('[🇺🇦 APP] - Your app has been installed, it now works offline!')
     } else if (needRefresh) {
-      console.log('[🇺🇦 APP] - A new update is available!')
+      logDebugInfo('[🇺🇦 APP] - A new update is available!')
     }
   }, [close, needRefresh, offlineReady, updateServiceWorker])
   return (
