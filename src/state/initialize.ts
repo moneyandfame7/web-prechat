@@ -1,4 +1,3 @@
-import type { SignalGlobalState } from 'types/state'
 import { generateRecaptcha } from 'lib/firebase'
 
 import { getGlobalState } from './signal'
@@ -21,11 +20,11 @@ export async function initializeGlobalState() {
   updateGlobalState(persisted)
 }
 
-async function initializeLibraries(state: SignalGlobalState) {
+async function initializeLibraries() {
   const { getLanguageWithCountries } = getActions()
 
   /* Init i18n */
-  await getLanguageWithCountries(state.settings.suggestedLanguage || 'en')
+  await getLanguageWithCountries('en')
 }
 
 export async function initializeApplication() {
@@ -33,7 +32,7 @@ export async function initializeApplication() {
   state.initialization = true
 
   await initializeGlobalState()
-  await initializeLibraries(state)
+  await initializeLibraries()
 
   setTimeout(() => {
     state.initialization = false

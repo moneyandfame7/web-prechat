@@ -29,16 +29,12 @@ import './AuthPhoneNumber.scss'
 const IS_PHONE_VAL_REG = /^\+\d{1,4}\s?\d{7,}$/
 
 const AuthPhoneNumber: FC = () => {
-  const { getCountries, sendPhone } = getActions()
+  const { sendPhone } = getActions()
   const state = getGlobalState()
   const phoneInputRef = useRef<HTMLInputElement>(null)
 
   const [phone, setPhone] = useState<string>(state.auth.phoneNumber || '')
   const [country, setCountry] = useState<Country | undefined>(selectCountryByPhone(state))
-
-  useEffect(() => {
-    getCountries(state.settings.i18n.lang_code)
-  }, [state.settings.i18n.lang_code])
 
   useEffect(() => {
     if (state.auth.connection && state.settings.i18n.countries.length) {
@@ -77,17 +73,23 @@ const AuthPhoneNumber: FC = () => {
   )
 
   const handleChangeLanguage = async () => {
-    if (state.settings.suggestedLanguage) {
-      await changeLanguage(state.settings.suggestedLanguage)
+    const suggestedLng = state.settings.suggestedLanguage
+    if (suggestedLng) {
+      // await getCountries(suggestedLng)
+      await changeLanguage(suggestedLng)
+      setCountry(state.settings.i18n.countries.find((country) => phone.includes(country.dial_code)))
     }
   }
 
   const handleChangeRememberMe = useCallback((checked: boolean) => {
-    updateGlobalState({
-      auth: {
-        rememberMe: checked
-      }
-    })
+    updateGlobalState(
+      {
+        auth: {
+          rememberMe: checked
+        }
+      },
+      false
+    )
   }, [])
 
   const isValidPhone = useMemo(() => IS_PHONE_VAL_REG.test(phone.trim()), [phone])
@@ -99,7 +101,6 @@ const AuthPhoneNumber: FC = () => {
 
   const handleSubmit = async (e: TargetedEvent<HTMLFormElement, Event>) => {
     e.preventDefault()
-
     sendPhone(phone)
   }
   return (
@@ -109,7 +110,7 @@ const AuthPhoneNumber: FC = () => {
       <p class="subtitle text-center">{t('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>
         <SelectCountryInput
-          loading={!state.settings.i18n.countries.length || !state.auth.connection}
+          loading={!state.settings?.i18n?.countries?.length || !state.auth.connection}
           countryList={state.settings.i18n.countries}
           handleSelect={handleSelectCountry}
           selectedCountry={country}

@@ -17,7 +17,7 @@ import './AuthCode.scss'
 const AuthCode: FC = () => {
   const { auth } = getGlobalState()
   const { verifyCode } = getActions()
-  // const emojiRef = useRef<HTMLHeadingElement>(null)
+  const code = useSignal('')
 
   const handleChangeCode = async (e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()
@@ -40,7 +40,6 @@ const AuthCode: FC = () => {
       }
     })
   }, [])
-  const code = useSignal('')
 
   return (
     <>

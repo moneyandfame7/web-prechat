@@ -38,12 +38,20 @@ export function updateGlobalState(object: DeepPartial<GlobalState>, persist = tr
   if (object.settings) {
     updateSettingsState(state, object.settings)
   }
-  const test = getPersistedState(state, PERSISTED_PROPERTIES as DeepPartialPersist<GlobalState>)
 
   if (persist) {
-    database.settings.change(test.settings)
-    database.auth.change(test.auth)
+    forceUpdateState(state)
   }
+}
+
+export function forceUpdateState(state: SignalGlobalState) {
+  const persisted = getPersistedState(
+    state,
+    PERSISTED_PROPERTIES as DeepPartialPersist<GlobalState>
+  )
+
+  database.auth.change(persisted.auth)
+  database.settings.change(persisted.settings)
 }
 
 function getPersistedState<T>(

@@ -73,7 +73,7 @@ export const InputText: FC<InputProps> = ({
   }
 
   const buildedClassname = clsx('input-container', {
-    'not-empty': value,
+    'not-empty': Boolean(value.length),
     'error': Boolean(error),
     'disabled': disabled,
     'with-arrow': withArrow

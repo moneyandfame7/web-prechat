@@ -5330,11 +5330,6 @@ workbox-window@7.0.0, workbox-window@^7.0.0:
     "@types/trusted-types" "^2.0.2"
     workbox-core "7.0.0"
 
-wouter-preact@^2.11.0:
-  version "2.11.0"
-  resolved "https://registry.yarnpkg.com/wouter-preact/-/wouter-preact-2.11.0.tgz#587b12381a5b582be19cd2dcc77e9b6837fe5437"
-  integrity sha512-0eGcl9kI1lk/85/6uri46s5rP+j92F1US2FHzG1ezwF97l0Mas/1n0q9YmKNX3s1VzMxO+ajYKRfAKbsxn+/sA==
-
 wrap-ansi@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-7.0.0.tgz#67e145cff510a6a6984bdf1152911d69d2eb9e43"

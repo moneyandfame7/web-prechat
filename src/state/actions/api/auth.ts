@@ -38,8 +38,8 @@ createAction('sendPhone', async (state, payload) => {
   }
   const data = response.data.sendPhone
 
-  console.log('[API]: Code from firebase was sent')
   await firebase.sendCode(state.auth, state.settings.i18n.lang_code, payload)
+  console.log('[AUTH]: Code from firebase was sent')
 
   console.log('[AUTH]: Remember me:', state.auth.rememberMe)
 
@@ -52,12 +52,16 @@ createAction('sendPhone', async (state, payload) => {
         screen: AuthScreens.Code
       }
     },
-    state.auth.rememberMe
+    false
   )
 })
 
 createAction('verifyCode', async (state, payload) => {
+  state.auth.loading = true
   const credentials = await firebase.verifyCode(state.auth, state.settings.i18n.lang_code, payload)
+  if (!credentials) {
+    return
+  }
   const token = await credentials?.user.getIdToken()
   if (!token || state.auth.error) {
     console.warn('[AUTH]: No token or auth error')
@@ -65,24 +69,30 @@ createAction('verifyCode', async (state, payload) => {
   }
   const { data } = await callApi('getTwoFa', token)
   if (!state.auth.userId) {
-    updateGlobalState({
-      auth: {
-        token,
-        screen: AuthScreens.SignUp
-      }
-    })
+    updateGlobalState(
+      {
+        auth: {
+          token,
+          screen: AuthScreens.SignUp
+        }
+      },
+      false
+    )
     return
   } else if (data.getTwoFa) {
-    updateGlobalState({
-      auth: {
-        passwordHint: data.getTwoFa.hint,
-        email: data.getTwoFa.email,
-        screen: AuthScreens.Password
-      }
-    })
+    updateGlobalState(
+      {
+        auth: {
+          passwordHint: data.getTwoFa.hint,
+          email: data.getTwoFa.email,
+          screen: AuthScreens.Password
+        }
+      },
+      false
+    )
     return
   } else {
-    const signInPayload = {
+    const { data } = await callApi('signIn', {
       userId: state.auth.userId,
       token,
       connection: {
@@ -90,28 +100,16 @@ createAction('verifyCode', async (state, payload) => {
         browser: USER_BROWSER,
         platform: USER_PLATFORM
       }
-    }
-    /* винести signIn в окремий action?? */
-    const { data } = await callApi('signIn', signInPayload)
+    })
     if (!data?.signIn) {
-      console.warn('[API]: Sign In error')
+      console.warn('[AUTH]: Sign In error')
       return
     }
-
-    if (!state.auth.rememberMe) {
-      /* або тут прибирати state, або навпаки тільки тут оновлювати його в db */
-      // database.auth.change({
-      //   rememberMe: state.auth.rememberMe,
-      //   session: data.signIn.session,
-      //   phoneNumber: state.auth.phoneNumber,
-      //   email: state.auth.email
-      // })
-    }
-
     updateGlobalState(
       {
         auth: {
-          session: data.signIn.session
+          session: data.signIn.session,
+          loading: false
         }
       },
       state.auth.rememberMe
@@ -123,7 +121,7 @@ createAction('signUp', async (state, payload) => {
   const { silent, firstName, lastName, photo } = payload
   if (!state.auth.token || !state.auth.phoneNumber) {
     state.auth.error = 'Phone verification failed'
-    console.warn('[API]: SIGN UP ERROR')
+    console.warn('[AUTH]: SIGN UP ERROR')
 
     return
   }
@@ -140,7 +138,17 @@ createAction('signUp', async (state, payload) => {
     },
     token: state.auth.token
   }
-  const response = await callApi('signUp', { input, photo })
-  console.log({ response })
+  const { data } = await callApi('signUp', { input, photo })
+  if (!data) {
+    console.warn('[AUTH]: Sign Up error')
+    return
+  }
+  console.log({ data })
+
+  updateGlobalState({
+    auth: {
+      session: data?.signUp.session
+    }
+  })
   /* доробити це */
 })

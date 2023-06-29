@@ -58,6 +58,7 @@ export async function getFromCache(name: CacheName, key: string) {
 
   return item.value
 }
+
 export async function removeFromCache(name: CacheName, key: string) {
   const cache = await storageCache.open(name) // Відкрити кеш з ім'ям 'my-cache'
   await cache.delete(key) // Видалити відповідь з кешу за ключем

@@ -1,15 +1,17 @@
 /* eslint-disable no-console */
 import { Signal, useSignal } from '@preact/signals'
 import { useEffect } from 'preact/hooks'
+import deepOmit from 'omit-deep-lodash'
 
 import { callApi } from 'api/provider'
-import type { LanguagePack, LanguagePackKeys, SupportedLanguages } from 'types/lib'
+import type { LanguagePackKeys, SupportedLanguages } from 'types/lib'
 
 import * as cache from 'common/cache'
 
 import { getGlobalState } from 'state/signal'
 import { updateGlobalState } from 'state/persist'
 import { DEBUG } from 'common/config'
+import { FetchLanguage } from 'types/api'
 
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
@@ -24,11 +26,11 @@ export function t(key: LanguagePackKeys): Signal<string> {
 }
 
 export async function changeLanguage(language: SupportedLanguages) {
-  let data = (await cache.getFromCache('prechat-i18n-pack', language)) as LanguagePack
+  let data = (await cache.getFromCache('prechat-i18n-pack', language)) as FetchLanguage
 
   if (!data) {
-    const response = await callApi('fetchLanguage', language)
-    data = response.data.language.pack
+    const response = await callApi('fetchLanguageWithCountries', language)
+    data = deepOmit(response.data.language, ['__typename']) as FetchLanguage
 
     cache.addToCache({
       name: 'prechat-i18n-pack',
@@ -36,15 +38,19 @@ export async function changeLanguage(language: SupportedLanguages) {
       value: data
     })
   }
-
-  updateGlobalState({
-    settings: {
-      i18n: {
-        pack: data,
-        lang_code: language
+  const state = getGlobalState()
+  updateGlobalState(
+    {
+      settings: {
+        i18n: {
+          pack: data.pack,
+          lang_code: language,
+          countries: data.countries
+        }
       }
-    }
-  })
+    },
+    Boolean(state.auth.session)
+  )
 }
 
 export async function translateByString(language: SupportedLanguages, str: LanguagePackKeys) {

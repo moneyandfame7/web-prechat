@@ -54,8 +54,6 @@ export async function verifyCode(
   code: string
 ) {
   try {
-    auth.loading = true
-
     const response = await auth.confirmResult?.confirm(code)
     console.log(response)
     if (!response) {
@@ -64,10 +62,8 @@ export async function verifyCode(
         'Response not found'
       )
     }
-    auth.loading = false
     return response
   } catch (err) {
-    console.log(err)
     throwFirebaseError(auth, language, err)
   }
 }

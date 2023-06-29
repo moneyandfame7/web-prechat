@@ -10,6 +10,7 @@ createAction('getLanguageWithCountries', async ({ settings: { i18n } }, payload)
   if (i18n.countries.length && Object.keys(i18n.pack).length) {
     return
   }
+
   const { data } = await callApi('fetchLanguageWithCountries', payload)
 
   const newObj = deepOmit(data.language, ['__typename']) as FetchLanguage
@@ -25,8 +26,8 @@ createAction('getLanguageWithCountries', async ({ settings: { i18n } }, payload)
   })
 })
 
-createAction('getCountries', async (state, payload) => {
-  if (state.settings.i18n.lang_code !== payload) {
+createAction('getCountries', async ({ settings: { i18n } }, payload) => {
+  if (i18n.lang_code !== payload) {
     const { data } = await callApi('fetchCountries', payload)
 
     updateGlobalState({
