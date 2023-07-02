@@ -1,4 +1,4 @@
-import { ObjectWithKey } from 'types/common'
+import type { AnyFunction, ObjectWithKey } from 'types/common'
 
 export function omit<T extends object, K extends keyof T>(
   obj: T,
@@ -11,6 +11,30 @@ export function omit<T extends object, K extends keyof T>(
   })
 
   return result
+}
+export function debounce<F extends AnyFunction>(
+  fn: F,
+  ms: number,
+  shouldRunFirst = true,
+  shouldRunLast = true
+) {
+  let waitingTimeout: number | undefined
+  return (...args: Parameters<F>) => {
+    if (waitingTimeout) {
+      clearTimeout(waitingTimeout)
+      waitingTimeout = undefined
+    } else if (shouldRunFirst) {
+      fn(...args)
+    }
+
+    waitingTimeout = setTimeout(() => {
+      if (shouldRunLast) {
+        fn(...args)
+      }
+
+      waitingTimeout = undefined
+    }, ms)
+  }
 }
 
 export function convertMs(ms: number) {

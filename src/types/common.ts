@@ -7,3 +7,6 @@ export type DeepPartialPersist<T> = {
 }
 
 export type ObjectWithKey<T> = { [K in keyof T]: T[K] }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyFunction = (...args: any[]) => void

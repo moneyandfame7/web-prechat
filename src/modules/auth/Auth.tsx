@@ -34,7 +34,7 @@ function getAuthScreenTransition(newEl: VNode, current: VNode): TransitionType {
     return 'zoomSlideReverse'
   }
 
-  return 'zoomFade'
+  return 'slide'
 }
 const Auth: FC = () => {
   const { auth } = getGlobalState()

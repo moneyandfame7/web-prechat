@@ -2,8 +2,7 @@ import type { DeepSignal } from 'deepsignal'
 
 import { ConfirmationResult, RecaptchaVerifier } from 'firebase/auth'
 
-import lang from 'lib/i18n/lang'
-import type { SupportedLanguages } from 'types/lib'
+import type { ErrorPack, LanguagePack, SupportedLanguages } from 'types/lib'
 import type { Country } from 'types/api'
 import type { Connection } from 'types/request'
 
@@ -21,7 +20,8 @@ export interface SettingsState {
   i18n: {
     lang_code: SupportedLanguages
     countries: Country[]
-    pack: typeof lang
+    pack: LanguagePack
+    errors: ErrorPack
   }
   suggestedLanguage?: SupportedLanguages
 }

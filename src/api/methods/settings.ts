@@ -1,10 +1,5 @@
 import { client } from 'api/client'
-import {
-  QUERY_COUNTRIES,
-  QUERY_LANG,
-  QUERY_LANG_STRING,
-  QUERY_LANG_WITH_COUNTRIES
-} from 'api/graphql'
+import { QUERY_COUNTRIES, QUERY_LANG, QUERY_LANG_STRING } from 'api/graphql'
 
 import type { Country, FetchLanguage } from 'types/api'
 import type { SupportedLanguages, LanguagePack } from 'types/lib'
@@ -28,16 +23,6 @@ export async function fetchLanguage(language: SupportedLanguages) {
     }
   }>({
     query: QUERY_LANG,
-    variables: {
-      language
-    },
-    fetchPolicy: 'cache-first'
-  })
-}
-
-export async function fetchLanguageWithCountries(language: SupportedLanguages) {
-  return client.query<{ language: FetchLanguage }>({
-    query: QUERY_LANG_WITH_COUNTRIES,
     variables: {
       language
     },

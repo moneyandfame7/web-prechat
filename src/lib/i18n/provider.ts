@@ -12,6 +12,7 @@ import type { FetchLanguage } from 'types/api'
 import { getGlobalState } from 'state/signal'
 import { updateGlobalState } from 'state/persist'
 import { DEBUG } from 'common/config'
+import { logDebugWarn } from 'lib/logger'
 
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
@@ -26,10 +27,11 @@ export function t(key: LanguagePackKeys): Signal<string> {
 }
 
 export async function changeLanguage(language: SupportedLanguages) {
-  let data = (await cache.get('prechat-i18n-pack', language)) as FetchLanguage
+  logDebugWarn('[UI]: I18n provider was called')
 
+  let data = (await cache.get('prechat-i18n-pack', language)) as FetchLanguage
   if (!data) {
-    const response = await callApi('fetchLanguageWithCountries', language)
+    const response = await callApi('fetchLanguage', language)
     data = deepOmit(response.data.language, ['__typename']) as FetchLanguage
 
     cache.add({
@@ -38,6 +40,7 @@ export async function changeLanguage(language: SupportedLanguages) {
       value: data
     })
   }
+
   const state = getGlobalState()
   updateGlobalState(
     {
@@ -45,7 +48,8 @@ export async function changeLanguage(language: SupportedLanguages) {
         i18n: {
           pack: data.pack,
           lang_code: language,
-          countries: data.countries
+          countries: data.countries,
+          errors: data.errors
         }
       }
     },

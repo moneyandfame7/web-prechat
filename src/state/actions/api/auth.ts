@@ -12,7 +12,7 @@ import type { SignUpInput } from 'types/api'
 import type { SupportedLanguages } from 'types/lib'
 
 import { USER_BROWSER, USER_PLATFORM } from 'common/config'
-import { logDebugInfo } from 'lib/logger'
+import { logDebugInfo, logDebugWarn } from 'lib/logger'
 
 /* Get user connection info, country, dial code, etc */
 createAction('getConnection', async () => {
@@ -34,6 +34,7 @@ createAction('getConnection', async () => {
 /* Check user in backend side */
 createAction('sendPhone', async (state, _, payload) => {
   state.auth.loading = true
+  logDebugWarn(`[AUTH]: Auth remember me: ${state.auth.rememberMe}`)
   const response = await callApi('sendPhone', payload)
   if (!response || !response.data?.sendPhone) {
     state.auth.error = 'Auth send phone error'
@@ -60,6 +61,7 @@ createAction('sendPhone', async (state, _, payload) => {
 /* Verify code with Firebase */
 createAction('verifyCode', async (state, actions, payload) => {
   state.auth.loading = true
+
   const credentials = await firebase.verifyCode(state.auth, state.settings.i18n.lang_code, payload)
   if (!credentials) {
     console.error('[AUTH]: Code verification error')
@@ -110,13 +112,14 @@ createAction('verifyCode', async (state, actions, payload) => {
 /* Auth sign in */
 createAction('signIn', async (state, _, payload) => {
   state.auth.loading = true
+
   const { data } = await callApi('signIn', payload)
 
   if (!data?.signIn) {
     console.error('[AUTH]: «Sign in error»')
     return
   }
-
+  logDebugWarn(`[AUTH]: Session: ${data.signIn.session}`)
   updateGlobalState(
     {
       auth: {

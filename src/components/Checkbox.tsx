@@ -1,6 +1,8 @@
 import { FC, TargetedEvent, useCallback } from 'preact/compat'
 import { Signal } from '@preact/signals'
 
+import { Ripple } from './Ripple'
+
 import './Checkbox.scss'
 
 interface CheckboxProps {
@@ -17,6 +19,7 @@ export const Checkbox: FC<CheckboxProps> = ({ label, onToggle, checked }) => {
     <label class="Checkbox">
       <input type="checkbox" onChange={handleChange} checked={checked} />
       {label}
+      <Ripple />
     </label>
   )
 }

@@ -34,11 +34,15 @@ const AuthCode: FC = () => {
   }
 
   const handleEditPhone = useCallback(() => {
-    updateGlobalState({
-      auth: {
-        screen: AuthScreens.PhoneNumber
-      }
-    })
+    code.value = ''
+    updateGlobalState(
+      {
+        auth: {
+          screen: AuthScreens.PhoneNumber
+        }
+      },
+      false
+    )
   }, [])
 
   return (

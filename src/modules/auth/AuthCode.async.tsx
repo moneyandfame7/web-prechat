@@ -4,7 +4,7 @@ const AuthCodeAsync: FC = (props) => {
   const AuthCode = lazy(() => import('./AuthCode'))
 
   return (
-    <Suspense fallback="Loading...">
+    <Suspense fallback="">
       <AuthCode {...props} />
     </Suspense>
   )

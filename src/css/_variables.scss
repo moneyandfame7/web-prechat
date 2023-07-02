@@ -15,9 +15,13 @@ $color-warn: #ffd3009e;
 $color-neutral: #707579;
 $color-neutral-secondary: #94989b;
 
+$color-neutral-hover: rgba(0, 0, 0, 0.05);
+
 $color-background: #fff;
 $color-background-secondary: #dedede;
 $color-background-transparent: rgba(255 255 255/90%);
+
+$color-ripple: rgba(0, 0, 0, 0.08);
 
 $input-border-radius: 12px;
 $input-base-height: 50px;
@@ -46,6 +50,9 @@ $transition-duration-slide: 200ms;
 
   --color-neutral: #{$color-neutral};
   --color-neutral-secondary: #{$color-neutral-secondary};
+  --color-neutral-hover: #{$color-neutral-hover};
+
+  --color-ripple: #{$color-ripple};
 
   --input-border-radius: #{$input-border-radius};
   --input-base-height: #{$input-base-height};

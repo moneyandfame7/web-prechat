@@ -1,5 +1,12 @@
 import { DocumentNode, gql } from '@apollo/client'
 
+/* Api */
+export const QUERY_API_INIT: DocumentNode = gql`
+  query Initialize {
+    initialize
+  }
+`
+
 export const FRAGMENT_SESSION: DocumentNode = gql`
   fragment AllSessionFields on Session {
     id
@@ -14,7 +21,6 @@ export const FRAGMENT_SESSION: DocumentNode = gql`
   }
 `
 /* Auth  */
-
 export const MUTATION_SEND_PHONE: DocumentNode = gql`
   mutation SendPhone($phone: String!) {
     sendPhone(phone: $phone) {
@@ -50,27 +56,21 @@ export const QUERY_GET_TWO_FA: DocumentNode = gql`
 `
 
 /* Settings */
-// export const MUTATION_UPLOAD_AVATAR: DocumentNode = gql``
 export const QUERY_LANG: DocumentNode = gql`
   query Language($language: String!) {
     language(language: $language) {
       pack
-    }
-  }
-`
-export const QUERY_LANG_WITH_COUNTRIES: DocumentNode = gql`
-  query Language($language: String!) {
-    language(language: $language) {
       countries {
         name
         dial_code
         emoji
         code
       }
-      pack
+      errors
     }
   }
 `
+
 export const QUERY_LANG_STRING: DocumentNode = gql`
   query LanguageString($language: String!, $string: String!) {
     languageString(language: $language, string: $string)

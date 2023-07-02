@@ -33,7 +33,7 @@ const AuthPhoneNumber: FC = () => {
   const state = getGlobalState()
   const phoneInputRef = useRef<HTMLInputElement>(null)
 
-  const [phone, setPhone] = useState<string>(state.auth.phoneNumber || '')
+  const [phone, setPhone] = useState<string>('')
   const [country, setCountry] = useState<Country | undefined>(selectCountryByPhone(state))
 
   useEffect(() => {
@@ -75,7 +75,6 @@ const AuthPhoneNumber: FC = () => {
   const handleChangeLanguage = async () => {
     const suggestedLng = state.settings.suggestedLanguage
     if (suggestedLng) {
-      // await getCountries(suggestedLng)
       await changeLanguage(suggestedLng)
       setCountry(state.settings.i18n.countries.find((country) => phone.includes(country.dial_code)))
     }

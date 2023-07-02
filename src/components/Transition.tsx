@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import { CSSTransition } from 'lib/css-transition'
 
 import './Transition.scss'
+import { TRANSITION_DURATION_FADE, TRANSITION_DURATION_ZOOM_FADE } from 'common/config'
 
 export type TransitionType =
   | 'zoomFade'
@@ -31,11 +32,11 @@ const getTransitionDuration = (type: TransitionType) => {
   switch (type) {
     case 'fade':
     case 'slide':
-      return 200
+      return TRANSITION_DURATION_FADE
     case 'zoomFade':
-      return 150
+      return TRANSITION_DURATION_ZOOM_FADE
     default:
-      return 400
+      return 200
   }
 }
 export const Transition: FC<TransitionProps> = memo(

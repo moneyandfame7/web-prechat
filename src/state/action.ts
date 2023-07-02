@@ -21,8 +21,6 @@ interface ActionPayloads {
   setAuthRememberMe: boolean
 
   /* Api */
-  getLanguageWithCountries: SupportedLanguages
-  getLanguage: SupportedLanguages
   getCountries: SupportedLanguages
 
   getConnection: void

@@ -3,6 +3,7 @@ import type { SettingsState, AuthState, SignalGlobalState, GlobalState } from 't
 
 import { getGlobalState } from './signal'
 import { database } from './database'
+import { logDebugWarn } from 'lib/logger'
 
 type PickPersistProperties = Partial<Record<keyof GlobalState, boolean | object>>
 
@@ -39,6 +40,7 @@ export function updateGlobalState(object: DeepPartial<GlobalState>, persist = tr
   }
 
   if (persist) {
+    logDebugWarn('[UI]: State force persist')
     forceUpdateState(state)
   }
 }

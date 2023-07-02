@@ -1,4 +1,4 @@
-import { LanguagePack } from './lib'
+import type { ErrorPack, LanguagePack } from './lib'
 import type { Connection } from './request'
 
 export type Platform = 'macOS' | 'iOS' | 'Windows' | 'Android' | 'Linux' | 'Unknown'
@@ -32,6 +32,7 @@ export interface Session {
 export interface FetchLanguage {
   pack: LanguagePack
   countries: Country[]
+  errors: ErrorPack
 }
 export type SessionData = Connection & { browser: string; platform: string }
 

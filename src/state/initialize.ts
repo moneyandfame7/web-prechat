@@ -1,4 +1,5 @@
 import { generateRecaptcha } from 'lib/firebase'
+import { changeLanguage } from 'lib/i18n'
 
 import { getGlobalState } from './signal'
 import { getActions } from './action'
@@ -21,10 +22,8 @@ async function initializeGlobalState() {
 }
 
 async function initializeLibraries() {
-  const { getLanguageWithCountries } = getActions()
-
   /* Init i18n */
-  await getLanguageWithCountries('en')
+  await changeLanguage('en')
 }
 
 export async function initializeApplication() {

@@ -4,18 +4,18 @@ import { DEBUG } from 'common/config'
 
 export function logDebugError(...error: any[]) {
   if (DEBUG) {
-    console.error(error)
+    console.error(...error)
   }
 }
 
 export function logDebugWarn(...warn: any[]) {
   if (DEBUG) {
-    console.warn(warn)
+    console.warn(...warn)
   }
 }
 
 export function logDebugInfo(...info: any[]) {
   if (DEBUG) {
-    console.log(info)
+    console.log(...info)
   }
 }
