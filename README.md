@@ -27,5 +27,8 @@
  - [@apollo/client](https://github.com/apollographql/apollo-client)
 
 
+## Acknowledgements
+
+ - [Telegram Mockups](https://github.com/morethanwords/tweb-design)
 
 
