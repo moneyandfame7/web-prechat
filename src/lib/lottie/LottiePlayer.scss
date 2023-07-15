@@ -1,0 +1,36 @@
+@mixin lottie-sizes {
+  &_small {
+    height: 100px;
+  }
+  &_medium {
+    height: 170px;
+  }
+  &_large {
+    height: 200px;
+  }
+}
+.Lottie {
+  &-player {
+    position: relative;
+    overflow: hidden;
+    width: max-content;
+    &_hidden {
+      display: none;
+    }
+
+    &_pausable {
+      g {
+        cursor: pointer;
+      }
+    }
+
+    @include lottie-sizes();
+  }
+  &-fallback {
+    width: max-content;
+    display: flex;
+    justify-content: center;
+
+    @include lottie-sizes();
+  }
+}

@@ -19,7 +19,8 @@ const settingsInitialState: SettingsState = {
     pack: lang,
     errors
   },
-  suggestedLanguage: undefined
+  suggestedLanguage: undefined,
+  leftColumnWidth: 350
 }
 const authInitialState: AuthState = {
   connection: undefined,
@@ -29,7 +30,12 @@ const authInitialState: AuthState = {
   loading: false,
   screen: AuthScreens.PhoneNumber,
   token: undefined,
-  session: undefined
+  session: undefined,
+  captcha: undefined,
+  confirmResult: undefined,
+  email: undefined,
+  error: undefined,
+  passwordHint: undefined
 }
 
 const globalInitialState: GlobalState = {

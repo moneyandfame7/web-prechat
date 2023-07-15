@@ -1,5 +1,6 @@
-import { FC } from 'preact/compat'
+import { type FC } from 'preact/compat'
 
+import './MiddleColumn.scss'
 export const MiddleColumn: FC = () => {
-  return <>INVALID EBANIY</>
+  return <div class="MiddleColumn">Middle column</div>
 }

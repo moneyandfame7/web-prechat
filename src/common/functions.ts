@@ -12,28 +12,18 @@ export function omit<T extends object, K extends keyof T>(
 
   return result
 }
-export function debounce<F extends AnyFunction>(
-  fn: F,
-  ms: number,
-  shouldRunFirst = true,
-  shouldRunLast = true
-) {
-  let waitingTimeout: number | undefined
-  return (...args: Parameters<F>) => {
-    if (waitingTimeout) {
-      clearTimeout(waitingTimeout)
-      waitingTimeout = undefined
-    } else if (shouldRunFirst) {
-      fn(...args)
+export const debounce = <T extends AnyFunction>(fn: T, ms = 300, leading = true) => {
+  let timeoutId: ReturnType<typeof setTimeout>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return function (this: any, ...args: Parameters<T>) {
+    clearTimeout(timeoutId)
+
+    if (leading) {
+      fn.apply(this, args)
+      leading = false
+      return
     }
-
-    waitingTimeout = setTimeout(() => {
-      if (shouldRunLast) {
-        fn(...args)
-      }
-
-      waitingTimeout = undefined
-    }, ms)
+    timeoutId = setTimeout(() => fn.apply(this, args), ms)
   }
 }
 

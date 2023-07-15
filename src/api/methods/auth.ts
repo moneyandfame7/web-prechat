@@ -10,8 +10,11 @@ import type {
   SignUpResponse
 } from 'types/api'
 
+/**
+ * @returns Info about the user connection
+ */
 export async function fetchConnection() {
-  return makeRequest('connection', 'prechat-important', true, 60 * 60 * 1000)
+  return makeRequest('connection')
 }
 
 export async function sendPhone(phone: string) {

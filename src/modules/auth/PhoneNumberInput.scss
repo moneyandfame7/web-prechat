@@ -1,0 +1,13 @@
+.PhoneNumberInput {
+  > input {
+    color: transparent;
+  }
+  .input-value {
+    pointer-events: none;
+    &::after {
+      content: attr(data-remaining-pattern);
+      display: inline-block;
+      color: var(--color-placeholder);
+    }
+  }
+}

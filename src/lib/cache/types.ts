@@ -2,6 +2,7 @@ export type CacheName =
   | 'prechat-i18n-pack'
   | 'prechat-i18n-string'
   | 'prechat-files'
+  | 'prechat-assets'
   | 'prechat-avatars'
   | 'prechat-important'
 

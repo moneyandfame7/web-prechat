@@ -1,0 +1,24 @@
+.LeftColumn {
+  overflow: hidden;
+  // background-color: red;
+  position: relative;
+
+  width: var(--left-column-width);
+  height: 100vh;
+  border-right: 1px solid var(--color-border);
+
+  &-resizer {
+    height: 100%;
+    position: absolute;
+    right: -3px;
+    user-select: none;
+    top: 0;
+    float: right;
+    width: 5px;
+    cursor: ew-resize;
+    z-index: 0;
+    resize: horizontal;
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+}

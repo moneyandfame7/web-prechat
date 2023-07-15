@@ -1,67 +1,65 @@
-import { FC, useCallback } from 'preact/compat'
+import { type FC } from 'preact/compat'
+import type { VNode } from 'preact'
 
 import { getGlobalState } from 'state/signal'
+import { useScreenManager } from 'hooks'
 
+import { Spinner } from 'components/ui'
 import { ErrorCatcher } from 'components/ErrorCatcher'
 import { MountTransition } from 'components/MountTransition'
-import { Spinner } from 'components/Spinner'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
 
+import { hasSession } from 'state/helpers/auth'
 import { ServiceWorker } from '../serviceWorker'
 
 import './App.scss'
 
-enum ActiveScreen {
+enum AppScreens {
   Auth = 'Auth',
   Lock = 'Lock',
   Main = 'Main',
   Loading = 'Loading'
 }
 
+const screenCases: Record<AppScreens, VNode> = {
+  [AppScreens.Auth]: <Auth />,
+  [AppScreens.Lock]: <Lock />,
+  [AppScreens.Main]: <Main />,
+  [AppScreens.Loading]: (
+    <div class="PageLoader">
+      <Spinner size="large" color="primary" />
+    </div>
+  )
+}
 const Application: FC = () => {
   const state = getGlobalState()
-  let activeScreen: ActiveScreen
+  let initialScreen: AppScreens
+
   if (state.initialization) {
-    activeScreen = ActiveScreen.Loading
-  } else if (Boolean(state.auth.session)) {
-    activeScreen = ActiveScreen.Main
+    initialScreen = AppScreens.Loading
+  } else if (hasSession()) {
+    initialScreen = AppScreens.Main
   } else {
-    activeScreen = ActiveScreen.Auth
+    initialScreen = AppScreens.Auth
   }
 
-  const renderContent = useCallback(() => {
-    switch (activeScreen) {
-      case ActiveScreen.Auth:
-        return <Auth key={ActiveScreen.Auth} />
-      case ActiveScreen.Lock:
-        return <Lock key={ActiveScreen.Lock} />
-      case ActiveScreen.Main:
-        return <Main key={ActiveScreen.Main} />
-      case ActiveScreen.Loading:
-        return (
-          <div key={ActiveScreen.Loading} class="PageLoader">
-            <Spinner size="large" color="primary" />
-          </div>
-        )
-    }
-  }, [activeScreen])
-
+  const { renderScreen, activeScreen } = useScreenManager<AppScreens>({
+    initial: initialScreen,
+    cases: screenCases,
+    existScreen: initialScreen
+  })
   return (
-    // <PageLoader on={state.initialization}>
     <ErrorCatcher>
       <>
         <ServiceWorker />
-        <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-          <MountTransition activeKey={activeScreen} shouldCleanup name="fade" initial={false}>
-            {renderContent()}
-          </MountTransition>
-        </div>
+        <MountTransition activeKey={activeScreen} shouldCleanup name="fade" duration={300} initial>
+          {renderScreen()}
+        </MountTransition>
       </>
     </ErrorCatcher>
-    // </PageLoader>
   )
 }
 

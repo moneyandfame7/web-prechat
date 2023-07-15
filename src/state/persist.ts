@@ -1,9 +1,9 @@
 import type { DeepPartial, DeepPartialPersist } from 'types/common'
 import type { SettingsState, AuthState, SignalGlobalState, GlobalState } from 'types/state'
 
-import { getGlobalState } from './signal'
-import { database } from './database'
 import { logDebugWarn } from 'lib/logger'
+import { database } from 'lib/database'
+import { getGlobalState } from './signal'
 
 type PickPersistProperties = Partial<Record<keyof GlobalState, boolean | object>>
 
@@ -22,15 +22,20 @@ const PERSISTED_PROPERTIES = {
     userId: true,
     passwordHint: true,
     email: true,
-    session: true
+    session: true,
+    screen: true
+    // loading: false
   },
   settings: true
 }
 export type PersistGlobalState = PersistedProperties<typeof PERSISTED_PROPERTIES>
+export type PersistGlobalStateKeys = keyof PersistGlobalState
 
 /* Persist state  */
+/* maybe make persist: string ( auth | settings ???) */
 export function updateGlobalState(object: DeepPartial<GlobalState>, persist = true) {
   const state = getGlobalState()
+
   if (object.auth) {
     updateAuthState(state, object.auth)
   }
@@ -40,9 +45,28 @@ export function updateGlobalState(object: DeepPartial<GlobalState>, persist = tr
   }
 
   if (persist) {
-    logDebugWarn('[UI]: State force persist')
-    forceUpdateState(state)
+    // eslint-disable-next-line no-console
+    console.time('Persist')
+
+    const persisted = getPersistedState(
+      state,
+      PERSISTED_PROPERTIES as DeepPartialPersist<GlobalState>
+    )
+
+    if (object.settings) {
+      database.settings.change(persisted.settings)
+    }
+    if (object.auth) {
+      database.auth.change(persisted.auth)
+    }
+
+    // forceUpdateState(state)
+
+    // eslint-disable-next-line no-console
+    console.timeEnd('Persist')
   }
+
+  logDebugWarn('[UI]: Persist state', object)
 }
 
 export function forceUpdateState(state: SignalGlobalState) {
@@ -110,3 +134,12 @@ function updateSettingsState<S extends SignalGlobalState, U extends DeepPartial<
     }
   })
 }
+
+/* Resets  */
+// function resetGlobalState(name: PersistGlobalStateKeys | PersistGlobalStateKeys[]) {}
+
+// const test = resetGlobalState(['settings', 'auth'])
+
+// function resetAuthState() {}
+
+// function resetSettingsState() {}

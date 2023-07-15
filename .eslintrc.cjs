@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { defineConfig } = require('eslint-define-config')
+const {defineConfig} = require('eslint-define-config')
 
 module.exports = defineConfig({
   globals: {
@@ -21,6 +21,8 @@ module.exports = defineConfig({
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/no-non-null-assertion': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
+        '@typescript-eslint/consistent-type-imports': 'error',
+        '@typescript-eslint/prefer-ts-expect-error': 'error',
         '@typescript-eslint/no-extra-semi': 'off',
         'react-hooks/exhaustive-deps': 'off',
         'react/react-in-jsx-scope': 'off',

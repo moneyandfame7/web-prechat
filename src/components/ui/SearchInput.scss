@@ -1,0 +1,45 @@
+.SearchInput {
+  --input-search-radius: calc(var(--input-border-radius) + 10px);
+  .Icon {
+    path {
+      fill: var(--color-placeholder);
+    }
+  }
+  input {
+    border-radius: var(--input-search-radius);
+    border: none;
+    background-color: var(--color-gray);
+    padding: 0 40px;
+    height: 43px;
+    // border: none;
+
+    &::placeholder {
+      font-weight: 300;
+      color: #9b9b9b;
+    }
+    &:hover {
+      border-color: var(--color-border-hover);
+      ~ label,
+      &::placeholder,
+      ~ .length-indicator,
+      ~ .fa-solid {
+        color: var(--color-placeholder);
+      }
+    }
+
+    &:focus {
+      &::placeholder,
+      ~ label,
+      ~ .length-indicator {
+        color: var(--color-placeholder);
+      }
+
+      ~ .fa-solid {
+        color: var(--color-primary);
+      }
+    }
+  }
+  .input-border {
+    border-radius: var(--input-search-radius);
+  }
+}

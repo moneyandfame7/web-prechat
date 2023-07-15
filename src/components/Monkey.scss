@@ -1,0 +1,13 @@
+.Monkey {
+  height: 180px;
+
+  &-small {
+    height: 100px;
+  }
+  &-medium {
+    height: 170px;
+  }
+  &-large {
+    height: 200px;
+  }
+}

@@ -1,0 +1,18 @@
+.CreateChat {
+  &-Button {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+  }
+
+  &-Menu {
+    &.Transition_absoluted {
+      position: absolute;
+      bottom: 60px;
+      top: auto;
+      left: auto;
+      right: 20px;
+      width: 210px;
+    }
+  }
+}

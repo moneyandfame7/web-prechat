@@ -4,7 +4,7 @@ const MainAsync: FC = (props) => {
   const Main = lazy(() => import('./Main'))
 
   return (
-    <Suspense fallback="Loading main...">
+    <Suspense fallback="">
       <Main {...props} />
     </Suspense>
   )

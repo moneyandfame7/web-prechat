@@ -1,7 +1,11 @@
-import { Platform } from 'types/api'
+import type {Platform} from 'types/api'
 
-const { userAgent, platform } = window.navigator
+const {userAgent, platform} = window.navigator
 
+/**
+ *
+ * Taken from {@link https://github.com/Ajaxy/telegram-tt/blob/2f21b34689c65a1def46823d4b1d52182b60b550/src/util/windowEnvironment.ts#L12 here}
+ */
 function detectPlatform(): Platform | undefined {
   const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K']
   const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE']
@@ -10,7 +14,9 @@ function detectPlatform(): Platform | undefined {
   if (
     iosPlatforms.indexOf(platform) !== -1 ||
     // For new IPads with M1 chip and IPadOS platform returns "MacIntel"
-    (platform === 'MacIntel' && 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 2)
+    (platform === 'MacIntel' &&
+      'maxTouchPoints' in navigator &&
+      navigator.maxTouchPoints > 2)
   ) {
     return 'iOS'
   } else if (macosPlatforms.indexOf(platform) !== -1) {
@@ -25,23 +31,38 @@ function detectPlatform(): Platform | undefined {
 }
 function detectBrowser(): string | undefined {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  if ((window as any)?.opr?.addons || (window as any)?.opera || userAgent.indexOf(' OPR/') >= 0) {
+  if (
+    (window as any)?.opr?.addons ||
+    (window as any)?.opera ||
+    userAgent.indexOf(' OPR/') >= 0
+  ) {
     return `Opera ${userAgent.substring(userAgent.indexOf('OPR/') + 4)}`
   } else if (userAgent.indexOf('Edge') >= 0) {
-    return `Microsoft Edge ${userAgent.substring(userAgent.indexOf('Edge/') + 5)}`
+    return `Microsoft Edge ${userAgent.substring(
+      userAgent.indexOf('Edge/') + 5
+    )}`
   } else if (userAgent.indexOf('Chrome') >= 0) {
-    return `Google Chrome ${userAgent.substring(userAgent.indexOf('Chrome/') + 7)}`
+    return `Google Chrome ${userAgent.substring(
+      userAgent.indexOf('Chrome/') + 7
+    )}`
   } else if (userAgent.indexOf('Safari') >= 0) {
     return `Safari ${userAgent.substring(userAgent.indexOf('Version/') + 8)}`
   } else if (userAgent.indexOf('Firefox') >= 0) {
-    return `Mozilla Firefox ${userAgent.substring(userAgent.indexOf('Firefox/') + 8)}`
-  } else if (userAgent.indexOf('MSIE') >= 0 || userAgent.indexOf('Trident/') >= 0) {
+    return `Mozilla Firefox ${userAgent.substring(
+      userAgent.indexOf('Firefox/') + 8
+    )}`
+  } else if (
+    userAgent.indexOf('MSIE') >= 0 ||
+    userAgent.indexOf('Trident/') >= 0
+  ) {
     const browserVersion: string | number = userAgent.substring(
       userAgent.indexOf('MSIE') + 5,
       userAgent.indexOf(';')
     )
     if (parseInt(browserVersion) === -1) {
-      return `Microsoft Internet Explorer ${userAgent.substring(userAgent.indexOf('rv:') + 3)}`
+      return `Microsoft Internet Explorer ${userAgent.substring(
+        userAgent.indexOf('rv:') + 3
+      )}`
     }
     return `Microsoft Internet Explorer ${browserVersion}`
   }
@@ -58,5 +79,25 @@ export const AUTH_CAPTCHA_CONTAINER = 'auth_captcha_container'
 export const DEBUG = import.meta.env.DEV
 
 export const TRANSITION_DURATION_FADE = 200
-export const TRANSITION_DURATION_SLIDE = 200
-export const TRANSITION_DURATION_ZOOM_FADE = 150
+export const TRANSITION_DURATION_ZOOM_FADE = 200
+export const TRANSITION_DURATION_SLIDE = 250
+export const TRANSITION_DURATION_MENU = 250 /* 150 */
+
+export const TRANSITION_DURATIONS = {
+  FADE: 200,
+  ZOOM_FADE: 200,
+  LAYER_SLIDE: 250,
+  POPUP: 200
+}
+
+export const LEFT_COLUMN_HEADER_PX = 72
+
+export const LEFT_COLUMN_WIDTH = 350
+export function getPortalRoot() {
+  const el = document.getElementById('portals')
+  if (!el) {
+    throw new Error('Root Portal not exist')
+  }
+
+  return el
+}

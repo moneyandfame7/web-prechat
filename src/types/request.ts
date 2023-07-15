@@ -5,6 +5,8 @@ export interface Connection {
   longitude: number
   countryName: string
   countryCode: string
+  continentCode: string
+  continent: string
   timeZone: string
   zipCode: string
   cityName: string

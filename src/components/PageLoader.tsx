@@ -2,7 +2,7 @@ import type { ComponentChildren } from 'preact'
 import { type FC, useEffect } from 'preact/compat'
 import { useSignal } from '@preact/signals'
 
-import { Spinner } from './Spinner'
+import { Spinner } from 'components/ui'
 import { MountTransition } from './MountTransition'
 
 import './PageLoader.scss'

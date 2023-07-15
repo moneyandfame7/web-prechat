@@ -3,6 +3,24 @@
   .Menu {
     top: calc(var(--input-base-height) + 5px);
     max-height: 350px;
+
+    &_item {
+      font-size: 16px;
+      font-weight: 400;
+    }
+  }
+  .input-container {
+    .Icon-chevronDown {
+      transition: transform 0.3s ease;
+    }
+    input:focus {
+      ~ * .Icon-chevronDown {
+        transform: rotate(180deg) !important;
+        path {
+          fill: var(--color-primary);
+        }
+      }
+    }
   }
 }
 

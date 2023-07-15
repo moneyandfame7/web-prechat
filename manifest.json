@@ -2,7 +2,7 @@
   "theme_color": "#673ab8",
   "background_color": "#673ab8",
   "display": "minimal-ui",
-  "start_url": "./",
+  "start_url": "/",
   "name": "Prechat",
   "short_name": "Prechat",
   "description": "Web chat based on Preact ( Fast 3kB alternative to React with the same modern API ).",
@@ -10,7 +10,8 @@
     {
       "src": "images/icon-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "images/icon-256x256.png",

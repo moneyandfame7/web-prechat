@@ -8,18 +8,23 @@ export type Methods = typeof methods
 export type MethodsArgs<T extends keyof Methods> = Parameters<Methods[T]>
 export type MethodResponse<T extends keyof Methods> = ReturnType<Methods[T]>
 
+/**
+ *
+ * @param name - The name of the method to be called.
+ * @param args - Arguments bound by method name.
+ */
 export function callApi<T extends keyof Methods>(
   name: T,
   ...args: MethodsArgs<T>
 ): MethodResponse<T> {
   try {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
+    console.log({args})
+    // @ts-expect-error /** Idk why it not work */
     return methods[name](...args) as MethodResponse<T>
   } catch (e) {
     if (e instanceof Error) {
       // eslint-disable-next-line no-console
-      console.warn('[API]', e.message)
+      console.error('[API]', e.message)
     }
   }
 

@@ -13,29 +13,40 @@ import type { SupportedLanguages } from 'types/lib'
 
 import { USER_BROWSER, USER_PLATFORM } from 'common/config'
 import { logDebugInfo, logDebugWarn } from 'lib/logger'
+import { stringRemoveSpacing } from 'utilities/stringRemoveSpacing'
 
-/* Get user connection info, country, dial code, etc */
-createAction('getConnection', async () => {
+/**
+ * Get user connection info, country, dial code, etc
+ */
+createAction('getConnection', async (state) => {
   const connection = await callApi('fetchConnection')
 
   const suggestedLanguage = connection.countryCode.toLowerCase() as SupportedLanguages
   const existLanguage = LANGUAGES_CODE_ARRAY.find((code) => code === suggestedLanguage)
 
-  updateGlobalState({
-    auth: {
-      connection
+  updateGlobalState(
+    {
+      auth: {
+        connection
+      },
+      settings: {
+        suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
+      }
     },
-    settings: {
-      suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
-    }
-  })
+    Boolean(state.auth.session)
+  )
 })
 
-/* Check user in backend side */
+/**
+ *  Check user in backend side
+ */
 createAction('sendPhone', async (state, _, payload) => {
   state.auth.loading = true
   logDebugWarn(`[AUTH]: Auth remember me: ${state.auth.rememberMe}`)
-  const response = await callApi('sendPhone', payload)
+  const unformatted = stringRemoveSpacing(payload)
+
+  const response = await callApi('sendPhone', unformatted)
+
   if (!response || !response.data?.sendPhone) {
     state.auth.error = 'Auth send phone error'
     return
@@ -44,21 +55,22 @@ createAction('sendPhone', async (state, _, payload) => {
 
   await firebase.sendCode(state.auth, state.settings.i18n.lang_code, payload)
   logDebugInfo('[AUTH]: Code from firebase was sent')
-
   updateGlobalState(
     {
       auth: {
+        screen: AuthScreens.Code,
         userId: data.userId,
         phoneNumber: payload,
-        loading: false,
-        screen: AuthScreens.Code
+        loading: false
       }
     },
-    false
+    true
   )
 })
 
-/* Verify code with Firebase */
+/**
+ *  Verify code with Firebase
+ */
 createAction('verifyCode', async (state, actions, payload) => {
   state.auth.loading = true
 
@@ -104,12 +116,14 @@ createAction('verifyCode', async (state, actions, payload) => {
           screen: AuthScreens.SignUp
         }
       },
-      false
+      true
     )
   }
 })
 
-/* Auth sign in */
+/**
+ * Auth Sign In
+ */
 createAction('signIn', async (state, _, payload) => {
   state.auth.loading = true
 
@@ -131,7 +145,9 @@ createAction('signIn', async (state, _, payload) => {
   )
 })
 
-/* Auth sign up */
+/**
+ * Auth Sign Up
+ */
 createAction('signUp', async (state, _, payload) => {
   const { silent, firstName, lastName, photo } = payload
   if (!state.auth.token || !state.auth.phoneNumber) {
@@ -165,5 +181,7 @@ createAction('signUp', async (state, _, payload) => {
       session: data?.signUp.session
     }
   })
-  /* доробити це */
+  /**
+   * @todo Доробити тут
+   */
 })

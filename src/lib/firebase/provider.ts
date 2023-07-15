@@ -21,11 +21,12 @@ export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
       size: 'invisible',
       callback: (/* res:unknown */) => {
         /*  */
+        console.log('RES')
       }
     },
     authentication
   )
-  auth.captcha.render()
+  await auth.captcha.render().then(console.log)
 }
 
 export async function sendCode(

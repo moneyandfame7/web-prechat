@@ -1,0 +1,110 @@
+@mixin whenDark {
+  html.dark & {
+    @content;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    & {
+      @content;
+    }
+  }
+}
+
+@mixin responsive($breakpoint) {
+  @if $breakpoint == mobile {
+    @media only screen and (max-width: 480px) {
+      @content;
+    }
+  }
+  @if $breakpoint == tablet {
+    @media only screen and (min-width: 480.1px) and (max-width: 768px) {
+      @content;
+    }
+  }
+  @if $breakpoint == laptop {
+    @media only screen and (min-width: 768.1px) and (max-width: 1280px) {
+      @content;
+    }
+  }
+  @if $breakpoint == desktop {
+    @media only screen and (min-width: 1280px) {
+      @content;
+    }
+  }
+}
+
+@mixin withTransition($initial, $final, $transition, $withOpacity: false) {
+  &.Transition_absoluted {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  width: 100%;
+  will-change: transform;
+
+  body.animation-none & {
+    will-change: initial !important;
+  }
+  &-enter {
+    opacity: $withOpacity;
+    @if $withOpacity==true {
+      opacity: 0;
+    }
+    transform: $initial;
+    &-active {
+      @if $withOpacity==true {
+        opacity: 1;
+      }
+      transform: $final;
+      transition: $transition;
+    }
+    &-done {
+      @if $withOpacity==true {
+        opacity: 1;
+      }
+      transform: $final;
+    }
+  }
+
+  &-appear {
+    transform: $initial;
+    @if $withOpacity==true {
+      opacity: 0;
+    }
+    &-active {
+      @if $withOpacity==true {
+        opacity: 1;
+      }
+      transform: $final;
+      transition: $transition;
+    }
+    &-done {
+      @if $withOpacity==true {
+        opacity: 1;
+      }
+      transform: $final;
+    }
+  }
+
+  &-exit {
+    transform: $final;
+    @if $withOpacity==true {
+      opacity: 1;
+    }
+    &-active {
+      @if $withOpacity==true {
+        opacity: 0;
+      }
+      transform: $initial;
+      transition: $transition;
+    }
+
+    &-done {
+      display: none !important;
+      transform: $initial;
+    }
+  }
+}

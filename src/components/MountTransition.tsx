@@ -1,9 +1,17 @@
-import { VNode } from 'preact'
-import { FC, isValidElement, memo, useCallback, useEffect, useRef, useState } from 'preact/compat'
+import { type VNode } from 'preact'
+import {
+  type FC,
+  isValidElement,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState
+} from 'preact/compat'
 
 import { usePrevious } from 'hooks'
 
-import { Transition, TransitionType } from './Transition'
+import { Transition, type TransitionType } from './Transition'
 
 function getKey(el: VNode) {
   if (!isValidElement(el) || !el.key) {
@@ -25,8 +33,6 @@ function getTransitionType(isActive: boolean, name: TransitionType) {
       return isActive ? 'zoomFade' : 'slide'
     case 'zoomSlide':
       return isActive ? 'slide' : 'zoomFade'
-    case 'slideReverse':
-      return isActive ? 'slideFromRight' : 'slideFromLeft'
     default:
       return name
   }
@@ -41,10 +47,19 @@ function getClassnameByKey(key: string, classNames?: Record<string, string> | st
   return classNames[key]
 }
 
+function getCleanupElements(key: string, shouldCleanup: boolean | string[]) {
+  if (typeof shouldCleanup === 'boolean') {
+    return shouldCleanup
+  }
+  const cleanupEl = shouldCleanup.find((el) => el === key)
+
+  return Boolean(cleanupEl)
+}
+
 interface MountTransitionProps {
   children: VNode
   /* Whether remove from dom */
-  shouldCleanup: boolean
+  shouldCleanup: boolean | string[]
   activeKey: string
   name?: TransitionType
   classNames?: Record<string, string> | string
@@ -60,7 +75,8 @@ export const MountTransition: FC<MountTransitionProps> = memo(
     classNames,
     name,
     initial = true,
-    getTransitionForNew
+    getTransitionForNew,
+    duration
   }) => {
     const renderCount = useRef(0)
     const [transition, setTransition] = useState<TransitionType>(name || 'fade')
@@ -88,9 +104,9 @@ export const MountTransition: FC<MountTransitionProps> = memo(
 
     const renderContent = useCallback(() => {
       if (willHide && children.key !== willHide?.key) {
-        const gettedTransition = getTransitionForNew?.(children, willHide)
-        if (gettedTransition) {
-          setTransition(gettedTransition)
+        const receivedTransition = getTransitionForNew?.(children, willHide)
+        if (receivedTransition) {
+          setTransition(receivedTransition)
         }
       }
       return elements.map((el) => {
@@ -101,7 +117,8 @@ export const MountTransition: FC<MountTransitionProps> = memo(
             /* avoid transition for first component render, but for other - ok */
             appear={initial || renderCount.current > 0}
             key={key}
-            withMount={shouldCleanup}
+            duration={duration}
+            withMount={getCleanupElements(key, shouldCleanup)}
             // duration={initial ? duration || getTransitionDuration(name) + 1000 : undefined}
             isVisible={isActive}
             className={getClassnameByKey(key, classNames)}

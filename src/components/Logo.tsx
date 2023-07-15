@@ -1,11 +1,11 @@
-import { FC } from 'preact/compat'
+import type {FC} from 'preact/compat'
 
 import './Logo.scss'
 
 interface LogoProps {
   size?: 'large' | 'medium' | 'small'
 }
-export const Logo: FC<LogoProps> = ({ size = 'large' }) => {
+export const Logo: FC<LogoProps> = ({size = 'large'}) => {
   const buildedClass = `Logo ${size}`
 
   return (
@@ -19,9 +19,16 @@ export const Logo: FC<LogoProps> = ({ size = 'large' }) => {
       preserveAspectRatio="xMidYMid meet"
       viewBox="0 0 256 296"
     >
+      <defs>
+        <linearGradient id="grad" gradientTransform="rotate(30)">
+          <stop offset="0%" stop-color="#3290ec" />
+          <stop offset="100%" stop-color="#2270bc" />
+        </linearGradient>
+      </defs>
       <path
         class="Logo_background"
         // fill="#673AB8"
+        fill="url(#grad)"
         d="m128 0l128 73.9v147.8l-128 73.9L0 221.7V73.9z"
       ></path>
       <path

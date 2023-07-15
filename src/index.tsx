@@ -1,3 +1,4 @@
+import 'preact/debug'
 import { render } from 'preact'
 import { ApolloProvider } from '@apollo/client'
 
@@ -5,16 +6,16 @@ import { client } from 'api/client'
 import { Application } from 'modules/App'
 
 import { initializeApplication } from 'state/initialize'
-import { logDebugInfo } from 'lib/logger'
 
 import './css/index.scss'
 
 async function init() {
-  const start = Date.now()
+  // eslint-disable-next-line no-console
+  console.time('Initializing')
 
   await initializeApplication().then(() => {
     // eslint-disable-next-line no-console
-    logDebugInfo('Initializing', Date.now() - start, 'ms')
+    console.timeEnd('Initializing')
   })
 }
 init()

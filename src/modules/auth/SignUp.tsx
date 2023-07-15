@@ -4,10 +4,9 @@ import { getActions } from 'state/action'
 
 import { t } from 'lib/i18n'
 
-import { Button } from 'components/Button'
-import { InputText } from 'components/Input'
+import { Button, InputText } from 'components/ui'
+import { Checkbox } from 'components/ui/Checkbox'
 import { UploadPhoto } from 'components/UploadPhoto'
-import { Checkbox } from 'components/Checkbox'
 
 import './SignUp.scss'
 

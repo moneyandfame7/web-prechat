@@ -11,16 +11,16 @@ import type { FetchLanguage } from 'types/api'
 
 import { getGlobalState } from 'state/signal'
 import { updateGlobalState } from 'state/persist'
+import { logDebugError, logDebugWarn } from 'lib/logger'
 import { DEBUG } from 'common/config'
-import { logDebugWarn } from 'lib/logger'
 
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
 
   const translate = i18n.pack[`$${key}`] as unknown as Signal<string>
 
-  if (!translate?.value && DEBUG) {
-    console.error(`[UI]: Translation for «${key}» not found`)
+  if (!translate?.value) {
+    logDebugError(`[UI]: Translation for «${key}» not found`)
     // throw new Error('[UI]: Translation not found')
   }
   return translate
@@ -29,11 +29,10 @@ export function t(key: LanguagePackKeys): Signal<string> {
 export async function changeLanguage(language: SupportedLanguages) {
   logDebugWarn('[UI]: I18n provider was called')
 
-  let data = (await cache.get('prechat-i18n-pack', language)) as FetchLanguage
+  let data = DEBUG ? undefined : ((await cache.get('prechat-i18n-pack', language)) as FetchLanguage)
   if (!data) {
     const response = await callApi('fetchLanguage', language)
     data = deepOmit(response.data.language, ['__typename']) as FetchLanguage
-
     cache.add({
       name: 'prechat-i18n-pack',
       key: language,
@@ -41,20 +40,16 @@ export async function changeLanguage(language: SupportedLanguages) {
     })
   }
 
-  const state = getGlobalState()
-  updateGlobalState(
-    {
-      settings: {
-        i18n: {
-          pack: data.pack,
-          lang_code: language,
-          countries: data.countries,
-          errors: data.errors
-        }
+  updateGlobalState({
+    settings: {
+      i18n: {
+        pack: data.pack,
+        lang_code: language,
+        countries: data.countries,
+        errors: data.errors
       }
-    },
-    Boolean(state.auth.session)
-  )
+    }
+  })
 }
 
 export async function translateByString(language: SupportedLanguages, str: LanguagePackKeys) {

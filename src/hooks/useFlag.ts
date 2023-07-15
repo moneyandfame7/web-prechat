@@ -1,16 +1,33 @@
-import { useCallback, useState } from 'preact/hooks'
+import { StateUpdater, useCallback, useState } from 'preact/hooks'
 
-type HookFlag = (initial?: boolean) => [boolean, VoidFunction, VoidFunction]
-
-export const useFlag: HookFlag = (initial = false) => {
-  const [state, setState] = useState(initial)
+interface UseBooleanOutput {
+  value: boolean
+  setValue: StateUpdater<boolean>
+  setTrue: () => void
+  setFalse: () => void
+  toggle: () => void
+}
+type UseBoolean = (initial?: boolean) => UseBooleanOutput
+const useBoolean: UseBoolean = (initial = false) => {
+  const [value, setValue] = useState(initial)
 
   const setTrue = useCallback(() => {
-    setState(true)
+    setValue(true)
+  }, [])
+  const setFalse = useCallback(() => {
+    setValue(false)
+  }, [])
+  const toggle = useCallback(() => {
+    setValue((prev) => !prev)
   }, [])
 
-  const setFalse = useCallback(() => {
-    setState(false)
-  }, [])
-  return [state, setTrue, setFalse]
+  return {
+    value,
+    setValue,
+    setFalse,
+    setTrue,
+    toggle
+  }
 }
+
+export { useBoolean }

@@ -1,23 +1,22 @@
 import {
-  FC,
-  TargetedEvent,
+  type FC,
+  type TargetedEvent,
   memo,
   useCallback,
-  useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
+  useLayoutEffect
 } from 'preact/compat'
 
 import { t } from 'lib/i18n'
 
 import type { Country } from 'types/api'
 
-import { ClickAwayListener } from 'components/ClickAwayListener'
-import { InputText } from 'components/Input'
-import { MenuItem, Menu } from 'components/Menu'
+import { InputText, Icon } from 'components/ui'
+import { MenuItem, Menu } from 'components/popups/menu'
 
-import { TRANSITION_DURATION_FADE } from 'common/config'
+import { TRANSITION_DURATION_ZOOM_FADE } from 'common/config'
 
 import './SelectCountryInput.scss'
 
@@ -36,18 +35,21 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
     const handleOnFocus = useCallback(() => {
       if (loading) return
 
+      inputRef.current?.select()
+
       setIsOpen(true)
       setTimeout(() => {
         authScroll?.scrollTo({ top: authScroll.scrollHeight, behavior: 'smooth' })
       }, 100)
-    }, [countryList, selectedCountry, loading])
+    }, [countryList, selectedCountry, loading, authScroll])
 
-    const handleOnBlur = () => {
+    const handleOnBlur = useCallback(() => {
       setIsOpen(false)
       setTimeout(() => {
         authScroll?.scrollTo({ top: 0, behavior: 'smooth' })
       }, 100)
-    }
+      inputRef.current?.blur()
+    }, [authScroll, inputRef])
 
     const handleChange = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
       setStringName(e.currentTarget.value)
@@ -59,11 +61,11 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
       setTimeout(() => {
         handleSelect(country)
         setStringName(country.name)
-        /* avoid flickering menu */
-      }, TRANSITION_DURATION_FADE)
+        /* Avoid flickering menu */
+      }, TRANSITION_DURATION_ZOOM_FADE + 10)
     }, [])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (selectedCountry) {
         setStringName(selectedCountry?.name)
       }
@@ -94,24 +96,25 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
         </MenuItem>
       ))
     }, [selectedCountry, countryList, stringName])
-
     return (
-      <div class="select-container">
-        <InputText
-          elRef={inputRef}
-          onFocus={handleOnFocus}
-          onInput={handleChange}
-          value={stringName}
-          label={t('Country')}
-          loading={loading}
-          withArrow
-        />
-        <ClickAwayListener onClickAway={handleOnBlur}>
-          <Menu isOpen={isOpen} withMount={true}>
+      <>
+        <div class="select-container">
+          <InputText
+            aria-label="Select country"
+            id="select-country"
+            elRef={inputRef}
+            onFocus={handleOnFocus}
+            onInput={handleChange}
+            value={stringName}
+            label={t('Country')}
+            loading={loading}
+            endIcon={<Icon name="chevronDown" color="secondary" />}
+          />
+          <Menu withBackdrop={false} isOpen={isOpen} withMount onClose={handleOnBlur}>
             {renderItems}
           </Menu>
-        </ClickAwayListener>
-      </div>
+        </div>
+      </>
     )
   }
 )

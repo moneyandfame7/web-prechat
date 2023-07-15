@@ -1,6 +1,6 @@
 import type { DeepSignal } from 'deepsignal'
 
-import { ConfirmationResult, RecaptchaVerifier } from 'firebase/auth'
+import type { ConfirmationResult, RecaptchaVerifier } from 'firebase/auth'
 
 import type { ErrorPack, LanguagePack, SupportedLanguages } from 'types/lib'
 import type { Country } from 'types/api'
@@ -23,22 +23,23 @@ export interface SettingsState {
     pack: LanguagePack
     errors: ErrorPack
   }
-  suggestedLanguage?: SupportedLanguages
+  suggestedLanguage: SupportedLanguages | undefined
+  leftColumnWidth: number
 }
 export interface AuthState {
   rememberMe: boolean
-  connection?: Connection
-  phoneNumber?: string
-  captcha?: RecaptchaVerifier
-  confirmResult?: ConfirmationResult
-  error?: string
-  loading?: boolean
-  userId?: string
+  connection: Connection | undefined
+  phoneNumber: string | undefined
+  captcha: RecaptchaVerifier | undefined
+  confirmResult: ConfirmationResult | undefined
+  error: string | undefined
+  loading: boolean | undefined
+  userId: string | undefined
   screen: AuthScreens
-  token?: string
-  passwordHint?: string
-  email?: string
-  session?: string
+  token: string | undefined
+  passwordHint: string | undefined
+  email: string | undefined
+  session: string | undefined
 }
 export interface GlobalState {
   settings: SettingsState

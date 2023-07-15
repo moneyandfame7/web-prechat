@@ -1,12 +1,6 @@
-import { DocumentNode, gql } from '@apollo/client'
+import {DocumentNode, gql} from '@apollo/client'
 
 /* Api */
-export const QUERY_API_INIT: DocumentNode = gql`
-  query Initialize {
-    initialize
-  }
-`
-
 export const FRAGMENT_SESSION: DocumentNode = gql`
   fragment AllSessionFields on Session {
     id
@@ -87,5 +81,18 @@ export const QUERY_COUNTRIES: DocumentNode = gql`
         code
       }
     }
+  }
+`
+
+/* Test subscribe */
+export const SUBSCRIBE_TEST: DocumentNode = gql`
+  subscription TestSubscribe {
+    testSubscribed
+  }
+`
+
+export const MUTATION_TEST: DocumentNode = gql`
+  mutation TestMutation($name: String!) {
+    testSubscription(name: $name)
   }
 `

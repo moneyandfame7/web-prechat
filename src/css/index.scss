@@ -1,23 +1,50 @@
-@import "variables";
 @import "reset";
+@import "variables";
+@import "mixins";
 @import "typography";
-@import "../assets/icons/css/all.css";
+@import "../assets/webfonts/fonts.css";
+
 #app {
   height: 100%;
   width: 100%;
+  overflow: hidden;
 }
 body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Apple Color Emoji", "Helvetica Neue", sans-serif;
+  font-family:
+    "Roboto",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Apple Color Emoji",
+    "Segoe UI",
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Fira Sans",
+    "Droid Sans",
+    "Helvetica Neue",
+    sans-serif;
+
+  html.is-mac & {
+    font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol";
+  }
   line-height: 1.35;
 }
-.scrollable {
+
+html {
+  scroll-behavior: smooth;
+}
+
+html:not(.is-safari) .scrollable {
   &-x {
     overflow-x: auto;
     overflow-y: hidden;
+    padding: 5px 0;
   }
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+  // padding: 0 7px;
 
   &.scroll-hidden {
     &::-webkit-scrollbar {
@@ -46,15 +73,45 @@ body {
     transition-duration: 0.4s;
   }
   &:hover {
-    scrollbar-color: $color-scrollbar transparent;
+    scrollbar-color: #cccccc transparent;
 
     &::-webkit-scrollbar-thumb {
-      background-color: $color-scrollbar;
+      background-color: #cccccc;
       scrollbar-width: thin;
       display: initial;
     }
   }
 }
+.scrollable {
+  &-x {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
+}
 .text-center {
   text-align: center;
+}
+
+.Icon {
+  &-secondary {
+    path {
+      fill: var(--color-neutral);
+    }
+    &:hover {
+      path {
+        fill: #000 !important;
+      }
+    }
+  }
+  path {
+    transition: all 0.2s ease !important;
+  }
+  &:hover {
+    path {
+      fill: var(--color-neutral);
+    }
+  }
 }

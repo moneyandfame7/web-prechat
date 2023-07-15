@@ -1,39 +1,46 @@
 import * as cache from 'lib/cache'
 
 import type { Connection } from 'types/request'
+import { milliseconds } from 'utilities/ms'
 
 interface RequestResponse {
   connection: Connection
 }
-
-const requestsUrls: Record<keyof RequestResponse, string> = {
-  connection: 'https://freeipapi.com/api/json'
-}
-
 type RequestName = keyof RequestResponse
 
-export async function makeRequest<T extends RequestName>(
-  name: T,
-  cacheName?: cache.CacheName,
-  withCache?: boolean,
-  expiration?: number
-) {
-  try {
-    if (!withCache || !cacheName) {
-      const response = await fetch(requestsUrls[name])
+interface Test {
+  url: string
+  cacheName: cache.CacheName
+  expiration: number
+  withCache?: boolean
+}
 
-      return (await response.json()) as RequestResponse[typeof name]
+const requests: Record<RequestName, Test> = {
+  connection: {
+    url: 'https://freeipapi.com/api/json',
+    cacheName: 'prechat-important',
+    expiration: milliseconds({ hours: 1 }),
+    withCache: true
+  }
+}
+
+export async function makeRequest<T extends RequestName>(name: T) {
+  try {
+    const { expiration, cacheName, url, withCache } = requests[name]
+
+    if (!withCache || !cacheName) {
+      const response = await fetch(url)
+
+      return (await response.json()) as RequestResponse[T]
     }
     let response = await cache.get(cacheName, name)
 
     if (!response) {
-      response = await fetch(requestsUrls[name])
+      response = await fetch(url)
 
       await cache.add({ name: cacheName, key: name, value: response.clone(), expiration })
     }
-    return (await (response instanceof Response
-      ? response.json()
-      : response)) as RequestResponse[typeof name]
+    return (await (response instanceof Response ? response.json() : response)) as RequestResponse[T]
   } catch (e) {
     if (e instanceof Error) {
       throw new Error(e.message)

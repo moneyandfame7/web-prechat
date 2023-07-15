@@ -11,10 +11,10 @@ $color-error: rgb(237, 24, 24);
 $color-error-secondary: rgba(233, 52, 52, 0.751);
 
 $color-warn: #ffd3009e;
-
+$color-gray: #f4f4f5;
 $color-neutral: #707579;
 $color-neutral-secondary: #94989b;
-
+$color-neutral-third: #dc3016;
 $color-neutral-hover: rgba(0, 0, 0, 0.05);
 
 $color-background: #fff;
@@ -22,13 +22,19 @@ $color-background-secondary: #dedede;
 $color-background-transparent: rgba(255 255 255/90%);
 
 $color-ripple: rgba(0, 0, 0, 0.08);
+$color-border: #dfe1e5;
+$color-border-hover: #c4c9cc;
 
 $input-border-radius: 12px;
 $input-base-height: 50px;
 
-$transition-duration-zoom-fade: 150ms;
+$transition-duration-zoom-fade: 200ms;
 $transition-duration-fade: 200ms;
-$transition-duration-slide: 200ms;
+$transition-duration-slide: 250ms;
+
+$left-column-width: 350px;
+$z-menu-backdrop: 10;
+$z-menu: 11;
 :root {
   --color-background: #{$color-background};
   --color-background-secondary: #{$color-background-secondary};
@@ -47,12 +53,16 @@ $transition-duration-slide: 200ms;
   --color-error-secondary: #{$color-error-secondary};
 
   --color-warn: #{$color-warn};
+  --color-gray: #{$color-gray};
 
   --color-neutral: #{$color-neutral};
   --color-neutral-secondary: #{$color-neutral-secondary};
+
   --color-neutral-hover: #{$color-neutral-hover};
 
   --color-ripple: #{$color-ripple};
+  --color-border: #{$color-border};
+  --color-border-hover: #{$color-border-hover};
 
   --input-border-radius: #{$input-border-radius};
   --input-base-height: #{$input-base-height};
@@ -60,6 +70,11 @@ $transition-duration-slide: 200ms;
   --transition-duration-zoom-fade: #{$transition-duration-zoom-fade};
   --transition-duration-fade: #{$transition-duration-fade};
   --transition-duration-slide: #{$transition-duration-slide};
+
+  --left-column-width: #{$left-column-width};
+
+  --z-menu-backdrop: #{$z-menu-backdrop};
+  --z-menu: #{$z-menu};
   &.dark {
     --color-background: #000;
     --color-background-transparent: rgba(0 0 0/90%);

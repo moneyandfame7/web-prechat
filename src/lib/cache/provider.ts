@@ -12,6 +12,7 @@ export async function add({ name, key, value, expiration }: CacheOptions) {
   }
 
   const response = new Response(JSON.stringify(item))
+
   await cache.put(key, response)
 }
 
