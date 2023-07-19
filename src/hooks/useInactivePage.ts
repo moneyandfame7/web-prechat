@@ -1,4 +1,4 @@
-import { useEffect } from 'preact/compat'
+import {useEffect} from 'preact/compat'
 
 type FocusHandler = (e: FocusEvent) => void
 
@@ -7,9 +7,9 @@ interface UseInactiveInput {
   onFocus: FocusHandler
 }
 
-export const useInactivePage = (input: UseInactiveInput) => {
+export const usePageBlur = (input: UseInactiveInput) => {
   useEffect(() => {
-    const { onBlur, onFocus } = input
+    const {onBlur, onFocus} = input
 
     window.addEventListener('blur', onBlur)
     window.addEventListener('focus', onFocus)

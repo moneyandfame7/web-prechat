@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'preact/hooks'
+import {useCallback, useEffect, useMemo, useRef, useState} from 'preact/hooks'
 
-import { debounce } from 'common/functions'
+import {debounce} from 'common/functions'
 
 interface UseResizeProps {
   initialWidth?: number
@@ -30,7 +30,6 @@ export function useResize<T extends HTMLElement>({
   const debounceResize = useMemo(() => {
     return debounce(debounceCb, 500)
   }, [])
-
   const eventResize = useCallback(
     (e: MouseEvent) => {
       if (isResizing && ref.current) {

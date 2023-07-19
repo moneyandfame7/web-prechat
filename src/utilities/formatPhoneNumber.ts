@@ -30,10 +30,10 @@ type CodePatterns = keyof typeof patterns
  */
 export const formatPhoneNumber = (phone?: string, code?: string): FormattedPhone => {
   if (!phone) {
-    return { formatted: '' }
+    return {formatted: ''}
   }
   if (!code || phone.length === 0) {
-    return { formatted: phone }
+    return {formatted: phone}
   }
 
   let pattern = patterns[code as CodePatterns]
@@ -44,9 +44,9 @@ export const formatPhoneNumber = (phone?: string, code?: string): FormattedPhone
   }
   if (!testPhone) {
     if (phone.trim() === code) {
-      return { formatted: phone + ' ', remainingPattern: pattern }
+      return {formatted: phone + ' ', remainingPattern: pattern}
     }
-    return { formatted: phone }
+    return {formatted: phone}
   }
 
   const digitRegex = /\d/
@@ -62,5 +62,5 @@ export const formatPhoneNumber = (phone?: string, code?: string): FormattedPhone
   const formatted = formattedWithPattern.replace(/‒+.*$/, '')
   const remainingPattern = formattedPhoneNumber.replace(/\d+/g, '')
 
-  return { formatted, formattedWithPattern, remainingPattern }
+  return {formatted, formattedWithPattern, remainingPattern}
 }

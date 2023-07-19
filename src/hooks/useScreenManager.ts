@@ -1,7 +1,7 @@
-import { type VNode } from 'preact'
-import { useCallback, useRef, useState } from 'preact/hooks'
+import {type VNode} from 'preact'
+import {useCallback, useRef, useState} from 'preact/hooks'
 
-import { cloneElementWithKey } from 'utilities/cloneElementWithKey'
+import {cloneElementWithKey} from 'utilities/cloneElementWithKey'
 
 type ScreenKey = string | number
 
@@ -10,10 +10,11 @@ interface UseScreenManagerInput<S extends ScreenKey> {
   initial: S
   forResetScreen?: S
   existScreen?: S
+  resetCb?: (currentScreen: S, force?: true) => S
 }
 interface UseScreenManagerOutput<S extends ScreenKey> {
   setScreen: (screen: S) => void
-  resetScreen: () => void
+  resetScreen: (force?: true) => void
   renderScreen: () => VNode
   activeScreen: S
 }
@@ -28,16 +29,24 @@ const useScreenManager = <S extends ScreenKey>(
 ): UseScreenManagerOutput<S> => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cache = useRef({} as Record<any, VNode>)
-  const { cases, initial, forResetScreen = initial, existScreen } = input
+  const {cases, initial, forResetScreen = initial, existScreen, resetCb} = input
   const [screen, setStateScreen] = useState(initial)
 
   const setScreen: UseScreenManagerHandler<S, 'setScreen'> = useCallback((screen) => {
     setStateScreen(screen)
   }, [])
 
-  const resetScreen: UseScreenManagerHandler<S, 'resetScreen'> = useCallback(() => {
-    setStateScreen(forResetScreen)
-  }, [forResetScreen])
+  const resetScreen: UseScreenManagerHandler<S, 'resetScreen'> = useCallback(
+    (force?: true) => {
+      let computedForResetScreen = forResetScreen
+      if (resetCb) {
+        computedForResetScreen = resetCb(screen, force)
+      }
+
+      setStateScreen(computedForResetScreen)
+    },
+    [forResetScreen]
+  )
 
   const renderScreen: UseScreenManagerHandler<S, 'renderScreen'> = useCallback(() => {
     const computedScreen = existScreen || screen
@@ -65,4 +74,4 @@ const useScreenManager = <S extends ScreenKey>(
   }
 }
 
-export { useScreenManager }
+export {useScreenManager}

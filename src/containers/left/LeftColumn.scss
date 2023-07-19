@@ -1,9 +1,8 @@
 .LeftColumn {
   overflow: hidden;
-  // background-color: red;
   position: relative;
-
-  width: var(--left-column-width);
+  // var(--left-column-width)
+  width: 420px;
   height: 100vh;
   border-right: 1px solid var(--color-border);
 
@@ -21,4 +20,10 @@
     -webkit-touch-callout: none;
     user-select: none;
   }
+
+  // &-Main,
+  // &-Contacts,
+  // &-Settings {
+  //   background-color: white;
+  // }
 }

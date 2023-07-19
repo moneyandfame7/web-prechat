@@ -4,7 +4,7 @@ interface MsInput {
   minutes?: number
 }
 /**
- * @param value - object (days, hours, minutes)
+ * @param value - object {@link MsInput}
  */
 export const milliseconds = (value: MsInput) => {
   let totalMs = 0

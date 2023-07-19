@@ -1,19 +1,17 @@
-import { FC, memo, useCallback } from 'preact/compat'
+import type {FC} from 'preact/compat'
+import {memo} from 'preact/compat'
 
-import { LeftColumnScreen } from 'types/ui'
-import { Button } from 'components/ui'
+import {Button} from 'components/ui'
 
-import { useLeftColumn } from '../context'
+import {useLeftColumn} from '../context'
 
 const Settings: FC = () => {
-  const { setScreen } = useLeftColumn()
-  const handleResetScreen = useCallback(() => {
-    setScreen(LeftColumnScreen.Main)
-  }, [])
+  const {resetScreen} = useLeftColumn()
+
   return (
     <>
-      Settings
-      <Button onClick={handleResetScreen}>Reset</Button>
+      <div class="LeftColumn-Header">Settings</div>
+      <Button onClick={resetScreen}>Reset</Button>
     </>
   )
 }

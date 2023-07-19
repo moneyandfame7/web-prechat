@@ -1,4 +1,5 @@
-import { StateUpdater, useCallback, useState } from 'preact/hooks'
+import type { StateUpdater} from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks'
 
 interface UseBooleanOutput {
   value: boolean

@@ -1,4 +1,4 @@
-import { FC, TargetedEvent } from 'preact/compat'
+import type { FC, TargetedEvent } from 'preact/compat'
 
 import { logDebugWarn } from 'lib/logger'
 import { IS_SENSOR } from 'common/config'

@@ -1,9 +1,9 @@
-import type { SignalGlobalState, Theme } from 'types/state'
-import type { SupportedLanguages } from 'types/lib'
-import type { SignInPayload, SignUpPayload } from 'types/action'
-import { DEBUG } from 'common/config'
+import type {SignalGlobalState, Theme} from 'types/state'
+import type {SupportedLanguages} from 'types/lib'
+import type {SignInPayload, SignUpPayload} from 'types/action'
+import {DEBUG} from 'common/config'
 
-import { getGlobalState } from './signal'
+import {getGlobalState} from './signal'
 
 /**
  * The idea for actions was taken from this repository because I really liked it
@@ -14,8 +14,10 @@ interface ActionPayloads {
   signUp: SignUpPayload
   signIn: SignInPayload
 
+  /* Auth ui */
   uploadAvatar: File
   /* Ui */
+
   changeTheme: Theme
   changeLanguage: SupportedLanguages
   setAuthRememberMe: boolean
@@ -44,16 +46,16 @@ export function createAction<Name extends ActionNames>(
 ) {
   if (actions[name]) {
     // eslint-disable-next-line no-console
-    console.warn(`[CLIENT]: Action with name ${name} already exist.`)
+    console.warn(`[UI]: Action with name ${name} already exist.`)
     return
   }
-  const globalState = getGlobalState()
 
   actions[name] = (payload: unknown) => {
     if (DEBUG) {
       // eslint-disable-next-line no-console
       console.warn(`Was called action with name «${name}»`)
     }
+    const globalState = getGlobalState()
     handler(globalState, actions, payload as ActionPayloads[Name])
   }
 }

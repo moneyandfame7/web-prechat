@@ -3,7 +3,7 @@
   .Menu {
     top: calc(var(--input-base-height) + 5px);
     max-height: 350px;
-
+    width: 100% !important;
     &_item {
       font-size: 16px;
       font-weight: 400;

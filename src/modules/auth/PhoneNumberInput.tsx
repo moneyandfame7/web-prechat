@@ -1,4 +1,5 @@
-import { FC, RefObject, TargetedEvent, useCallback } from 'preact/compat'
+import type { FC, RefObject, TargetedEvent} from 'preact/compat';
+import { useCallback } from 'preact/compat'
 
 import { InputText } from 'components/ui'
 import { t } from 'lib/i18n'

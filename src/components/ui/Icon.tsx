@@ -1,8 +1,11 @@
-import { FC, JSX, Suspense, TargetedEvent, memo, useCallback } from 'preact/compat'
+import type {FC, JSX, TargetedEvent} from 'preact/compat'
+import {memo, useCallback} from 'preact/compat'
 
 import * as icons from 'assets/icons/all'
-import { logDebugWarn } from 'lib/logger'
-import { IS_SENSOR } from 'common/config'
+import {logDebugWarn} from 'lib/logger'
+import {IS_SENSOR} from 'common/config'
+
+import './Icon.scss'
 type SVGIconProps = JSX.SVGAttributes<SVGSVGElement>
 
 export type IconName = keyof typeof icons
@@ -23,7 +26,7 @@ interface IconProps {
   width?: number
 }
 export const Icon: FC<IconProps> = memo(
-  ({ name, className, color = 'default', onClick, withFastClick = false, ...props }) => {
+  ({name, className, color = 'default', onClick, withFastClick = false, ...props}) => {
     const ComputedIcon = icons[name] as FC<SVGIconProps>
 
     const buildedClass = `Icon Icon-${name} Icon-${color} ${className || ''}`.trim()
@@ -42,14 +45,12 @@ export const Icon: FC<IconProps> = memo(
     )
 
     return (
-      <Suspense fallback="...">
-        <ComputedIcon
-          class={buildedClass}
-          onMouseDown={withFastClick && !IS_SENSOR ? handleMouseDown : undefined}
-          onClick={IS_SENSOR || !withFastClick ? onClick : undefined}
-          {...props}
-        />
-      </Suspense>
+      <ComputedIcon
+        className={buildedClass}
+        onMouseDown={withFastClick && !IS_SENSOR ? handleMouseDown : undefined}
+        onClick={IS_SENSOR || !withFastClick ? onClick : undefined}
+        {...props}
+      />
     )
   }
 )

@@ -1,76 +1,65 @@
-import {type FC, memo} from 'preact/compat'
+import {type FC, memo, Fragment} from 'preact/compat'
 import {useCallback, useState, useRef} from 'preact/hooks'
 
 import {SearchInput} from 'components/ui'
-import {MountTransition} from 'components/MountTransition'
+import MountTransition from 'components/MountTransition'
 
-import {LeftColumnMainScreen} from 'types/ui'
+import {LeftColumnMainScreen, LeftColumnScreen} from 'types/ui'
 
 import {Chats} from './chats/Chats'
-import {Search} from './search/Search'
+import Search from './search/Search.async'
 
 import {LeftGoBack} from '../LeftGoBack'
 import {LeftMainMenu} from './MainMenu'
 import {CreateChatButton} from './CreateChatButton'
-import {LeftColumnMainProvider} from './context'
+
+import {useLeftColumn} from '../context'
 
 import './LeftMain.scss'
 
 const classNames = {
-  [LeftColumnMainScreen.Chats]: 'LeftColumn-Main_Chats scrollable',
-  [LeftColumnMainScreen.Search]: 'LeftColumn-Main_Search'
+  [LeftColumnMainScreen.Chats]: 'LeftColumn-Chats scrollable',
+  [LeftColumnMainScreen.Search]: 'LeftColumn-Search'
 }
 
-const LeftMain: FC = () => {
-  const [activeScreen, setActiveScreen] = useState(LeftColumnMainScreen.Chats)
+const LeftMain: FC = (props) => {
   const [search, setSearch] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const {activeScreen, setScreen} = useLeftColumn()
+  const renderScreen = useCallback(() => {
+    switch (activeScreen) {
+      case LeftColumnScreen.Chats:
+        return <Chats key={LeftColumnScreen.Chats} />
+      case LeftColumnScreen.Search:
+        return <Search key={LeftColumnScreen.Search} />
+      default:
+        return <Chats key={LeftColumnScreen.Chats} />
+    }
+  }, [activeScreen])
   const handleSearch = useCallback((value: string) => {
     setSearch(value)
   }, [])
 
-  const renderScreen = useCallback(() => {
+  const handleFocusInput = useCallback(() => {
+    setScreen(LeftColumnScreen.Search)
+  }, [])
+  const renderButton = useCallback(() => {
     switch (activeScreen) {
-      case LeftColumnMainScreen.Chats:
-        return <Chats key={LeftColumnMainScreen.Chats} />
-      case LeftColumnMainScreen.Search:
-        return <Search key={LeftColumnMainScreen.Search} />
+      case LeftColumnScreen.Search:
+        return <LeftGoBack />
+      default:
+        return <LeftMainMenu />
     }
   }, [activeScreen])
-
-  const resetScreen = useCallback(() => {
-    setActiveScreen(LeftColumnMainScreen.Chats)
-    inputRef.current?.blur()
-  }, [])
-
-  const setScreen = useCallback((screen: LeftColumnMainScreen) => {
-    setActiveScreen(screen)
-  }, [])
-
-  const handleFocusInput = useCallback(() => {
-    setScreen(LeftColumnMainScreen.Search)
-  }, [])
-
-  const renderMainButton = () => {
-    switch (activeScreen) {
-      case LeftColumnMainScreen.Chats:
-        return <LeftMainMenu />
-
-      case LeftColumnMainScreen.Search:
-        return <LeftGoBack />
-    }
-  }
   return (
-    <LeftColumnMainProvider
-      store={{
-        activeScreen,
-        resetScreen,
-        setScreen
-      }}
-    >
-      <div class="LeftColumn-Header">
+    <Fragment {...props}>
+      {/* <div class="LeftColumn-Header">
         {renderMainButton()}
+ 
+      </div> */}
+      <div class="LeftColumn-Header">
+        {renderButton()}
         <SearchInput
           elRef={inputRef}
           value={search}
@@ -90,7 +79,7 @@ const LeftMain: FC = () => {
         </MountTransition>
         <CreateChatButton />
       </div>
-    </LeftColumnMainProvider>
+    </Fragment>
   )
 }
 

@@ -1,4 +1,4 @@
-import {DocumentNode, gql} from '@apollo/client'
+import {type DocumentNode, gql} from '@apollo/client'
 
 /* Api */
 export const FRAGMENT_SESSION: DocumentNode = gql`

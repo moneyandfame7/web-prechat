@@ -1,9 +1,17 @@
-import type { CacheOptions, CacheResponse, CacheName } from './types'
+import type {CacheOptions, CacheResponse, CacheName} from './types'
 
 // eslint-disable-next-line no-restricted-globals
-const storageCache = self.caches
+const storageCache = self.caches || window.caches
 
-export async function add({ name, key, value, expiration }: CacheOptions) {
+/* Not supported in non-secured ( http ) */
+export function isCacheApiSupported() {
+  return Boolean(storageCache)
+}
+
+export async function add({name, key, value, expiration}: CacheOptions) {
+  if (!storageCache) {
+    return
+  }
   const cache = await storageCache.open(name)
 
   const item: CacheResponse = {
@@ -17,6 +25,9 @@ export async function add({ name, key, value, expiration }: CacheOptions) {
 }
 
 export async function get(name: CacheName, key: string) {
+  if (!storageCache) {
+    return null
+  }
   const cache = await storageCache.open(name)
 
   const response = await cache.match(key)
@@ -37,11 +48,17 @@ export async function get(name: CacheName, key: string) {
 }
 
 export async function remove(name: CacheName, key: string) {
+  if (!storageCache) {
+    return null
+  }
   const cache = await storageCache.open(name)
   await cache.delete(key)
 }
 
 export async function clear(name: CacheName) {
+  if (!storageCache) {
+    return null
+  }
   try {
     return await storageCache.delete(name)
   } catch (err) {

@@ -1,4 +1,5 @@
-import { FC, memo } from 'preact/compat'
+import type { FC} from 'preact/compat';
+import { memo } from 'preact/compat'
 
 const Lock: FC = () => {
   return (

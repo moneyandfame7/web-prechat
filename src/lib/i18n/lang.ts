@@ -2,7 +2,6 @@ const lang = {
   Next: 'Next',
   Country: 'Country',
   Code: 'Code',
-  Search: 'Search',
   CreateChat: 'Create chat',
   PhoneNumber: 'Phone number',
   RememberMe: 'Remember me',
@@ -12,13 +11,22 @@ const lang = {
   NewGroup: 'New Group',
   NewPrivateChat: 'New Private Chat',
   LastNameOptional: 'Last Name (optional)',
+  Search: 'Search',
+  SavedMessages: 'Saved Messages',
+  Contacts: 'Contacts',
+  Settings: 'Settings',
+  Animations: 'Animations',
+  DarkMode: 'Dark Mode',
+  InstallApp: 'Install App',
+  SourceCode: 'Source Code',
   'Auth.Signin': 'Sign in to Prechat',
   'Auth.ConfirmNumber': 'Please confirm your country and enter your phone number.',
   'Auth.ContinueOnLanguage': 'Continue in English',
   'Auth.CodeSendOnApp': "We've sent the code to the Prechat app on your other device.",
   'Auth.CodeSendOnPhone': "We've sent a code to your mobile phone",
   'Auth.SignUp': 'Enter your name and add a profile picture',
-  'Auth.SilentAuth': 'Silent (your contacts will not receive a notification of registration)',
+  'Auth.SilentAuth':
+    'Silent (your contacts will not receive a notification of registration)',
   'Auth.StartMessaging': 'Start Messaging'
 }
 

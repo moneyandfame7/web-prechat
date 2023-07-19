@@ -1,13 +1,19 @@
-import { type FC, memo } from 'preact/compat'
+import {type FC, memo, useCallback} from 'preact/compat'
 
-import { useLeftMainColumn } from 'containers/left/main/context'
+import {IconButton} from 'components/ui'
 
-import { IconButton } from 'components/ui'
+import {useLeftColumn} from './context'
 
 import './LeftGoBack.scss'
 
-export const LeftGoBack: FC = memo((props) => {
-  const { resetScreen } = useLeftMainColumn()
+interface LeftGoBackProps {
+  force?: boolean
+}
+export const LeftGoBack: FC<LeftGoBackProps> = memo(({force = true, ...props}) => {
+  const {resetScreen} = useLeftColumn()
 
-  return <IconButton icon="arrowLeft" onClick={resetScreen} {...props} />
+  const handleClick = useCallback(() => {
+    resetScreen(force)
+  }, [force])
+  return <IconButton icon="arrowLeft" onClick={handleClick} {...props} />
 })

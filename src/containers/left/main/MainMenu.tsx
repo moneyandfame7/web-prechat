@@ -1,66 +1,66 @@
-import { FC, memo, useMemo } from 'preact/compat'
+import type {FC} from 'preact/compat'
+import {memo, useMemo} from 'preact/compat'
 
-import { LeftColumnScreen } from 'types/ui'
-import { useBoolean } from 'hooks/useFlag'
+import {LeftColumnScreen} from 'types/ui'
+import {useBoolean} from 'hooks/useFlag'
 
-import { ReactComponent as SavedMessagesIcon } from 'assets/icons/saved-messages.svg'
-import { ReactComponent as SettingsIcon } from 'assets/icons/settings.svg'
-import { ReactComponent as UserIcon } from 'assets/icons/user.svg'
-import { ReactComponent as AnimationsIcon } from 'assets/icons/figma.svg'
-import { ReactComponent as MoonIcon } from 'assets/icons/moon.svg'
-import { ReactComponent as GitIcon } from 'assets/icons/github.svg'
-// import { ReactComponent as MenuIcon } from 'assets/icons/menu.svg'
-// import { ReactComponent as SunIcon } from 'assets/icons/sun.svg'
+import {Menu, MenuItem} from 'components/popups/menu'
+import {Icon, IconButton} from 'components/ui'
 
-import { Menu, MenuItem } from 'components/popups/menu'
-import { IconButton } from 'components/ui'
-
-import { useLeftColumn } from '../context'
+import {useLeftColumn} from '../context'
 
 import './MainMenu.scss'
+import {GITHUB_SOURCE} from 'common/config'
+import {t} from 'lib/i18n'
+import {getGlobalState} from 'state/signal'
 export const LeftMainMenu: FC = memo(() => {
-  const { setTrue, value, setFalse } = useBoolean(false)
-  const { setScreen } = useLeftColumn()
+  const {setTrue, value, setFalse} = useBoolean(false)
+  const {setScreen} = useLeftColumn()
+  const lang = getGlobalState((state) => state.settings.i18n.lang_code)
 
   const items = useMemo(
     () => (
       <>
         <MenuItem>
-          <SavedMessagesIcon />
-          Saved messages
+          <Icon name="savedMessages" />
+          {t('SavedMessages')}
         </MenuItem>
         <MenuItem
           onClick={() => {
             setScreen(LeftColumnScreen.Contacts)
           }}
         >
-          <UserIcon />
-          Contacts
+          <Icon name="user" />
+          {t('Contacts')}
         </MenuItem>
         <MenuItem
           onClick={() => {
             setScreen(LeftColumnScreen.Settings)
           }}
         >
-          <SettingsIcon />
-          Settings
+          <Icon name="settings" />
+          {t('Settings')}
         </MenuItem>
 
         <MenuItem>
-          <AnimationsIcon />
-          Animations
+          <Icon name="animations" />
+          {t('Animations')}
         </MenuItem>
         <MenuItem>
-          <MoonIcon />
-          Night Mode
+          <Icon name="darkMode" />
+          {t('DarkMode')}
         </MenuItem>
         <MenuItem>
-          <GitIcon />
-          Source Code
+          <Icon name="download" />
+          {t('InstallApp')}
+        </MenuItem>
+        <MenuItem to={GITHUB_SOURCE}>
+          <Icon name="bug" />
+          {t('SourceCode')}
         </MenuItem>
       </>
     ),
-    []
+    [lang]
   )
   return (
     <div class="LeftColumn-Main_Menu">

@@ -1,24 +1,34 @@
 /* eslint-disable no-console */
-import { Signal, useSignal } from '@preact/signals'
-import { useEffect } from 'preact/hooks'
-import deepOmit from 'omit-deep-lodash'
+import {type Signal, useSignal} from '@preact/signals'
+import {useEffect} from 'preact/hooks'
 
-import { callApi } from 'api/provider'
 import * as cache from 'lib/cache'
 
-import type { LanguagePackKeys, SupportedLanguages } from 'types/lib'
-import type { FetchLanguage } from 'types/api'
+import type {LanguagePackKeys, SupportedLanguages} from 'types/lib'
+import type {FetchLanguage} from 'types/api'
 
-import { getGlobalState } from 'state/signal'
-import { updateGlobalState } from 'state/persist'
-import { logDebugError, logDebugWarn } from 'lib/logger'
-import { DEBUG } from 'common/config'
+import {getGlobalState} from 'state/signal'
+import {updateGlobalState} from 'state/persist'
+import {logDebugError, logDebugWarn} from 'lib/logger'
+import {DEBUG} from 'common/config'
+import {api} from 'api/client'
+
+async function fetchLanguage(language: SupportedLanguages) {
+  const response = await api.help.getLanguage(language)
+
+  return (await import('omit-deep-lodash')
+    .then((module) => module.default)
+    .then((omitDeep) =>
+      omitDeep(response.data.language, ['__typename'])
+    )) as FetchLanguage
+}
 
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
 
   const translate = i18n.pack[`$${key}`] as unknown as Signal<string>
 
+  console.log({translate})
   if (!translate?.value) {
     logDebugError(`[UI]: Translation for «${key}» not found`)
     // throw new Error('[UI]: Translation not found')
@@ -28,11 +38,14 @@ export function t(key: LanguagePackKeys): Signal<string> {
 
 export async function changeLanguage(language: SupportedLanguages) {
   logDebugWarn('[UI]: I18n provider was called')
+  let data
 
-  let data = DEBUG ? undefined : ((await cache.get('prechat-i18n-pack', language)) as FetchLanguage)
+  if (!DEBUG) {
+    data = (await cache.get('prechat-i18n-pack', language)) as FetchLanguage
+  }
   if (!data) {
-    const response = await callApi('fetchLanguage', language)
-    data = deepOmit(response.data.language, ['__typename']) as FetchLanguage
+    data = await fetchLanguage(language)
+
     cache.add({
       name: 'prechat-i18n-pack',
       key: language,
@@ -52,7 +65,10 @@ export async function changeLanguage(language: SupportedLanguages) {
   })
 }
 
-export async function translateByString(language: SupportedLanguages, str: LanguagePackKeys) {
+export async function translateByString(
+  language: SupportedLanguages,
+  str: LanguagePackKeys
+) {
   const i18n = getGlobalState((state) => state.settings.i18n)
 
   if (language === i18n.lang_code) {
@@ -61,7 +77,11 @@ export async function translateByString(language: SupportedLanguages, str: Langu
 
   let langString = await cache.get('prechat-i18n-string', str)
   if (!langString) {
-    const { data } = await callApi('fetchLanguageString', language, str)
+    const {data} =
+      /* await callApi('fetchLanguageString', language, str) */ await api.help.getLanguageString(
+        language,
+        str
+      )
     langString = data.languageString
     await cache.add({
       name: 'prechat-i18n-string',
@@ -79,7 +99,8 @@ export function useTranslateString(str: LanguagePackKeys, language?: SupportedLa
   useEffect(() => {
     if (language) {
       translateByString(language, str).then(
-        (value) => (translate.value = typeof value === 'string' ? value : (value as Signal).value)
+        (value) =>
+          (translate.value = typeof value === 'string' ? value : (value as Signal).value)
       )
     }
   }, [language, str])

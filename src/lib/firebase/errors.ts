@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { batch } from '@preact/signals'
-import { DeepSignal } from 'deepsignal'
+import type { DeepSignal } from 'deepsignal'
 import { FirebaseError } from 'firebase/app'
 
 import type { SupportedLanguages } from 'types/lib'

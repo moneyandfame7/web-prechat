@@ -1,4 +1,5 @@
-import { FC, Suspense, lazy, memo } from 'preact/compat'
+import type { FC} from 'preact/compat';
+import { Suspense, lazy, memo } from 'preact/compat'
 
 const SignUpAsync: FC = () => {
   const SignUp = lazy(() => import('./SignUp'))

@@ -1,9 +1,9 @@
 import Dexie from 'dexie'
 
-import type { DeepPartial } from 'types/common'
-import type { PersistGlobalState } from 'state/persist'
+import type {DeepPartial} from 'types/common'
+import type {PersistGlobalState} from 'state/persist'
 
-import { logDebugInfo } from 'lib/logger'
+import {logDebugInfo} from 'lib/logger'
 
 import UsersTable from './users'
 import AuthTable from './auth'
@@ -38,10 +38,8 @@ class Database {
   }
 
   public async getInitialState(): Promise<DeepPartial<PersistGlobalState>> {
-    const start = Date.now()
     const [auth, settings] = await Promise.all([this.auth.get(), this.settings.get()])
 
-    logDebugInfo(Date.now() - start, '[DB INIT]')
     return {
       auth,
       settings

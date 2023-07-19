@@ -1,13 +1,12 @@
-import type { DeepPartial, DeepPartialPersist } from 'types/common'
-import type { SettingsState, AuthState, SignalGlobalState, GlobalState } from 'types/state'
+import type {DeepPartial, DeepPartialPersist} from 'types/common'
+import type {SettingsState, AuthState, SignalGlobalState, GlobalState} from 'types/state'
 
-import { logDebugWarn } from 'lib/logger'
-import { database } from 'lib/database'
-import { getGlobalState } from './signal'
+import {logDebugWarn} from 'lib/logger'
+import {database} from 'lib/database'
+import {getGlobalState} from './signal'
 
-type PickPersistProperties = Partial<Record<keyof GlobalState, boolean | object>>
-
-type PersistedProperties<T extends PickPersistProperties> = {
+type PersistPropertiesSatisfie = Partial<Record<keyof GlobalState, boolean | object>>
+type PersistedProperties<T extends PersistPropertiesSatisfie> = {
   [K in keyof T]: K extends keyof GlobalState
     ? T[K] extends boolean
       ? GlobalState[K]
@@ -22,12 +21,12 @@ const PERSISTED_PROPERTIES = {
     userId: true,
     passwordHint: true,
     email: true,
-    session: true,
-    screen: true
-    // loading: false
+    session: true
+    // screen: false
   },
   settings: true
-}
+} satisfies PersistPropertiesSatisfie
+
 export type PersistGlobalState = PersistedProperties<typeof PERSISTED_PROPERTIES>
 export type PersistGlobalStateKeys = keyof PersistGlobalState
 
@@ -89,9 +88,15 @@ function getPersistedState<T>(
   for (const key in persistedProperties) {
     if (persistedProperties[key] === true) {
       persistedState[key] = state[key]
-    } else if (typeof persistedProperties[key] === 'object' && typeof state[key] === 'object') {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const nestedPersistedState = getPersistedState(state[key], (persistedProperties as any)[key])
+    } else if (
+      typeof persistedProperties[key] === 'object' &&
+      typeof state[key] === 'object'
+    ) {
+      const nestedPersistedState = getPersistedState(
+        state[key],
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (persistedProperties as any)[key]
+      )
       if (Object.keys(nestedPersistedState).length > 0) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ;(persistedState as any)[key] = nestedPersistedState
@@ -107,7 +112,7 @@ function updateAuthState<S extends SignalGlobalState, U extends DeepPartial<Auth
   state: S,
   auth: U
 ) {
-  Object.assign<S, { auth: U }>(state, {
+  Object.assign<S, {auth: U}>(state, {
     auth: {
       ...state.auth,
       ...auth
@@ -115,11 +120,11 @@ function updateAuthState<S extends SignalGlobalState, U extends DeepPartial<Auth
   })
 }
 
-function updateSettingsState<S extends SignalGlobalState, U extends DeepPartial<SettingsState>>(
-  state: S,
-  settings: U
-) {
-  Object.assign<S, { settings: U }>(state, {
+function updateSettingsState<
+  S extends SignalGlobalState,
+  U extends DeepPartial<SettingsState>
+>(state: S, settings: U) {
+  Object.assign<S, {settings: U}>(state, {
     settings: {
       ...state.settings,
       ...settings,

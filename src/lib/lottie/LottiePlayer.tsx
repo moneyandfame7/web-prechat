@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from 'preact/hooks'
-import type { FC, TargetedEvent } from 'preact/compat'
+import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
+import type {FC, TargetedEvent} from 'preact/compat'
 
 import Lottie from 'lottie-react'
 import clsx from 'clsx'
 
-import { useInactivePage } from 'hooks'
+import {useInactivePage} from 'hooks'
 
-import type { LottiePlayerProps } from './types'
-import { getFallback } from './helpers'
+import type {LottiePlayerProps} from './types'
+import {getFallback} from './helpers'
 
 import './LottiePlayer.scss'
 
@@ -25,6 +25,8 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
 }) => {
   const [animationData, setAnimationData] = useState<unknown>()
   const [isPaused, setIsPaused] = useState(lottieRef.current?.animationItem?.isPaused)
+  const playerHidden = loading || !animationData /* || !lottieRef.current */
+
   useLayoutEffect(() => {
     import(`../../assets/animations/${name}.json`).then((module) =>
       setAnimationData(module.default)
@@ -42,25 +44,28 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
     /**
      * visibility change for stop
      */
-    document.addEventListener('visibilitychange', (e) => {
+    document.addEventListener('visibilitychange', () => {
       if (!hidden) {
       }
     })
   }, [hidden])
-  const pauseOnClick = (e: TargetedEvent<HTMLDivElement, Event>) => {
-    e.preventDefault()
-    if (isPaused) {
-      lottieRef.current?.play()
-      setIsPaused(false)
-    } else {
-      lottieRef.current?.pause()
-      setIsPaused(true)
-    }
-  }
 
-  useInactivePage({ onBlur: stopAnimationOnBlur, onFocus: playAnimationOnFocus })
+  const pauseOnClick = useCallback(
+    (e: TargetedEvent<HTMLDivElement, Event>) => {
+      e.preventDefault()
 
-  const playerHidden = loading || !animationData /* || !lottieRef.current */
+      if (isPaused) {
+        lottieRef.current?.play()
+        setIsPaused(false)
+      } else {
+        lottieRef.current?.pause()
+        setIsPaused(true)
+      }
+    },
+    [isPaused]
+  )
+
+  useInactivePage({onBlur: stopAnimationOnBlur, onFocus: playAnimationOnFocus})
 
   const fallbackClass = clsx('Lottie-fallback', `Lottie-fallback_${size}`)
 
@@ -85,19 +90,21 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
       lottieRef.current?.play()
     }
   }, [playerHidden])
+  // const elRef = useRef<{base: HTMLDivElement}>(null)
 
   return (
     <>
       {playerHidden && !hidden && <div class={fallbackClass}>{getFallback(name)}</div>}
 
       <Lottie
+        // ref={elRef}
         onClick={isPausable ? pauseOnClick : undefined}
         lottieRef={lottieRef}
         loop={loop}
         autoplay={false}
         className={playerClass}
         animationData={animationData}
-        rendererSettings={{ className: 'Lottie-player_svg' }}
+        rendererSettings={{className: 'Lottie-player_svg'}}
       />
     </>
   )

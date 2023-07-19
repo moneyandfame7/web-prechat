@@ -1,4 +1,4 @@
-import { Ref, RefCallback, RefObject } from 'preact'
+import type { Ref, RefCallback, RefObject } from 'preact'
 
 import { type CSSTransitionClassNames, Phase, PhaseEvent } from './types'
 

@@ -1,9 +1,9 @@
-import { VNode } from 'preact'
+import type {VNode} from 'preact'
 
-import { ReactComponent as MonkeyFallback } from 'assets/skeletons/monkey.svg'
-import { ReactComponent as EmptyFolderFallback } from 'assets/skeletons/empty-folder.svg'
+import {ReactComponent as MonkeyFallback} from 'assets/monkey.svg'
+import {ReactComponent as EmptyFolderFallback} from 'assets/skeletons/empty-folder.svg'
 
-import { LottieAnimations } from './types'
+import type {LottieAnimations} from './types'
 
 export function getFallback(name: LottieAnimations): VNode | undefined {
   if (name.includes('Monkey-')) {

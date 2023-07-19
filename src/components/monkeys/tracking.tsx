@@ -1,12 +1,11 @@
-import { type FC, useRef, type RefObject, useEffect, memo, useState } from 'preact/compat'
+import {type FC, useRef, type RefObject, useEffect, memo, useState} from 'preact/compat'
 
-import { LottiePlayer, type LottieRefCurrentProps } from 'lib/lottie'
-import { logDebugWarn } from 'lib/logger'
+import {LottiePlayer, type LottieRefCurrentProps} from 'lib/lottie'
 
-import type { Size } from 'types/ui'
-import { usePrevious } from 'hooks'
+import type {Size} from 'types/ui'
+import {usePrevious} from 'hooks'
 
-import { MONKEY_TRACK_FRAMES, MONKEY_TRACK_LAST_SEGMENT_ON_INPUT } from './helpers'
+import {MONKEY_TRACK_FRAMES, MONKEY_TRACK_LAST_SEGMENT_ON_INPUT} from './helpers'
 
 interface AnimationSegments {
   firstS: number
@@ -20,7 +19,7 @@ interface MonkeyTrackProps {
   currentLength: number
 }
 export const MonkeyTrack: FC<MonkeyTrackProps> = memo(
-  ({ maxLength, size = 'medium', inputRef, currentLength }) => {
+  ({maxLength, size = 'medium', inputRef, currentLength}) => {
     const monkeyRef = useRef<LottieRefCurrentProps>(null)
     const monkeyRefIdle = useRef<LottieRefCurrentProps>(null)
     const segmentsRef = useRef<AnimationSegments>({
@@ -49,8 +48,6 @@ export const MonkeyTrack: FC<MonkeyTrackProps> = memo(
           segmentsRef.current.speed = 6
           break
       }
-
-      logDebugWarn(`[UI]: Monkey FRAGMENTS: ${FRAGMENTS}`)
     }, [FRAGMENTS])
 
     useEffect(() => {

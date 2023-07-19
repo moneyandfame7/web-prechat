@@ -1,4 +1,4 @@
-import { deepSignal } from 'deepsignal'
+import {deepSignal} from 'deepsignal'
 
 import {
   AuthScreens,
@@ -10,6 +10,7 @@ import {
 
 import lang from 'lib/i18n/lang'
 import errors from 'lib/i18n/errors'
+import {isCacheApiSupported} from 'lib/cache'
 
 const settingsInitialState: SettingsState = {
   theme: 'light',
@@ -41,13 +42,16 @@ const authInitialState: AuthState = {
 const globalInitialState: GlobalState = {
   settings: settingsInitialState,
   auth: authInitialState,
-  initialization: false
+  initialization: false,
+  isCacheSupported: isCacheApiSupported()
 }
 
 const globalState = deepSignal(globalInitialState)
 
 export function getGlobalState(): SignalGlobalState
-export function getGlobalState<State>(selector: (state: SignalGlobalState) => State): State
+export function getGlobalState<State>(
+  selector: (state: SignalGlobalState) => State
+): State
 export function getGlobalState<State>(selector?: (state: SignalGlobalState) => State) {
   if (typeof selector === 'function') {
     return selector(globalState)

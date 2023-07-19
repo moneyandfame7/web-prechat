@@ -1,8 +1,8 @@
-import type { ComponentChildren, JSX, RefObject } from 'preact'
-import { type FC, memo, useEffect, useState, useMemo } from 'preact/compat'
+import type {ComponentChildren, JSX, RefObject} from 'preact'
+import {type FC, memo, useEffect, useState, useMemo} from 'preact/compat'
 import clsx from 'clsx'
 
-import { CSSTransition } from 'lib/css-transition'
+import {CSSTransition} from 'lib/css-transition'
 import {
   TRANSITION_DURATION_FADE,
   TRANSITION_DURATION_SLIDE,
@@ -18,6 +18,9 @@ export type TransitionType =
   | 'zoomSlide'
   | 'zoomSlideReverse'
 
+export type ComposedTransitionType = 'zoomSlide' | 'zoomSlideReverse'
+
+export type AllTransitionType = TransitionType & ComposedTransitionType
 interface TransitionProps {
   elRef?: RefObject<HTMLDivElement>
   withMount: boolean
@@ -29,9 +32,16 @@ interface TransitionProps {
   className?: string
   styles?: JSX.CSSProperties
   absoluted?: boolean
+  full?: boolean
 }
 /* rewrite to constants */
 const getTransitionDuration = (type: TransitionType) => {
+  const body = document.querySelector('body')
+  if (body?.classList.contains('animation-none')) {
+    return 0
+  } else if (body?.classList.contains('animation-level-2')) {
+    return 150
+  }
   switch (type) {
     /* if animation none - return 0? , if level 2 - 150?? or also 0*/
     case 'slide':
@@ -41,7 +51,7 @@ const getTransitionDuration = (type: TransitionType) => {
     case 'zoomFade':
       return TRANSITION_DURATION_ZOOM_FADE
     default:
-      return 350
+      return 300
   }
 }
 const cssTransitionNames: Pick<
@@ -63,7 +73,8 @@ export const Transition: FC<TransitionProps> = memo(
     className,
     elRef,
     styles,
-    absoluted = true
+    absoluted = true,
+    full = true
   }) => {
     const [isMounted, setIsMouted] = useState(isVisible)
 
@@ -72,14 +83,13 @@ export const Transition: FC<TransitionProps> = memo(
     }, [isVisible])
 
     const transitionClassname = clsx(className, 'Transition', {
-      'Transition_absoluted': absoluted
+      'Transition_absoluted': absoluted,
+      'Transition_full': full
     })
 
     const buildedStyles = useMemo(
       () => ({
-        ...(duration
-          ? { [cssTransitionNames[type] as string]: `${duration}ms` }
-          : {}),
+        ...(duration ? {[cssTransitionNames[type] as string]: `${duration}ms`} : {}),
         ...styles
       }),
       [duration, type, styles]

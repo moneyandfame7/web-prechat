@@ -1,4 +1,4 @@
-import Dexie from 'dexie'
+import type Dexie from 'dexie'
 
 import type { PersistGlobalState } from 'state/persist'
 
@@ -6,8 +6,9 @@ import errors from 'lib/i18n/errors'
 import lang from 'lib/i18n/lang'
 import { LEFT_COLUMN_WIDTH } from 'common/config'
 
-import { DatabaseTable, TableKeys } from './table'
-import { DatabaseTableNames } from './root'
+import type { TableKeys } from './table';
+import { DatabaseTable } from './table'
+import type { DatabaseTableNames } from './root'
 
 const INITIAL_SETTINGS_STATE: PersistGlobalState[DatabaseTableNames.Settings] = {
   i18n: {

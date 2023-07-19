@@ -1,3 +1,3 @@
 import './api/auth'
-import './api/settings'
+import './api/help'
 import './ui/settings'

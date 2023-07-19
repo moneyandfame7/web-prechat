@@ -1,15 +1,17 @@
-import { VNode, cloneElement, createElement } from 'preact'
-import { memo, useMemo } from 'preact/compat'
+import type {VNode} from 'preact'
+import {cloneElement, createElement} from 'preact'
+import {memo} from 'preact/compat'
 
 import Transition from './Transition'
-import { computeClassName, joinClassNames } from './helpers'
-import { type CSSTransitionProps, Phase, type TransitionState } from './types'
+import {computeClassName, joinClassNames} from './helpers'
+import type {Phase} from './types'
+import {type CSSTransitionProps, type TransitionState} from './types'
 
 /**
  * Taken from https://github.com/fakundo/preact-transitioning and modified
  */
 export const CSSTransition = memo((props: CSSTransitionProps): VNode => {
-  const { children, classNames, ...rest } = props
+  const {children, classNames, ...rest} = props
 
   return createElement(
     Transition,
@@ -19,7 +21,7 @@ export const CSSTransition = memo((props: CSSTransitionProps): VNode => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     rest as any,
     (_state: TransitionState, phase: Phase) => {
-      const { className } = children.props
+      const {className} = children.props
 
       const finalClassName = joinClassNames(
         className,
@@ -27,10 +29,7 @@ export const CSSTransition = memo((props: CSSTransitionProps): VNode => {
         computeClassName(phase, classNames)
       )
 
-      if (finalClassName.includes('Menu')) {
-        console.log({ phase })
-      }
-      return cloneElement(children, { className: finalClassName })
+      return cloneElement(children, {className: finalClassName})
     }
   )
 })

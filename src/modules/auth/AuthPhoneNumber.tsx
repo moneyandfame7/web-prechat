@@ -9,36 +9,31 @@ import {
   useState
 } from 'preact/compat'
 
-import { changeLanguage, t, useTranslateString } from 'lib/i18n'
-import { getActions } from 'state/action'
-import { getGlobalState } from 'state/signal'
-import {
-  selectCountryByPhone,
-  selectSuggestedCountry
-} from 'state/selectors/auth'
-import { formatPhoneNumber } from 'utilities/formatPhoneNumber'
+import {changeLanguage, t, useTranslateString} from 'lib/i18n'
+import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
+import {selectCountryByPhone, selectSuggestedCountry} from 'state/selectors/auth'
+import {formatPhoneNumber} from 'utilities/formatPhoneNumber'
 
-import type { Country } from 'types/api'
+import type {Country} from 'types/api'
 
-import { Button, Checkbox } from 'components/ui'
-import { Logo } from 'components/Logo'
+import {Button, Checkbox} from 'components/ui'
+import {Logo} from 'components/Logo'
 
-import { PhoneNumberInput } from './PhoneNumberInput'
-import { SelectCountryInput } from './SelectCountryInput'
+import {PhoneNumberInput} from './PhoneNumberInput'
+import {SelectCountryInput} from './SelectCountryInput'
 
 import './AuthPhoneNumber.scss'
 
 const IS_PHONE_VAL_REG = /^\+\d{1,4}\s?\d{10,}$/
 
 const AuthPhoneNumber: FC = () => {
-  const { sendPhone } = getActions()
+  const {sendPhone} = getActions()
   const state = getGlobalState()
   const phoneInputRef = useRef<HTMLInputElement>(null)
 
   const [phone, setPhone] = useState<string>('')
-  const [country, setCountry] = useState<Country | undefined>(
-    selectCountryByPhone(state)
-  )
+  const [country, setCountry] = useState<Country | undefined>(selectCountryByPhone(state))
   const [translateLoading, setTranslateLoading] = useState(false)
   const translateString = useTranslateString(
     'Auth.ContinueOnLanguage',
@@ -85,9 +80,7 @@ const AuthPhoneNumber: FC = () => {
       setTranslateLoading(true)
       await changeLanguage(suggestedLng)
       setCountry(
-        state.settings.i18n.countries.find((country) =>
-          phone.includes(country.dial_code)
-        )
+        state.settings.i18n.countries.find((country) => phone.includes(country.dial_code))
       )
       setTranslateLoading(false)
     }
@@ -110,10 +103,7 @@ const AuthPhoneNumber: FC = () => {
     [formattedPhone]
   )
 
-  const isValidPhone = useMemo(
-    () => IS_PHONE_VAL_REG.test(phone.trim()),
-    [phone]
-  )
+  const isValidPhone = useMemo(() => IS_PHONE_VAL_REG.test(phone.trim()), [phone])
   return (
     <>
       <Logo />
@@ -121,9 +111,7 @@ const AuthPhoneNumber: FC = () => {
       <p class="subtitle text-center">{t('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>
         <SelectCountryInput
-          loading={
-            !state.settings?.i18n?.countries?.length || !state.auth.connection
-          }
+          loading={!state.settings?.i18n?.countries?.length || !state.auth.connection}
           countryList={state.settings.i18n.countries}
           handleSelect={handleSelectCountry}
           selectedCountry={country}
@@ -149,8 +137,7 @@ const AuthPhoneNumber: FC = () => {
           </Button>
         )}
         {translateString &&
-          state.settings.suggestedLanguage !==
-            state.settings.i18n.lang_code && (
+          state.settings.suggestedLanguage !== state.settings.i18n.lang_code && (
             <Button
               variant="transparent"
               onClick={handleChangeLanguage}

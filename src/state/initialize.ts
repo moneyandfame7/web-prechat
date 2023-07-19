@@ -1,14 +1,14 @@
-import { generateRecaptcha } from 'lib/firebase'
-import { changeLanguage } from 'lib/i18n'
-import type { SignalGlobalState } from 'types/state'
+import {generateRecaptcha} from 'lib/firebase'
+import {changeLanguage} from 'lib/i18n'
+import type {SignalGlobalState} from 'types/state'
 
-import { USER_BROWSER, USER_PLATFORM } from 'common/config'
+import {USER_BROWSER, USER_PLATFORM} from 'common/config'
 
-import { database } from 'lib/database'
+import {database} from 'lib/database'
 
-import { getGlobalState } from './signal'
-import { getActions } from './action'
-import { updateGlobalState } from './persist'
+import {getGlobalState} from './signal'
+import {getActions} from './action'
+import {updateGlobalState} from './persist'
 
 export async function initializeAuth() {
   const state = getGlobalState()
@@ -19,9 +19,8 @@ export async function initializeAuth() {
 }
 
 async function initializeGlobalState() {
-  const { getConnection } = getActions()
+  const {getConnection} = getActions()
   await getConnection()
-
   const persisted = await database.getInitialState()
   updateGlobalState(persisted)
 }
@@ -52,7 +51,8 @@ export async function initializeApplication() {
   if (state.settings.theme === 'light') {
     document.documentElement.classList.add('day')
   }
+
   setTimeout(() => {
     state.initialization = false
-  }, 500)
+  }, 200)
 }

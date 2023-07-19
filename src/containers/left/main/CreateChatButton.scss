@@ -3,16 +3,39 @@
     position: absolute;
     right: 20px;
     bottom: 20px;
+    .FloatButton {
+      right: 0;
+      bottom: 0;
+
+      & .Icon {
+        position: absolute;
+      }
+    }
+
+    &:not(.open) {
+      & .Icon-close {
+        animation: hide-icon 0.4s forwards ease-out;
+      }
+      & .Icon-editFilled {
+        animation: show-icon 0.4s ease-out;
+      }
+    }
+    &.open {
+      & .Icon-close {
+        animation: show-icon 0.4s ease-out;
+      }
+      & .Icon-editFilled {
+        animation: hide-icon 0.4s forwards ease-out;
+      }
+    }
   }
 
   &-Menu {
-    &.Transition_absoluted {
-      position: absolute;
+    &.zoomFade.Transition_absoluted {
       bottom: 60px;
       top: auto;
       left: auto;
-      right: 20px;
-      width: 210px;
+      right: 0;
     }
   }
 }

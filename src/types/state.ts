@@ -1,10 +1,10 @@
-import type { DeepSignal } from 'deepsignal'
+import type {DeepSignal} from 'deepsignal'
 
-import type { ConfirmationResult, RecaptchaVerifier } from 'firebase/auth'
+import type {ConfirmationResult, RecaptchaVerifier} from 'firebase/auth'
 
-import type { ErrorPack, LanguagePack, SupportedLanguages } from 'types/lib'
-import type { Country } from 'types/api'
-import type { Connection } from 'types/request'
+import type {ErrorPack, LanguagePack, SupportedLanguages} from 'types/lib'
+import type {Country} from 'types/api'
+import type {Connection} from 'types/request'
 
 export type Theme = 'light' | 'dark' | 'system'
 
@@ -45,6 +45,7 @@ export interface GlobalState {
   settings: SettingsState
   auth: AuthState
   initialization: boolean
+  isCacheSupported: boolean
 }
 
 export type SignalGlobalState = DeepSignal<GlobalState>

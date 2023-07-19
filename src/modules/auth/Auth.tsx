@@ -1,14 +1,13 @@
-import { VNode } from 'preact'
-import { FC, memo, useEffect } from 'preact/compat'
+import type {FC} from 'preact/compat'
+import {useCallback, useEffect} from 'preact/compat'
 
 import 'state/actions/imporant'
-import { initializeAuth } from 'state/initialize'
-import { getGlobalState } from 'state/signal'
+import {initializeAuth} from 'state/initialize'
+import {getGlobalState} from 'state/signal'
 
-import { AuthScreens } from 'types/state'
-import { useScreenManager } from 'hooks'
+import {AuthScreens} from 'types/state'
 
-import { MountTransition } from 'components/MountTransition'
+import MountTransition from 'components/MountTransition'
 
 import SignUp from './SignUp.async'
 import AuthCode from './AuthCode.async'
@@ -36,28 +35,42 @@ const classNames = {
 
 //   return 'slide'
 // }
-const screenCases: Record<AuthScreens, VNode> = {
-  [AuthScreens.PhoneNumber]: <AuthPhoneNumber />,
-  [AuthScreens.Code]: <AuthCode />,
-  [AuthScreens.Password]: <AuthPassword />,
-  [AuthScreens.SignUp]: <SignUp />
-}
+// const screenCases: Record<AuthScreens, VNode> = {
+//   [AuthScreens.PhoneNumber]: <AuthPhoneNumber />,
+//   [AuthScreens.Code]: <AuthCode />,
+//   [AuthScreens.Password]: <AuthPassword />,
+//   [AuthScreens.SignUp]: <SignUp />
+// }
 const Auth: FC = () => {
-  const { auth } = getGlobalState()
+  const {auth} = getGlobalState()
   useEffect(() => {
     initializeAuth()
   }, [])
 
-  const { renderScreen } = useScreenManager({
-    initial: AuthScreens.PhoneNumber,
-    forResetScreen: AuthScreens.PhoneNumber,
-    cases: screenCases,
-    existScreen: auth.screen
-  })
+  // const {renderScreen, activeScreen} = useScreenManager({
+  //   initial: AuthScreens.PhoneNumber,
+  //   forResetScreen: AuthScreens.PhoneNumber,
+  //   cases: screenCases,
+  //   existScreen: auth.screen
+  // })
+
+  const renderScreen = useCallback(() => {
+    switch (auth.screen) {
+      case AuthScreens.Code:
+        return <AuthCode key={AuthScreens.Code} />
+      case AuthScreens.Password:
+        return <AuthPassword key={AuthScreens.Password} />
+      case AuthScreens.PhoneNumber:
+        return <AuthPhoneNumber key={AuthScreens.PhoneNumber} />
+      case AuthScreens.SignUp:
+        return <SignUp key={AuthScreens.SignUp} />
+    }
+  }, [auth.screen])
 
   return (
     <div class="scrollable" id="auth-scroll">
       <div class="Auth">
+        <h1>{auth.$screen}</h1>
         <div class="Auth_inner">
           <MountTransition
             /**
@@ -82,4 +95,4 @@ const Auth: FC = () => {
   )
 }
 
-export default memo(Auth)
+export default Auth

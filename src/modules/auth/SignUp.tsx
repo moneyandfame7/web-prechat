@@ -1,4 +1,5 @@
-import { FC, TargetedEvent, memo, useCallback, useState } from 'preact/compat'
+import type { FC, TargetedEvent} from 'preact/compat';
+import { memo, useCallback, useState } from 'preact/compat'
 
 import { getActions } from 'state/action'
 

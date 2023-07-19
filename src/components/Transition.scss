@@ -1,14 +1,12 @@
-.transition-base {
-  &.Transition_absoluted {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-  }
-}
 .Transition {
-  width: 100%;
-  height: 100%;
+  &_full {
+    width: 100%;
+    height: 100%;
+  }
+
+  will-change: transform;
+  animation-fill-mode: forwards !important;
+
   body.animation-level-2 & {
     transition: opacity 0.15s !important;
     transform: none !important;
@@ -17,29 +15,74 @@
     transition: none !important;
     transform: none !important;
   }
+
+  &_absoluted {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
 }
 
 $transform-3d-final: translate3d(0, 0, 0);
 
 $transition-zoom-fade:
-  opacity var(--transition-duration-zoom-fade) ease,
-  transform var(--transition-duration-zoom-fade) cubic-bezier(0.33, 1, 0.68, 1);
+  opacity 0.2s ease-out,
+  transform 0.2s ease;
 
-$transform-zoom-fade-init: scale(0.8) $transform-3d-final;
+$transform-zoom-fade-init: scale(0.7) $transform-3d-final;
 $transform-zoom-fade-final: scale(1) $transform-3d-final;
+
 .zoomFade {
   --transform-zoom-fade-init: #{$transform-zoom-fade-init};
   --transform-zoom-fade-final: #{$transform-zoom-fade-final};
-  @include withTransition(
-    var(--transform-zoom-fade-init),
-    var(--transform-zoom-fade-final),
-    $transition-zoom-fade,
-    true
-  );
+  --transition-zoom-fade: #{$transition-zoom-fade};
+
+  &-enter {
+    opacity: 0;
+    transform: var(--transform-zoom-fade-init);
+    &-active {
+      opacity: 1;
+      transform: var(--transform-zoom-fade-final);
+      transition: var(--transition-zoom-fade);
+    }
+    &-done {
+      opacity: 1;
+      transform: var(--transform-zoom-fade-final);
+    }
+  }
+
+  &-appear {
+    opacity: 0;
+    transform: var(--transform-zoom-fade-init);
+    &-active {
+      opacity: 1;
+      transform: var(--transform-zoom-fade-final);
+      transition: var(--transition-zoom-fade);
+    }
+    &-done {
+      opacity: 1;
+      transform: var(--transform-zoom-fade-final);
+    }
+  }
+
+  &-exit {
+    opacity: 1;
+    transform: var(--transform-zoom-fade-final);
+
+    &-active {
+      opacity: 0;
+      transform: var(--transform-zoom-fade-init);
+      transition: var(--transition-zoom-fade);
+    }
+
+    &-done {
+      display: none !important;
+    }
+  }
 }
 
 .fade {
-  @extend .transition-base;
   &-enter {
     opacity: 0;
     &-active {
@@ -74,10 +117,40 @@ $transform-zoom-fade-final: scale(1) $transform-3d-final;
     }
   }
 }
-
-$transform-layout-slide-transition: transform var(--transition-duration-slide) cubic-bezier(0.33, 1, 0.68, 1);
+// cubic-bezier(0.25, 0.1, 0.25, 1);
+// cubic-bezier(0.42, 0, 0.58, 1)
+$transform-layout-slide-transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1);
 .slide {
-  --transform-layout-slide-transition: #{$transform-layout-slide-transition};
-
-  @include withTransition(translate3d(100%, 0, 0), $transform-3d-final, var(--transform-layout-slide-transition));
+  &-enter {
+    transform: translate3d(200%, 0, 0);
+    &-active {
+      transform: translate3d(0, 0, 0);
+      transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    &-done {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  &-appear {
+    transform: translate3d(200%, 0, 0);
+    &-active {
+      transform: translate3d(0, 0, 0);
+      transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    &-done {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  &-exit {
+    transform: $transform-3d-final;
+    &-active {
+      transform: translate3d(200%, 0, 0);
+      transition: transform 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    &-done {
+      transform: translate3d(200%, 0, 0);
+      display: none !important;
+    }
+  }
+  z-index: 2;
 }

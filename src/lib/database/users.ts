@@ -1,4 +1,4 @@
-import Dexie from 'dexie'
+import type Dexie from 'dexie'
 
 interface User {
   id: string

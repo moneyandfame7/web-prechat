@@ -1,13 +1,13 @@
-import type { FC, TargetedEvent } from 'preact/compat'
+import type {FC, TargetedEvent} from 'preact/compat'
 import clsx from 'clsx'
 
-import { IS_SENSOR } from 'common/config'
-import { logDebugWarn } from 'lib/logger'
+import {IS_SENSOR} from 'common/config'
+import {logDebugWarn} from 'lib/logger'
 
-import type { SignalOrString } from 'types/ui'
+import type {SignalOrString} from 'types/ui'
 
-import { Spinner } from './Spinner'
-import { Ripple } from '../Ripple'
+import {Spinner} from './Spinner'
+import {Ripple} from '../Ripple'
 
 import './Button.scss'
 

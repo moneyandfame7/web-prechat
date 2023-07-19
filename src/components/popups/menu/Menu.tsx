@@ -1,16 +1,17 @@
-import { ComponentChildren } from 'preact'
-import { FC, TargetedEvent, memo, useCallback, useRef } from 'preact/compat'
+import type {ComponentChildren} from 'preact'
+import type {FC, TargetedEvent} from 'preact/compat'
+import {memo, useCallback, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import { IS_SENSOR, TRANSITION_DURATION_MENU } from 'common/config'
-import { logDebugWarn } from 'lib/logger'
+import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/config'
+import {logDebugWarn} from 'lib/logger'
 
-import { useClickAway } from 'hooks/useClickAway'
+import {useClickAway} from 'hooks/useClickAway'
 
-import { Transition } from 'components/Transition'
+import {Transition} from 'components/Transition'
 
-import { MenuProvider, useMenuContext } from './context'
+import {MenuProvider, useMenuContext} from './context'
 
 import './Menu.scss'
 
@@ -42,11 +43,14 @@ export const Menu: FC<MenuProps> = memo(
   }) => {
     const buildedClass = clsx('Menu', className, 'scrollable')
 
-    const handleClickBackdrop = useCallback((e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault()
-      onClose()
-      logDebugWarn('[UI]: Menu backdrop click')
-    }, [])
+    const handleClickBackdrop = useCallback(
+      (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
+        e.preventDefault()
+        onClose()
+        logDebugWarn('[UI]: Menu backdrop click')
+      },
+      []
+    )
     const menuRef = useRef<HTMLDivElement>(null)
 
     useClickAway(menuRef, (e, clicked) => {
@@ -79,7 +83,9 @@ export const Menu: FC<MenuProps> = memo(
         >
           {children}
         </Transition>
-        {isOpen && withBackdrop && <div class="backdrop" onMouseDown={handleClickBackdrop} />}
+        {isOpen && withBackdrop && (
+          <div class="backdrop" onMouseDown={handleClickBackdrop} />
+        )}
       </MenuProvider>
     )
   }
@@ -91,13 +97,14 @@ interface MenuItemProps {
   onClick?: (e?: MouseEvent) => void
   hidden?: boolean
   selected?: boolean
+  to?: string
 }
 export const MenuItem: FC<MenuItemProps> = memo(
-  ({ children, className, hidden = false, selected = false, onClick }) => {
-    const { onClose, autoClose } = useMenuContext()
+  ({children, className, hidden = false, selected = false, onClick, to}) => {
+    const {onClose, autoClose} = useMenuContext()
 
     const handleClick = useCallback(
-      (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
+      (e: TargetedEvent<HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
         e.preventDefault()
         autoClose && onClose()
         onClick?.()
@@ -106,7 +113,7 @@ export const MenuItem: FC<MenuItemProps> = memo(
     )
 
     const handleMouseDown = useCallback(
-      (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
+      (e: TargetedEvent<HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
         if (!IS_SENSOR && e.button === 0) {
           handleClick(e)
         }
@@ -118,14 +125,28 @@ export const MenuItem: FC<MenuItemProps> = memo(
       'hidden': hidden,
       'selected': selected
     })
+    const itemProps = {
+      onClick: IS_SENSOR ? handleClick : undefined,
+      onMouseDown: !IS_SENSOR ? handleMouseDown : undefined,
+      class: buildedClass
+    }
     return (
-      <div
-        onClick={IS_SENSOR ? handleClick : undefined}
-        onMouseDown={!IS_SENSOR ? handleMouseDown : undefined}
-        class={buildedClass}
-      >
-        {children}
-      </div>
+      <>
+        {to ? (
+          <a {...itemProps} href={to} target="_blank" rel="noreferrer">
+            {children}
+          </a>
+        ) : (
+          <div {...itemProps}>{children}</div>
+        )}
+        {/* <div
+          onClick={IS_SENSOR ? handleClick : undefined}
+          onMouseDown={!IS_SENSOR ? handleMouseDown : undefined}
+          class={buildedClass}
+        >
+          {children}
+        </div> */}
+      </>
     )
   }
 )

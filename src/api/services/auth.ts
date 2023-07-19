@@ -1,5 +1,3 @@
-import type {ApolloClient, NormalizedCacheObject} from '@apollo/client'
-
 import type {
   SendPhoneResponse,
   SignInInput,
@@ -7,28 +5,40 @@ import type {
   SignUpInput,
   SignUpResponse
 } from 'types/api'
+import type {Mutation} from 'api/apollo'
 
 import {
   MUTATION_SEND_PHONE,
   MUTATION_SIGN_IN,
-  MUTATION_SIGN_UP
+  MUTATION_SIGN_UP,
+  MUTATION_TEST
 } from 'api/graphql'
 
-export class ApiAuth {
-  public constructor(
-    private readonly client: ApolloClient<NormalizedCacheObject>
-  ) {}
+import {BaseService} from './base'
 
-  public async sendPhone(phone: string) {
+export interface ApiAuthMethods {
+  sendPhone: (phone: string) => Mutation<{sendPhone: SendPhoneResponse}>
+  signIn: (input: SignInInput) => Mutation<{signIn: SignInResponse}>
+  signUp: (input: SignUpInput) => Mutation<{signUp: SignUpResponse}>
+}
+
+export class ApiAuth extends BaseService implements ApiAuthMethods {
+  /**
+   * @param phone Check additional user info by phone number.
+   * @returns  User id or undefined.
+   */
+  public async sendPhone(phone: string): Mutation<{sendPhone: SendPhoneResponse}> {
     return this.client.mutate<{sendPhone: SendPhoneResponse}>({
       mutation: MUTATION_SEND_PHONE,
-      variables: {
-        phone
-      }
+      variables: {phone}
     })
   }
 
-  public async signIn(input: SignInInput) {
+  /**
+   * @param input Input for sign in: ( token, connection, userId).
+   * @returns Encoded session.
+   */
+  public async signIn(input: SignInInput): Mutation<{signIn: SignInResponse}> {
     return this.client.mutate<{signIn: SignInResponse}>({
       mutation: MUTATION_SIGN_IN,
       variables: {
@@ -37,12 +47,25 @@ export class ApiAuth {
     })
   }
 
-  public async signUp({input, photo}: SignUpInput) {
+  /**
+   * @param input - Sign up input ( include input and user photo).
+   * @returns  Encoded session.
+   */
+  public async signUp({input, photo}: SignUpInput): Mutation<{signUp: SignUpResponse}> {
     return this.client.mutate<{signUp: SignUpResponse}>({
       mutation: MUTATION_SIGN_UP,
       variables: {
         input,
         photo
+      }
+    })
+  }
+
+  public async test(name: string) {
+    return this.client.mutate({
+      mutation: MUTATION_TEST,
+      variables: {
+        name
       }
     })
   }

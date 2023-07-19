@@ -1,4 +1,4 @@
-import Dexie from 'dexie'
+import type Dexie from 'dexie'
 
 import type { PersistGlobalState, PersistGlobalStateKeys } from 'state/persist'
 import type { DeepPartial } from 'types/common'

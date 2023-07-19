@@ -1,25 +1,25 @@
 /* eslint-disable no-console */
 import * as firebase from 'lib/firebase'
 
-import { callApi } from 'api/provider'
+import {updateGlobalState} from 'state/persist'
+import {createAction} from 'state/action'
+import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
 
-import { updateGlobalState } from 'state/persist'
-import { createAction } from 'state/action'
-import { LANGUAGES_CODE_ARRAY } from 'state/helpers/settings'
+import {AuthScreens} from 'types/state'
+import type {SignUpInput} from 'types/api'
+import type {SupportedLanguages} from 'types/lib'
 
-import { AuthScreens } from 'types/state'
-import type { SignUpInput } from 'types/api'
-import type { SupportedLanguages } from 'types/lib'
-
-import { USER_BROWSER, USER_PLATFORM } from 'common/config'
-import { logDebugInfo, logDebugWarn } from 'lib/logger'
-import { stringRemoveSpacing } from 'utilities/stringRemoveSpacing'
+import {USER_BROWSER, USER_PLATFORM} from 'common/config'
+import {logDebugInfo, logDebugWarn} from 'lib/logger'
+import {stringRemoveSpacing} from 'utilities/stringRemoveSpacing'
+import {api} from 'api/client'
+import {makeRequest} from 'api/request'
 
 /**
- * Get user connection info, country, dial code, etc
+ * Get user connection info, country ( dial code, etc )
  */
 createAction('getConnection', async (state) => {
-  const connection = await callApi('fetchConnection')
+  const connection = await makeRequest('connection')
 
   const suggestedLanguage = connection.countryCode.toLowerCase() as SupportedLanguages
   const existLanguage = LANGUAGES_CODE_ARRAY.find((code) => code === suggestedLanguage)
@@ -38,34 +38,34 @@ createAction('getConnection', async (state) => {
 })
 
 /**
- *  Check user in backend side
+ *  Check user on backend side
  */
 createAction('sendPhone', async (state, _, payload) => {
   state.auth.loading = true
   logDebugWarn(`[AUTH]: Auth remember me: ${state.auth.rememberMe}`)
   const unformatted = stringRemoveSpacing(payload)
 
-  const response = await callApi('sendPhone', unformatted)
+  const response = /* await callApi('sendPhone', unformatted) */ await api.auth.sendPhone(
+    unformatted
+  )
+  const data = response?.data?.sendPhone
 
-  if (!response || !response.data?.sendPhone) {
+  if (!data) {
     state.auth.error = 'Auth send phone error'
     return
   }
-  const data = response.data.sendPhone
+  // const data = response.data.sendPhone
 
   await firebase.sendCode(state.auth, state.settings.i18n.lang_code, payload)
   logDebugInfo('[AUTH]: Code from firebase was sent')
-  updateGlobalState(
-    {
-      auth: {
-        screen: AuthScreens.Code,
-        userId: data.userId,
-        phoneNumber: payload,
-        loading: false
-      }
-    },
-    true
-  )
+
+  state.auth = {
+    ...state.auth,
+    screen: AuthScreens.Code,
+    userId: data.userId,
+    phoneNumber: payload,
+    loading: false
+  }
 })
 
 /**
@@ -74,7 +74,11 @@ createAction('sendPhone', async (state, _, payload) => {
 createAction('verifyCode', async (state, actions, payload) => {
   state.auth.loading = true
 
-  const credentials = await firebase.verifyCode(state.auth, state.settings.i18n.lang_code, payload)
+  const credentials = await firebase.verifyCode(
+    state.auth,
+    state.settings.i18n.lang_code,
+    payload
+  )
   if (!credentials) {
     console.error('[AUTH]: Code verification error')
 
@@ -86,7 +90,7 @@ createAction('verifyCode', async (state, actions, payload) => {
     console.error('[AUTH]: No token or auth error')
     return
   }
-  const { data } = await callApi('getTwoFa', token)
+  const {data} = /* await callApi('getTwoFa', token) */ await api.twoFa.getTwoFa(token)
   if (data.getTwoFa) {
     updateGlobalState(
       {
@@ -127,7 +131,7 @@ createAction('verifyCode', async (state, actions, payload) => {
 createAction('signIn', async (state, _, payload) => {
   state.auth.loading = true
 
-  const { data } = await callApi('signIn', payload)
+  const {data} = /*  await callApi('signIn', payload) */ await api.auth.signIn(payload)
 
   if (!data?.signIn) {
     console.error('[AUTH]: «Sign in error»')
@@ -149,7 +153,7 @@ createAction('signIn', async (state, _, payload) => {
  * Auth Sign Up
  */
 createAction('signUp', async (state, _, payload) => {
-  const { silent, firstName, lastName, photo } = payload
+  const {silent, firstName, lastName, photo} = payload
   if (!state.auth.token || !state.auth.phoneNumber) {
     state.auth.error = 'Phone verification failed'
     console.error('[AUTH]: SIGN UP ERROR')
@@ -169,12 +173,15 @@ createAction('signUp', async (state, _, payload) => {
     },
     token: state.auth.token
   }
-  const { data } = await callApi('signUp', { input, photo })
+  const {data} = /* await callApi('signUp', {input, photo}) */ await api.auth.signUp({
+    input,
+    photo
+  })
   if (!data) {
     console.warn('[AUTH]: Sign Up error')
     return
   }
-  console.log({ data })
+  console.log({data})
 
   updateGlobalState({
     auth: {

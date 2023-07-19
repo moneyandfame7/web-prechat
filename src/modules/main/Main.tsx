@@ -1,8 +1,8 @@
-import { FC, memo } from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
 import 'state/actions/all'
 
-import { MiddleColumn } from 'containers/middle'
+import {MiddleColumn} from 'containers/middle'
 import LeftColumn from 'containers/left/LeftColumn'
 import RightColumn from 'containers/right/RightColumn'
 

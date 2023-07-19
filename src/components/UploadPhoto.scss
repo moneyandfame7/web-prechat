@@ -1,13 +1,23 @@
 .UploadPhoto {
-  width: 180px;
-  height: 180px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   background-color: var(--color-primary);
   display: flex;
+  margin: 0px auto;
   justify-content: center;
   align-items: center;
-  .fa-images {
-    color: #fff;
-    font-size: 35px;
+  cursor: pointer;
+  &:hover {
+    .Icon {
+      transform: scale(1.2);
+    }
+  }
+
+  .Icon {
+    transition: transform 0.3s ease;
+    path {
+      fill: #fff !important;
+    }
   }
 }

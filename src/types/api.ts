@@ -1,6 +1,22 @@
+import type {ApiAuth} from 'api/services/auth'
 import type {ErrorPack, LanguagePack} from './lib'
 import type {Connection} from './request'
+import type {ApiHelp} from 'api/services/help'
+import type {ApiSettings} from 'api/services/settings'
+import type {Api2Fa} from 'api/services/2fa'
 
+export interface ApiClientOptions {
+  connection: ApiClientConnection
+  auth: ApiAuth
+  help: ApiHelp
+  settings: ApiSettings
+  twoFa: Api2Fa
+}
+export interface ApiClientConnection {
+  apiToken: string
+  httpUrl: string
+  wsUrl: string
+}
 export type Platform =
   | 'macOS'
   | 'iOS'

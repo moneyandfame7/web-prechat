@@ -1,0 +1,30 @@
+.Icon {
+  &-default {
+    path {
+      fill: #000;
+    }
+    &:hover {
+      path {
+        fill: #000 !important;
+      }
+    }
+  }
+  &-secondary {
+    path {
+      fill: var(--color-neutral);
+    }
+    &:hover {
+      path {
+        fill: #000 !important;
+      }
+    }
+  }
+  path {
+    transition: all 0.2s ease !important;
+  }
+  &:hover {
+    path {
+      fill: var(--color-neutral);
+    }
+  }
+}

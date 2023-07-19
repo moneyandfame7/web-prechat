@@ -14,12 +14,14 @@ import {
   joinClassNames,
   mergeRefs
 } from './helpers'
+import type {
+  PhaseEvent
+} from './types';
 import {
   type CSSTransitionClassNames,
   Phase,
   type TransitionProps,
-  type TransitionState,
-  PhaseEvent
+  type TransitionState
 } from './types'
 
 /* Create also hook? Provide all props  */

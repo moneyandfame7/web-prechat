@@ -1,4 +1,10 @@
 .MiddleColumn {
   flex: 1;
   background-color: white;
+  position: relative;
+
+  .Transition {
+    width: max-content;
+    height: max-content;
+  }
 }

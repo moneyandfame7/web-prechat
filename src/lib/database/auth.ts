@@ -1,9 +1,8 @@
-import Dexie from 'dexie'
+import type Dexie from 'dexie'
 
-import type { PersistGlobalState } from 'state/persist'
-import { AuthScreens } from 'types/state'
-import { DatabaseTable, type TableKeys } from './table'
-import { DatabaseTableNames } from './root'
+import type {PersistGlobalState} from 'state/persist'
+import {DatabaseTable, type TableKeys} from './table'
+import type {DatabaseTableNames} from './root'
 
 const INITIAL_AUTH_STATE: PersistGlobalState[DatabaseTableNames.Auth] = {
   rememberMe: true,
@@ -11,8 +10,7 @@ const INITIAL_AUTH_STATE: PersistGlobalState[DatabaseTableNames.Auth] = {
   passwordHint: undefined,
   phoneNumber: undefined,
   session: undefined,
-  userId: undefined,
-  screen: AuthScreens.PhoneNumber
+  userId: undefined
 }
 
 export default class AuthTable extends DatabaseTable<

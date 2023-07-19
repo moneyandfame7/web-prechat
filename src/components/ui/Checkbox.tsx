@@ -1,4 +1,5 @@
-import {FC, TargetedEvent, useCallback} from 'preact/compat'
+import type {FC, TargetedEvent} from 'preact/compat';
+import { useCallback} from 'preact/compat'
 import {Signal} from '@preact/signals'
 
 import {Icon} from 'components/ui'

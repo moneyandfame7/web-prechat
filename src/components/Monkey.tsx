@@ -1,4 +1,5 @@
-import { FC, memo, useEffect, useRef } from 'preact/compat'
+import type { FC} from 'preact/compat';
+import { memo, useEffect, useRef } from 'preact/compat'
 
 import type { LottieRefCurrentProps } from 'lottie-react'
 import clsx from 'clsx'
@@ -11,7 +12,7 @@ import { usePrevious } from 'hooks'
 import { logDebugWarn } from 'lib/logger'
 
 import { LottiePlayer } from 'lib/lottie'
-import { Size } from 'types/ui'
+import type { Size } from 'types/ui'
 
 import './Monkey.scss'
 

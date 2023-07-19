@@ -1,0 +1,23 @@
+.FloatButton {
+  // transform: translateY(200%);
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  border-radius: 50%;
+  width: 54px;
+  height: 54px;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: #fff;
+  svg path {
+    fill: #fff;
+  }
+  &_icon {
+    height: 24px !important; /* @todo avoid hardcode ( 24px - height of icons ) */
+    top: auto !important;
+    transition: 0.35s ease all;
+  }
+}

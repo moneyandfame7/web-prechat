@@ -1,4 +1,4 @@
-import {useRef, type FC, useEffect} from 'preact/compat'
+import {useRef, type FC} from 'preact/compat'
 
 import {Button, IconButton, InputText} from 'components/ui'
 import {SwitchLanguageTest, ScreenManagerTest} from 'components/test'
@@ -8,34 +8,29 @@ import {useInputValue} from 'hooks'
 
 import {useBoolean} from 'hooks/useFlag'
 import {useTransition} from 'lib/css-transition'
+import {t} from 'lib/i18n'
 
 import './Chats.scss'
-import {useSubscription} from '@apollo/client'
-import {SUBSCRIBE_TEST} from 'api/graphql'
-import {testMutation, testSubscribe} from 'api/methods'
+import {TEST_SIGNAL} from '../CreateChatButton'
 
 export const Chats: FC = () => {
   const {value, handleInput} = useInputValue({initial: ''})
-  const {value: boolean, setTrue, setFalse} = useBoolean(true)
+  const {value: boolean} = useBoolean(true)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const testToggle = () => {
+    if (TEST_SIGNAL.value) {
+      TEST_SIGNAL.value = false
+    } else {
+      TEST_SIGNAL.value = true
+    }
+  }
   const TRANSITION_CLASS = useTransition({
     shouldRender: boolean,
     className: 'zoomFade',
     absoluted: true
   })
 
-  // console.log({TRANSITION_CLASS})
-  // const {data} = useSubscription(SUBSCRIBE_TEST, {})
-  // useEffect(() => {
-  //   ;(async () => {
-  //     await testSubscribe()
-  //   })()
-  // }, [])
-
-  useEffect(() => {
-    testSubscribe()
-  }, [])
   return (
     <div>
       Chats {'   '}
@@ -48,19 +43,8 @@ export const Chats: FC = () => {
         maxLength={12}
         currentLength={value.length}
       />
-      <InputText
-        aria-label="Test"
-        elRef={inputRef}
-        value={value}
-        onInput={handleInput}
-      />
-      <Button
-        onClick={() => {
-          testMutation(crypto.randomUUID() + Date.now())
-        }}
-      >
-        Mutate
-      </Button>
+      <Button onClick={testToggle}>Toggle</Button>
+      <InputText aria-label="Test" elRef={inputRef} value={value} onInput={handleInput} />
       {TRANSITION_CLASS}
       <div
         class={TRANSITION_CLASS}
@@ -72,6 +56,8 @@ export const Chats: FC = () => {
       >
         Lorem ipsum
       </div>
+      {t('Auth.CodeSendOnApp')}
+      {t('NewPrivateChat')}
     </div>
   )
 }

@@ -1,10 +1,14 @@
-import { type FC, Suspense, lazy, memo } from 'preact/compat'
+import {type FC, Suspense, lazy, memo} from 'preact/compat'
 
-const CreateChatAsync: FC = (props) => {
+import {ScreenLoader} from 'components/ScreenLoader'
+
+import type {CreateChatProps} from './CreateChat'
+
+const CreateChatAsync: FC<CreateChatProps> = (props) => {
   const CreateChat = lazy(() => import('./CreateChat'))
 
   return (
-    <Suspense fallback="">
+    <Suspense fallback={<ScreenLoader />}>
       <CreateChat {...props} />
     </Suspense>
   )

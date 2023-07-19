@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type {Platform} from 'types/api'
 
 const {userAgent, platform} = window.navigator
@@ -30,7 +31,6 @@ function detectPlatform(): Platform | undefined {
   }
 }
 function detectBrowser(): string | undefined {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (
     (window as any)?.opr?.addons ||
     (window as any)?.opera ||
@@ -38,23 +38,14 @@ function detectBrowser(): string | undefined {
   ) {
     return `Opera ${userAgent.substring(userAgent.indexOf('OPR/') + 4)}`
   } else if (userAgent.indexOf('Edge') >= 0) {
-    return `Microsoft Edge ${userAgent.substring(
-      userAgent.indexOf('Edge/') + 5
-    )}`
+    return `Microsoft Edge ${userAgent.substring(userAgent.indexOf('Edge/') + 5)}`
   } else if (userAgent.indexOf('Chrome') >= 0) {
-    return `Google Chrome ${userAgent.substring(
-      userAgent.indexOf('Chrome/') + 7
-    )}`
+    return `Google Chrome ${userAgent.substring(userAgent.indexOf('Chrome/') + 7)}`
   } else if (userAgent.indexOf('Safari') >= 0) {
     return `Safari ${userAgent.substring(userAgent.indexOf('Version/') + 8)}`
   } else if (userAgent.indexOf('Firefox') >= 0) {
-    return `Mozilla Firefox ${userAgent.substring(
-      userAgent.indexOf('Firefox/') + 8
-    )}`
-  } else if (
-    userAgent.indexOf('MSIE') >= 0 ||
-    userAgent.indexOf('Trident/') >= 0
-  ) {
+    return `Mozilla Firefox ${userAgent.substring(userAgent.indexOf('Firefox/') + 8)}`
+  } else if (userAgent.indexOf('MSIE') >= 0 || userAgent.indexOf('Trident/') >= 0) {
     const browserVersion: string | number = userAgent.substring(
       userAgent.indexOf('MSIE') + 5,
       userAgent.indexOf(';')
@@ -76,11 +67,13 @@ export const IS_SENSOR = window.matchMedia('(pointer: coarse)').matches
 
 export const AUTH_CAPTCHA_EL = 'auth_captcha_el'
 export const AUTH_CAPTCHA_CONTAINER = 'auth_captcha_container'
-export const DEBUG = import.meta.env.DEV
+export const DEBUG = import.meta.env.DEV /* || ?debug=1 */
+
+export const GITHUB_SOURCE = 'https://github.com/moneyandfame7/web-prechat#readme'
 
 export const TRANSITION_DURATION_FADE = 200
 export const TRANSITION_DURATION_ZOOM_FADE = 200
-export const TRANSITION_DURATION_SLIDE = 250
+export const TRANSITION_DURATION_SLIDE = 300
 export const TRANSITION_DURATION_MENU = 250 /* 150 */
 
 export const TRANSITION_DURATIONS = {

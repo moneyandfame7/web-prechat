@@ -1,71 +1,44 @@
-/* eslint-disable no-console */
-import {
-  InMemoryCache,
-  createHttpLink,
-  split,
-  ApolloClient,
-  ApolloLink
-} from '@apollo/client/core'
-import {GraphQLWsLink} from '@apollo/client/link/subscriptions'
-import {setContext} from '@apollo/client/link/context'
-import {onError} from '@apollo/client/link/error'
-import {getMainDefinition} from '@apollo/client/utilities'
-import {createClient} from 'graphql-ws'
+import {ApiAuth, type ApiAuthMethods} from './services/auth'
+import {Api2Fa, type ApiTwoFaMethods} from './services/2fa'
+import {ApiHelp, type ApiHelpMethods} from './services/help'
+import {ApiSettings, type ApiSettingsMethods} from './services/settings'
 
-import {getGlobalState} from 'state/signal'
+import {type ApolloClientWrapper, createApolloClientWrapper} from './apollo'
 
-const cache = new InMemoryCache({})
-const httpLink = createHttpLink({
-  uri: import.meta.env.VITE_API_URL
-})
+export interface ApiClientMethods {
+  auth: ApiAuthMethods
+  help: ApiHelpMethods
+  twoFa: ApiTwoFaMethods
+}
 
-const linkHeaders = setContext(async (_, {headers}) => {
-  const {auth, settings} = getGlobalState()
+/**
+ * This class is a wrapper with methods for api
+ */
+class ApiClient implements ApiClientMethods {
+  /**
+   * Constructor accepts all  instances with api methods
+   */
+  public constructor(
+    public readonly auth: ApiAuthMethods,
+    public readonly help: ApiHelpMethods,
+    public readonly twoFa: ApiTwoFaMethods,
+    public readonly settings: ApiSettingsMethods
+  ) {}
+}
 
-  return {
-    headers: {
-      ...headers,
-      'prechat-language': settings.i18n.lang_code,
-      'prechat-session': auth.session || '',
-      'prechat-api-token': import.meta.env.VITE_API_TOKEN
-    }
-  }
-})
-const linkError = onError(({graphQLErrors, networkError}) => {
-  if (networkError) {
-    console.error(`[Network error]: ${networkError}`)
-  }
+function createApiClient(apolloWrapper: ApolloClientWrapper) {
+  const client = apolloWrapper.getClient()
 
-  if (graphQLErrors) {
-    graphQLErrors.forEach(({message}) =>
-      console.error(`[GraphQL error]: Message: ${message}`)
-    )
-  }
-})
-const wsLink = new GraphQLWsLink(
-  createClient({
-    url: 'ws://localhost:8001/graphql/subscriptions',
-    connectionParams: async () => ({
-      isWebsocket: true,
-      'prechat-api-token': import.meta.env.VITE_API_TOKEN
-    })
-  })
-)
+  const authService = new ApiAuth(client)
+  const helpService = new ApiHelp(client)
+  const settingsService = new ApiSettings(client)
+  const twoFaService = new Api2Fa(client)
 
-const withSubLink = split(
-  ({query}) => {
-    const definition = getMainDefinition(query)
+  const apiClient = new ApiClient(authService, helpService, twoFaService, settingsService)
 
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    )
-  },
-  wsLink,
-  httpLink
-)
+  return apiClient
+}
 
-export const client = new ApolloClient({
-  link: ApolloLink.from([linkError, linkHeaders, withSubLink]),
-  cache
-})
+export const ApolloClient = createApolloClientWrapper()
+
+export const api = createApiClient(ApolloClient)

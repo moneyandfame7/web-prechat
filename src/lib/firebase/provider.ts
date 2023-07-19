@@ -1,18 +1,18 @@
-import { DeepSignal } from 'deepsignal'
+import type {DeepSignal} from 'deepsignal'
 /* eslint-disable no-console */
 
-import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
-import { FirebaseError } from 'firebase/app'
+import {RecaptchaVerifier, signInWithPhoneNumber} from 'firebase/auth'
+import {FirebaseError} from 'firebase/app'
 
-import type { SupportedLanguages } from 'types/lib'
-import type { AuthState } from 'types/state'
+import type {SupportedLanguages} from 'types/lib'
+import type {AuthState} from 'types/state'
 
-import { authentication } from './config'
-import { throwFirebaseError, getFirebaseErrorMessage } from './errors'
+import {authentication} from './config'
+import {throwFirebaseError, getFirebaseErrorMessage} from './errors'
 
 export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
   if (auth.captcha) {
-    await resetCaptcha(auth)
+    // await resetCaptcha(auth)
     return
   }
   auth.captcha = new RecaptchaVerifier(
@@ -26,7 +26,7 @@ export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
     },
     authentication
   )
-  await auth.captcha.render().then(console.log)
+  await auth.captcha.render()
 }
 
 export async function sendCode(

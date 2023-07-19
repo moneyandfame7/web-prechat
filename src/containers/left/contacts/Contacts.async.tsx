@@ -1,13 +1,17 @@
-import { type FC, Suspense, lazy, memo } from 'preact/compat'
+import {ScreenLoader} from 'components/ScreenLoader'
 
-import { timeout } from 'utilities/timeout'
+import {type FC, Suspense, memo, lazy} from 'preact/compat'
+import {timeout} from 'utilities/timeout'
+// import {timeout} from 'utilities/timeout'
+// import {timeout} from 'utilities/timeout'
 
 const ContactsAsync: FC = (props) => {
   const Contacts = lazy(() =>
-    import('./Contacts').then((module) => module.default).then(timeout(5000))
+    import('./Contacts').then((module) => module.default).then(timeout(0))
   )
+
   return (
-    <Suspense fallback="LOADING...">
+    <Suspense fallback={<ScreenLoader />}>
       <Contacts {...props} />
     </Suspense>
   )

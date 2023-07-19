@@ -1,9 +1,9 @@
-import type { ComponentChildren } from 'preact'
-import { type FC, useEffect } from 'preact/compat'
-import { useSignal } from '@preact/signals'
+import type {ComponentChildren} from 'preact'
+import {type FC, useEffect} from 'preact/compat'
+import {useSignal} from '@preact/signals'
 
-import { Spinner } from 'components/ui'
-import { MountTransition } from './MountTransition'
+import {Spinner} from 'components/ui'
+import MountTransition from './MountTransition'
 
 import './PageLoader.scss'
 
@@ -15,14 +15,14 @@ interface PageLoaderProps {
   on: boolean
   children: ComponentChildren
 }
-export const PageLoader: FC<PageLoaderProps> = ({ children, on }) => {
+export const PageLoader: FC<PageLoaderProps> = ({children, on}) => {
   const activeKey = useSignal<PageScreens>(PageScreens.Loading)
 
   const renderContent = () => {
     switch (activeKey.value) {
       case PageScreens.Children:
         return (
-          <div style={{ height: '100%' }} key={PageScreens.Children}>
+          <div style={{height: '100%'}} key={PageScreens.Children}>
             {children}
           </div>
         )

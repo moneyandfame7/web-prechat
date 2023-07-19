@@ -1,19 +1,22 @@
-import { memo, type FC, useCallback } from 'preact/compat'
+import {memo, type FC} from 'preact/compat'
 
-import { LeftColumnScreen } from 'types/ui'
-import { Button } from 'components/ui'
+import {Button, FloatButton, Icon} from 'components/ui'
 
-import { useLeftColumn } from '../context'
+import {useLeftColumn} from '../context'
 
+import './Contacts.scss'
 const Contacts: FC = () => {
-  const { setScreen } = useLeftColumn()
-  const handleResetScreen = useCallback(() => {
-    setScreen(LeftColumnScreen.Main)
-  }, [])
+  const {resetScreen} = useLeftColumn()
+
   return (
     <>
       Contacts
-      <Button onClick={handleResetScreen}>Reset</Button>
+      <Button onClick={resetScreen}>Reset</Button>
+      <FloatButton
+        className="CreateNewContact"
+        aria-label="Create new Contact"
+        icon={<Icon name="plus" />}
+      />
     </>
   )
 }
