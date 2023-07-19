@@ -30,5 +30,7 @@
 ## Acknowledgements
 
  - [Telegram Mockups](https://github.com/morethanwords/tweb-design)
+ - [Telegram Web A](https://github.com/Ajaxy/telegram-tt)
+ - [Telegram Web K](https://github.com/morethanwords/tweb)
 
 
