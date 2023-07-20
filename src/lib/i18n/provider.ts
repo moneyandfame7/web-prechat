@@ -28,7 +28,6 @@ export function t(key: LanguagePackKeys): Signal<string> {
 
   const translate = i18n.pack[`$${key}`] as unknown as Signal<string>
 
-  console.log({translate})
   if (!translate?.value) {
     logDebugError(`[UI]: Translation for «${key}» not found`)
     // throw new Error('[UI]: Translation not found')

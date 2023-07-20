@@ -32,3 +32,5 @@ export interface Connection {
   cityName: string
   regionName: string
 }
+
+export interface EmojiData {}

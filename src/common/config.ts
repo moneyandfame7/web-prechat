@@ -40,7 +40,7 @@ function detectBrowser(): string | undefined {
   } else if (userAgent.indexOf('Edge') >= 0) {
     return `Microsoft Edge ${userAgent.substring(userAgent.indexOf('Edge/') + 5)}`
   } else if (userAgent.indexOf('Chrome') >= 0) {
-    return `Google Chrome ${userAgent.substring(userAgent.indexOf('Chrome/') + 7)}`
+    return `Google Chrome ${userAgent.split('Chrome/')[1].split(' ')[0]}`
   } else if (userAgent.indexOf('Safari') >= 0) {
     return `Safari ${userAgent.substring(userAgent.indexOf('Version/') + 8)}`
   } else if (userAgent.indexOf('Firefox') >= 0) {
@@ -61,7 +61,7 @@ function detectBrowser(): string | undefined {
 
 export const USER_PLATFORM: Platform = detectPlatform() || 'Unknown'
 export const USER_BROWSER: string = detectBrowser() || 'Unknown'
-
+export const IS_APPLE = USER_PLATFORM === 'iOS' || USER_PLATFORM === 'macOS'
 export const SUGGESTED_LANGUAGE = window.navigator.language
 export const IS_SENSOR = window.matchMedia('(pointer: coarse)').matches
 

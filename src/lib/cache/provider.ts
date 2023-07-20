@@ -35,6 +35,9 @@ export async function get(name: CacheName, key: string) {
   if (!response) {
     return null
   }
+  if (name === 'prechat-assets' || name === 'prechat-avatars') {
+    return response.blob()
+  }
   const item = (await response.json()) as CacheResponse
 
   if (item.expiration && Date.now() > item.expiration) {

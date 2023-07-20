@@ -2,7 +2,7 @@ import {generateRecaptcha} from 'lib/firebase'
 import {changeLanguage} from 'lib/i18n'
 import type {SignalGlobalState} from 'types/state'
 
-import {USER_BROWSER, USER_PLATFORM} from 'common/config'
+import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/config'
 
 import {database} from 'lib/database'
 
@@ -41,6 +41,9 @@ export async function initializeApplication() {
   state.initialization = true
   if (USER_PLATFORM === 'macOS') {
     document.documentElement.classList.add('is-mac')
+  }
+  if (IS_APPLE) {
+    document.documentElement.classList.add('is-apple')
   }
   if (USER_BROWSER.startsWith('Safari')) {
     document.documentElement.classList.add('is-safari')

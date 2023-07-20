@@ -8,9 +8,7 @@ import {BaseService} from './base'
 export interface ApiHelpMethods {
   getCountries: (language: SupportedLanguages) => Query<{countries: Country[]}>
 
-  getLanguage: (
-    language: SupportedLanguages
-  ) => Query<{language: FetchLanguage}>
+  getLanguage: (language: SupportedLanguages) => Query<{language: FetchLanguage}>
 
   getLanguageString: (
     language: SupportedLanguages,
@@ -26,9 +24,7 @@ export class ApiHelp extends BaseService implements ApiHelpMethods {
    * @param language Language code.
    * @returns List of countries ( emoji, dial_code, code, label ) for provided language code.
    */
-  public async getCountries(
-    language: SupportedLanguages
-  ): Query<{countries: Country[]}> {
+  public async getCountries(language: SupportedLanguages): Query<{countries: Country[]}> {
     return this.client.query<{countries: Country[]}>({
       query: QUERY_COUNTRIES,
       fetchPolicy: 'cache-first',

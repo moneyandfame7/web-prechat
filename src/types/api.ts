@@ -17,13 +17,7 @@ export interface ApiClientConnection {
   httpUrl: string
   wsUrl: string
 }
-export type Platform =
-  | 'macOS'
-  | 'iOS'
-  | 'Windows'
-  | 'Android'
-  | 'Linux'
-  | 'Unknown'
+export type Platform = 'macOS' | 'iOS' | 'Windows' | 'Android' | 'Linux' | 'Unknown'
 
 export type Browser =
   | 'Opera'

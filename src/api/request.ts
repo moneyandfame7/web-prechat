@@ -1,10 +1,11 @@
 import * as cache from 'lib/cache'
 
-import type {Connection} from 'types/request'
+import type {Connection, EmojiData} from 'types/request'
 import {milliseconds} from 'utilities/ms'
 
 interface RequestResponse {
   connection: Connection
+  emojis: EmojiData
 }
 type RequestName = keyof RequestResponse
 type RequestOptions =
@@ -27,6 +28,12 @@ const requests: Record<RequestName, RequestOptions> = {
     cacheName: 'prechat-important',
     expiration: milliseconds({minutes: 60}),
     withCache: true
+  },
+  emojis: {
+    url: 'https://cdn.jsdelivr.net/npm/@emoji-mart/data@latest/sets/1/apple.json',
+    cacheName: 'prechat-important',
+    expiration: undefined,
+    withCache: true
   }
 }
 
@@ -40,7 +47,6 @@ export async function makeRequest<T extends RequestName>(name: T) {
       return (await response.json()) as RequestResponse[T]
     }
     let response = await cache.get(cacheName, name)
-
     if (!response) {
       response = await fetch(url)
 

@@ -1,8 +1,8 @@
-import type { FC, RefObject, TargetedEvent} from 'preact/compat';
-import { useCallback } from 'preact/compat'
+import type {FC, RefObject, TargetedEvent} from 'preact/compat'
+import {useCallback} from 'preact/compat'
 
-import { InputText } from 'components/ui'
-import { t } from 'lib/i18n'
+import {InputText} from 'components/ui'
+import {t} from 'lib/i18n'
 
 import './PhoneNumberInput.scss'
 
@@ -21,14 +21,17 @@ export const PhoneNumberInput: FC<PhoneNumberInputProps> = ({
   autoFocus = true,
   remainingPattern
 }) => {
-  const handleKeydown = useCallback((e: TargetedEvent<HTMLInputElement, KeyboardEvent>) => {
-    if (e.key === ' ') {
-      e.preventDefault()
-    }
-  }, [])
+  const handleKeydown = useCallback(
+    (e: TargetedEvent<HTMLInputElement, KeyboardEvent>) => {
+      if (e.key === ' ') {
+        e.preventDefault()
+      }
+    },
+    []
+  )
   const handleInput = useCallback(
     (e: TargetedEvent<HTMLInputElement, Event>) => {
-      const { value } = e.currentTarget
+      const {value} = e.currentTarget
 
       onInput(value)
     },
@@ -43,6 +46,8 @@ export const PhoneNumberInput: FC<PhoneNumberInputProps> = ({
       elRef={elRef}
       label={t('PhoneNumber')}
       value={value}
+      inputMode="decimal"
+      type="tel"
       onInput={handleInput}
       onKeyDown={handleKeydown}
       children={

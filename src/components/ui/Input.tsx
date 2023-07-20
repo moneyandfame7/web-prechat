@@ -1,14 +1,20 @@
-import { type VNode, type RefObject } from 'preact'
-import { type FC, type TargetedEvent, useLayoutEffect, useEffect, useCallback } from 'preact/compat'
-import { useSignal } from '@preact/signals'
+import {type VNode, type RefObject} from 'preact'
+import {
+  type FC,
+  type TargetedEvent,
+  useLayoutEffect,
+  useEffect,
+  useCallback
+} from 'preact/compat'
+import {useSignal} from '@preact/signals'
 
 import clsx from 'clsx'
 
-import type { InputHandler, SignalOrString } from 'types/ui'
-import type { AnyObject } from 'types/common'
+import type {InputHandler, SignalOrString} from 'types/ui'
+import type {AnyObject} from 'types/common'
 
-import { Spinner } from './Spinner'
-import { Transition } from '../Transition'
+import {Spinner} from './Spinner'
+import {Transition} from '../Transition'
 
 import './Input.scss'
 
@@ -35,6 +41,8 @@ interface InputProps {
   className?: string
   dataProps?: AnyObject
   'aria-label'?: SignalOrString
+  type?: string
+  inputMode?: string
 }
 
 export const InputText: FC<InputProps> = ({
@@ -59,13 +67,15 @@ export const InputText: FC<InputProps> = ({
   className,
   dataProps,
   children,
-  'aria-label': ariaLabel
+  'aria-label': ariaLabel,
+  type = 'text',
+  inputMode
 }) => {
   const valueLength = useSignal(maxLength)
   const labelText = error || label
   const handleOnInput = (e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()
-    const { value } = e.currentTarget
+    const {value} = e.currentTarget
     if (typeof valueLength.value !== 'undefined' && typeof maxLength !== 'undefined') {
       valueLength.value = maxLength - value.length
     }
@@ -118,7 +128,12 @@ export const InputText: FC<InputProps> = ({
         </Transition>
 
         {endIcon && (
-          <Transition type="zoomFade" isVisible={!loading} appear={false} withMount={false}>
+          <Transition
+            type="zoomFade"
+            isVisible={!loading}
+            appear={false}
+            withMount={false}
+          >
             {endIcon}
           </Transition>
         )}
@@ -130,7 +145,7 @@ export const InputText: FC<InputProps> = ({
     <div className={buildedClassname} {...dataProps}>
       <input
         // autoFocus={autoFocus}
-
+        inputMode={inputMode}
         tabIndex={tabIndex}
         ref={elRef}
         id={id}
@@ -139,7 +154,7 @@ export const InputText: FC<InputProps> = ({
         onKeyDown={onKeyDown}
         onFocus={handleOnFocus}
         value={value}
-        type="text"
+        type={type}
         autoComplete="off"
         disabled={isInputDisabled}
         maxLength={maxLength}

@@ -9,16 +9,17 @@ import {
   useLayoutEffect
 } from 'preact/compat'
 
-import { t } from 'lib/i18n'
+import {t} from 'lib/i18n'
 
-import type { Country } from 'types/api'
+import type {Country} from 'types/api'
 
-import { InputText, Icon } from 'components/ui'
-import { MenuItem, Menu } from 'components/popups/menu'
+import {InputText, Icon} from 'components/ui'
+import {MenuItem, Menu} from 'components/popups/menu'
 
-import { TRANSITION_DURATION_ZOOM_FADE } from 'common/config'
+import {TRANSITION_DURATION_ZOOM_FADE} from 'common/config'
 
 import './SelectCountryInput.scss'
+import {parseEmoji} from 'utilities/parseEmoji'
 
 interface SelectCountryInputProps {
   countryList: Country[]
@@ -27,7 +28,7 @@ interface SelectCountryInputProps {
   handleSelect: (country: Country) => void
 }
 export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
-  ({ countryList, selectedCountry, loading, handleSelect }) => {
+  ({countryList, selectedCountry, loading, handleSelect}) => {
     const [isOpen, setIsOpen] = useState(false)
     const authScroll = document.getElementById('auth-scroll')
     const [stringName, setStringName] = useState('')
@@ -39,14 +40,14 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
 
       setIsOpen(true)
       setTimeout(() => {
-        authScroll?.scrollTo({ top: authScroll.scrollHeight, behavior: 'smooth' })
+        authScroll?.scrollTo({top: authScroll.scrollHeight, behavior: 'smooth'})
       }, 100)
     }, [countryList, selectedCountry, loading, authScroll])
 
     const handleOnBlur = useCallback(() => {
       setIsOpen(false)
       setTimeout(() => {
-        authScroll?.scrollTo({ top: 0, behavior: 'smooth' })
+        authScroll?.scrollTo({top: 0, behavior: 'smooth'})
       }, 100)
       inputRef.current?.blur()
     }, [authScroll, inputRef])
@@ -90,7 +91,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
             !country.name.toLowerCase().includes(stringName.toLowerCase())
           }
         >
-          <span class="country-emoji">{country.emoji}</span>
+          <span class="country-emoji">{parseEmoji(country.emoji)}</span>
           <span class="country-name">{country.name}</span>
           <span class="country-code">{country.dial_code}</span>
         </MenuItem>

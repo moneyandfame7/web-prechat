@@ -7,6 +7,10 @@
     &_item {
       font-size: 16px;
       font-weight: 400;
+      // text-overflow: ellipsis;
+      white-space: initial;
+      padding-top: 8px;
+      padding-bottom: 8px;
     }
   }
   .input-container {
@@ -26,6 +30,10 @@
 
 .country-emoji {
   font-size: 30px;
+  height: 34px;
+  width: 34px;
+  display: flex;
+  align-items: center;
 }
 .country-name {
   flex: 1;

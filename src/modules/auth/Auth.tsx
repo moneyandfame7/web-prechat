@@ -70,7 +70,6 @@ const Auth: FC = () => {
   return (
     <div class="scrollable" id="auth-scroll">
       <div class="Auth">
-        <h1>{auth.$screen}</h1>
         <div class="Auth_inner">
           <MountTransition
             /**

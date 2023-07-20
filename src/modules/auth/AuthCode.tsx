@@ -69,6 +69,8 @@ const AuthCode: FC = () => {
       </h1>
       <p class="subtitle">{t('Auth.CodeSendOnPhone')}</p>
       <InputText
+        inputMode="decimal"
+        type="tel"
         elRef={inputRef}
         autoFocus
         error={auth.error}

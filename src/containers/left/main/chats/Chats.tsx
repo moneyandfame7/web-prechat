@@ -9,9 +9,14 @@ import {useInputValue} from 'hooks'
 import {useBoolean} from 'hooks/useFlag'
 import {useTransition} from 'lib/css-transition'
 import {t} from 'lib/i18n'
+import {parseEmoji} from 'utilities/parseEmoji'
+
+import {TEST_SIGNAL} from '../CreateChatButton'
+
+import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/config'
+import {Emoji} from 'components/Emoji'
 
 import './Chats.scss'
-import {TEST_SIGNAL} from '../CreateChatButton'
 
 export const Chats: FC = () => {
   const {value, handleInput} = useInputValue({initial: ''})
@@ -34,6 +39,9 @@ export const Chats: FC = () => {
   return (
     <div>
       Chats {'   '}
+      <p style={{fontWeight: 700}}>{USER_PLATFORM}</p>
+      <p style={{fontWeight: 700}}>{USER_BROWSER}</p>
+      <p>IS APPLE - {IS_APPLE ? 'TAK' : 'NE'}</p>
       <ScreenManagerTest key="LP" />
       <IconButton icon="arrowLeft" />
       <SwitchLanguageTest />
@@ -56,6 +64,8 @@ export const Chats: FC = () => {
       >
         Lorem ipsum
       </div>
+      <Emoji emoji="🇺🇦" />
+      <h1>{parseEmoji('🇬🇧')}</h1>
       {t('Auth.CodeSendOnApp')}
       {t('NewPrivateChat')}
     </div>

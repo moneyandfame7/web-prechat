@@ -7,7 +7,7 @@ export type CacheName =
   | 'prechat-important'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CacheTypeToSave = Response | Record<string, any> | string | number
+export type CacheTypeToSave = Response | Record<string, any> | string | number | Blob
 
 export interface CacheOptions {
   name: CacheName
