@@ -13,43 +13,55 @@ export interface CreateChatProps {
   isGroup: boolean
 }
 
+enum CreateChatGroup {
+  Step1 = 'Step1',
+  Step2 = 'Step2'
+}
+const screenClassnames = {
+  [CreateChatGroup.Step1]: 'LeftColumn-CreateChatStep1',
+  [CreateChatGroup.Step2]: 'LeftColumn-CreateChatStep2'
+}
 function getScreenTransition(
-  newEl: VNodeWithKey<LeftColumnScreen>,
-  current: VNodeWithKey<LeftColumnScreen>
+  newEl: VNodeWithKey<CreateChatGroup>,
+  current: VNodeWithKey<CreateChatGroup>
 ): TransitionType {
-  if (newEl.key === LeftColumnScreen.Chats) {
-    return 'fade'
-  }
-  // console.log(newEl.key, current.key)
   switch (current.key) {
-    case LeftColumnScreen.NewChannelStep1:
-    case LeftColumnScreen.NewGroupStep1:
-      return 'zoomSlide'
+    case CreateChatGroup.Step1:
+      return 'zoomSlideReverse'
 
     default:
-      return 'zoomSlideReverse'
+      return 'zoomSlide'
   }
 }
+
 const CreateChat: FC<CreateChatProps> = ({isGroup}) => {
   const {activeScreen} = useLeftColumn()
+
+  let activeGroup: CreateChatGroup = CreateChatGroup.Step1
+  switch (activeScreen) {
+    case LeftColumnScreen.NewChannelStep1:
+    case LeftColumnScreen.NewGroupStep1:
+      activeGroup = CreateChatGroup.Step1
+      break
+    case LeftColumnScreen.NewChannelStep2:
+    case LeftColumnScreen.NewGroupStep2:
+      activeGroup = CreateChatGroup.Step2
+  }
   const renderScreen = useCallback(() => {
-    switch (activeScreen) {
-      case LeftColumnScreen.NewChannelStep1:
-      case LeftColumnScreen.NewGroupStep1:
-      default:
-        return <CreateChatStep1 isGroup={isGroup} key={LeftColumnScreen[activeScreen]} />
-      case LeftColumnScreen.NewChannelStep2:
-      case LeftColumnScreen.NewGroupStep2:
-        return <CreateChatStep2 isGroup={isGroup} key={LeftColumnScreen[activeScreen]} />
+    switch (activeGroup) {
+      case CreateChatGroup.Step1:
+        return <CreateChatStep1 isGroup={isGroup} key={CreateChatGroup.Step1} />
+      case CreateChatGroup.Step2:
+        return <CreateChatStep2 isGroup={isGroup} key={CreateChatGroup.Step2} />
     }
-  }, [activeScreen])
+  }, [activeGroup, isGroup])
 
   return (
     <MountTransition
-      shouldCleanup={false}
+      shouldCleanup={true}
       // name="fade"
-      // duration={5000}
-      activeKey={activeScreen}
+      classNames={screenClassnames}
+      activeKey={activeGroup}
       getTransitionForNew={getScreenTransition}
     >
       {renderScreen()}
