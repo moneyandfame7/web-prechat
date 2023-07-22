@@ -1,10 +1,13 @@
 .PhoneNumberInput {
+  margin-top: 10px;
   > input {
     color: transparent;
   }
   .input-value {
     pointer-events: none;
-
+    max-width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
     &::after {
       content: attr(data-remaining-pattern);
       display: inline-block;

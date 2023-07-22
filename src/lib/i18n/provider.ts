@@ -10,7 +10,6 @@ import type {FetchLanguage} from 'types/api'
 import {getGlobalState} from 'state/signal'
 import {updateGlobalState} from 'state/persist'
 import {logDebugError, logDebugWarn} from 'lib/logger'
-import {DEBUG} from 'common/config'
 import {api} from 'api/client'
 
 async function fetchLanguage(language: SupportedLanguages) {
@@ -39,9 +38,9 @@ export async function changeLanguage(language: SupportedLanguages) {
   logDebugWarn('[UI]: I18n provider was called')
   let data
 
-  if (!DEBUG) {
-    data = (await cache.get('prechat-i18n-pack', language)) as FetchLanguage
-  }
+  // if (!DEBUG) {
+  data = (await cache.get('prechat-i18n-pack', language)) as FetchLanguage
+  // }
   if (!data) {
     data = await fetchLanguage(language)
 
@@ -52,16 +51,19 @@ export async function changeLanguage(language: SupportedLanguages) {
     })
   }
 
-  updateGlobalState({
-    settings: {
-      i18n: {
-        pack: data.pack,
-        lang_code: language,
-        countries: data.countries,
-        errors: data.errors
+  updateGlobalState(
+    {
+      settings: {
+        i18n: {
+          pack: data.pack,
+          lang_code: language,
+          countries: data.countries,
+          errors: data.errors
+        }
       }
-    }
-  })
+    },
+    false
+  )
 }
 
 export async function translateByString(

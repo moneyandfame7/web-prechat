@@ -18,9 +18,9 @@ export type TransitionType =
   | 'zoomSlide'
   | 'zoomSlideReverse'
 
-export type ComposedTransitionType = 'zoomSlide' | 'zoomSlideReverse'
+// export type ComposedTransitionType = 'zoomSlide' | 'zoomSlideReverse'
 
-export type AllTransitionType = TransitionType & ComposedTransitionType
+// export type AllTransitionType = TransitionType & ComposedTransitionType
 interface TransitionProps {
   elRef?: RefObject<HTMLDivElement>
   withMount: boolean
@@ -36,10 +36,10 @@ interface TransitionProps {
 }
 /* rewrite to constants */
 const getTransitionDuration = (type: TransitionType) => {
-  const body = document.querySelector('body')
-  if (body?.classList.contains('animation-none')) {
+  const root = document.documentElement
+  if (root?.classList.contains('animation-none')) {
     return 0
-  } else if (body?.classList.contains('animation-level-2')) {
+  } else if (root?.classList.contains('animation-level-2')) {
     return 150
   }
   switch (type) {

@@ -16,6 +16,7 @@ import {selectCountryByPhone, selectSuggestedCountry} from 'state/selectors/auth
 import {formatPhoneNumber} from 'utilities/formatPhoneNumber'
 
 import type {Country} from 'types/api'
+import {DEBUG} from 'common/config'
 
 import {Button, Checkbox} from 'components/ui'
 import {Logo} from 'components/Logo'
@@ -24,8 +25,18 @@ import {PhoneNumberInput} from './PhoneNumberInput'
 import {SelectCountryInput} from './SelectCountryInput'
 
 import './AuthPhoneNumber.scss'
+import {useBoolean} from 'hooks/useFlag'
 
 const IS_PHONE_VAL_REG = /^\+\d{1,4}\s?\d{10,}$/
+
+function validatePhone(phone: string) {
+  const matched = IS_PHONE_VAL_REG.test(phone)
+  if (DEBUG) {
+    return matched || phone === '+12345678'
+  }
+
+  return matched
+}
 
 const AuthPhoneNumber: FC = () => {
   const {sendPhone} = getActions()
@@ -96,14 +107,14 @@ const AuthPhoneNumber: FC = () => {
   )
 
   const handleSubmit = useCallback(
-    async (e: TargetedEvent<HTMLFormElement, Event>) => {
+    (e: TargetedEvent<HTMLFormElement, Event>) => {
       e.preventDefault()
       sendPhone(formattedPhone.formatted)
     },
     [formattedPhone]
   )
 
-  const isValidPhone = useMemo(() => IS_PHONE_VAL_REG.test(phone.trim()), [phone])
+  const isValidPhone = useMemo(() => validatePhone(phone.trim()), [phone])
   return (
     <>
       <Logo />
@@ -128,6 +139,7 @@ const AuthPhoneNumber: FC = () => {
           id="remember-me"
           label={t('RememberMe')}
           onToggle={handleChangeRememberMe}
+          disabled={state.auth.loading}
           /* якщо тут передати не сигнал, буде ререндер всього компоненту */
           checked={state.auth.$rememberMe!}
         />
@@ -142,6 +154,7 @@ const AuthPhoneNumber: FC = () => {
               variant="transparent"
               onClick={handleChangeLanguage}
               isLoading={translateLoading}
+              isDisabled={state.auth.loading}
             >
               {translateString}
             </Button>

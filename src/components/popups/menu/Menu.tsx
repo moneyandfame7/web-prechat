@@ -1,4 +1,4 @@
-import type {ComponentChildren} from 'preact'
+import type {ComponentChildren, RefObject} from 'preact'
 import type {FC, TargetedEvent} from 'preact/compat'
 import {memo, useCallback, useRef} from 'preact/compat'
 
@@ -15,7 +15,16 @@ import {MenuProvider, useMenuContext} from './context'
 
 import './Menu.scss'
 
-type MenuPlacement = 'bottom-left' | 'bottom-right' | 'default' | 'top-right' | 'top-left'
+type MenuPlacement =
+  | 'bottom left'
+  | 'bottom right'
+  | 'default'
+  | 'top right'
+  | 'top left'
+  | 'top center'
+  | 'top'
+  | 'center'
+  | 'bottom'
 interface MenuProps {
   className?: string
   children: ComponentChildren
@@ -28,6 +37,7 @@ interface MenuProps {
   onClose: () => void
   withBackdrop?: boolean
   placement?: MenuPlacement
+  containerRef?: RefObject<HTMLElement>
 }
 
 export const Menu: FC<MenuProps> = memo(
@@ -39,7 +49,8 @@ export const Menu: FC<MenuProps> = memo(
     onClose,
     autoClose = true,
     withBackdrop = true,
-    placement = 'default'
+    placement = 'default',
+    containerRef
   }) => {
     const buildedClass = clsx('Menu', className, 'scrollable')
 
@@ -53,14 +64,14 @@ export const Menu: FC<MenuProps> = memo(
     )
     const menuRef = useRef<HTMLDivElement>(null)
 
-    useClickAway(menuRef, (e, clicked) => {
-      if (isOpen && clicked.className !== 'backdrop') {
+    useClickAway(containerRef || menuRef, (e, clicked) => {
+      if (isOpen && (withBackdrop ? clicked.className !== 'backdrop' : true)) {
         e.preventDefault()
+
         onClose()
         logDebugWarn('[UI]: Menu away click')
       }
     })
-    const menuPlacement = placement.split('-').join(' ')
     return (
       <MenuProvider
         props={{
@@ -73,7 +84,7 @@ export const Menu: FC<MenuProps> = memo(
           elRef={menuRef}
           className={buildedClass}
           styles={{
-            transformOrigin: menuPlacement
+            transformOrigin: placement
           }}
           isVisible={isOpen}
           withMount={withMount}

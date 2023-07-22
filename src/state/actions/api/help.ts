@@ -6,9 +6,7 @@ import {updateGlobalState} from 'state/persist'
 createAction('getCountries', async ({settings: {i18n}}, _, payload) => {
   if (i18n.lang_code !== payload) {
     const {data} =
-      /*  await callApi('fetchCountries', payload) */ await api.help.getCountries(
-        payload
-      )
+      /*  await callApi('fetchCountries', payload) */ await api.help.getCountries(payload)
 
     updateGlobalState({
       settings: {

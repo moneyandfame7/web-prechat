@@ -36,7 +36,7 @@ export interface AuthState {
   loading: boolean | undefined
   userId: string | undefined
   screen: AuthScreens
-  token: string | undefined
+  firebase_token: string | undefined
   passwordHint: string | undefined
   email: string | undefined
   session: string | undefined

@@ -68,8 +68,8 @@ export interface SignUpInput {
     firstName: string
     lastName?: string
     phoneNumber: string
-    /* token after validating phone with code */
-    token: string
+    /* Firebase token after validating phone with code */
+    firebase_token: string
     connection: SessionData
   }
   photo?: File
@@ -79,7 +79,7 @@ export interface SignUpResponse {
 }
 
 export interface SignInInput {
-  token: string
+  firebase_token: string
   connection: SessionData
   userId: string
 }

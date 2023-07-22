@@ -33,78 +33,8 @@
   }
 }
 
-@mixin withTransition($initial, $final, $transition, $withOpacity: false) {
-  &.Transition_absoluted {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  width: 100%;
-  will-change: transform;
-
-  body.animation-none & {
-    will-change: initial !important;
-  }
-  &-enter {
-    opacity: $withOpacity;
-    @if $withOpacity==true {
-      opacity: 0;
-    }
-    transform: $initial;
-    &-active {
-      @if $withOpacity==true {
-        opacity: 1;
-      }
-      transform: $final;
-      transition: $transition;
-    }
-    &-done {
-      @if $withOpacity==true {
-        opacity: 1;
-      }
-      transform: $final;
-    }
-  }
-
-  &-appear {
-    transform: $initial;
-    @if $withOpacity==true {
-      opacity: 0;
-    }
-    &-active {
-      @if $withOpacity==true {
-        opacity: 1;
-      }
-      transform: $final;
-      transition: $transition;
-    }
-    &-done {
-      @if $withOpacity==true {
-        opacity: 1;
-      }
-      transform: $final;
-    }
-  }
-
-  &-exit {
-    transform: $final;
-    @if $withOpacity==true {
-      opacity: 1;
-    }
-    &-active {
-      @if $withOpacity==true {
-        opacity: 0;
-      }
-      transform: $initial;
-      transition: $transition;
-    }
-
-    &-done {
-      display: none !important;
-      transform: $initial;
-    }
+@mixin withAnimations() {
+  html:not(.animation-none) & {
+    @content;
   }
 }

@@ -1,5 +1,4 @@
 import {
-  // isValidElement,
   memo,
   useCallback,
   useEffect,
@@ -11,8 +10,8 @@ import {
 import {usePrevious} from 'hooks'
 import {useForceUpdate} from 'hooks/useForceUpdate'
 
-import {Transition, type TransitionType} from './Transition'
 import type {VNodeWithKey} from 'types/ui'
+import {Transition, type TransitionType} from './Transition'
 
 function getKey<TKey>(el: VNodeWithKey<TKey> | undefined) {
   if (typeof el === 'undefined') {
@@ -129,7 +128,8 @@ const MountTransition = <TKey extends string>({
     if (!children) {
       return undefined
     }
-    if (willHide && children.key !== willHide?.key) {
+
+    if (willHide /*  && children.key !== willHide?.key */) {
       const receivedTransition = getTransitionForNew?.(children, willHide)
       if (receivedTransition) {
         setTransition(receivedTransition)

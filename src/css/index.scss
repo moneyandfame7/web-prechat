@@ -1,9 +1,9 @@
-@import "font";
-@import "reset";
-@import "variables";
-@import "mixins";
-@import "typography";
-@import "../assets/webfonts/fonts.css";
+@import 'font';
+@import 'reset';
+@import 'variables';
+@import 'mixins';
+@import 'typography';
+@import '../assets/webfonts/fonts.css';
 
 #app {
   height: 100%;
@@ -16,13 +16,14 @@ body {
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Apple Color Emoji", "Segoe UI", Oxygen, Ubuntu, Cantarell,
-    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  --font-family-monospace: "Cascadia Mono", "Roboto Mono", "Droid Sans Mono", "SF Mono", "Menlo", "Ubuntu Mono",
-    "Consolas", monospace;
+  --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Apple Color Emoji',
+    'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  --font-family-monospace: 'Cascadia Mono', 'Roboto Mono', 'Droid Sans Mono', 'SF Mono',
+    'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
   html.is-mac & {
-    --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Apple Color Emoji", "Helvetica Neue",
-      sans-serif;
+    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Roboto',
+      'Apple Color Emoji', 'Helvetica Neue', sans-serif;
   }
   line-height: 1.5;
 }
@@ -78,6 +79,17 @@ html:not(.is-safari) .scrollable {
   &-x {
     overflow-x: auto;
     overflow-y: hidden;
+  }
+  &-hidden {
+    overflow-x: auto;
+    overflow-y: auto;
+    scrollbar-color: transparent !important;
+
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent !important;
+      scrollbar-width: thin !important;
+      display: none !important;
+    }
   }
   overflow-y: auto;
   overflow-x: hidden;

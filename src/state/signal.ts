@@ -30,7 +30,7 @@ const authInitialState: AuthState = {
   userId: undefined,
   loading: false,
   screen: AuthScreens.PhoneNumber,
-  token: undefined,
+  firebase_token: undefined,
   session: undefined,
   captcha: undefined,
   confirmResult: undefined,

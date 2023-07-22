@@ -46,9 +46,9 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
 
     const handleOnBlur = useCallback(() => {
       setIsOpen(false)
-      setTimeout(() => {
-        authScroll?.scrollTo({top: 0, behavior: 'smooth'})
-      }, 100)
+      // setTimeout(() => {
+      //   authScroll?.scrollTo({top: 0, behavior: 'smooth'})
+      // }, 100)
       inputRef.current?.blur()
     }, [authScroll, inputRef])
 
@@ -97,9 +97,11 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
         </MenuItem>
       ))
     }, [selectedCountry, countryList, stringName])
+
+    const containerRef = useRef<HTMLDivElement>(null)
     return (
       <>
-        <div class="select-container">
+        <div class="select-container" ref={containerRef}>
           <InputText
             aria-label="Select country"
             id="select-country"
@@ -109,9 +111,16 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
             value={stringName}
             label={t('Country')}
             loading={loading}
-            endIcon={<Icon name="chevronDown" color="secondary" />}
+            endIcon="chevronDown"
           />
-          <Menu withBackdrop={false} isOpen={isOpen} withMount onClose={handleOnBlur}>
+          <Menu
+            placement="top"
+            containerRef={containerRef}
+            withBackdrop={false}
+            isOpen={isOpen}
+            withMount
+            onClose={handleOnBlur}
+          >
             {renderItems}
           </Menu>
         </div>

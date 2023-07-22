@@ -21,21 +21,28 @@
       border-color: var(--color-border-hover);
       ~ label,
       &::placeholder,
-      ~ .length-indicator,
-      ~ .fa-solid {
+      ~ .length-indicator {
         color: var(--color-placeholder);
+      }
+      ~ .Icon {
+        path {
+          fill: var(--color-placeholder);
+        }
       }
     }
 
     &:focus {
+      background-color: var(--color-background);
       &::placeholder,
       ~ label,
       ~ .length-indicator {
         color: var(--color-placeholder);
       }
 
-      ~ .fa-solid {
-        color: var(--color-primary);
+      ~ .Icon {
+        path {
+          fill: var(--color-primary) !important;
+        }
       }
     }
   }

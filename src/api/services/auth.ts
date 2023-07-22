@@ -8,7 +8,7 @@ import type {
 import type {Mutation} from 'api/apollo'
 
 import {
-  MUTATION_SEND_PHONE,
+  QUERY_SEND_PHONE,
   MUTATION_SIGN_IN,
   MUTATION_SIGN_UP,
   MUTATION_TEST
@@ -28,9 +28,10 @@ export class ApiAuth extends BaseService implements ApiAuthMethods {
    * @returns  User id or undefined.
    */
   public async sendPhone(phone: string): Mutation<{sendPhone: SendPhoneResponse}> {
-    return this.client.mutate<{sendPhone: SendPhoneResponse}>({
-      mutation: MUTATION_SEND_PHONE,
-      variables: {phone}
+    return this.client.query<{sendPhone: SendPhoneResponse}>({
+      query: QUERY_SEND_PHONE,
+      variables: {phone},
+      fetchPolicy: 'cache-first'
     })
   }
 

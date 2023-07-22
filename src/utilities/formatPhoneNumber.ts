@@ -20,13 +20,13 @@ type FormattedPhone =
 
 type CodePatterns = keyof typeof patterns
 /**
- * @example formatPhoneNumber("+38096281", "+380")
- *
- *  = {
- *   formatted: "+380 96 281",
- *   remainingPattern: "## ##",
- *   formattedWithPattern: "+380 96 281 ## ##"
- * }
+ * @example
+ * formatPhoneNumber("+38096281", "+380")
+ * // {
+ * //   formatted: "+380 96 281", - just phone
+ * //   remainingPattern: "## ##", - just remaining pattern
+ * //   formattedWithPattern: "+380 96 281 ## ##" - all together
+ * // }
  */
 export const formatPhoneNumber = (phone?: string, code?: string): FormattedPhone => {
   if (!phone) {

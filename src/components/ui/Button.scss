@@ -8,7 +8,7 @@
   border-radius: 12px;
   text-transform: uppercase;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 500;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,18 +28,28 @@
     &:hover {
       background-color: var(--color-primary-transparent);
     }
+    font-weight: 400;
+
+    &:disabled {
+      opacity: 0.8;
+      background-color: transparent !important;
+    }
   }
 
   &-loading {
-    background-color: #4d90fea8;
+    justify-content: center;
+    > .loader {
+      position: absolute;
+      right: 20px;
+    }
   }
   &-loading.Button-transparent {
     color: #fff;
     background-color: var(--color-primary-transparent);
   }
+
   &:disabled {
     pointer-events: none;
-
-    background-color: var(--color-neutral);
+    background-color: var(--color-primary-disabled);
   }
 }

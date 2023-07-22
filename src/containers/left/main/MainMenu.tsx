@@ -66,7 +66,7 @@ export const LeftMainMenu: FC = memo(() => {
     <div class="LeftColumn-Main_Menu">
       <IconButton onClick={setTrue} icon="menu" />
 
-      <Menu placement="top-left" isOpen={value} withMount={false} onClose={setFalse}>
+      <Menu placement="top left" isOpen={value} withMount={false} onClose={setFalse}>
         {items}
       </Menu>
     </div>

@@ -15,8 +15,8 @@ export const FRAGMENT_SESSION: DocumentNode = gql`
   }
 `
 /* Auth  */
-export const MUTATION_SEND_PHONE: DocumentNode = gql`
-  mutation SendPhone($phone: String!) {
+export const QUERY_SEND_PHONE: DocumentNode = gql`
+  query SendPhone($phone: String!) {
     sendPhone(phone: $phone) {
       userId
     }

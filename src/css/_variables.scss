@@ -1,10 +1,10 @@
 $color-text-secondary: #6d6b6b;
 $color-scrollbar: rgb(207, 207, 207);
-$color-primary: #3290ec;
+$color-primary: #4da4f5;
 $color-primary-lighter: #4da4f5;
-$color-primary-hover: darken($color-primary, 5%);
+$color-primary-hover: darken($color-primary, 8%);
 $color-primary-transparent: rgba(78, 163, 252, 0.13);
-
+$color-primary-disabled: lighten($color-primary, 4%);
 $color-placeholder: #999;
 $color-border: #d5d7db;
 $color-error: rgb(237, 24, 24);
@@ -21,7 +21,7 @@ $color-background: #fff;
 $color-background-secondary: #dedede;
 $color-background-transparent: rgba(255 255 255/90%);
 
-$color-ripple: rgba(0, 0, 0, 0.08);
+$color-ripple: rgb(112 117 121 / 8%);
 $color-border: #dfe1e5;
 $color-border-hover: #c4c9cc;
 
@@ -46,6 +46,7 @@ $z-menu: 11;
   --color-primary-lighter: #{$color-primary-lighter};
   --color-primary-hover: #{$color-primary-hover};
   --color-primary-transparent: #{$color-primary-transparent};
+  --color-primary-disabled: #{$color-primary-disabled};
 
   --color-placeholder: #{$color-placeholder};
   --color-border: #{$color-border};

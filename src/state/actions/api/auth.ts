@@ -14,6 +14,7 @@ import {logDebugInfo, logDebugWarn} from 'lib/logger'
 import {stringRemoveSpacing} from 'utilities/stringRemoveSpacing'
 import {api} from 'api/client'
 import {makeRequest} from 'api/request'
+import {startTransition} from 'preact/compat'
 
 /**
  * Get user connection info, country ( dial code, etc )
@@ -50,12 +51,15 @@ createAction('sendPhone', async (state, _, payload) => {
   )
   const data = response?.data?.sendPhone
 
+  console.log({data}, 'DATA???')
+  /**
+   * @todo Провірити цей case
+   */
   if (!data) {
     state.auth.error = 'Auth send phone error'
     return
   }
-  // const data = response.data.sendPhone
-
+  /* Check, if data.hasActiveSession ? send to app message, else firebase */
   await firebase.sendCode(state.auth, state.settings.i18n.lang_code, payload)
   logDebugInfo('[AUTH]: Code from firebase was sent')
 
@@ -74,23 +78,24 @@ createAction('sendPhone', async (state, _, payload) => {
 createAction('verifyCode', async (state, actions, payload) => {
   state.auth.loading = true
 
-  const credentials = await firebase.verifyCode(
+  const firebase_token = await firebase.verifyCode(
     state.auth,
     state.settings.i18n.lang_code,
     payload
   )
-  if (!credentials) {
+  if (!firebase_token) {
     console.error('[AUTH]: Code verification error')
 
     return
   }
 
-  const token = await credentials?.user.getIdToken()
-  if (!token || state.auth.error) {
+  if (!firebase_token || state.auth.error) {
     console.error('[AUTH]: No token or auth error')
     return
   }
-  const {data} = /* await callApi('getTwoFa', token) */ await api.twoFa.getTwoFa(token)
+  const {data} = /* await callApi('getTwoFa', token) */ await api.twoFa.getTwoFa(
+    firebase_token
+  )
   if (data.getTwoFa) {
     updateGlobalState(
       {
@@ -105,7 +110,7 @@ createAction('verifyCode', async (state, actions, payload) => {
   } else if (state.auth.userId) {
     actions.signIn({
       userId: state.auth.userId,
-      token,
+      firebase_token,
       connection: {
         ...state.auth.connection!,
         browser: USER_BROWSER,
@@ -116,7 +121,7 @@ createAction('verifyCode', async (state, actions, payload) => {
     updateGlobalState(
       {
         auth: {
-          token,
+          firebase_token,
           screen: AuthScreens.SignUp
         }
       },
@@ -154,7 +159,7 @@ createAction('signIn', async (state, _, payload) => {
  */
 createAction('signUp', async (state, _, payload) => {
   const {silent, firstName, lastName, photo} = payload
-  if (!state.auth.token || !state.auth.phoneNumber) {
+  if (!state.auth.firebase_token || !state.auth.phoneNumber) {
     state.auth.error = 'Phone verification failed'
     console.error('[AUTH]: SIGN UP ERROR')
 
@@ -171,7 +176,7 @@ createAction('signUp', async (state, _, payload) => {
       browser: USER_BROWSER || 'Unknown',
       platform: USER_PLATFORM || 'Unknown'
     },
-    token: state.auth.token
+    firebase_token: state.auth.firebase_token
   }
   const {data} = /* await callApi('signUp', {input, photo}) */ await api.auth.signUp({
     input,

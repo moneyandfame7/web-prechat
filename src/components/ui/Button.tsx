@@ -26,7 +26,7 @@ export interface ButtonProps {
 
 export const Button: FC<ButtonProps> = ({
   isLoading = false,
-  loadingText,
+  loadingText = 'Please wait...',
   type = 'button',
   isDisabled = false,
   variant = 'contained',

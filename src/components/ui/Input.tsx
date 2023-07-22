@@ -1,4 +1,4 @@
-import {type VNode, type RefObject} from 'preact'
+import {type RefObject} from 'preact'
 import {
   type FC,
   type TargetedEvent,
@@ -14,7 +14,7 @@ import type {InputHandler, SignalOrString} from 'types/ui'
 import type {AnyObject} from 'types/common'
 
 import {Spinner} from './Spinner'
-import {Transition} from '../Transition'
+import {Icon, type IconName} from './Icon'
 
 import './Input.scss'
 
@@ -36,8 +36,8 @@ interface InputProps {
   loading?: boolean
   tabIndex?: number
   autoFocus?: boolean
-  startIcon?: VNode
-  endIcon?: VNode
+  startIcon?: IconName
+  endIcon?: IconName
   className?: string
   dataProps?: AnyObject
   'aria-label'?: SignalOrString
@@ -99,6 +99,7 @@ export const InputText: FC<InputProps> = ({
     'error': Boolean(error),
     'disabled': isInputDisabled,
     'start-icon': Boolean(startIcon),
+    'loading': loading,
     'end-icon': Boolean(endIcon) || typeof loading !== 'undefined'
   })
 
@@ -117,26 +118,12 @@ export const InputText: FC<InputProps> = ({
   const renderEndIcon = useCallback(() => {
     return (
       <>
-        <Transition
-          className="input-spinner"
-          type="zoomFade"
-          appear={false}
-          withMount
-          isVisible={loading}
-        >
-          <Spinner size="small" color="neutral" />
-        </Transition>
-
-        {endIcon && (
-          <Transition
-            type="zoomFade"
-            isVisible={!loading}
-            appear={false}
-            withMount={false}
-          >
-            {endIcon}
-          </Transition>
+        {loading && (
+          <span class="input-spinner">
+            <Spinner size="small" color="neutral" />
+          </span>
         )}
+        {endIcon && <Icon className="input-icon" color="secondary" name={endIcon} />}
       </>
     )
   }, [endIcon, loading])
@@ -162,7 +149,7 @@ export const InputText: FC<InputProps> = ({
         placeholder={placeholder}
       />
       <div class="input-border" />
-      {startIcon}
+      {startIcon && <Icon name={startIcon} color="secondary" />}
       {renderEndIcon()}
       {labelText && (
         <label for={id} htmlFor={id}>

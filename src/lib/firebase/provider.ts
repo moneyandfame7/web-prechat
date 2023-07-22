@@ -11,17 +11,17 @@ import {authentication} from './config'
 import {throwFirebaseError, getFirebaseErrorMessage} from './errors'
 
 export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
-  if (auth.captcha) {
-    // await resetCaptcha(auth)
-    return
-  }
+  // if (auth.captcha) {
+  //   await resetCaptcha(auth)
+  //   return
+  // }
   auth.captcha = new RecaptchaVerifier(
     'auth-recaptcha',
     {
       size: 'invisible',
-      callback: (/* res:unknown */) => {
+      callback: (res: unknown) => {
         /*  */
-        console.log('RES')
+        console.log('RES', res)
       }
     },
     authentication
@@ -42,7 +42,7 @@ export async function sendCode(
   }
   try {
     const res = await signInWithPhoneNumber(authentication, phone, auth.captcha)
-
+    console.log({res}, 'FIREBASE RES')
     auth.confirmResult = res
   } catch (err) {
     throwFirebaseError(auth, lang, err)
@@ -55,14 +55,14 @@ export async function verifyCode(
   code: string
 ) {
   try {
-    const response = await auth.confirmResult?.confirm(code)
-    if (!response) {
+    const credentials = await auth.confirmResult?.confirm(code)
+    if (!credentials) {
       throw new FirebaseError(
         getFirebaseErrorMessage('auth/invalid-credential', language),
         'Response not found'
       )
     }
-    return response
+    return credentials?.user.getIdToken()
   } catch (err) {
     throwFirebaseError(auth, language, err)
   }

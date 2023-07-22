@@ -97,7 +97,7 @@ export const CreateChatButton: FC = () => {
       <div class={buildedClass}>
         <FloatButton aria-label={t('CreateChat')} icon={renderIcon} onClick={setTrue} />
         <Menu
-          placement="bottom-right"
+          placement="bottom right"
           className="CreateChat-Menu"
           isOpen={value}
           onClose={setFalse}

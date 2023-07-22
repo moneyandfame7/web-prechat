@@ -41,6 +41,7 @@ const classNames = {
 //   [AuthScreens.Password]: <AuthPassword />,
 //   [AuthScreens.SignUp]: <SignUp />
 // }
+
 const Auth: FC = () => {
   const {auth} = getGlobalState()
   useEffect(() => {
@@ -68,7 +69,7 @@ const Auth: FC = () => {
   }, [auth.screen])
 
   return (
-    <div class="scrollable" id="auth-scroll">
+    <div class="scrollable scrollable-hidden" id="auth-scroll">
       <div class="Auth">
         <div class="Auth_inner">
           <MountTransition
@@ -79,7 +80,9 @@ const Auth: FC = () => {
             classNames={classNames}
             /* shouldCleanupByKey=["",""] */
             /* if not found - throw error */
+            // duration={}
             shouldCleanup={false}
+            // getTransitionForNew={getScreenTransition}
             initial={false}
             name="zoomFade"
           >
