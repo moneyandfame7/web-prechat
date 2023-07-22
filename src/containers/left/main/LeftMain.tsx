@@ -52,6 +52,7 @@ const LeftMain: FC = (props) => {
         return <LeftMainMenu />
     }
   }, [activeScreen])
+
   return (
     <Fragment {...props}>
       {/* <div class="LeftColumn-Header">

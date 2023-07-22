@@ -23,12 +23,13 @@ const classNames: Record<LeftColumnGroup, string> = {
 }
 
 function getScreenTransition(
-  // newEl: VNodeWithKey<LeftColumnGroup>,
+  newEl: VNodeWithKey<LeftColumnGroup>,
   current: VNodeWithKey<string>
 ): TransitionType {
   if (current.key === LeftColumnGroup.Main) {
     return 'zoomSlideReverse'
   }
+
   return 'zoomSlide'
 }
 

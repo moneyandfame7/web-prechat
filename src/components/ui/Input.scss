@@ -44,6 +44,18 @@
 
     &:focus {
       outline: none;
+      caret-color: var(--color-primary);
+      ~ .input-border {
+        opacity: 1;
+      }
+      &::placeholder,
+      ~ label,
+      ~ .length-indicator {
+        color: var(--color-primary);
+      }
+      ~ .Icon path {
+        fill: var(--color-primary);
+      }
     }
 
     &:hover {
@@ -56,20 +68,6 @@
 
       ~ .Icon path,
       .Icon path {
-        fill: var(--color-primary);
-      }
-    }
-    &:focus {
-      caret-color: var(--color-primary);
-      ~ .input-border {
-        opacity: 1;
-      }
-      &::placeholder,
-      ~ label,
-      ~ .length-indicator {
-        color: var(--color-primary);
-      }
-      ~ .Icon path {
         fill: var(--color-primary);
       }
     }
@@ -152,10 +150,26 @@
     transition: opacity 0.2s ease-out;
   }
 
+  &.input-default {
+    input {
+      border: none;
+      border-radius: 0;
+      height: initial;
+      padding-top: 10px !important;
+      padding-bottom: 10px !important;
+      &:focus,
+      &:hover {
+        &::placeholder {
+          color: var(--color-placeholder);
+        }
+      }
+    }
+  }
+
   label {
     position: absolute;
     left: 20px;
-    top: 15px;
+    top: 13px;
     transform-origin: left center;
     padding: 0px 5px;
     scale: 1;

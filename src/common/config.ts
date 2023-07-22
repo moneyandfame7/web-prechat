@@ -74,7 +74,7 @@ export const GITHUB_SOURCE = 'https://github.com/moneyandfame7/web-prechat#readm
 export const TRANSITION_DURATION_FADE = 200
 export const TRANSITION_DURATION_ZOOM_FADE = 200
 export const TRANSITION_DURATION_SLIDE = 300
-export const TRANSITION_DURATION_MENU = 250 /* 150 */
+export const TRANSITION_DURATION_MENU = 150 /* 150 */
 
 export const TRANSITION_DURATIONS = {
   FADE: 200,

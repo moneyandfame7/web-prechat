@@ -1,0 +1,35 @@
+.divider {
+  width: 100%;
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  &::after,
+  &::before {
+    content: '';
+    display: block;
+    width: 100%;
+    border-top: thin solid var(--color-border);
+  }
+
+  &-left {
+    &::after {
+      width: 90%;
+    }
+    &::before {
+      width: 10%;
+    }
+  }
+
+  &-right {
+    &::after {
+      width: 10%;
+    }
+    &::before {
+      width: 90%;
+    }
+  }
+
+  &-wrapper {
+    padding: 0px 7px;
+  }
+}

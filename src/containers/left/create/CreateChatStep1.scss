@@ -1,0 +1,14 @@
+.LeftColumn {
+  &-NewChannelStep1,
+  &-NewGroupStep1 {
+    display: flex;
+    flex-direction: column;
+    .divider {
+      margin-top: 10px;
+    }
+
+    .picker-list {
+      padding: 10px;
+    }
+  }
+}

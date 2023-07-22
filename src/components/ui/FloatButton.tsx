@@ -11,17 +11,21 @@ import './FloatButton.scss'
 interface FloatButtonProps extends ButtonProps {
   icon: VNode
   'aria-label': SignalOrString
+  shown: boolean
 }
 export const FloatButton: FC<FloatButtonProps> = ({
   icon,
   children,
   className,
+  shown,
   ...props
 }) => {
-  const buildedClass = clsx('FloatButton', className)
+  const buildedClass = clsx('FloatButton', className, {
+    'shown': shown
+  })
 
   return (
-    <Button className={buildedClass} {...props}>
+    <Button className={buildedClass} loadingText="" {...props}>
       {icon}
       {children}
     </Button>

@@ -10,10 +10,10 @@ interface LeftGoBackProps {
   force?: boolean
 }
 export const LeftGoBack: FC<LeftGoBackProps> = memo(({force = true, ...props}) => {
-  const {resetScreen} = useLeftColumn()
+  const {activeScreen, resetScreen} = useLeftColumn()
 
   const handleClick = useCallback(() => {
     resetScreen(force)
-  }, [force])
+  }, [force, activeScreen])
   return <IconButton icon="arrowLeft" onClick={handleClick} {...props} />
 })

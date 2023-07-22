@@ -25,7 +25,6 @@ import {PhoneNumberInput} from './PhoneNumberInput'
 import {SelectCountryInput} from './SelectCountryInput'
 
 import './AuthPhoneNumber.scss'
-import {useBoolean} from 'hooks/useFlag'
 
 const IS_PHONE_VAL_REG = /^\+\d{1,4}\s?\d{10,}$/
 

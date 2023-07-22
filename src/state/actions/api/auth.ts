@@ -14,7 +14,6 @@ import {logDebugInfo, logDebugWarn} from 'lib/logger'
 import {stringRemoveSpacing} from 'utilities/stringRemoveSpacing'
 import {api} from 'api/client'
 import {makeRequest} from 'api/request'
-import {startTransition} from 'preact/compat'
 
 /**
  * Get user connection info, country ( dial code, etc )

@@ -1,24 +1,18 @@
 import {useMemo, type FC, useCallback} from 'preact/compat'
+import clsx from 'clsx'
 
 import {t} from 'lib/i18n'
-
+import {LeftColumnScreen} from 'types/ui'
+import {getGlobalState} from 'state/signal'
 import {useBoolean} from 'hooks/useFlag'
 
 import {Menu, MenuItem} from 'components/popups/menu'
-import {Transition} from 'components/Transition'
 import {Icon, FloatButton} from 'components/ui'
-
-import {LeftColumnScreen} from 'types/ui'
-import {getGlobalState} from 'state/signal'
 
 import {useLeftColumn} from '../context'
 
-import {signal} from '@preact/signals'
-
 import './CreateChatButton.scss'
-import clsx from 'clsx'
 
-export const TEST_SIGNAL = signal(true)
 export const CreateChatButton: FC = () => {
   const {value, setFalse, setTrue} = useBoolean(false)
   const {setScreen} = useLeftColumn()
@@ -56,26 +50,8 @@ export const CreateChatButton: FC = () => {
   const renderIcon = useMemo(() => {
     return (
       <>
-        {/* <Transition
-          className="FloatButton_icon"
-          isVisible={value}
-          withMount
-          appear={false}
-          duration={350}
-          type="zoomFade"
-        > */}
         <Icon name="close" />
-        {/* </Transition> */}
-        {/* <Transition
-          className="FloatButton_icon"
-          isVisible={!value}
-          withMount
-          appear={false}
-          duration={500}
-          type="zoomFade"
-        > */}
         <Icon name="editFilled" />
-        {/* </Transition> */}
       </>
     )
   }, [value])
@@ -84,28 +60,22 @@ export const CreateChatButton: FC = () => {
     open: value
   })
   return (
-    <>
-      <Transition
-        full={false}
-        isVisible={TEST_SIGNAL.value}
-        type="zoomFade"
-        appear={false}
+    <div class={buildedClass}>
+      <FloatButton
+        shown
+        aria-label={t('CreateChat')}
+        icon={renderIcon}
+        onClick={setTrue}
+      />
+      <Menu
+        placement="bottom right"
+        className="CreateChat-Menu"
+        isOpen={value}
+        onClose={setFalse}
         withMount={false}
       >
-        <div style={{backgroundColor: 'pink'}}>Aboba</div>
-      </Transition>
-      <div class={buildedClass}>
-        <FloatButton aria-label={t('CreateChat')} icon={renderIcon} onClick={setTrue} />
-        <Menu
-          placement="bottom right"
-          className="CreateChat-Menu"
-          isOpen={value}
-          onClose={setFalse}
-          withMount={false}
-        >
-          {renderItems}
-        </Menu>
-      </div>
-    </>
+        {renderItems}
+      </Menu>
+    </div>
   )
 }

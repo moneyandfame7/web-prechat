@@ -18,6 +18,7 @@ import {Icon, type IconName} from './Icon'
 
 import './Input.scss'
 
+export type InputVariant = 'filled' | 'outlined' | 'default'
 interface InputProps {
   elRef?: RefObject<HTMLInputElement>
   id?: SignalOrString
@@ -43,6 +44,7 @@ interface InputProps {
   'aria-label'?: SignalOrString
   type?: string
   inputMode?: string
+  variant?: InputVariant
 }
 
 export const InputText: FC<InputProps> = ({
@@ -69,7 +71,8 @@ export const InputText: FC<InputProps> = ({
   children,
   'aria-label': ariaLabel,
   type = 'text',
-  inputMode
+  inputMode,
+  variant = 'outlined'
 }) => {
   const valueLength = useSignal(maxLength)
   const labelText = error || label
@@ -94,7 +97,7 @@ export const InputText: FC<InputProps> = ({
 
   const isInputDisabled = disabled || loading
 
-  const buildedClassname = clsx(className, 'input-container', {
+  const buildedClassname = clsx(className, 'input-container', `input-${variant}`, {
     'not-empty': Boolean(value.length),
     'error': Boolean(error),
     'disabled': isInputDisabled,
@@ -148,7 +151,7 @@ export const InputText: FC<InputProps> = ({
         aria-label={ariaLabel || labelText}
         placeholder={placeholder}
       />
-      <div class="input-border" />
+      {variant !== 'default' && <div class="input-border" />}
       {startIcon && <Icon name={startIcon} color="secondary" />}
       {renderEndIcon()}
       {labelText && (

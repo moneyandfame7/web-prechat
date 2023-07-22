@@ -7,6 +7,12 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--input-border-radius);
+  &-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   cursor: pointer;
   @include withAnimations {
     transition: background-color 0.2s ease;
@@ -14,18 +20,20 @@
   &.disabled {
     pointer-events: none;
   }
-  > .Icon-check {
+  .Icon-check {
     position: absolute;
-    left: 23px;
+    // left: 23px;
     path {
       fill: #fff;
     }
     display: none;
-    width: 15px;
-    height: 15px;
+    // width: 15px;
+    // height: 15px;
   }
-  &:hover {
-    background-color: var(--color-neutral-hover);
+  &.ripple {
+    &:hover {
+      background-color: var(--color-neutral-hover);
+    }
   }
 
   input[type='checkbox'] {
@@ -33,7 +41,7 @@
     height: 20px;
     width: 20px;
     border-radius: 5px;
-    border: 2px solid var(--color-border);
+    border: 2px solid var(--color-neutral);
     display: flex;
     align-items: center;
     justify-content: center;

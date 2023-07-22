@@ -13,7 +13,7 @@ import {t} from 'lib/i18n'
 
 import type {Country} from 'types/api'
 
-import {InputText, Icon} from 'components/ui'
+import {InputText} from 'components/ui'
 import {MenuItem, Menu} from 'components/popups/menu'
 
 import {TRANSITION_DURATION_ZOOM_FADE} from 'common/config'

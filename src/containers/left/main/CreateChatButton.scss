@@ -12,21 +12,37 @@
       }
     }
 
-    &:not(.open) {
-      & .Icon-close {
-        animation: hide-icon 0.4s forwards ease-out;
+    @include withAnimations {
+      &:not(.open) {
+        & .Icon-close {
+          animation: hide-icon 0.4s forwards ease-out !important;
+        }
+        & .Icon-editFilled {
+          animation: show-icon 0.4s ease-out !important;
+        }
       }
-      & .Icon-editFilled {
-        animation: show-icon 0.4s ease-out;
+      &.open {
+        & .Icon-close {
+          animation: show-icon 0.4s ease-out !important;
+        }
+        & .Icon-editFilled {
+          animation: hide-icon 0.4s forwards ease-out !important;
+        }
       }
     }
-    &.open {
+    &:not(.open) {
       & .Icon-close {
-        animation: show-icon 0.4s ease-out;
+        display: none;
       }
       & .Icon-editFilled {
-        animation: hide-icon 0.4s forwards ease-out;
+        display: initial;
       }
+    }
+    & .Icon-close {
+      display: initial;
+    }
+    & .Icon-editFilled {
+      display: none;
     }
   }
 

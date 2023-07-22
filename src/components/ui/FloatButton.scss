@@ -1,5 +1,4 @@
 .FloatButton {
-  // transform: translateY(200%);
   position: absolute;
   right: 20px;
   bottom: 20px;
@@ -15,9 +14,45 @@
   svg path {
     fill: #fff;
   }
-  &_icon {
-    height: 24px !important; /* @todo avoid hardcode ( 24px - height of icons ) */
-    top: auto !important;
-    transition: 0.35s ease all;
+  // &_icon {
+  //   height: 24px !important; /* @todo avoid hardcode ( 24px - height of icons ) */
+  //   top: auto !important;
+  //   transition: 0.35s ease all;
+  // }
+
+  transform: translateY(100px);
+  &.shown {
+    transform: translateY(0);
+  }
+
+  // & .Icon {
+  //   position: absolute;
+  //   animation: hide-icon 0.3s ease;
+  // }
+  .loader {
+    right: auto;
+    top: 16px;
+    // transform: translateY(-50%);
+  }
+
+  @include withAnimations {
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    &:not(.Button-loading) {
+      > .loader {
+        animation: hide-icon 0.3s ease;
+      }
+      > .Icon {
+        animation: show-icon 0.3s ease;
+      }
+    }
+    &.Button-loading {
+      > .loader {
+        animation: show-icon 0.3s ease;
+      }
+      > .Icon {
+        animation: hide-icon 0.3s ease;
+      }
+    }
   }
 }

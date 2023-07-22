@@ -41,6 +41,7 @@
     > .loader {
       position: absolute;
       right: 20px;
+      height: 24px;
     }
   }
   &-loading.Button-transparent {
@@ -50,6 +51,6 @@
 
   &:disabled {
     pointer-events: none;
-    background-color: var(--color-primary-disabled);
+    background-color: var(--color-primary-lighter);
   }
 }
