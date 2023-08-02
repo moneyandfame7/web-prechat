@@ -1,3 +1,5 @@
+import {updateGlobalState} from 'state/persist'
+// import {deepClone} from 'utilities/deepClone'
 /* eslint-disable no-console */
 import {type Signal, useSignal} from '@preact/signals'
 import {useEffect} from 'preact/hooks'
@@ -8,42 +10,41 @@ import type {LanguagePackKeys, SupportedLanguages} from 'types/lib'
 import type {FetchLanguage} from 'types/api'
 
 import {getGlobalState} from 'state/signal'
-import {updateGlobalState} from 'state/persist'
 import {logDebugError, logDebugWarn} from 'lib/logger'
-import {api} from 'api/client'
+import {Api} from 'api/client'
+// import {DEBUG} from 'common/config'
+import {DEBUG} from 'common/config'
+import {hasSession} from 'state/helpers/auth'
 
 async function fetchLanguage(language: SupportedLanguages) {
-  const response = await api.help.getLanguage(language)
+  const response = await Api.help.getLanguage(language)
 
-  return (await import('omit-deep-lodash')
-    .then((module) => module.default)
-    .then((omitDeep) =>
-      omitDeep(response.data.language, ['__typename'])
-    )) as FetchLanguage
+  return response.data.language
 }
 
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
 
   const translate = i18n.pack[`$${key}`] as unknown as Signal<string>
-
   if (!translate?.value) {
     logDebugError(`[UI]: Translation for «${key}» not found`)
     // throw new Error('[UI]: Translation not found')
+    // return key
   }
   return translate
 }
 
 export async function changeLanguage(language: SupportedLanguages) {
-  logDebugWarn('[UI]: I18n provider was called')
+  // const state = getGlobalState()
   let data
 
-  // if (!DEBUG) {
-  data = (await cache.get('prechat-i18n-pack', language)) as FetchLanguage
-  // }
+  if (!DEBUG) {
+    data = (await cache.get('prechat-i18n-pack', language)) as FetchLanguage
+  }
   if (!data) {
-    data = await fetchLanguage(language)
+    logDebugWarn('[UI]: I18n fetch language PACK')
 
+    data = await fetchLanguage(language)
     cache.add({
       name: 'prechat-i18n-pack',
       key: language,
@@ -51,6 +52,15 @@ export async function changeLanguage(language: SupportedLanguages) {
     })
   }
 
+  // state.settings = {
+  //   ...state.settings,
+  //   i18n: {
+  //     pack: deepClone(data.pack),
+  //     lang_code: language,
+  //     countries: deepClone(data.countries),
+  //     errors: deepClone(data.errors)
+  //   }
+  // }
   updateGlobalState(
     {
       settings: {
@@ -62,7 +72,7 @@ export async function changeLanguage(language: SupportedLanguages) {
         }
       }
     },
-    false
+    hasSession()
   )
 }
 
@@ -79,7 +89,7 @@ export async function translateByString(
   let langString = await cache.get('prechat-i18n-string', str)
   if (!langString) {
     const {data} =
-      /* await callApi('fetchLanguageString', language, str) */ await api.help.getLanguageString(
+      /* await callApi('fetchLanguageString', language, str) */ await Api.help.getLanguageString(
         language,
         str
       )

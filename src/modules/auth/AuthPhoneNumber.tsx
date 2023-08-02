@@ -6,13 +6,16 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
+  useLayoutEffect
 } from 'preact/compat'
 
 import {changeLanguage, t, useTranslateString} from 'lib/i18n'
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 import {selectCountryByPhone, selectSuggestedCountry} from 'state/selectors/auth'
+import {initializeAuth} from 'state/initialize'
+
 import {formatPhoneNumber} from 'utilities/formatPhoneNumber'
 
 import type {Country} from 'types/api'
@@ -24,6 +27,7 @@ import {Logo} from 'components/Logo'
 import {PhoneNumberInput} from './PhoneNumberInput'
 import {SelectCountryInput} from './SelectCountryInput'
 
+// import {updateGlobalState} from 'state/persist'
 import './AuthPhoneNumber.scss'
 
 const IS_PHONE_VAL_REG = /^\+\d{1,4}\s?\d{10,}$/
@@ -41,7 +45,9 @@ const AuthPhoneNumber: FC = () => {
   const {sendPhone} = getActions()
   const state = getGlobalState()
   const phoneInputRef = useRef<HTMLInputElement>(null)
-
+  useLayoutEffect(() => {
+    initializeAuth()
+  }, [])
   const [phone, setPhone] = useState<string>('')
   const [country, setCountry] = useState<Country | undefined>(selectCountryByPhone(state))
   const [translateLoading, setTranslateLoading] = useState(false)
@@ -117,8 +123,8 @@ const AuthPhoneNumber: FC = () => {
   return (
     <>
       <Logo />
-      <h1 class="title text-center">{t('Auth.Signin')}</h1>
-      <p class="subtitle text-center">{t('Auth.ConfirmNumber')}</p>
+      <h1 class="title">{t('Auth.Signin')}</h1>
+      <p class="subtitle">{t('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>
         <SelectCountryInput
           loading={!state.settings?.i18n?.countries?.length || !state.auth.connection}
@@ -144,9 +150,10 @@ const AuthPhoneNumber: FC = () => {
         />
         {isValidPhone && (
           <Button type="submit" isLoading={state.auth.loading}>
-            {t('Next')}
+            {state.auth.error || t('Next')}
           </Button>
         )}
+
         {translateString &&
           state.settings.suggestedLanguage !== state.settings.i18n.lang_code && (
             <Button
@@ -159,6 +166,9 @@ const AuthPhoneNumber: FC = () => {
             </Button>
           )}
       </form>
+      <div id="auth-recaptcha-wrapper">
+        <div id="auth-recaptcha" />
+      </div>
     </>
   )
 }

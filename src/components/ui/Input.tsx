@@ -1,4 +1,4 @@
-import {type RefObject} from 'preact'
+import type {VNode, RefObject} from 'preact'
 import {
   type FC,
   type TargetedEvent,
@@ -10,9 +10,11 @@ import {useSignal} from '@preact/signals'
 
 import clsx from 'clsx'
 
-import type {InputHandler, SignalOrString} from 'types/ui'
+import type {InputHandler, SignalOr} from 'types/ui'
 import type {AnyObject} from 'types/common'
 
+import {isAnimationDisabled} from 'utilities/isAnimationEnabled'
+import {getLengthMaybeSignal} from 'utilities/getLengthMaybeSignal'
 import {Spinner} from './Spinner'
 import {Icon, type IconName} from './Icon'
 
@@ -21,12 +23,12 @@ import './Input.scss'
 export type InputVariant = 'filled' | 'outlined' | 'default'
 interface InputProps {
   elRef?: RefObject<HTMLInputElement>
-  id?: SignalOrString
-  value: string
-  error?: SignalOrString
-  label?: SignalOrString
-  disabled?: boolean
-  placeholder?: SignalOrString
+  id?: SignalOr<string>
+  value: SignalOr<string>
+  error?: SignalOr<string>
+  label?: SignalOr<string>
+  disabled?: SignalOr<boolean>
+  placeholder?: SignalOr<string>
   onInput: InputHandler
   onBlur?: InputHandler
   onFocus?: InputHandler
@@ -38,13 +40,14 @@ interface InputProps {
   tabIndex?: number
   autoFocus?: boolean
   startIcon?: IconName
-  endIcon?: IconName
+  endIcon?: VNode
   className?: string
   dataProps?: AnyObject
-  'aria-label'?: SignalOrString
-  type?: string
+  'aria-label'?: SignalOr<string>
+  type?: SignalOr<string>
   inputMode?: string
   variant?: InputVariant
+  fixedLabel?: boolean
 }
 
 export const InputText: FC<InputProps> = ({
@@ -72,6 +75,7 @@ export const InputText: FC<InputProps> = ({
   'aria-label': ariaLabel,
   type = 'text',
   inputMode,
+  fixedLabel,
   variant = 'outlined'
 }) => {
   const valueLength = useSignal(maxLength)
@@ -95,15 +99,13 @@ export const InputText: FC<InputProps> = ({
     onBlur?.(e)
   }
 
-  const isInputDisabled = disabled || loading
-
   const buildedClassname = clsx(className, 'input-container', `input-${variant}`, {
-    'not-empty': Boolean(value.length),
     'error': Boolean(error),
-    'disabled': isInputDisabled,
+    'not-empty': Boolean(getLengthMaybeSignal(value)),
     'start-icon': Boolean(startIcon),
     'loading': loading,
-    'end-icon': Boolean(endIcon) || typeof loading !== 'undefined'
+    'end-icon': Boolean(endIcon) || typeof loading !== 'undefined',
+    'fixed-label': fixedLabel || isAnimationDisabled() // if animation off
   })
 
   useLayoutEffect(() => {
@@ -126,7 +128,7 @@ export const InputText: FC<InputProps> = ({
             <Spinner size="small" color="neutral" />
           </span>
         )}
-        {endIcon && <Icon className="input-icon" color="secondary" name={endIcon} />}
+        {endIcon}
       </>
     )
   }, [endIcon, loading])
@@ -146,7 +148,7 @@ export const InputText: FC<InputProps> = ({
         value={value}
         type={type}
         autoComplete="off"
-        disabled={isInputDisabled}
+        disabled={disabled || loading}
         maxLength={maxLength}
         aria-label={ariaLabel || labelText}
         placeholder={placeholder}

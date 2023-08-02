@@ -40,16 +40,6 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
     if (withBlur && !hidden) lottieRef.current?.play()
   }, [])
 
-  useEffect(() => {
-    /**
-     * visibility change for stop
-     */
-    document.addEventListener('visibilitychange', () => {
-      if (!hidden) {
-      }
-    })
-  }, [hidden])
-
   const pauseOnClick = useCallback(
     (e: TargetedEvent<HTMLDivElement, Event>) => {
       e.preventDefault()

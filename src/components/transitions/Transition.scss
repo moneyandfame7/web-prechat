@@ -1,0 +1,345 @@
+.Transition {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+
+  html.animation-level-2 & {
+    transition: opacity 0.15s !important;
+    transform: none !important;
+  }
+  html.animation-none & {
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+.zoomFade {
+  --transition-zoomFade-duration: 250ms;
+  transform-origin: center;
+  will-change: transform;
+  &-enter,
+  &-appear {
+    animation: fade-in var(--transition-zoomFade-duration) ease forwards,
+      zoom-fade-in var(--transition-zoomFade-duration) ease forwards;
+  }
+
+  &-exit {
+    // to avoid flickering need use forwards
+    animation: fade-out var(--transition-zoomFade-duration) ease forwards,
+      zoom-fade-out var(--transition-zoomFade-duration) ease forwards;
+    &-done {
+      transform-origin: bottom;
+      animation: fade-out var(--transition-zoomFade-duration) ease forwards,
+        zoom-fade-out var(--transition-zoomFade-duration) ease forwards;
+      display: none !important; /* perfomance - display: none */
+    }
+  }
+}
+
+.fade {
+  --transition-fade-duration: 250ms;
+  // will-change: opacity;
+  &-enter,
+  &-appear {
+    animation: fade-in var(--transition-fade-duration) ease forwards;
+  }
+
+  &-exit {
+    // to avoid flickering need use forwards
+    animation: fade-out var(--transition-fade-duration) ease forwards;
+    &-done {
+      // transform-origin: bottom;
+      animation: fade-out var(--transition-fade-duration) ease forwards;
+      display: none !important; /* perfomance - display: none */
+    }
+  }
+}
+
+.slideFade {
+  --transition-slideFade-duration: 250ms;
+
+  --transition-slideFade-backward-duration: 250ms;
+  will-change: transform, filter;
+  &-enter,
+  &-appear {
+    animation: slide-fade-in var(--transition-slideFade-duration)
+      cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+  }
+  &-backward {
+    &-enter,
+    &-appear {
+      animation: slide-fade-in-backward var(--transition-slideFade-backward-duration)
+        cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+    }
+  }
+
+  &-exit {
+    // to avoid flickering need use forwards
+    animation: slide-fade-out var(--transition-slideFade-duration)
+      cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+    &-done {
+      animation: slide-fade-out var(--transition-slideFade-duration) ease forwards;
+      display: none !important; /* perfomance - display: none */
+    }
+  }
+  &-backward {
+    &-exit {
+      animation: slide-fade-out-backward var(--transition-slideFade-backward-duration)
+        cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+      &-done {
+        animation: slide-fade-out-backward var(--transition-slideFade-backward-duration)
+          ease forwards;
+        display: none !important; /* perfomance - display: none */
+      }
+    }
+  }
+}
+
+// Єдине, не знає як позбутись швидкого перескоку при швидкому перемиканні компонентів
+// якщо duration дуже високий. Хіба що зробити хук, який буде блокувати доступ анімувати, поки анімація не завершилась.
+
+.slide {
+  --transition-slide-duration: 250ms;
+
+  --transition-slide-backward-duration: 250ms;
+  will-change: transform;
+
+  /* Enter, Initial */
+  &-enter,
+  &-appear {
+    animation: slide-in var(--transition-slide-duration)
+      cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+  }
+  &-backward {
+    &-enter,
+    &-appear {
+      animation: slide-in-backward var(--transition-slide-backward-duration)
+        cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+    }
+  }
+
+  /* Exit animation */
+  &-exit {
+    // to avoid flickering need use forwards
+    animation: slide-out var(--transition-slide-duration)
+      cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+    &-done {
+      animation: slide-out var(--transition-slide-duration) ease forwards;
+      display: none !important; /* perfomance - display: none */
+    }
+  }
+  &-backward {
+    &-exit {
+      // to avoid flickering need use forwards
+      animation: slide-out-backward var(--transition-slide-backward-duration)
+        cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+      &-done {
+        animation: slide-out-backward var(--transition-slide-backward-duration) ease
+          forwards;
+        display: none !important; /* perfomance - display: none */
+      }
+    }
+  }
+}
+
+.slide-200 {
+  will-change: transform;
+  --transition-slide-200-duration: 250ms;
+  --transition-slide-200-backward-duration: 250ms;
+
+  /* Mount */
+  &-enter {
+    animation: slide-in-200 var(--transition-slide-200-duration)
+      cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+  }
+  &-backward {
+    &-enter {
+      animation: slide-in-200-backward var(--transition-slide-200-backward-duration)
+        cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+    }
+  }
+
+  /* First mount */
+  &-appear {
+    animation: slide-in-200 var(--transition-slide-200-duration) ease forwards;
+  }
+  &-backward {
+    &-appear {
+      animation: slide-in-200-backward var(--transition-slide-200-backward-duration) ease
+        forwards;
+    }
+  }
+
+  /* Unmount */
+  &-exit {
+    // to avoid flickering need use forwards
+    animation: slide-out-200 var(--transition-slide-200-duration)
+      cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+    &-done {
+      animation: slide-out-200 var(--transition-slide-200-duration) ease forwards;
+      display: none !important; /* perfomance - display: none */
+    }
+  }
+  &-backward {
+    &-exit {
+      // to avoid flickering need use forwards
+      animation: slide-out-200-backward var(--transition-slide-200-backward-duration)
+        cubic-bezier(0.445, 0.05, 0.55, 0.95) forwards;
+      &-done {
+        animation: slide-out-200-backward var(--transition-slide-200-backward-duration)
+          ease forwards;
+        display: none !important; /* perfomance - display: none */
+      }
+    }
+  }
+}
+
+/* SLIDES   */
+@keyframes slide-out {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+@keyframes slide-out-backward {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes slide-in-backward {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slide-out-200 {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(200%, 0, 0);
+  }
+}
+@keyframes slide-out-200-backward {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-200%, 0, 0);
+  }
+}
+
+@keyframes slide-in-200 {
+  from {
+    transform: translate3d(200%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+@keyframes slide-in-200-backward {
+  from {
+    transform: translate3d(-200%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slide-fade-out {
+  from {
+    transform: translate3d(0, 0, 0);
+    filter: none;
+  }
+  to {
+    transform: translate3d(-80px, 0, 0);
+    filter: brightness(0.75);
+  }
+}
+@keyframes slide-fade-out-backward {
+  from {
+    transform: translate3d(0, 0, 0);
+    filter: none;
+  }
+  to {
+    transform: translate3d(80px, 0, 0);
+    filter: brightness(0.75);
+  }
+}
+@keyframes slide-fade-in {
+  from {
+    transform: translate3d(-80px, 0, 0);
+    filter: brightness(0.75);
+  }
+
+  to {
+    transform: translate3d(0);
+    filter: none;
+  }
+}
+@keyframes slide-fade-in-backward {
+  from {
+    transform: translate3d(80px, 0, 0);
+    filter: brightness(0.75);
+  }
+
+  to {
+    transform: translate3d(0);
+    filter: none;
+  }
+}
+
+/* FADES, ZOOM */
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-fade-out {
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+  to {
+    transform: scale3d(0.8, 0.8, 0.8);
+  }
+}
+@keyframes zoom-fade-in {
+  from {
+    transform: scale3d(0.8, 0.8, 0.8);
+  }
+  to {
+    transform: scale3d(1, 1, 1);
+  }
+}

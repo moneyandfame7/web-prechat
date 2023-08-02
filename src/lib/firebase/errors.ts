@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-import { batch } from '@preact/signals'
-import type { DeepSignal } from 'deepsignal'
-import { FirebaseError } from 'firebase/app'
+import {batch} from '@preact/signals'
+import type {DeepSignal} from 'deepsignal'
+import {FirebaseError} from 'firebase/app'
 
-import type { SupportedLanguages } from 'types/lib'
-import type { AuthState } from 'types/state'
+import type {SupportedLanguages} from 'types/lib'
+import type {AuthState} from 'types/state'
 
 export type FirebaseErrors = Record<SupportedLanguages, Record<string, string>>
 export type FirebaseErrorCodes = keyof FirebaseErrors['en']
@@ -19,9 +19,11 @@ const FIREBASE_ERRORS: FirebaseErrors = {
     'auth/code-expired': 'The provided code has expired.',
     'auth/cordova-not-ready': 'Cordova is not ready.',
     'auth/cors-unsupported': 'CORS is not supported by your browser.',
-    'auth/credential-already-in-use': 'This credential is already associated with another account.',
+    'auth/credential-already-in-use':
+      'This credential is already associated with another account.',
     'auth/custom-token-mismatch': 'The custom token and API key do not match.',
-    'auth/requires-recent-login': 'Please login again, as your last login was too long ago.',
+    'auth/requires-recent-login':
+      'Please login again, as your last login was too long ago.',
     'auth/dependent-sdk-initialized-before-auth':
       'Please initialize the Firebase Auth SDK before other dependent SDKs.',
     'auth/dynamic-link-not-activated': 'Dynamic links are not activated.',
@@ -59,7 +61,8 @@ const FIREBASE_ERRORS: FirebaseErrors = {
     'auth/invalid-sender': 'Invalid sender.',
     'auth/invalid-verification-id': 'Invalid verification ID.',
     'auth/invalid-tenant-id': 'Invalid tenant ID.',
-    'auth/multi-factor-info-not-found': 'Multi-factor authentication information not found.',
+    'auth/multi-factor-info-not-found':
+      'Multi-factor authentication information not found.',
     'auth/multi-factor-auth-required': 'Multi-factor authentication is required.',
     'auth/missing-android-pkg-name': 'Missing Android package name.',
     'auth/missing-app-credential': 'Missing app credential.',
@@ -90,7 +93,8 @@ const FIREBASE_ERRORS: FirebaseErrors = {
     'auth/redirect-cancelled-by-user': 'Redirect cancelled by user.',
     'auth/redirect-operation-pending': 'Redirect operation is pending.',
     'auth/rejected-credential': 'Rejected credential.',
-    'auth/second-factor-already-in-use': 'Second factor authentication method already in use.',
+    'auth/second-factor-already-in-use':
+      'Second factor authentication method already in use.',
     'auth/maximum-second-factor-count-exceeded':
       'Maximum number of second factor methods exceeded.',
     'auth/tenant-id-mismatch': 'Tenant ID mismatch.',
@@ -130,7 +134,10 @@ const FIREBASE_ERRORS: FirebaseErrors = {
   }
 }
 
-export function getFirebaseErrorMessage(code: FirebaseErrorCodes, lang: SupportedLanguages) {
+export function getFirebaseErrorMessage(
+  code: FirebaseErrorCodes,
+  lang: SupportedLanguages
+) {
   return FIREBASE_ERRORS[lang][code] || FIREBASE_ERRORS['en'][code]
 }
 

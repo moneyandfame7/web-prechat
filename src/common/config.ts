@@ -1,6 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {Platform} from 'types/api'
 
+/*
+ * API
+ */
+export const API_AUTH_STATE = ['signUpRequired', 'passwordRequired', 'authDone'] as const
+
+export const API_AVATAR_VARIANTS = [
+  'GREEN',
+  'PINK',
+  'BLUE',
+  'YELLOW',
+  'PURPLE',
+  'ORANGE'
+] as const
+
+/* UI  */
 const {userAgent, platform} = window.navigator
 
 /**
@@ -74,7 +89,7 @@ export const GITHUB_SOURCE = 'https://github.com/moneyandfame7/web-prechat#readm
 export const TRANSITION_DURATION_FADE = 200
 export const TRANSITION_DURATION_ZOOM_FADE = 200
 export const TRANSITION_DURATION_SLIDE = 300
-export const TRANSITION_DURATION_MENU = 150 /* 150 */
+export const TRANSITION_DURATION_MENU = 250 /* 150 */
 
 export const TRANSITION_DURATIONS = {
   FADE: 200,

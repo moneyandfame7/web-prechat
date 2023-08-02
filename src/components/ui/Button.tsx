@@ -2,9 +2,8 @@ import type {FC, TargetedEvent} from 'preact/compat'
 import clsx from 'clsx'
 
 import {IS_SENSOR} from 'common/config'
-import {logDebugWarn} from 'lib/logger'
 
-import type {SignalOrString} from 'types/ui'
+import type {SignalOr, SignalOrString} from 'types/ui'
 
 import {Spinner} from './Spinner'
 import {Ripple} from '../Ripple'
@@ -14,7 +13,7 @@ import './Button.scss'
 export interface ButtonProps {
   isLoading?: boolean
   loadingText?: string
-  isDisabled?: boolean
+  isDisabled?: SignalOr<boolean | undefined>
   type?: 'button' | 'submit'
   variant?: 'contained' | 'transparent'
   withFastClick?: boolean
@@ -41,8 +40,7 @@ export const Button: FC<ButtonProps> = ({
     'Button',
     `Button-${variant}`,
     {
-      'Button-loading': isLoading,
-      'Button-disabled': isDisabled
+      'Button-loading': isLoading
     },
     className
   )
@@ -50,7 +48,7 @@ export const Button: FC<ButtonProps> = ({
   const handleMouseDown = (e: TargetedEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
     if (e.button === 0) {
-      logDebugWarn('[UI]: Button click')
+      // logDebugWarn('[UI]: Button click')
 
       onClick?.()
     }

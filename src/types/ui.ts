@@ -38,6 +38,7 @@ export interface LeftColumnMainStore {
 }
 
 export type InputHandler = (e: TargetedEvent<HTMLInputElement, Event>) => void
+export type InputHandlerValue = (value: string) => void
 export type MouseClickHandler<T extends HTMLElement> = (
   e: TargetedEvent<T, MouseEvent>
 ) => void
@@ -46,6 +47,8 @@ export type MouseHandler = (e: MouseEvent) => void
 export type Size = 'small' | 'medium' | 'large'
 
 export type SignalOrString = string | Signal<string> | undefined
+
+export type SignalOr<T> = Signal<T> | T
 export interface VNodeWithKey<T> extends VNode {
   key: T
 }

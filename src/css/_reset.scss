@@ -49,13 +49,30 @@ textarea {
   font-family: inherit;
 }
 
-input::-ms-clear {
-  display: none;
-}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+b,
+strong {
+  font-weight: 500;
+}
+input {
+  &::-webkit-strong-password-auto-fill-button {
+    opacity: 0;
+    width: 0 !important;
+    overflow: hidden !important;
+    max-width: 0 !important;
+    min-width: 0 !important;
+    clip: rect(0, 0, 0, 0);
+    position: absolute;
+  }
+
+  &::-ms-clear,
+  &::-ms-reveal {
+    display: none;
+  }
 }
 
 /* Firefox */

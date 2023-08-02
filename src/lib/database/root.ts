@@ -1,13 +1,10 @@
 import Dexie from 'dexie'
 
-import type {DeepPartial} from 'types/common'
-import type {PersistGlobalState} from 'state/persist'
-
 import {logDebugInfo} from 'lib/logger'
 
-import UsersTable from './users'
-import AuthTable from './auth'
-import SettingsTable from './settings'
+import AuthTable from './tables/auth'
+import UsersTable from './tables/users'
+import SettingsTable from './tables/settings'
 
 export enum DatabaseTableNames {
   Users = 'users',
@@ -26,7 +23,7 @@ class Database {
   public constructor() {
     this._db = new Dexie(this.DB_NAME)
     this._db.version(1).stores({
-      users: 'id',
+      users: 'id, &username, &phoneNumber',
       settings: '&key',
       auth: '&key'
     })
@@ -37,12 +34,18 @@ class Database {
     this.auth = new AuthTable(this._db.table(DatabaseTableNames.Auth))
   }
 
-  public async getInitialState(): Promise<DeepPartial<PersistGlobalState>> {
-    const [auth, settings] = await Promise.all([this.auth.get(), this.settings.get()])
+  public async getInitialState() /* : Promise<DeepPartial<PersistGlobalState>> */ {
+    const [auth, settings, users] = await Promise.all([
+      this.auth.get(),
+      this.settings.get(),
+      this.users.getInitialState()
+    ])
 
+    console.log({users})
     return {
       auth,
-      settings
+      settings,
+      users
     }
   }
 
@@ -54,3 +57,7 @@ class Database {
 }
 
 export const database = new Database()
+
+// export function updateUserDb(users:ApiUser[]){
+// // database.users.put()
+// }

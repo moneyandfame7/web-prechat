@@ -13,6 +13,7 @@ const Contacts: FC = () => {
       Contacts
       <Button onClick={resetScreen}>Reset</Button>
       <FloatButton
+        shown
         className="CreateNewContact"
         aria-label="Create new Contact"
         icon={<Icon name="plus" />}

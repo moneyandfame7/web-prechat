@@ -5,18 +5,23 @@ import {UploadPhoto} from 'components/UploadPhoto'
 import {useLeftColumn} from '../context'
 import {LeftGoBack} from '../LeftGoBack'
 
-import styles from './CreateChatStep2.module.scss'
 import {useBoolean} from 'hooks/useFlag'
+
+import styles from './CreateChatStep2.module.scss'
+import {getDisplayedUserName} from 'state/helpers/users'
+import {getGlobalState} from 'state/signal'
+import {ChatItem} from 'components/ChatItem'
 
 export interface CreateChatStep2Props {
   isGroup: boolean
-  members?: string[]
+  selectedIds: string[]
 }
-const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, members}) => {
+const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
   const {resetScreen} = useLeftColumn()
   const [name, setName] = useState('')
+  const globalState = getGlobalState()
   const [description, setDescription] = useState('')
-  const {value: loading, setTrue, setFalse, toggle} = useBoolean()
+  const {value: loading, /*  setTrue, setFalse, */ toggle} = useBoolean()
   const handleChangeName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
     const {value} = e.currentTarget
 
@@ -37,7 +42,6 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, members}) => {
     // setFalse()
   }, [])
 
-  console.log('RERENDER')
   return (
     <>
       <div class="LeftColumn-Header">
@@ -64,13 +68,24 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, members}) => {
           </p>
         )}
         {}
-        {members?.length && isGroup && (
+        {selectedIds?.length && isGroup && (
           <>
-            <p class="members-count">{members.length} members</p>
-            <div class="members-list">
-              {members.map((member) => (
-                <p>{member}</p>
-              ))}
+            <p class={styles.membersCount}>{selectedIds.length} members</p>
+            <div class={styles.membersList}>
+              {selectedIds.map((member) => {
+                const user = globalState.users.byId?.[member] || undefined
+                return (
+                  <ChatItem
+                    id={member}
+                    key={member}
+                    title={getDisplayedUserName(user)}
+                    subtitle="online"
+
+                    // withCheckbox
+                    // checked={selectedIds.includes(id)}
+                  />
+                )
+              })}
             </div>
           </>
         )}

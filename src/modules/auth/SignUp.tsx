@@ -10,8 +10,10 @@ import {Checkbox} from 'components/ui/Checkbox'
 import {UploadPhoto} from 'components/UploadPhoto'
 
 import './SignUp.scss'
+import {getGlobalState} from 'state/signal'
 
 const SignUp: FC = () => {
+  const {auth} = getGlobalState()
   const {signUp} = getActions()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -68,7 +70,9 @@ const SignUp: FC = () => {
           checked={silentSignUp}
         />
         {firstName.length > 3 && (
-          <Button type="submit">{t('Auth.StartMessaging')}</Button>
+          <Button isLoading={auth.loading} type="submit">
+            {t('Auth.StartMessaging')}
+          </Button>
         )}
       </form>
     </>

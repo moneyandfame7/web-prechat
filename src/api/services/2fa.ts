@@ -1,14 +1,13 @@
 import type {TwoFactorAuth} from 'types/api'
 import type {Query} from 'api/apollo'
-
 import {QUERY_GET_TWO_FA} from 'api/graphql'
+
 import {BaseService} from './base'
 
 export interface ApiTwoFaMethods {
   getTwoFa: (token: string) => Query<{getTwoFa?: TwoFactorAuth}>
 }
-
-export class Api2Fa extends BaseService implements ApiTwoFaMethods {
+export class ApiTwoFa extends BaseService implements ApiTwoFaMethods {
   /**
    *
    * @param token - Firebase token after successful code verification

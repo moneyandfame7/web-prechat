@@ -30,4 +30,12 @@
     color: var(--color-text-secondary);
     font-size: 15px;
   }
+
+  &.non-clickable {
+    cursor: default;
+
+    &:hover {
+      background-color: initial;
+    }
+  }
 }

@@ -1,11 +1,16 @@
-import type {FC} from 'preact/compat'
+import {useEffect, type FC} from 'preact/compat'
 import type {Signal} from '@preact/signals'
+import clsx from 'clsx'
 
 import {Checkbox} from './ui'
 
 import {Ripple} from './Ripple'
 import {Avatar} from './Avatar'
+import {getActions} from 'state/action'
+
 import './ChatItem.scss'
+import {getGlobalState} from 'state/signal'
+import {deepClone} from 'utilities/deepClone'
 
 interface ContextAction {
   icon: string
@@ -18,43 +23,41 @@ export interface ChatItemProps {
   avatar?: string /* || ApiAvatar ??? */
   hover?: boolean
   contextActions?: ContextAction[]
-  onClick: VoidFunction
+  onClick?: VoidFunction
   checked?: boolean | Signal<boolean>
   title?: string
   subtitle?: string
+  id: string
 }
-// type TestProps =
-//   | {
-//       withCheckbox: boolean
-//       avatar?: string
-//       hover?: boolean
-//       contextActions?: never
-//       onToggle: (c: boolean) => void
-//       checked: boolean
-//     }
-//   | {
-//       withCheckbox?: never
-//       avatar?: string
-//       hover?: boolean
-//       contextActions?: ContextAction[]
-//       onToggle?: never
-//       checked?: never
-//     }
+
 export const ChatItem: FC<ChatItemProps> = ({
   withCheckbox,
   avatar,
-  hover,
-  contextActions,
+  // hover,
+  // contextActions,
   onClick,
   checked,
   title,
-  subtitle
+  subtitle,
+  id
 }) => {
+  const {getUser} = getActions()
+  const {users} = getGlobalState()
+  useEffect(() => {
+    getUser(id)
+  }, [])
+
+  const buildedClass = clsx('ChatItem', {
+    'non-clickable': !Boolean(onClick)
+  })
+
+  console.log(users)
   return (
-    <div class="ChatItem" onMouseDown={onClick}>
-      {withCheckbox && <Checkbox withRipple={false} checked={checked}></Checkbox>}
-      <Ripple />
-      {avatar && <Avatar url={avatar} />}
+    <div class={buildedClass} onMouseDown={onClick}>
+      {withCheckbox && <Checkbox withRipple={false} checked={checked} />}
+
+      {onClick && <Ripple />}
+      {<Avatar user={users.byId[id]} avatar={users.byId[id].fullInfo?.avatar} />}
       <div class="info">
         {title && <h3 class="title">{title}</h3>}
         {subtitle && <p class="subtitle">{subtitle}</p>}

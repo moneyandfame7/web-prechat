@@ -45,6 +45,7 @@ export default ({mode}) => {
           enabled: true,
           type: 'module'
         },
+
         workbox: {
           globDirectory: 'dist',
           globPatterns: ['**/*.{js,ts,css,html}', '**/*.{svg,png,jpg,gif,woff2}']
@@ -63,6 +64,9 @@ export default ({mode}) => {
     css: {
       postcss: {
         plugins: [autoprefixer({})]
+      },
+      modules: {
+        localsConvention: 'camelCase'
       },
       preprocessorOptions: {
         scss: {

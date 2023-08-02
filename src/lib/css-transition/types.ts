@@ -1,4 +1,4 @@
-import type { VNode } from 'preact'
+import type {VNode} from 'preact'
 
 export enum Phase {
   APPEAR = 'appear',
@@ -45,6 +45,6 @@ export type CSSTransitionClassNames =
     }
 
 export type CSSTransitionProps = Omit<TransitionProps, 'children'> & {
-  children: VNode<{ className: string }>
+  children: VNode<{className?: string}>
   classNames: CSSTransitionClassNames
 }

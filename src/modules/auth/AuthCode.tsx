@@ -1,16 +1,17 @@
 import type {FC, TargetedEvent} from 'preact/compat'
-import {memo, useCallback, useRef, useState} from 'preact/compat'
-
-import {AuthScreens} from 'types/state'
+import {memo, useRef} from 'preact/compat'
+import {useSignal} from '@preact/signals'
 
 import {getGlobalState} from 'state/signal'
 import {getActions} from 'state/action'
+import {AuthScreens} from 'types/screens'
+
 import {t} from 'lib/i18n'
 
 import {InputText, Icon} from 'components/ui'
 import {MonkeyTrack} from 'components/monkeys'
 
-import {updateGlobalState} from 'state/persist'
+import {generateRecaptcha} from 'lib/firebase'
 
 import './AuthCode.scss'
 
@@ -19,14 +20,16 @@ const AuthCode: FC = () => {
   const {auth} = getGlobalState()
   const {verifyCode} = getActions()
 
-  const [code, setCode] = useState('')
+  // const [code, setCode] = useState('')
+  const code = useSignal('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleChangeCode = async (e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()
 
     const {value} = e.currentTarget
-    setCode(value)
+    // setCode(value)
+    code.value = value
     if (auth.error) {
       auth.error = undefined
     }
@@ -36,36 +39,31 @@ const AuthCode: FC = () => {
       verifyCode(value)
     }
   }
-
-  const handleEditPhone = useCallback(() => {
-    setCode('')
-    updateGlobalState(
-      {
-        auth: {
-          screen: AuthScreens.PhoneNumber
-        }
-      },
-      false
-    )
-  }, [])
-
+  // t('WrongNumber?')
+  const handleEditPhone = () => {
+    code.value = ''
+    generateRecaptcha(auth)
+    auth.screen = AuthScreens.PhoneNumber
+  }
   return (
     <>
       <MonkeyTrack
         inputRef={inputRef}
         size="medium"
         maxLength={CODE_LENGTH}
-        currentLength={code.length}
+        currentLength={code.value.length}
       />
       <h1 class="title">
         {auth.$phoneNumber}
-        <Icon
-          name="edit"
-          color="secondary"
-          height={24}
-          width={24}
-          onClick={handleEditPhone}
-        />
+        <div title={t('WrongNumber?')}>
+          <Icon
+            name="edit"
+            color="secondary"
+            height={24}
+            width={24}
+            onClick={handleEditPhone}
+          />
+        </div>
       </h1>
       <p class="subtitle">{t('Auth.CodeSendOnPhone')}</p>
       <InputText

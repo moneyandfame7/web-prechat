@@ -1,2 +1,1 @@
-export { CSSTransition } from './CSSTransition'
-export { useTransition } from './Transition'
+export {CSSTransition} from './CSSTransition'

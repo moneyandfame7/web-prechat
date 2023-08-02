@@ -14,6 +14,7 @@ interface IconProps {
   name: IconName
   className?: string
   color?: 'default' | 'secondary'
+  title?: string
   onClick?: (e: TargetedEvent<SVGSVGElement, MouseEvent>) => void
   withFastClick?: boolean
   /**
@@ -26,7 +27,15 @@ interface IconProps {
   width?: number
 }
 export const Icon: FC<IconProps> = memo(
-  ({name, className, color = 'default', onClick, withFastClick = false, ...props}) => {
+  ({
+    name,
+    className,
+    color = 'default',
+    onClick,
+    withFastClick = false,
+    title,
+    ...props
+  }) => {
     const ComputedIcon = icons[name] as FC<SVGIconProps>
 
     const buildedClass = `Icon Icon-${name} Icon-${color} ${className || ''}`.trim()
@@ -46,6 +55,7 @@ export const Icon: FC<IconProps> = memo(
 
     return (
       <ComputedIcon
+        title={title}
         className={buildedClass}
         onMouseDown={withFastClick && !IS_SENSOR ? handleMouseDown : undefined}
         onClick={IS_SENSOR || !withFastClick ? onClick : undefined}

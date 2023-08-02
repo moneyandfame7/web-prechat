@@ -1,7 +1,7 @@
-import type { TargetedEvent } from 'preact/compat'
-import { useCallback, useState } from 'preact/hooks'
+import type {TargetedEvent} from 'preact/compat'
+import {useCallback, useState} from 'preact/hooks'
 
-import type { InputHandler } from 'types/ui'
+import type {InputHandler} from 'types/ui'
 
 interface UseInputValueInput {
   initial?: string
@@ -13,7 +13,7 @@ interface UseInputValueOtput {
 }
 
 export const useInputValue = (input: UseInputValueInput): UseInputValueOtput => {
-  const { initial = '', cb } = input
+  const {initial = '', cb} = input
   const [value, setValue] = useState(initial)
 
   const handleInput = useCallback(

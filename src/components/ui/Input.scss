@@ -4,7 +4,9 @@
 
   input {
     white-space: nowrap;
-    text-overflow: ellipsis;
+    &:not([type='password']) {
+      text-overflow: ellipsis;
+    }
     font-size: 16px;
     border-radius: var(--input-border-radius);
     padding: 0 20px;
@@ -25,21 +27,6 @@
     &:-webkit-autofill-and-obscured {
       box-shadow: inset 0 0 0 10rem var(--color-background);
       -webkit-text-fill-color: var(--color-text);
-    }
-
-    &::-webkit-strong-password-auto-fill-button {
-      opacity: 0;
-      width: 0 !important;
-      overflow: hidden !important;
-      max-width: 0 !important;
-      min-width: 0 !important;
-      clip: rect(0, 0, 0, 0);
-      position: absolute;
-    }
-
-    &::-ms-clear,
-    &::-ms-reveal {
-      display: none;
     }
 
     &:focus {
@@ -79,6 +66,14 @@
     }
   }
 
+  &.fixed-label {
+    > label {
+      transform: scale(0.75) translate(-5px, -35px);
+      background-color: var(--color-background);
+    }
+  }
+
+  /* Colors  */
   &.error {
     input {
       caret-color: var(--color-error) !important;
@@ -91,7 +86,7 @@
     .length-indicator,
     label {
       color: var(--color-error) !important;
-      font-weight: 300;
+      font-weight: 500;
     }
 
     input,
@@ -99,6 +94,9 @@
     input:focus ~ .input-border {
       border-color: var(--color-error) !important;
     }
+  }
+  &.success {
+    /*  */
   }
   &.loading {
     & .Icon {
@@ -126,30 +124,17 @@
     }
   }
 
-  &.disabled {
+  &:has(input:disabled) {
     opacity: 0.6;
     pointer-events: none;
     border-radius: 12px;
   }
-
   &.not-empty label {
     transform: scale(0.75) translate(-5px, -35px);
     background-color: var(--color-background);
   }
 
-  .input-border {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    opacity: 0;
-    border-radius: 12px;
-    border: 2px solid var(--color-primary);
-    pointer-events: none;
-    transition: opacity 0.2s ease-out;
-  }
-
+  /* Variant */
   &.input-default {
     input {
       border: none;
@@ -179,6 +164,19 @@
     white-space: nowrap;
   }
 
+  /* Elements  */
+  .input-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    border-radius: 12px;
+    border: 2px solid var(--color-primary);
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
+  }
   .length-indicator {
     position: absolute;
     right: 20px;
@@ -195,6 +193,8 @@
     transform: translateY(-50%);
     left: 21px;
   }
+
+  /* Icon  */
   &.end-icon,
   &.start-icon {
     .Icon,
@@ -212,7 +212,7 @@
 
   &.end-icon {
     input {
-      padding: 0 40px 0 20px;
+      padding: 0 50px 0 20px;
     }
     .Icon,
     .input-spinner {

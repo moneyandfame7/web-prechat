@@ -13,13 +13,13 @@ import {t} from 'lib/i18n'
 
 import type {Country} from 'types/api'
 
-import {InputText} from 'components/ui'
+import {Icon, InputText} from 'components/ui'
 import {MenuItem, Menu} from 'components/popups/menu'
 
 import {TRANSITION_DURATION_ZOOM_FADE} from 'common/config'
 
 import './SelectCountryInput.scss'
-import {parseEmoji} from 'utilities/parseEmoji'
+// import {parseEmoji} from 'utilities/parseEmoji'
 
 interface SelectCountryInputProps {
   countryList: Country[]
@@ -91,7 +91,9 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
             !country.name.toLowerCase().includes(stringName.toLowerCase())
           }
         >
-          <span class="country-emoji">{parseEmoji(country.emoji)}</span>
+          <span class="country-emoji">
+            {/* parseEmoji(country.emoji) */ country.emoji}
+          </span>
           <span class="country-name">{country.name}</span>
           <span class="country-code">{country.dial_code}</span>
         </MenuItem>
@@ -111,7 +113,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
             value={stringName}
             label={t('Country')}
             loading={loading}
-            endIcon="chevronDown"
+            endIcon={<Icon name="chevronDown" color="secondary" />}
           />
           <Menu
             placement="top"

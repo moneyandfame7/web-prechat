@@ -1,1 +1,1 @@
-export { database } from './root'
+export {database} from './root'

@@ -28,7 +28,6 @@ export const CSSTransition = memo((props: CSSTransitionProps): VNode => {
         classNames,
         computeClassName(phase, classNames)
       )
-
       return cloneElement(children, {className: finalClassName})
     }
   )

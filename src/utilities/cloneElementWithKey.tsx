@@ -1,9 +1,9 @@
-import {Fragment, type VNode, cloneElement, type Key} from 'preact'
+import {Fragment, cloneElement, type VNode, type Key} from 'preact'
 
 /**
- * @param {VNode} el - the component to be cloned
- * @param {Key} key - the key for component
- * @param {any[]} props - additional props for component
+ * @param el - the component to be cloned
+ * @param key - the key for component
+ * @param props - additional props for component
  *
  * @returns cloned element with provided key and additional props
  */

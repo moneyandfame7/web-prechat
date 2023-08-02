@@ -8,8 +8,6 @@ import {usePrevious} from 'hooks'
 import {MONKEY_TRACK_FRAMES, MONKEY_TRACK_LAST_SEGMENT_ON_INPUT} from './helpers'
 
 interface AnimationSegments {
-  firstS: number
-  secondS: number
   speed: number
 }
 interface MonkeyTrackProps {
@@ -23,8 +21,6 @@ export const MonkeyTrack: FC<MonkeyTrackProps> = memo(
     const monkeyRef = useRef<LottieRefCurrentProps>(null)
     const monkeyRefIdle = useRef<LottieRefCurrentProps>(null)
     const segmentsRef = useRef<AnimationSegments>({
-      firstS: 0,
-      secondS: 0,
       speed: 2
     })
     const previousLength = usePrevious(currentLength)

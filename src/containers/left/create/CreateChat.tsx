@@ -1,13 +1,17 @@
 import type {FC} from 'preact/compat'
-import {memo, useCallback} from 'preact/compat'
+import {memo, useCallback, useEffect, useState} from 'preact/compat'
 
-import CreateChatStep1 from './CreateChatStep1.async'
-import CreateChatStep2 from './CreateChatStep2.async'
-import MountTransition from 'components/MountTransition'
-import type {TransitionType} from 'components/Transition'
+import CreateChatStep1 from './CreateChatStep1'
+import CreateChatStep2 from './CreateChatStep2'
 
 import {useLeftColumn} from '../context'
-import {LeftColumnScreen, type VNodeWithKey} from 'types/ui'
+import {LeftColumnScreen} from 'types/ui'
+import {
+  type TransitionCases,
+  SwitchTransition,
+  SLIDE_FADE_OUT,
+  SLIDE_FADE_IN
+} from 'components/transitions'
 
 export interface CreateChatProps {
   isGroup: boolean
@@ -21,51 +25,80 @@ const screenClassnames = {
   [CreateChatGroup.Step1]: 'LeftColumn-CreateChatStep1',
   [CreateChatGroup.Step2]: 'LeftColumn-CreateChatStep2'
 }
-function getScreenTransition(
-  newEl: VNodeWithKey<CreateChatGroup>,
-  current: VNodeWithKey<CreateChatGroup>
-): TransitionType {
-  switch (current.key) {
-    case CreateChatGroup.Step1:
-      return 'zoomSlideReverse'
+function getTransitionByCase(
+  activeScreen: CreateChatGroup
+  // previousScreen?: CreateChatGroup
+): TransitionCases {
+  switch (activeScreen) {
+    case CreateChatGroup.Step2:
+      return SLIDE_FADE_IN
 
     default:
-      return 'zoomSlide'
+      return SLIDE_FADE_OUT
   }
 }
 
 const CreateChat: FC<CreateChatProps> = ({isGroup}) => {
   const {activeScreen} = useLeftColumn()
 
-  let activeGroup: CreateChatGroup = CreateChatGroup.Step1
-  switch (activeScreen) {
-    case LeftColumnScreen.NewChannelStep1:
-    case LeftColumnScreen.NewGroupStep1:
-      activeGroup = CreateChatGroup.Step1
-      break
-    case LeftColumnScreen.NewChannelStep2:
-    case LeftColumnScreen.NewGroupStep2:
-      activeGroup = CreateChatGroup.Step2
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const onSelectMember = (id: string) => {
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((existingId) => existingId !== id)
+      } else {
+        return [...prev, id]
+      }
+    })
   }
-  const renderScreen = useCallback(() => {
-    switch (activeGroup) {
-      case CreateChatGroup.Step1:
-        return <CreateChatStep1 isGroup={isGroup} key={CreateChatGroup.Step1} />
-      case CreateChatGroup.Step2:
-        return <CreateChatStep2 isGroup={isGroup} key={CreateChatGroup.Step2} />
+
+  const [activeGroup, setActiveGroup] = useState(CreateChatGroup.Step1)
+  useEffect(() => {
+    switch (activeScreen) {
+      case LeftColumnScreen.NewChannelStep1:
+      case LeftColumnScreen.NewGroupStep1:
+        setActiveGroup(CreateChatGroup.Step1)
+        break
+      case LeftColumnScreen.NewChannelStep2:
+      case LeftColumnScreen.NewGroupStep2:
+        setActiveGroup(CreateChatGroup.Step2)
     }
-  }, [activeGroup, isGroup])
+  }, [activeScreen])
+
+  const renderScreen = useCallback(
+    (activeGroup: CreateChatGroup) => {
+      switch (activeGroup) {
+        case CreateChatGroup.Step1:
+          return (
+            <CreateChatStep1
+              selectedIds={selectedIds}
+              handleSelect={onSelectMember}
+              isGroup={isGroup}
+              key={CreateChatGroup.Step1}
+            />
+          )
+        case CreateChatGroup.Step2:
+          return (
+            <CreateChatStep2
+              selectedIds={selectedIds}
+              isGroup={isGroup}
+              key={CreateChatGroup.Step2}
+            />
+          )
+      }
+    },
+    [selectedIds]
+  )
 
   return (
-    <MountTransition
-      shouldCleanup={true}
-      // name="fade"
+    <SwitchTransition
       classNames={screenClassnames}
       activeKey={activeGroup}
-      getTransitionForNew={getScreenTransition}
+      name="fade"
+      getTransitionByCase={getTransitionByCase}
     >
-      {renderScreen()}
-    </MountTransition>
+      {renderScreen(activeGroup)}
+    </SwitchTransition>
   )
 }
 export default memo(CreateChat)

@@ -3,6 +3,7 @@ import type {LanguagePackKeys, SupportedLanguages} from 'types/lib'
 import type {Query} from 'api/apollo'
 
 import {QUERY_COUNTRIES, QUERY_LANG, QUERY_LANG_STRING} from 'api/graphql'
+
 import {BaseService} from './base'
 
 export interface ApiHelpMethods {
@@ -61,6 +62,7 @@ export class ApiHelp extends BaseService implements ApiHelpMethods {
   ): Query<{languageString: string}> {
     return this.client.query<{languageString: string}>({
       query: QUERY_LANG_STRING,
+      fetchPolicy: 'cache-first',
       variables: {
         language,
         string

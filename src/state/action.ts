@@ -14,16 +14,22 @@ interface ActionPayloads {
   signUp: SignUpPayload
   signIn: SignInPayload
 
+  // Search
+  searchGlobal: string
+  searchUsers: string
+  searchGlobalClear: void
+
   /* Auth ui */
   uploadAvatar: File
   /* Ui */
 
   changeTheme: Theme
   changeLanguage: SupportedLanguages
-  setAuthRememberMe: boolean
 
   /* Api */
   getCountries: SupportedLanguages
+  getContactList: void
+  getUser: string
 
   getConnection: void
   sendPhone: string

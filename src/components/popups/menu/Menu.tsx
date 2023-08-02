@@ -9,7 +9,7 @@ import {logDebugWarn} from 'lib/logger'
 
 import {useClickAway} from 'hooks/useClickAway'
 
-import {Transition} from 'components/Transition'
+import {TransitionTest} from 'components/transitions'
 
 import {MenuProvider, useMenuContext} from './context'
 
@@ -80,6 +80,19 @@ export const Menu: FC<MenuProps> = memo(
           autoClose
         }}
       >
+        <TransitionTest
+          elRef={menuRef}
+          className={buildedClass}
+          styles={{transformOrigin: placement}}
+          isMounted={isOpen}
+          alwaysMounted={!withMount}
+          appear={false}
+          duration={TRANSITION_DURATION_MENU}
+          name="zoomFade"
+        >
+          <>{children}</>
+        </TransitionTest>
+        {/* 
         <Transition
           elRef={menuRef}
           className={buildedClass}
@@ -93,7 +106,7 @@ export const Menu: FC<MenuProps> = memo(
           type="zoomFade"
         >
           {children}
-        </Transition>
+        </TransitionTest> */}
         {isOpen && withBackdrop && (
           <div class="backdrop" onMouseDown={handleClickBackdrop} />
         )}

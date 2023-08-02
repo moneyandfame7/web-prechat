@@ -8,10 +8,10 @@
       flex: 1;
       padding-left: 10px;
     }
-    > .Transition {
-      width: max-content;
-      height: max-content;
-    }
+    // > .Transition {
+    //   width: max-content;
+    //   height: max-content;
+    // }
 
     &_title {
       padding-left: 20px;
@@ -33,10 +33,10 @@
     overflow: hidden;
     width: 100%;
     height: 100%;
-    > .Transition {
-      --transform-zoom-fade-init: scale(1.05);
-      // transform-origin: top center;
-    }
+    // > .Transition {
+    //   --transform-zoom-fade-init: scale(1.05);
+    //   // transform-origin: top center;
+    // }
   }
 
   &-Button {

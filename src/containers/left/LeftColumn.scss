@@ -1,32 +1,7 @@
 .LeftColumn {
   overflow: hidden;
   position: relative;
-  // var(--left-column-width)
   width: 420px;
   height: 100vh;
   border-right: 1px solid var(--color-border);
-
-  > .Transition_absoluted {
-    background-color: white;
-  }
-  // &-resizer {
-  //   height: 100%;
-  //   position: absolute;
-  //   right: -3px;
-  //   user-select: none;
-  //   top: 0;
-  //   float: right;
-  //   width: 5px;
-  //   cursor: ew-resize;
-  //   z-index: 0;
-  //   resize: horizontal;
-  //   -webkit-touch-callout: none;
-  //   user-select: none;
-  // }
-
-  // &-Main,
-  // &-Contacts,
-  // &-Settings {
-  //   background-color: white;
-  // }
 }

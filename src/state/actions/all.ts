@@ -1,3 +1,7 @@
 import './api/auth'
 import './api/help'
+import './api/search'
+import './api/contacts'
+import './api/users'
 import './ui/settings'
+import './ui/search'

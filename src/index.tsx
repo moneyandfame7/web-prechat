@@ -1,4 +1,3 @@
-// import 'preact/debug'
 import {render} from 'preact'
 import {ApolloProvider} from '@apollo/client'
 
@@ -9,21 +8,19 @@ import {initializeApplication} from 'state/initialize'
 import {ApolloClient} from 'api/client'
 
 import './css/index.scss'
-// import {effect} from '@preact/signals'
-// import {getGlobalState} from 'state/signal'
 
 async function init() {
-  // const state = getGlobalState()
   // eslint-disable-next-line no-console
   console.time('Initializing')
-  await initializeApplication().then(() => {
-    // eslint-disable-next-line no-console
-    console.timeEnd('Initializing')
-  })
-  /* якщо потрібні якісь підписки в auth - перед переходом в main - unsubscribe from all  */
-  // state.auth.$rememberMe!.subscribe((state) => {
-  //   console.log('WAS CHANGED')
-  // })
+  await initializeApplication()
+    .then(() => {
+      // eslint-disable-next-line no-console
+      console.timeEnd('Initializing')
+    })
+    .catch((err) => {
+      console.warn({err})
+    })
+
   // effect(() => console.log(state.auth, 'REMEMBER ME???'))
 }
 init()

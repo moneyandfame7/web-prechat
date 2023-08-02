@@ -3,17 +3,11 @@ import type {DeepSignal} from 'deepsignal'
 import type {ConfirmationResult, RecaptchaVerifier} from 'firebase/auth'
 
 import type {ErrorPack, LanguagePack, SupportedLanguages} from 'types/lib'
-import type {Country} from 'types/api'
+import type {ApiUser, Country} from 'types/api'
 import type {Connection} from 'types/request'
+import type {AuthScreens} from './screens'
 
 export type Theme = 'light' | 'dark' | 'system'
-
-export enum AuthScreens {
-  PhoneNumber = 'PhoneNumber',
-  Password = 'AuthPassword',
-  Code = 'Code',
-  SignUp = 'SignUp'
-}
 
 export interface SettingsState {
   theme: Theme
@@ -33,7 +27,7 @@ export interface AuthState {
   captcha: RecaptchaVerifier | undefined
   confirmResult: ConfirmationResult | undefined
   error: string | undefined
-  loading: boolean | undefined
+  loading: boolean
   userId: string | undefined
   screen: AuthScreens
   firebase_token: string | undefined
@@ -41,11 +35,27 @@ export interface AuthState {
   email: string | undefined
   session: string | undefined
 }
+export interface GlobalSearchState {
+  known?: {
+    users?: ApiUser[]
+    chatIds?: string[]
+  }
+  global?: {
+    users?: ApiUser[]
+    chatIds?: string[]
+  }
+  isLoading: boolean
+}
 export interface GlobalState {
   settings: SettingsState
   auth: AuthState
   initialization: boolean
   isCacheSupported: boolean
+  globalSearch: GlobalSearchState
+  users: {
+    contactIds: string[]
+    byId: Record<string, ApiUser>
+  }
 }
 
 export type SignalGlobalState = DeepSignal<GlobalState>

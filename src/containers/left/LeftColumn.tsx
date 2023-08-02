@@ -1,9 +1,15 @@
 import {type FC, memo, useState} from 'preact/compat'
 
-import MountTransition from 'components/MountTransition'
-import type {TransitionType} from 'components/Transition'
+import {LeftColumnGroup, LeftColumnScreen} from 'types/ui'
 
-import {LeftColumnGroup, LeftColumnScreen, type VNodeWithKey} from 'types/ui'
+import SwitchTransition from 'components/transitions/SwitchTransition'
+import type {TransitionCases} from 'components/transitions/types'
+import {
+  SLIDE_FADE_OUT,
+  SLIDE_FADE_IN,
+  ZOOM_SLIDE_IN,
+  ZOOM_SLIDE_OUT
+} from 'components/transitions/helpers'
 
 import LeftMain from './main/LeftMain'
 import CreateChat from './create/CreateChat.async'
@@ -22,17 +28,36 @@ const classNames: Record<LeftColumnGroup, string> = {
   [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup'
 }
 
-function getScreenTransition(
-  newEl: VNodeWithKey<LeftColumnGroup>,
-  current: VNodeWithKey<string>
-): TransitionType {
-  if (current.key === LeftColumnGroup.Main) {
-    return 'zoomSlideReverse'
+// const TRANSITION_CASES: TransitionScreenConfig<LeftColumnGroup> = {
+//   [LeftColumnGroup.Main]: {
+//     [LeftColumnGroup.Contacts]: SLIDE_IN,
+//     [LeftColumnGroup.NewChannel]: SLIDE_IN,
+//     [LeftColumnGroup.NewGroup]: SLIDE_IN,
+//     [LeftColumnGroup.Settings]: SLIDE_IN
+//   },
+//   [LeftColumnGroup.Contacts]: {
+//     [LeftColumnGroup.Main]: SLIDE_OUT
+//   },
+//   [LeftColumnGroup.NewChannel]: {
+//     [LeftColumnGroup.Main]: SLIDE_OUT
+//   },
+//   [LeftColumnGroup.NewGroup]: {
+//     [LeftColumnGroup.Main]: SLIDE_OUT
+//   },
+//   [LeftColumnGroup.Settings]: {
+//     [LeftColumnGroup.Main]: SLIDE_OUT
+//   }
+// }
+const getTransitionByCase = (
+  _: LeftColumnGroup,
+  previousScreen?: LeftColumnGroup
+): TransitionCases => {
+  if (previousScreen === LeftColumnGroup.Main) {
+    return SLIDE_FADE_IN
   }
 
-  return 'zoomSlide'
+  return SLIDE_FADE_OUT
 }
-
 const LeftColumn: FC = () => {
   // const leftColumnWidth = getGlobalState((state) => state.settings.leftColumnWidth)
   // const {ref, resize, width} = useResize<HTMLDivElement>({
@@ -119,18 +144,18 @@ const LeftColumn: FC = () => {
     setActiveScreen(LeftColumnScreen.Chats)
   }
 
-  const renderScreen = () => {
-    switch (activeGroup) {
+  const renderScreen = (activeKey: LeftColumnGroup) => {
+    switch (activeKey) {
       case LeftColumnGroup.Contacts:
-        return <Contacts key={LeftColumnGroup.Contacts} />
+        return <Contacts />
       case LeftColumnGroup.Main:
-        return <LeftMain key={LeftColumnGroup.Main} />
+        return <LeftMain />
       case LeftColumnGroup.NewChannel:
-        return <CreateChat isGroup={false} key={LeftColumnGroup.NewChannel} />
+        return <CreateChat isGroup={false} />
       case LeftColumnGroup.NewGroup:
-        return <CreateChat isGroup key={LeftColumnGroup.NewGroup} />
+        return <CreateChat isGroup />
       case LeftColumnGroup.Settings:
-        return <Settings key={LeftColumnGroup.Settings} />
+        return <Settings />
     }
   }
 
@@ -147,7 +172,16 @@ const LeftColumn: FC = () => {
         // ref={ref}
         // style={{width, '--left-column-width': width + 'px'}}
       >
-        <MountTransition
+        <SwitchTransition
+          activeKey={activeGroup}
+          classNames={classNames}
+          cleanupException={[LeftColumnGroup.Main]}
+          name="fade"
+          getTransitionByCase={getTransitionByCase}
+        >
+          {renderScreen(activeGroup)}
+        </SwitchTransition>
+        {/* <MountTransition
           classNames={classNames}
           shouldCleanup={[
             LeftColumnGroup.Settings,
@@ -161,7 +195,7 @@ const LeftColumn: FC = () => {
           getTransitionForNew={getScreenTransition}
         >
           {renderScreen()}
-        </MountTransition>
+        </MountTransition> */}
         {/* <div class="LeftColumn-resizer" onMouseDown={resize} /> */}
       </div>
     </LeftColumnProvider>

@@ -1,11 +1,16 @@
 import type Dexie from 'dexie'
+import {logDebugWarn} from 'lib/logger'
 
-import type { PersistGlobalState, PersistGlobalStateKeys } from 'state/persist'
-import type { DeepPartial } from 'types/common'
+import type {PersistGlobalState, PersistGlobalStateKeys} from 'state/persist'
+import type {DeepPartial} from 'types/common'
 
-export type TableKeys<Name extends PersistGlobalStateKeys> = keyof PersistGlobalState[Name]
+export type TableKeys<Name extends PersistGlobalStateKeys> =
+  keyof PersistGlobalState[Name]
 
-export interface TableEntity<Name extends PersistGlobalStateKeys, Keys extends TableKeys<Name>> {
+export interface TableEntity<
+  Name extends PersistGlobalStateKeys,
+  Keys extends TableKeys<Name>
+> {
   key: Keys
   value: DeepPartial<PersistGlobalState[Name][Keys]>
 }
@@ -15,13 +20,22 @@ export type TableManyEntities<
   K extends TableKeys<N>
 > = TableEntity<N, K>[]
 
-export class DatabaseTable<Name extends PersistGlobalStateKeys, Keys extends TableKeys<Name>> {
+export class DatabaseTable<
+  Name extends PersistGlobalStateKeys,
+  Keys extends TableKeys<Name>
+> {
   protected constructor(
     protected readonly _table: Dexie.Table<TableEntity<Name, Keys>, string>,
     protected readonly initialState: PersistGlobalState[Name]
   ) {}
 
-  public async change<T extends DeepPartial<PersistGlobalState[Name]>>(item: T): Promise<void> {
+  public async change<T extends DeepPartial<PersistGlobalState[Name]>>(
+    item: T
+  ): Promise<void> {
+    if (!item) {
+      logDebugWarn('NOTHING TO SERIALIZE')
+      return
+    }
     const records: TableManyEntities<Name, Keys> = []
     const serialized: T = JSON.parse(JSON.stringify(item))
 
@@ -32,7 +46,6 @@ export class DatabaseTable<Name extends PersistGlobalStateKeys, Keys extends Tab
         value: serialized[key]
       })
     }
-
     await this._table.bulkPut(records)
   }
 
@@ -41,7 +54,7 @@ export class DatabaseTable<Name extends PersistGlobalStateKeys, Keys extends Tab
 
     const records: DeepPartial<PersistGlobalState[Name]> = {}
     // eslint-disable-next-line array-callback-return
-    array.map(({ key, value }) => {
+    array.map(({key, value}) => {
       records[key] = value
     })
 

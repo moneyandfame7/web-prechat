@@ -18,11 +18,10 @@ export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
   auth.captcha = new RecaptchaVerifier(
     'auth-recaptcha',
     {
-      size: 'invisible',
-      callback: (res: unknown) => {
-        /*  */
-        console.log('RES', res)
-      }
+      size: 'invisible'
+      // callback: (res: unknown) => {
+      //   /*  */
+      // }
     },
     authentication
   )
@@ -38,14 +37,15 @@ export async function sendCode(
 
   if (!auth.captcha) {
     console.warn('[AUTH] Captcha not defined')
-    return
+    return false
   }
   try {
     const res = await signInWithPhoneNumber(authentication, phone, auth.captcha)
-    console.log({res}, 'FIREBASE RES')
     auth.confirmResult = res
+    return true
   } catch (err) {
     throwFirebaseError(auth, lang, err)
+    return false
   }
 }
 

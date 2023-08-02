@@ -1,4 +1,4 @@
-import { getGlobalState } from 'state/signal'
+import {getGlobalState} from 'state/signal'
 
 /**
  * return true if has user has active session

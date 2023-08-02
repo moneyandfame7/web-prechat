@@ -9,20 +9,32 @@ import {database} from 'lib/database'
 import {getGlobalState} from './signal'
 import {getActions} from './action'
 import {updateGlobalState} from './persist'
+import type {ApiUser} from 'types/api'
+import {updateContactList, updateUserList} from './updates/contacts'
 
+/**
+ * @todo винести це все в actions??
+ */
 export async function initializeAuth() {
+  const {getConnection} = getActions()
   const state = getGlobalState()
+
   state.auth.loading = true
+
+  await getConnection()
   await generateRecaptcha(state.auth)
 
   state.auth.loading = false
 }
 
 async function initializeGlobalState() {
-  const {getConnection} = getActions()
-  await getConnection()
-  const persisted = await database.getInitialState()
-  updateGlobalState(persisted)
+  const state = getGlobalState()
+  const {auth, settings, users} = await database.getInitialState()
+
+  updateGlobalState({auth, settings}, false)
+
+  updateUserList(state, users.users)
+  updateContactList(state, users.contactIds)
 }
 
 async function initializeLibraries(state: SignalGlobalState) {
@@ -48,14 +60,14 @@ export async function initializeApplication() {
   if (USER_BROWSER.startsWith('Safari')) {
     document.documentElement.classList.add('is-safari')
   }
-  await initializeGlobalState()
-  await initializeLibraries(state)
-
+  await Promise.all([initializeGlobalState(), initializeLibraries(state)]).finally(
+    () => (state.initialization = false)
+  )
   if (state.settings.theme === 'light') {
     document.documentElement.classList.add('day')
   }
 
-  setTimeout(() => {
-    state.initialization = false
-  }, 200)
+  // setTimeout(() => {
+  state.initialization = false
+  // }, 200)
 }

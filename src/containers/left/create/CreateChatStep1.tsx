@@ -1,5 +1,7 @@
-import {type FC, memo, useCallback} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect} from 'preact/compat'
 
+import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
 import {FloatButton, Icon, InputText, Divider} from 'components/ui'
 import {LeftColumnScreen} from 'types/ui'
 
@@ -9,238 +11,97 @@ import {LeftGoBack} from '../LeftGoBack'
 import {useLeftColumn} from '../context'
 
 import {ChatItem} from 'components/ChatItem'
-import {useBoolean} from 'hooks/useFlag'
+import {getDisplayedUserName} from 'state/helpers/users'
 
 import './CreateChatStep1.scss'
 
 export interface CreateChatStep1Props {
   isGroup: boolean
+  selectedIds: string[]
+  handleSelect: (id: string) => void
 }
-const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup}) => {
+const CreateChatStep1: FC<CreateChatStep1Props> = ({
+  isGroup,
+  selectedIds,
+  handleSelect
+}) => {
   const {setScreen} = useLeftColumn()
+  const {searchUsers, searchGlobalClear} = getActions()
+  const {globalSearch, users} = getGlobalState()
   const handleNextStep = useCallback(() => {
     setScreen(isGroup ? LeftColumnScreen.NewGroupStep2 : LeftColumnScreen.NewChannelStep2)
   }, [isGroup])
-  const {value, handleInput} = useInputValue({})
-  const {value: boolean, toggle} = useBoolean(false)
-  // const items = [
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   },
-  //   {
-  //     withCheckbox: true,
-  //     onClick: toggle,
-  //     checked: boolean,
-  //     title: 'Aboba',
-  //     subtitle: 'petrovich',
-  //     avatar:
-  //       'https://plus.unsplash.com/premium_photo-1689632031083-518b012767a4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'
-  //   }
-  // ]
+  const {value, handleInput} = useInputValue({
+    cb: (value) => {
+      searchUsers(value.currentTarget.value)
+    }
+  })
+
+  useEffect(() => {
+    /* Get contacts here?? */
+    return () => {
+      searchGlobalClear()
+    }
+  }, [])
+
+  function renderList() {
+    if (!globalSearch.known?.users?.length || !globalSearch.global?.users?.length) {
+      return users.contactIds.map((id) => {
+        const user = users.byId[id]
+
+        return (
+          <ChatItem
+            id={user.id}
+            key={id}
+            title={getDisplayedUserName(user)}
+            subtitle="online"
+            onClick={() => {
+              handleSelect(id)
+            }}
+            withCheckbox
+            checked={selectedIds.includes(id)}
+          />
+        )
+      })
+    }
+
+    return (
+      <>
+        {globalSearch.known.users.map((u) => (
+          <ChatItem
+            id={u.id}
+            withCheckbox
+            checked={selectedIds.includes(u.id)}
+            key={u.id}
+            title={getDisplayedUserName(u)}
+            subtitle="online"
+            onClick={() => {
+              handleSelect(u.id)
+            }}
+          />
+        ))}
+        <h3>Global</h3>
+        {globalSearch.global.users.map((u) => (
+          <ChatItem
+            id={u.id}
+            withCheckbox
+            checked={selectedIds.includes(u.id)}
+            key={u.id}
+            title={getDisplayedUserName(u)}
+            subtitle="online"
+            onClick={() => {
+              handleSelect(u.id)
+            }}
+          />
+        ))}
+      </>
+    )
+  }
+  function renderSelected() {
+    return selectedIds.map((id) => <h5>{id}</h5>)
+  }
+
+  console.log({selectedIds})
   return (
     <>
       <div class="LeftColumn-Header">
@@ -255,10 +116,13 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup}) => {
       />
       <Divider />
       <div class="picker-list scrollable">
-        {/* {items.map((item, index) => (
-          <ChatItem key={index} {...item} />
-        ))} */}
+        {renderList()}
+        <Divider>
+          <h3>SELECTED</h3>
+        </Divider>
+        {renderSelected()}
       </div>
+
       <FloatButton
         shown
         onClick={handleNextStep}

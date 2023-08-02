@@ -1,7 +1,6 @@
 import {deepSignal} from 'deepsignal'
 
 import {
-  AuthScreens,
   type SignalGlobalState,
   type GlobalState,
   type SettingsState,
@@ -11,6 +10,7 @@ import {
 import lang from 'lib/i18n/lang'
 import errors from 'lib/i18n/errors'
 import {isCacheApiSupported} from 'lib/cache'
+import {AuthScreens} from 'types/screens'
 
 const settingsInitialState: SettingsState = {
   theme: 'light',
@@ -43,7 +43,20 @@ const globalInitialState: GlobalState = {
   settings: settingsInitialState,
   auth: authInitialState,
   initialization: false,
-  isCacheSupported: isCacheApiSupported()
+  isCacheSupported: isCacheApiSupported(),
+  globalSearch: {
+    known: {
+      users: []
+    },
+    global: {
+      users: []
+    },
+    isLoading: false
+  },
+  users: {
+    contactIds: [],
+    byId: {}
+  }
 }
 
 const globalState = deepSignal(globalInitialState)

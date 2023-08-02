@@ -5,20 +5,21 @@ import {updateGlobalState} from 'state/persist'
 import {createAction} from 'state/action'
 import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
 
-import {AuthScreens} from 'types/state'
-import type {SignUpInput} from 'types/api'
+import type {SendPhoneResponse, SignUpInput} from 'types/api'
 import type {SupportedLanguages} from 'types/lib'
+import {AuthScreens} from 'types/screens'
 
 import {USER_BROWSER, USER_PLATFORM} from 'common/config'
 import {logDebugInfo, logDebugWarn} from 'lib/logger'
-import {stringRemoveSpacing} from 'utilities/stringRemoveSpacing'
-import {api} from 'api/client'
+import {unformatStr} from 'utilities/stringRemoveSpacing'
+import {Api} from 'api/client'
 import {makeRequest} from 'api/request'
+import {ApolloError} from '@apollo/client'
 
 /**
  * Get user connection info, country ( dial code, etc )
  */
-createAction('getConnection', async (state) => {
+createAction('getConnection', async () => {
   const connection = await makeRequest('connection')
 
   const suggestedLanguage = connection.countryCode.toLowerCase() as SupportedLanguages
@@ -33,7 +34,7 @@ createAction('getConnection', async (state) => {
         suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
       }
     },
-    Boolean(state.auth.session)
+    false
   )
 })
 
@@ -43,23 +44,35 @@ createAction('getConnection', async (state) => {
 createAction('sendPhone', async (state, _, payload) => {
   state.auth.loading = true
   logDebugWarn(`[AUTH]: Auth remember me: ${state.auth.rememberMe}`)
-  const unformatted = stringRemoveSpacing(payload)
-
-  const response = /* await callApi('sendPhone', unformatted) */ await api.auth.sendPhone(
-    unformatted
-  )
-  const data = response?.data?.sendPhone
-
-  console.log({data}, 'DATA???')
-  /**
-   * @todo Провірити цей case
-   */
+  const unformatted = unformatStr(payload)
+  let data: SendPhoneResponse | undefined
+  try {
+    const response = await Api.auth.sendPhone(unformatted)
+    /* check error, return message */
+    data = response?.data?.sendPhone
+  } catch (e) {
+    if (e instanceof ApolloError) {
+      state.auth.error = (e.graphQLErrors[0] as any).code
+      state.auth.loading = false
+      return
+    }
+  }
   if (!data) {
-    state.auth.error = 'Auth send phone error'
     return
   }
+  console.log(data?.userId, 'USER_ID')
+
   /* Check, if data.hasActiveSession ? send to app message, else firebase */
-  await firebase.sendCode(state.auth, state.settings.i18n.lang_code, payload)
+  const successfully = await firebase.sendCode(
+    state.auth,
+    state.settings.i18n.lang_code,
+    payload
+  )
+  console.log({successfully})
+  if (!successfully) {
+    console.error(state.auth.error)
+    return
+  }
   logDebugInfo('[AUTH]: Code from firebase was sent')
 
   state.auth = {
@@ -82,31 +95,31 @@ createAction('verifyCode', async (state, actions, payload) => {
     state.settings.i18n.lang_code,
     payload
   )
-  if (!firebase_token) {
+  if (!firebase_token || state.auth.error) {
     console.error('[AUTH]: Code verification error')
 
     return
   }
 
-  if (!firebase_token || state.auth.error) {
-    console.error('[AUTH]: No token or auth error')
-    return
-  }
-  const {data} = /* await callApi('getTwoFa', token) */ await api.twoFa.getTwoFa(
-    firebase_token
-  )
+  const {data} = await Api.twoFa.getTwoFa(firebase_token)
+  /**
+   * Check password, then try signIn with token, it return stage, or smth like
+   * signUpRequired | passwordRequired | signInDone
+   */
   if (data.getTwoFa) {
     updateGlobalState(
       {
         auth: {
           passwordHint: data.getTwoFa?.hint,
           email: data.getTwoFa?.email,
-          screen: AuthScreens.Password
+          screen: AuthScreens.Password,
+          loading: false
         }
       },
-      false
+      true
     )
   } else if (state.auth.userId) {
+    // firebase.resetCaptcha(state.auth)
     actions.signIn({
       userId: state.auth.userId,
       firebase_token,
@@ -121,10 +134,11 @@ createAction('verifyCode', async (state, actions, payload) => {
       {
         auth: {
           firebase_token,
-          screen: AuthScreens.SignUp
+          screen: AuthScreens.SignUp,
+          loading: false
         }
       },
-      true
+      false
     )
   }
 })
@@ -135,13 +149,17 @@ createAction('verifyCode', async (state, actions, payload) => {
 createAction('signIn', async (state, _, payload) => {
   state.auth.loading = true
 
-  const {data} = /*  await callApi('signIn', payload) */ await api.auth.signIn(payload)
+  const {data} = await Api.auth.signIn(payload)
 
   if (!data?.signIn) {
     console.error('[AUTH]: «Sign in error»')
     return
   }
   logDebugWarn(`[AUTH]: Session: ${data.signIn.session}`)
+
+  /* FORCE UPDATE, for update all state ( i18n settings, auth and other)
+    IF REMEMBER ME - TRUE */
+
   updateGlobalState(
     {
       auth: {
@@ -149,7 +167,8 @@ createAction('signIn', async (state, _, payload) => {
         loading: false
       }
     },
-    state.auth.rememberMe
+    state.auth.rememberMe,
+    true
   )
 })
 
@@ -157,6 +176,7 @@ createAction('signIn', async (state, _, payload) => {
  * Auth Sign Up
  */
 createAction('signUp', async (state, _, payload) => {
+  state.auth.loading = true
   const {silent, firstName, lastName, photo} = payload
   if (!state.auth.firebase_token || !state.auth.phoneNumber) {
     state.auth.error = 'Phone verification failed'
@@ -165,11 +185,12 @@ createAction('signUp', async (state, _, payload) => {
     return
   }
 
+  const unformatted = unformatStr(state.auth.phoneNumber)
   const input: SignUpInput['input'] = {
     silent,
     firstName,
     lastName,
-    phoneNumber: state.auth.phoneNumber,
+    phoneNumber: unformatted,
     connection: {
       ...state.auth.connection!,
       browser: USER_BROWSER || 'Unknown',
@@ -177,22 +198,21 @@ createAction('signUp', async (state, _, payload) => {
     },
     firebase_token: state.auth.firebase_token
   }
-  const {data} = /* await callApi('signUp', {input, photo}) */ await api.auth.signUp({
-    input,
-    photo
-  })
+  const {data} = await Api.auth.signUp({input, photo})
+
   if (!data) {
     console.warn('[AUTH]: Sign Up error')
     return
   }
-  console.log({data})
 
-  updateGlobalState({
-    auth: {
-      session: data?.signUp.session
-    }
-  })
-  /**
-   * @todo Доробити тут
-   */
+  updateGlobalState(
+    {
+      auth: {
+        session: data.signUp.session,
+        loading: false
+      }
+    },
+    state.auth.rememberMe,
+    true
+  )
 })

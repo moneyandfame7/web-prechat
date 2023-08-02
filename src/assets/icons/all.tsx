@@ -21,6 +21,8 @@ import {ReactComponent as darkMode} from './darkmode.svg'
 import {ReactComponent as animations} from './animations.svg'
 import {ReactComponent as download} from './download.svg'
 import {ReactComponent as bug} from './bug.svg'
+import {ReactComponent as eyeOpen} from './eye1.svg'
+import {ReactComponent as eyeClose} from './eye2.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 
@@ -46,5 +48,7 @@ export {
   darkMode,
   animations,
   download,
-  bug
+  bug,
+  eyeClose,
+  eyeOpen
 }

@@ -2,9 +2,11 @@ const lang = {
   Next: 'Next',
   Country: 'Country',
   Code: 'Code',
-  CreateChat: 'Create chat',
   PhoneNumber: 'Phone number',
   RememberMe: 'Remember me',
+  Password: 'Password',
+  'WrongNumber?': 'Wrong number?',
+  CreateChat: 'Create Chat',
   YourName: 'Your Name',
   Name: 'Name',
   NewChannel: 'New Channel',
@@ -24,9 +26,10 @@ const lang = {
   'Auth.ContinueOnLanguage': 'Continue in English',
   'Auth.CodeSendOnApp': "We've sent the code to the Prechat app on your other device.",
   'Auth.CodeSendOnPhone': "We've sent a code to your mobile phone",
+  'Auth.Password': 'Your account is protected with an additional password.',
+  'Auth.EnterPassword': 'Enter a Password',
   'Auth.SignUp': 'Enter your name and add a profile picture',
-  'Auth.SilentAuth':
-    'Silent (your contacts will not receive a notification of registration)',
+  'Auth.SilentAuth': 'Silent (without contacts notification)',
   'Auth.StartMessaging': 'Start Messaging'
 }
 

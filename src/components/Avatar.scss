@@ -1,5 +1,19 @@
 .Avatar {
   border-radius: 50%;
   width: 42px;
+
+  user-select: none;
   height: 42px;
+
+  background-color: red;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .initials {
+    font-weight: 700;
+    font-size: 18px;
+    color: #fff;
+  }
 }

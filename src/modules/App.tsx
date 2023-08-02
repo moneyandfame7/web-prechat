@@ -1,21 +1,20 @@
 import {type FC} from 'preact/compat'
-import type {VNode} from 'preact'
+
+import {ClientError} from 'lib/error/error'
 
 import {getGlobalState} from 'state/signal'
-import {useScreenManager} from 'hooks'
+import {hasSession} from 'state/helpers/auth'
 
 import {ErrorCatcher} from 'components/ErrorCatcher'
-import MountTransition from 'components/MountTransition'
 import {ScreenLoader} from 'components/ScreenLoader'
+import {SwitchTransition} from 'components/transitions'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
 
-import {hasSession} from 'state/helpers/auth'
 import {ServiceWorker} from '../serviceWorker'
 
-import {ClientError} from 'lib/error/error'
 import './App.scss'
 
 enum AppScreens {
@@ -26,17 +25,9 @@ enum AppScreens {
   Error = 'Error'
 }
 
-const screenCases: Record<AppScreens, VNode> = {
-  [AppScreens.Auth]: <Auth />,
-  [AppScreens.Lock]: <Lock />,
-  [AppScreens.Main]: <Main />,
-  [AppScreens.Loading]: <ScreenLoader />,
-  [AppScreens.Error]: <div>{ClientError.getError()}</div>
-}
 const Application: FC = () => {
   const state = getGlobalState()
   let initialScreen: AppScreens
-
   if (ClientError.getError().value.length) {
     initialScreen = AppScreens.Error
   } else if (state.initialization) {
@@ -47,24 +38,32 @@ const Application: FC = () => {
     initialScreen = AppScreens.Auth
   }
 
-  const {renderScreen, activeScreen} = useScreenManager<AppScreens>({
-    initial: initialScreen,
-    cases: screenCases,
-    existScreen: initialScreen
-  })
+  const renderScreen = (activeScreen: AppScreens) => {
+    switch (activeScreen) {
+      case AppScreens.Auth:
+        return <Auth key={AppScreens.Auth} />
+      case AppScreens.Lock:
+        return <Lock key={AppScreens.Lock} />
+      case AppScreens.Error:
+        return <div key={AppScreens.Error}>{ClientError.getError()}</div>
+      case AppScreens.Loading:
+        return <ScreenLoader key={AppScreens.Loading} />
+      case AppScreens.Main:
+        return <Main key={AppScreens.Main} />
+    }
+  }
   return (
     <ErrorCatcher>
       <>
         <ServiceWorker />
-        <MountTransition
-          activeKey={activeScreen}
-          shouldCleanup
+        <SwitchTransition
           name="fade"
-          duration={300}
-          initial
+          shouldCleanup
+          durations={500}
+          activeKey={initialScreen}
         >
-          {renderScreen()}
-        </MountTransition>
+          {renderScreen(initialScreen)}
+        </SwitchTransition>
       </>
     </ErrorCatcher>
   )

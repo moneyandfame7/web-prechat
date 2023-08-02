@@ -5,7 +5,7 @@ import type {
   SignUpInput,
   SignUpResponse
 } from 'types/api'
-import type {Mutation} from 'api/apollo'
+import {type Mutation, type Query} from 'api/apollo'
 
 import {
   QUERY_SEND_PHONE,
@@ -17,17 +17,16 @@ import {
 import {BaseService} from './base'
 
 export interface ApiAuthMethods {
-  sendPhone: (phone: string) => Mutation<{sendPhone: SendPhoneResponse}>
+  sendPhone: (phone: string) => Query<{sendPhone: SendPhoneResponse}>
   signIn: (input: SignInInput) => Mutation<{signIn: SignInResponse}>
   signUp: (input: SignUpInput) => Mutation<{signUp: SignUpResponse}>
 }
-
 export class ApiAuth extends BaseService implements ApiAuthMethods {
   /**
    * @param phone Check additional user info by phone number.
    * @returns  User id or undefined.
    */
-  public async sendPhone(phone: string): Mutation<{sendPhone: SendPhoneResponse}> {
+  public async sendPhone(phone: string): Query<{sendPhone: SendPhoneResponse}> {
     return this.client.query<{sendPhone: SendPhoneResponse}>({
       query: QUERY_SEND_PHONE,
       variables: {phone},
@@ -36,7 +35,7 @@ export class ApiAuth extends BaseService implements ApiAuthMethods {
   }
 
   /**
-   * @param input Input for sign in: ( token, connection, userId).
+   * @param input Input for sign in: (token, connection, userId).
    * @returns Encoded session.
    */
   public async signIn(input: SignInInput): Mutation<{signIn: SignInResponse}> {
@@ -50,7 +49,7 @@ export class ApiAuth extends BaseService implements ApiAuthMethods {
 
   /**
    * @param input - Sign up input ( include input and user photo).
-   * @returns  Encoded session.
+   * @returns Encoded session.
    */
   public async signUp({input, photo}: SignUpInput): Mutation<{signUp: SignUpResponse}> {
     return this.client.mutate<{signUp: SignUpResponse}>({

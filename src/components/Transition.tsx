@@ -39,7 +39,7 @@ const getTransitionDuration = (type: TransitionType) => {
   const root = document.documentElement
   if (root?.classList.contains('animation-none')) {
     return 0
-  } else if (root?.classList.contains('animation-level-2')) {
+  } else if (root?.classList.contains('animation-level-2') && type !== 'slide') {
     return 150
   }
   switch (type) {
