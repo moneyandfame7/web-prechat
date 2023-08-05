@@ -70,7 +70,7 @@ const SignUp: FC = () => {
           checked={silentSignUp}
         />
         {firstName.length > 3 && (
-          <Button isLoading={auth.loading} type="submit">
+          <Button isLoading={auth.isLoading} type="submit">
             {t('Auth.StartMessaging')}
           </Button>
         )}

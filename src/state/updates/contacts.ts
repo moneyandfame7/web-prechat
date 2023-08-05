@@ -11,7 +11,11 @@ export function updateContactList<T extends SignalGlobalState>(state: T, ids: st
 }
 
 export function updateUserList<T extends SignalGlobalState>(state: T, users: ApiUser[]) {
+  const byId = {} as Record<string, ApiUser>
   users.map((u) => {
-    state.users.byId[u.id] = u
+    // byId[u.id] = u
+    state.users.$byId!.value[u.id] = u
   })
+
+  console.log({byId})
 }

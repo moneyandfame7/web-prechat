@@ -20,6 +20,7 @@
     "firebase": "^9.22.1",
     "graphql": "^16.6.0",
     "graphql-ws": "^5.13.1",
+    "localstorage-slim": "^2.4.0",
     "lottie-react": "^2.4.0",
     "preact": "^10.13.2"
   },

@@ -35,17 +35,15 @@ class Database {
   }
 
   public async getInitialState() /* : Promise<DeepPartial<PersistGlobalState>> */ {
-    const [auth, settings, users] = await Promise.all([
+    const [auth, settings] = await Promise.all([
       this.auth.get(),
-      this.settings.get(),
-      this.users.getInitialState()
+      this.settings.get()
+      // this.users.getInitialState()
     ])
 
-    console.log({users})
     return {
       auth,
-      settings,
-      users
+      settings
     }
   }
 

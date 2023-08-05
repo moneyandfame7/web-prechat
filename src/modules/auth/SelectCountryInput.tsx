@@ -6,12 +6,10 @@ import {
   useMemo,
   useRef,
   useState,
-  useLayoutEffect
+  useEffect
 } from 'preact/compat'
 
 import {t} from 'lib/i18n'
-
-import type {Country} from 'types/api'
 
 import {Icon, InputText} from 'components/ui'
 import {MenuItem, Menu} from 'components/popups/menu'
@@ -19,13 +17,15 @@ import {MenuItem, Menu} from 'components/popups/menu'
 import {TRANSITION_DURATION_ZOOM_FADE} from 'common/config'
 
 import './SelectCountryInput.scss'
+import type {ApiCountry} from 'api/types/langPack'
+import {getGlobalState} from 'state/signal'
 // import {parseEmoji} from 'utilities/parseEmoji'
 
 interface SelectCountryInputProps {
-  countryList: Country[]
-  selectedCountry?: Country
+  countryList: ApiCountry[]
+  selectedCountry?: ApiCountry
   loading: boolean
-  handleSelect: (country: Country) => void
+  handleSelect: (country: ApiCountry) => void
 }
 export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
   ({countryList, selectedCountry, loading, handleSelect}) => {
@@ -46,9 +46,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
 
     const handleOnBlur = useCallback(() => {
       setIsOpen(false)
-      // setTimeout(() => {
-      //   authScroll?.scrollTo({top: 0, behavior: 'smooth'})
-      // }, 100)
+
       inputRef.current?.blur()
     }, [authScroll, inputRef])
 
@@ -56,7 +54,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
       setStringName(e.currentTarget.value)
     }, [])
 
-    const handleSelectCountry = useCallback((country: Country) => {
+    const handleSelectCountry = useCallback((country: ApiCountry) => {
       setIsOpen(false)
       inputRef?.current?.blur()
       setTimeout(() => {
@@ -66,7 +64,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
       }, TRANSITION_DURATION_ZOOM_FADE + 10)
     }, [])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
       if (selectedCountry) {
         setStringName(selectedCountry?.name)
       }

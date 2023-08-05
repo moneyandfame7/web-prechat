@@ -17,10 +17,7 @@ import {type Observable, getMainDefinition} from '@apollo/client/utilities'
 import {createClient} from 'graphql-ws'
 
 import {getGlobalState} from 'state/signal'
-import type {ApiClientConnection} from 'types/api'
-import {ClientError} from 'lib/error/error'
 import {logDebugWarn} from 'lib/logger'
-// import {cleanTypename} from 'utilities/cleanTypename'
 
 export type Mutation<T> = Promise<FetchResult<T>>
 
@@ -41,28 +38,21 @@ export class ApolloClientWrapper {
   private readonly _splittedLinks: ApolloLink
   private readonly _errorLink: ApolloLink = this.getErrorLink()
   private readonly _retryLink: ApolloLink = this.getRetryLink()
-  // private readonly _cleanTypenameLink: ApolloLink = this.getCleanTypenameLink()
-  public constructor(connection: ApiClientConnection) {
-    const {apiToken, httpUrl, wsUrl} = connection
-    if (!apiToken) {
-      ClientError.setError('Api token not provided')
-    }
+  public constructor(connection: {httpUrl: string; wsUrl: string}) {
+    const {httpUrl, wsUrl} = connection
 
-    this._headersLink = this.getHeadersLink(apiToken)
+    this._headersLink = this.getHeadersLink()
     this._httpLink = this.getHttpLink(httpUrl)
     this._wsLink = this.getWsLink(wsUrl)
     this._splittedLinks = this.getSplittedLinks(this._wsLink, this._httpLink)
     this._client = new ApolloClient({
       link: ApolloLink.from([
-        // this._cleanTypenameLink,
         this._retryLink,
         this._errorLink,
         this._headersLink,
         this._splittedLinks
       ]),
-      cache: new InMemoryCache({
-        // addTypename: false
-      })
+      cache: new InMemoryCache()
     })
   }
 
@@ -82,7 +72,7 @@ export class ApolloClientWrapper {
   /**
    * {@link https://www.apollographql.com/docs/react/networking/authentication/#header Apollo Header link}
    */
-  private getHeadersLink(apiToken: string) {
+  private getHeadersLink() {
     return setContext(async (_, {headers}) => {
       const {auth, settings} = getGlobalState()
 
@@ -90,8 +80,7 @@ export class ApolloClientWrapper {
         headers: {
           ...headers,
           'prechat-language': settings.i18n.lang_code,
-          'prechat-session': auth.session || '',
-          'prechat-api-token': apiToken || ''
+          'prechat-session': auth.session || ''
         }
       }
     })
@@ -122,8 +111,7 @@ export class ApolloClientWrapper {
       createClient({
         url,
         connectionParams: async () => ({
-          isWebsocket: true,
-          'prechat-api-token': import.meta.env.VITE_API_TOKEN
+          isWebsocket: true
         })
       })
     )
@@ -157,17 +145,6 @@ export class ApolloClientWrapper {
       }
     })
   }
-
-  /**
-   * Omit "__typename" from Apollo result.
-   */
-  // private getCleanTypenameLink() {
-  //   return new ApolloLink((operation, forward) => {
-  //     return forward(operation).map((data) => {
-  //       return cleanTypename(data)
-  //     })
-  //   })
-  // }
 }
 
 /**
@@ -175,7 +152,6 @@ export class ApolloClientWrapper {
  */
 export function createApolloClientWrapper(): ApolloClientWrapper {
   const client = new ApolloClientWrapper({
-    apiToken: import.meta.env.VITE_API_TOKEN,
     httpUrl: import.meta.env.VITE_API_URL,
     wsUrl: 'ws://localhost:8001/graphql/subscriptions'
   })

@@ -3,10 +3,10 @@ import {batch} from '@preact/signals'
 import type {DeepSignal} from 'deepsignal'
 import {FirebaseError} from 'firebase/app'
 
-import type {SupportedLanguages} from 'types/lib'
+import type {ApiLangCode} from 'types/lib'
 import type {AuthState} from 'types/state'
 
-export type FirebaseErrors = Record<SupportedLanguages, Record<string, string>>
+export type FirebaseErrors = Record<ApiLangCode, Record<string, string>>
 export type FirebaseErrorCodes = keyof FirebaseErrors['en']
 
 const FIREBASE_ERRORS: FirebaseErrors = {
@@ -134,16 +134,13 @@ const FIREBASE_ERRORS: FirebaseErrors = {
   }
 }
 
-export function getFirebaseErrorMessage(
-  code: FirebaseErrorCodes,
-  lang: SupportedLanguages
-) {
+export function getFirebaseErrorMessage(code: FirebaseErrorCodes, lang: ApiLangCode) {
   return FIREBASE_ERRORS[lang][code] || FIREBASE_ERRORS['en'][code]
 }
 
 export function throwFirebaseError(
   auth: DeepSignal<AuthState>,
-  lang: SupportedLanguages,
+  lang: ApiLangCode,
   err: unknown
 ) {
   if (err instanceof FirebaseError) {
@@ -151,7 +148,7 @@ export function throwFirebaseError(
     console.warn('[AUTH]', error)
     batch(() => {
       auth.error = error
-      auth.loading = false
+      auth.isLoading = false
     })
   }
 }

@@ -1,9 +1,10 @@
 import type {SignalGlobalState, Theme} from 'types/state'
-import type {SupportedLanguages} from 'types/lib'
+import type {ApiLangCode} from 'types/lib'
 import type {SignInPayload, SignUpPayload} from 'types/action'
 import {DEBUG} from 'common/config'
 
 import {getGlobalState} from './signal'
+import {ApiLanguage, ApiLanguageCode, ApiLanguageKey} from 'api/types/settings'
 
 /**
  * The idea for actions was taken from this repository because I really liked it
@@ -22,14 +23,21 @@ interface ActionPayloads {
   /* Auth ui */
   uploadAvatar: File
   /* Ui */
+  reset: void
+  init: void
 
   changeTheme: Theme
-  changeLanguage: SupportedLanguages
+  changeLanguage: ApiLangCode
 
   /* Api */
-  getCountries: SupportedLanguages
+  getCountries: ApiLangCode | undefined
   getContactList: void
   getUser: string
+
+  // Localization
+  getLangPack: ApiLanguageCode
+  getLanguageString: {code: ApiLanguageCode; key: ApiLanguageKey}
+  getLanguages: ApiLanguage[]
 
   getConnection: void
   sendPhone: string

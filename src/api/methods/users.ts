@@ -3,12 +3,9 @@ import type {ApiInputGetUsers, ApiInputUser, ApiUser, ApiUserFull} from 'types/a
 
 import {QUERY_GET_USERS, QUERY_GET_USER_FULL} from 'api/graphql'
 
-import {BaseService} from './base'
+import {ApiBaseMethod} from './base'
 
-export interface ApiUsersMethods {
-  getUsers: (input: {ids: string[]}) => Query<{getUsers: ApiUser[]}>
-}
-export class ApiUsers extends BaseService implements ApiUsersMethods {
+export class ApiUsers extends ApiBaseMethod {
   /**
    * @param input - List of user identifiers.
    * @returns Returns basic user info according to their identifiers.
@@ -18,8 +15,8 @@ export class ApiUsers extends BaseService implements ApiUsersMethods {
       query: QUERY_GET_USERS,
       variables: {
         input
-      },
-      fetchPolicy: 'cache-first'
+      }
+      // fetchPolicy: 'cache-first'
     })
   }
 

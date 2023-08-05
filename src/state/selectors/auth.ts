@@ -1,17 +1,19 @@
-import type { SignalGlobalState } from 'types/state'
+import type {SignalGlobalState} from 'types/state'
 
 export const selectSuggestedCountry = (state: SignalGlobalState) => {
   const code = state.auth.connection?.countryCode
   if (!code) return
-  return state.settings.i18n.countries.find((country) => country.code === code)
+  return state.countryList.find((country) => country.code === code)
 }
 
 export const selectCountryByPhone = (state: SignalGlobalState) => {
-  const phone = state.auth.phoneNumber
-  const countries = state.settings.i18n.countries
+  const {
+    auth: {phoneNumber},
+    countryList
+  } = state
 
-  if (!phone) {
+  if (!phoneNumber) {
     return
   }
-  return countries.find((country) => phone.includes(country.dial_code))
+  return countryList.find((country) => phoneNumber.includes(country.dial_code))
 }

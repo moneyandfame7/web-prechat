@@ -1,9 +1,9 @@
 import type lang from 'lib/i18n/lang'
 import type errors from 'lib/i18n/errors'
 
-export type SupportedLanguages = 'en' | 'uk' | 'pl' | 'de'
+export type ApiLangCode = 'en' | 'uk' | 'pl' | 'de'
 export type SupportedLanguagesList = Array<{
-  value: SupportedLanguages
+  value: ApiLangCode
   label: string
 }>
 export type LanguagePack = typeof lang

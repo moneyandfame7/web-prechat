@@ -1,6 +1,6 @@
-import type {API_AUTH_STATE, API_AVATAR_VARIANTS} from 'common/config'
+import type {API_AVATAR_VARIANTS} from 'common/config'
 import type {ErrorPack, LanguagePack} from './lib'
-import type {Connection} from './request'
+import type {UserConnection} from './request'
 
 export interface ApiClientConnection {
   apiToken: string
@@ -8,13 +8,6 @@ export interface ApiClientConnection {
   wsUrl: string
 }
 export type Platform = 'macOS' | 'iOS' | 'Windows' | 'Android' | 'Linux' | 'Unknown'
-
-export interface Country {
-  name: string
-  emoji: string
-  code: string
-  dial_code: string
-}
 
 export interface Session {
   id: string
@@ -27,12 +20,7 @@ export interface Session {
   hash: string
 }
 
-export interface FetchLanguage {
-  pack: LanguagePack
-  countries: Country[]
-  errors: ErrorPack
-}
-export type SessionData = Connection & {browser: string; platform: string}
+export type AuthConnection = UserConnection & {browser: string; platform: string}
 
 export interface TwoFactorAuth {
   hint?: string
@@ -52,7 +40,7 @@ export interface SignUpInput {
     phoneNumber: string
     /* Firebase token after validating phone with code */
     firebase_token: string
-    connection: SessionData
+    connection: AuthConnection
   }
   photo?: File
 }
@@ -62,7 +50,7 @@ export interface SignUpResponse {
 
 export interface SignInInput {
   firebase_token: string
-  connection: SessionData
+  connection: AuthConnection
   userId: string
 }
 export interface SignInResponse {

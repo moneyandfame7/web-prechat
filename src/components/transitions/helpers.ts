@@ -43,21 +43,21 @@ export const SLIDE_FADE_OUT: TransitionCases = {
 export const ZOOM_SLIDE_IN: TransitionCases = {
   enter: {
     name: 'slide',
-    duration: 400
+    duration: 250
   },
   exit: {
     name: 'zoomFade',
-    duration: 400
+    duration: 250
   }
 }
 export const ZOOM_SLIDE_OUT: TransitionCases = {
   enter: {
     name: 'zoomFade',
-    duration: 400
+    duration: 250
   },
   exit: {
     name: 'slide',
-    duration: 400
+    duration: 250
   }
 }
 export const SLIDE_IN: TransitionCases = {

@@ -9,6 +9,11 @@ createAction('getUser', async (state, _, payload) => {
   if (!user) {
     return
   }
-  state.users.byId[payload] = user
+  // state.users.byId = {
+  //   ...state.users.byId,
+  //   [payload]: cleanTypename(user)
+  // } as any
+
+  state.users.byId[payload] = {...user}
   database.users.add(user)
 })

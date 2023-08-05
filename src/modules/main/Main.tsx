@@ -14,14 +14,11 @@ const Main: FC = () => {
   const {getContactList} = getActions()
 
   useEffect(() => {
-    getContactList()
+    // getContactList()
   }, [])
   return (
     <div class="Main">
       <LeftColumn />
-      {/* <SwitchLanguageTest /> */}
-      {/* <p>DORA DURA DORA DURA</p> */}
-      {/* <p>{t('Auth.StartMessaging')}</p> */}
       <MiddleColumn />
       <RightColumn />
     </div>

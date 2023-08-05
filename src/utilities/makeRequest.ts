@@ -1,10 +1,10 @@
 import {logDebugInfo} from 'lib/logger'
 
-import type {Connection} from 'types/request'
+import type {UserConnection} from 'types/request'
 import {fetchJson} from 'utilities/fetchJson'
 
 interface RequestResponse {
-  connection: Connection
+  connection: UserConnection
 }
 type RequestName = keyof RequestResponse
 

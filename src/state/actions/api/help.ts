@@ -1,19 +1,23 @@
 import {Api} from 'api/client'
 import {createAction} from 'state/action'
-import {updateGlobalState} from 'state/persist'
+import type {ApiLangCode} from 'types/lib'
 
-/* I18n queries */
-createAction('getCountries', async ({settings: {i18n}}, _, payload) => {
-  if (i18n.lang_code !== payload) {
-    const {data} =
-      /*  await callApi('fetchCountries', payload) */ await Api.help.getCountries(payload)
-
-    updateGlobalState({
-      settings: {
-        i18n: {
-          countries: data.countries
-        }
-      }
-    })
+createAction('getCountries', async (state, _, payload) => {
+  let lang = payload
+  if (!payload) {
+    lang = state.settings.language
   }
+  const countries = await Api.langPack.getCountriesList(lang as ApiLangCode)
+  if (!countries) {
+    return
+  }
+
+  state.countryList = [...countries]
+  // updateGlobalState({
+  //   settings: {
+  //     i18n: {
+  //       countries
+  //     }
+  //   }
+  // })
 })

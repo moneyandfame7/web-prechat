@@ -53,10 +53,10 @@ const getTransitionByCase = (
   previousScreen?: LeftColumnGroup
 ): TransitionCases => {
   if (previousScreen === LeftColumnGroup.Main) {
-    return SLIDE_FADE_IN
+    return ZOOM_SLIDE_IN
   }
 
-  return SLIDE_FADE_OUT
+  return ZOOM_SLIDE_OUT
 }
 const LeftColumn: FC = () => {
   // const leftColumnWidth = getGlobalState((state) => state.settings.leftColumnWidth)

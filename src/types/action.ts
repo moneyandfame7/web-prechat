@@ -1,5 +1,3 @@
-import type {SessionData} from './api'
-
 export interface SignUpPayload {
   silent: boolean
   firstName: string
@@ -7,7 +5,5 @@ export interface SignUpPayload {
   lastName?: string
 }
 export interface SignInPayload {
-  userId: string
   firebase_token: string
-  connection: SessionData
 }

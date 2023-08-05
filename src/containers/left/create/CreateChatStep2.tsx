@@ -76,7 +76,7 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
                 const user = globalState.users.byId?.[member] || undefined
                 return (
                   <ChatItem
-                    id={member}
+                    userId={member}
                     key={member}
                     title={getDisplayedUserName(user)}
                     subtitle="online"

@@ -26,47 +26,44 @@ export async function add({name, key, value, expiration}: CacheOptions) {
 
 export async function get(name: CacheName, key: string) {
   if (!storageCache) {
-    return null
+    return undefined
   }
-  const cache = await storageCache.open(name)
 
-  const response = await cache.match(key)
+  try {
+    const cache = await storageCache.open(name)
+    const response = await cache.match(key)
 
-  if (!response) {
-    return null
-  }
-  if (name === 'prechat-assets' || name === 'prechat-avatars') {
-    return response.blob()
-  }
-  const item = (await response.json()) as CacheResponse
+    if (!response) {
+      return undefined
+    }
+    const item = await response.json()
 
-  if (item.expiration && Date.now() > item.expiration) {
+    return item
+  } catch (e) {
     // eslint-disable-next-line no-console
-    console.warn(`[UI]: Cache "${name}" for  «${key}» was expired`)
-    await cache.delete(key)
-    return null
+    console.warn(e)
   }
-
-  return item.value
 }
 
 export async function remove(name: CacheName, key: string) {
   if (!storageCache) {
-    return null
+    return false
   }
   const cache = await storageCache.open(name)
   await cache.delete(key)
+
+  return true
 }
 
 export async function clear(name: CacheName) {
   if (!storageCache) {
-    return null
+    return false
   }
   try {
     return await storageCache.delete(name)
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn(err)
-    return null
+    return false
   }
 }

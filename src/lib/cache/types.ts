@@ -4,7 +4,6 @@ export type CacheName =
   | 'prechat-files'
   | 'prechat-assets'
   | 'prechat-avatars'
-  | 'prechat-important'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CacheTypeToSave = Response | Record<string, any> | string | number | Blob

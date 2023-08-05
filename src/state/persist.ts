@@ -10,6 +10,11 @@ import type {
 import {database} from 'lib/database'
 import {getGlobalState} from './signal'
 import {deepClone} from 'utilities/deepClone'
+import {pick} from 'utilities/pick'
+import ls from 'localstorage-slim'
+import {AuthScreens} from 'types/screens'
+import lang from 'lib/i18n/lang'
+import {hasSession} from './helpers/auth'
 
 type PersistPropertiesSatisfie = Partial<Record<keyof GlobalState, boolean | object>>
 type PersistedProperties<T extends PersistPropertiesSatisfie> = {
@@ -206,3 +211,210 @@ function updateGlobalSearchState<
 // function resetAuthState() {}
 
 // function resetSettingsState() {}
+
+export function setGlobalState(forUpd: DeepPartial<GlobalState>) {
+  const global = getGlobalState()
+  Object.assign(global, {
+    auth: {
+      ...global.auth,
+      ...forUpd?.auth
+    },
+    settings: {
+      ...global.settings,
+      ...forUpd?.settings,
+      i18n: {
+        ...global.settings.i18n,
+        ...forUpd?.settings?.i18n,
+        pack: {
+          ...global.settings.i18n.pack,
+          ...forUpd?.settings?.i18n?.pack
+        }
+      }
+    }
+  })
+}
+
+export function clearState() {
+  const success = ls.remove('STATE')
+
+  const global = getGlobalState()
+
+  global.auth = {
+    captcha: undefined,
+    confirmResult: undefined,
+    connection: undefined,
+    email: undefined,
+    phoneNumber: undefined,
+    session: undefined,
+    error: undefined,
+    firebase_token: undefined,
+    isLoading: false,
+    passwordHint: undefined,
+    rememberMe: true,
+    screen: AuthScreens.PhoneNumber,
+    userId: undefined
+  }
+  global.settings = {
+    language: 'en',
+    theme: 'light',
+    i18n: {
+      lang_code: 'en',
+      pack: lang
+    },
+    showTranslate: false,
+    suggestedLanguage: undefined
+  }
+  global.countryList = []
+  global.globalSearch = {
+    known: {},
+    global: {},
+    isLoading: false
+  }
+  global.initialization = false
+  global.isCacheSupported = true
+  global.users = {
+    byId: {},
+    contactIds: []
+  }
+}
+
+export const STATE_PERSIST_DISABLED = false
+export const INITIAL_STATE: GlobalState = {
+  auth: {
+    captcha: undefined,
+    confirmResult: undefined,
+    connection: undefined,
+    email: undefined,
+    phoneNumber: undefined,
+    session: undefined,
+    error: undefined,
+    firebase_token: undefined,
+    isLoading: false,
+    passwordHint: undefined,
+    rememberMe: true,
+    screen: AuthScreens.PhoneNumber,
+    userId: undefined
+  },
+  settings: {
+    language: 'en',
+    theme: 'light',
+    i18n: {
+      lang_code: 'en',
+      pack: lang
+    },
+    showTranslate: false,
+    suggestedLanguage: undefined
+  },
+
+  initialization: false,
+  isCacheSupported: true,
+
+  users: {
+    byId: {},
+    contactIds: []
+  },
+
+  globalSearch: {
+    known: {},
+    global: {},
+    isLoading: false
+  },
+
+  countryList: []
+}
+
+const PERSIST_KEY = 'prechat-state'
+
+function pickPersistGlobal(global: SignalGlobalState) {
+  const reduced: DeepPartial<GlobalState> = {
+    auth: pick(global.auth, [
+      'userId',
+      'screen',
+      'rememberMe',
+      'phoneNumber',
+      'passwordHint',
+      'email'
+    ]),
+    settings: pick(global.settings, [
+      'showTranslate',
+      'theme',
+      'language',
+      'suggestedLanguage'
+    ]),
+    isCacheSupported: global.isCacheSupported,
+    users: global.users
+  }
+
+  return reduced
+}
+
+let isPersist = false
+
+export function readPersist(initialState: GlobalState): GlobalState | undefined {
+  if (STATE_PERSIST_DISABLED) {
+    return undefined
+  }
+  const persisted = ls.get(PERSIST_KEY) as GlobalState
+
+  if (hasSession()) {
+    startPersist()
+
+    return {
+      ...initialState,
+      ...persisted
+    }
+  } else {
+    stopPersist()
+
+    return undefined
+  }
+}
+
+export function startPersist() {
+  console.log('WAS START PERSISTING STATE!!!')
+  isPersist = true
+  window.addEventListener('beforeunload', persist)
+  window.addEventListener('blur', persist)
+}
+
+function stopPersist() {
+  console.log('WAS STOPPED PERSISTING STATE!!!')
+
+  isPersist = false
+  window.removeEventListener('beforeunload', persist)
+  window.removeEventListener('blur', persist)
+}
+
+export function removePersist() {
+  const result = ls.remove(PERSIST_KEY)
+  if (typeof result !== 'undefined') {
+    console.error('REMOVE PERSIST STATE ERORR')
+  }
+  if (!isPersist) {
+    return
+  }
+
+  stopPersist()
+}
+
+function persist() {
+  const global = getGlobalState()
+  if (!isPersist || !global.auth.session) {
+    return
+  }
+
+  forcePersist()
+}
+function forcePersist() {
+  const global = getGlobalState()
+
+  /* check if has locked screen */
+
+  const persisted = pickPersistGlobal(global)
+
+  const result = ls.set(PERSIST_KEY, persisted)
+
+  if (result === false) {
+    throw new Error('Persist state error.')
+  }
+}

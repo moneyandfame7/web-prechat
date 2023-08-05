@@ -29,7 +29,7 @@ const AuthPassword: FC = () => {
         label="Password"
         showPassword={showPassword}
       />
-      <Button isLoading={auth.loading}>{t('Next')}</Button>
+      <Button isLoading={auth.isLoading}>{t('Next')}</Button>
     </>
   )
 }

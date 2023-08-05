@@ -1,7 +1,8 @@
-import type { SupportedLanguages, SupportedLanguagesList } from 'types/lib'
-import type { Theme } from 'types/state'
+import type {ApiLangCode, SupportedLanguagesList} from 'types/lib'
+import type {Theme} from 'types/state'
 
-export const PREFERRED_THEME: Theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+export const PREFERRED_THEME: Theme = window.matchMedia('(prefers-color-scheme: dark)')
+  .matches
   ? 'dark'
   : 'light'
 
@@ -24,4 +25,4 @@ export const LANGUAGES_LIST: SupportedLanguagesList = [
   }
 ]
 
-export const LANGUAGES_CODE_ARRAY: SupportedLanguages[] = ['en', 'uk', 'pl', 'de']
+export const LANGUAGES_CODE_ARRAY: ApiLangCode[] = ['en', 'uk', 'pl', 'de']

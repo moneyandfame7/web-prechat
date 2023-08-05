@@ -75,7 +75,7 @@ const AuthCode: FC = () => {
         maxLength={CODE_LENGTH}
         label={t('Code')}
         value={code}
-        loading={auth.loading}
+        loading={auth.isLoading}
         onInput={handleChangeCode}
       />
       {/* {auth.loading && <Spinner size="large" />} */}

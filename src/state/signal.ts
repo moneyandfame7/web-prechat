@@ -8,7 +8,6 @@ import {
 } from 'types/state'
 
 import lang from 'lib/i18n/lang'
-import errors from 'lib/i18n/errors'
 import {isCacheApiSupported} from 'lib/cache'
 import {AuthScreens} from 'types/screens'
 
@@ -16,19 +15,18 @@ const settingsInitialState: SettingsState = {
   theme: 'light',
   i18n: {
     lang_code: 'en',
-    countries: [],
-    pack: lang,
-    errors
+    pack: lang
   },
-  suggestedLanguage: undefined,
-  leftColumnWidth: 350
+  language: 'en',
+  showTranslate: false,
+  suggestedLanguage: undefined
 }
 const authInitialState: AuthState = {
   connection: undefined,
   phoneNumber: undefined,
   rememberMe: true,
   userId: undefined,
-  loading: false,
+  isLoading: false,
   screen: AuthScreens.PhoneNumber,
   firebase_token: undefined,
   session: undefined,
@@ -56,7 +54,8 @@ const globalInitialState: GlobalState = {
   users: {
     contactIds: [],
     byId: {}
-  }
+  },
+  countryList: []
 }
 
 const globalState = deepSignal(globalInitialState)

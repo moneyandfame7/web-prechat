@@ -1,5 +1,5 @@
-import {type FC, memo, useCallback, useEffect} from 'preact/compat'
-
+import {type FC, memo} from 'preact/compat'
+import {useCallback} from 'preact/hooks'
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 import {FloatButton, Icon, InputText, Divider} from 'components/ui'
@@ -7,11 +7,13 @@ import {LeftColumnScreen} from 'types/ui'
 
 import {useInputValue} from 'hooks'
 
+import {ChatItem} from 'components/ChatItem'
+import {ScreenLoader} from 'components/ScreenLoader'
+
+import {getDisplayedUserName} from 'state/helpers/users'
+
 import {LeftGoBack} from '../LeftGoBack'
 import {useLeftColumn} from '../context'
-
-import {ChatItem} from 'components/ChatItem'
-import {getDisplayedUserName} from 'state/helpers/users'
 
 import './CreateChatStep1.scss'
 
@@ -20,75 +22,85 @@ export interface CreateChatStep1Props {
   selectedIds: string[]
   handleSelect: (id: string) => void
 }
+
 const CreateChatStep1: FC<CreateChatStep1Props> = ({
   isGroup,
   selectedIds,
   handleSelect
 }) => {
   const {setScreen} = useLeftColumn()
-  const {searchUsers, searchGlobalClear} = getActions()
+  const {searchUsers} = getActions()
   const {globalSearch, users} = getGlobalState()
   const handleNextStep = useCallback(() => {
     setScreen(isGroup ? LeftColumnScreen.NewGroupStep2 : LeftColumnScreen.NewChannelStep2)
   }, [isGroup])
+
   const {value, handleInput} = useInputValue({
     cb: (value) => {
       searchUsers(value.currentTarget.value)
     }
   })
 
-  useEffect(() => {
-    /* Get contacts here?? */
-    return () => {
-      searchGlobalClear()
-    }
-  }, [])
-
   function renderList() {
-    if (!globalSearch.known?.users?.length || !globalSearch.global?.users?.length) {
-      return users.contactIds.map((id) => {
-        const user = users.byId[id]
+    if (!value.length) {
+      return (
+        <>
+          <h5 class="subtitle">Contacts</h5>
+          {users.contactIds.map((id) => {
+            const user = users.byId[id]
 
-        return (
-          <ChatItem
-            id={user.id}
-            key={id}
-            title={getDisplayedUserName(user)}
-            subtitle="online"
-            onClick={() => {
-              handleSelect(id)
-            }}
-            withCheckbox
-            checked={selectedIds.includes(id)}
-          />
-        )
-      })
+            return (
+              <ChatItem
+                userId={user.id}
+                user={user}
+                key={id}
+                title={getDisplayedUserName(user)}
+                subtitle={user.username ? `@${user.username}` : undefined}
+                onClick={() => {
+                  handleSelect(id)
+                }}
+                withCheckbox
+                checked={selectedIds.includes(id)}
+              />
+            )
+          })}
+        </>
+      )
+    }
+    if (globalSearch.isLoading) {
+      return <ScreenLoader />
+    }
+    if (!globalSearch.known?.users?.length && !globalSearch.global?.users?.length) {
+      return <h4>No results </h4>
     }
 
     return (
       <>
-        {globalSearch.known.users.map((u) => (
+        <h5 class="subtitle">Contacts</h5>
+        {globalSearch.known?.users?.map((u) => (
           <ChatItem
-            id={u.id}
+            user={u}
+            userId={u.id}
             withCheckbox
             checked={selectedIds.includes(u.id)}
             key={u.id}
             title={getDisplayedUserName(u)}
-            subtitle="online"
+            subtitle={`@${u.username}`}
             onClick={() => {
               handleSelect(u.id)
             }}
           />
         ))}
-        <h3>Global</h3>
-        {globalSearch.global.users.map((u) => (
+        <h5 class="subtitle">Global</h5>
+        {globalSearch.global?.users?.map((u) => (
           <ChatItem
-            id={u.id}
+            user={u}
+            userId={u.id}
             withCheckbox
             checked={selectedIds.includes(u.id)}
             key={u.id}
             title={getDisplayedUserName(u)}
-            subtitle="online"
+            subtitle={`@${u.username}`}
             onClick={() => {
               handleSelect(u.id)
             }}
@@ -97,11 +109,7 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
       </>
     )
   }
-  function renderSelected() {
-    return selectedIds.map((id) => <h5>{id}</h5>)
-  }
 
-  console.log({selectedIds})
   return (
     <>
       <div class="LeftColumn-Header">
@@ -115,14 +123,10 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
         placeholder="Add People..."
       />
       <Divider />
-      <div class="picker-list scrollable">
-        {renderList()}
-        <Divider>
-          <h3>SELECTED</h3>
-        </Divider>
-        {renderSelected()}
-      </div>
-
+      <div class="picker-list scrollable">{renderList()}</div>
+      {selectedIds.map((id) => (
+        <p>{users.byId[id].firstName}</p>
+      ))}
       <FloatButton
         shown
         onClick={handleNextStep}

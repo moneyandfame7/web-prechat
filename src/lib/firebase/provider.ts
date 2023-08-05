@@ -4,7 +4,7 @@ import type {DeepSignal} from 'deepsignal'
 import {RecaptchaVerifier, signInWithPhoneNumber} from 'firebase/auth'
 import {FirebaseError} from 'firebase/app'
 
-import type {SupportedLanguages} from 'types/lib'
+import type {ApiLangCode} from 'types/lib'
 import type {AuthState} from 'types/state'
 
 import {authentication} from './config'
@@ -30,7 +30,7 @@ export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
 
 export async function sendCode(
   auth: DeepSignal<AuthState>,
-  lang: SupportedLanguages,
+  lang: ApiLangCode,
   phone: string
 ) {
   authentication.languageCode = lang
@@ -51,7 +51,7 @@ export async function sendCode(
 
 export async function verifyCode(
   auth: DeepSignal<AuthState>,
-  language: SupportedLanguages,
+  language: ApiLangCode,
   code: string
 ) {
   try {

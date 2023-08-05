@@ -5,16 +5,19 @@ import {updateGlobalState} from 'state/persist'
 import {createAction} from 'state/action'
 import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
 
-import type {SendPhoneResponse, SignUpInput} from 'types/api'
-import type {SupportedLanguages} from 'types/lib'
+import type {SignUpInput} from 'types/api'
+import type {ApiLangCode} from 'types/lib'
 import {AuthScreens} from 'types/screens'
 
 import {USER_BROWSER, USER_PLATFORM} from 'common/config'
-import {logDebugInfo, logDebugWarn} from 'lib/logger'
+import {logDebugWarn} from 'lib/logger'
 import {unformatStr} from 'utilities/stringRemoveSpacing'
 import {Api} from 'api/client'
-import {makeRequest} from 'api/request'
+import {makeRequest} from 'utilities/makeRequest'
+import {logger} from 'utilities/logger'
 import {ApolloError} from '@apollo/client'
+import {AuthSignInResponse} from 'api/types/auth'
+import {saveSession} from 'utilities/session'
 
 /**
  * Get user connection info, country ( dial code, etc )
@@ -22,7 +25,7 @@ import {ApolloError} from '@apollo/client'
 createAction('getConnection', async () => {
   const connection = await makeRequest('connection')
 
-  const suggestedLanguage = connection.countryCode.toLowerCase() as SupportedLanguages
+  const suggestedLanguage = connection.countryCode.toLowerCase() as ApiLangCode
   const existLanguage = LANGUAGES_CODE_ARRAY.find((code) => code === suggestedLanguage)
 
   updateGlobalState(
@@ -42,45 +45,42 @@ createAction('getConnection', async () => {
  *  Check user on backend side
  */
 createAction('sendPhone', async (state, _, payload) => {
-  state.auth.loading = true
+  state.auth.isLoading = true
   logDebugWarn(`[AUTH]: Auth remember me: ${state.auth.rememberMe}`)
   const unformatted = unformatStr(payload)
-  let data: SendPhoneResponse | undefined
-  try {
-    const response = await Api.auth.sendPhone(unformatted)
-    /* check error, return message */
-    data = response?.data?.sendPhone
-  } catch (e) {
-    if (e instanceof ApolloError) {
-      state.auth.error = (e.graphQLErrors[0] as any).code
-      state.auth.loading = false
-      return
-    }
-  }
-  if (!data) {
+
+  const response = await Api.auth.sendPhone(unformatted)
+  /* check error, return message */
+  if (!response) {
+    console.error('AUTH RESPONSE ERROR')
     return
   }
-  console.log(data?.userId, 'USER_ID')
 
-  /* Check, if data.hasActiveSession ? send to app message, else firebase */
+  console.log(response?.userId, 'USER_ID')
+
+  if (response.hasActiveSession) {
+    /*  */
+    logger.info('HAS ACTIVE SESSIONS!!! CODE FROM APP!!!')
+  }
   const successfully = await firebase.sendCode(
     state.auth,
     state.settings.i18n.lang_code,
     payload
   )
-  console.log({successfully})
+
   if (!successfully) {
     console.error(state.auth.error)
     return
   }
-  logDebugInfo('[AUTH]: Code from firebase was sent')
+
+  logger.warn('Code from firebase was sent.')
 
   state.auth = {
     ...state.auth,
     screen: AuthScreens.Code,
-    userId: data.userId,
+    userId: response.userId,
     phoneNumber: payload,
-    loading: false
+    isLoading: false
   }
 })
 
@@ -88,7 +88,7 @@ createAction('sendPhone', async (state, _, payload) => {
  *  Verify code with Firebase
  */
 createAction('verifyCode', async (state, actions, payload) => {
-  state.auth.loading = true
+  state.auth.isLoading = true
 
   const firebase_token = await firebase.verifyCode(
     state.auth,
@@ -101,45 +101,34 @@ createAction('verifyCode', async (state, actions, payload) => {
     return
   }
 
-  const {data} = await Api.twoFa.getTwoFa(firebase_token)
   /**
    * Check password, then try signIn with token, it return stage, or smth like
    * signUpRequired | passwordRequired | signInDone
    */
-  if (data.getTwoFa) {
+  /*   if (data.getTwoFa) {
     updateGlobalState(
       {
         auth: {
           passwordHint: data.getTwoFa?.hint,
           email: data.getTwoFa?.email,
           screen: AuthScreens.Password,
-          loading: false
+          isLoading: false
         }
       },
       true
     )
-  } else if (state.auth.userId) {
+  } else */ if (state.auth.userId) {
     // firebase.resetCaptcha(state.auth)
     actions.signIn({
-      userId: state.auth.userId,
-      firebase_token,
-      connection: {
-        ...state.auth.connection!,
-        browser: USER_BROWSER,
-        platform: USER_PLATFORM
-      }
+      firebase_token
     })
   } else {
-    updateGlobalState(
-      {
-        auth: {
-          firebase_token,
-          screen: AuthScreens.SignUp,
-          loading: false
-        }
-      },
-      false
-    )
+    state.auth = {
+      ...state.auth,
+      firebase_token,
+      screen: AuthScreens.SignUp,
+      isLoading: false
+    }
   }
 })
 
@@ -147,24 +136,45 @@ createAction('verifyCode', async (state, actions, payload) => {
  * Auth Sign In
  */
 createAction('signIn', async (state, _, payload) => {
-  state.auth.loading = true
+  state.auth.isLoading = true
 
-  const {data} = await Api.auth.signIn(payload)
+  const {firebase_token} = payload
+  let response: AuthSignInResponse | undefined
+  try {
+    response = await Api.auth.signIn({
+      phoneNumber: unformatStr(state.auth.phoneNumber!),
+      firebase_token,
+      connection: {
+        ...state.auth.connection!,
+        browser: USER_BROWSER,
+        platform: USER_PLATFORM
+      }
+    })
+    if (!response) {
+      return
+    }
+  } catch (e) {
+    if (e instanceof ApolloError) {
+      console.log(e, 'SIGN IN ERRROR!!!!')
+    }
+    return
+  }
 
-  if (!data?.signIn) {
+  if (!response) {
     console.error('[AUTH]: «Sign in error»')
     return
   }
-  logDebugWarn(`[AUTH]: Session: ${data.signIn.session}`)
+  logDebugWarn(`[AUTH]: Session: ${response.sessionHash}`)
 
   /* FORCE UPDATE, for update all state ( i18n settings, auth and other)
     IF REMEMBER ME - TRUE */
+  saveSession(response.sessionHash)
 
   updateGlobalState(
     {
       auth: {
-        session: data.signIn.session,
-        loading: false
+        session: response.sessionHash,
+        isLoading: false
       }
     },
     state.auth.rememberMe,
@@ -176,7 +186,8 @@ createAction('signIn', async (state, _, payload) => {
  * Auth Sign Up
  */
 createAction('signUp', async (state, _, payload) => {
-  state.auth.loading = true
+  state.auth.isLoading = true
+
   const {silent, firstName, lastName, photo} = payload
   if (!state.auth.firebase_token || !state.auth.phoneNumber) {
     state.auth.error = 'Phone verification failed'
@@ -198,18 +209,18 @@ createAction('signUp', async (state, _, payload) => {
     },
     firebase_token: state.auth.firebase_token
   }
-  const {data} = await Api.auth.signUp({input, photo})
+  const response = await Api.auth.signUp({input, photo})
 
-  if (!data) {
+  if (!response) {
     console.warn('[AUTH]: Sign Up error')
     return
   }
-
+  saveSession(response.sessionHash)
   updateGlobalState(
     {
       auth: {
-        session: data.signUp.session,
-        loading: false
+        session: response.sessionHash,
+        isLoading: false
       }
     },
     state.auth.rememberMe,

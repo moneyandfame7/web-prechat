@@ -13,12 +13,7 @@ createAction('searchGlobal', async (state, actions, payload) => {
     return
   }
 
-  void throttledSearch(async () => {
-    const {data} = await Api.search.searchGlobal({
-      limit: SEARCH_GLOBAL_LIMIT,
-      query: payload
-    })
-  })
+  void throttledSearch(async () => {})
 })
 
 createAction('searchUsers', async (state, _, payload) => {
@@ -29,24 +24,8 @@ createAction('searchUsers', async (state, _, payload) => {
   state.globalSearch.isLoading = true
 
   void throttledSearch(async () => {
-    const {data} = await Api.search.searchUsers({
-      limit: SEARCH_USERS_LIMIT,
-      query: payload
-    })
-
-    updateGlobalState(
-      {
-        globalSearch: {
-          known: {
-            users: data.searchUsers.knownUsers
-          },
-          global: {
-            users: data.searchUsers.globalUsers
-          },
-          isLoading: false
-        }
-      },
-      false
-    )
+    state.globalSearch = {
+      'isLoading': false
+    }
   })
 })

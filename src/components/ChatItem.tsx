@@ -1,4 +1,4 @@
-import {useEffect, type FC} from 'preact/compat'
+import {useEffect, type FC, TargetedEvent} from 'preact/compat'
 import type {Signal} from '@preact/signals'
 import clsx from 'clsx'
 
@@ -10,7 +10,7 @@ import {getActions} from 'state/action'
 
 import './ChatItem.scss'
 import {getGlobalState} from 'state/signal'
-import {deepClone} from 'utilities/deepClone'
+import {ApiUser} from 'types/api'
 
 interface ContextAction {
   icon: string
@@ -20,44 +20,51 @@ interface ContextAction {
 }
 export interface ChatItemProps {
   withCheckbox?: boolean
-  avatar?: string /* || ApiAvatar ??? */
   hover?: boolean
+  user?: ApiUser
   contextActions?: ContextAction[]
   onClick?: VoidFunction
   checked?: boolean | Signal<boolean>
   title?: string
   subtitle?: string
-  id: string
+  userId: string
 }
 
 export const ChatItem: FC<ChatItemProps> = ({
   withCheckbox,
-  avatar,
   // hover,
   // contextActions,
   onClick,
   checked,
   title,
   subtitle,
-  id
+  user,
+  userId
 }) => {
   const {getUser} = getActions()
   const {users} = getGlobalState()
   useEffect(() => {
-    getUser(id)
+    // if (!user) {
+    getUser(userId)
+    // }
   }, [])
 
   const buildedClass = clsx('ChatItem', {
     'non-clickable': !Boolean(onClick)
   })
 
-  console.log(users)
+  const handleClick = (e: MouseEvent) => {
+    e.preventDefault()
+    if (e.button === 0) {
+      onClick?.()
+    }
+  }
   return (
-    <div class={buildedClass} onMouseDown={onClick}>
+    <div class={buildedClass} onMouseDown={handleClick}>
       {withCheckbox && <Checkbox withRipple={false} checked={checked} />}
 
       {onClick && <Ripple />}
-      {<Avatar user={users.byId[id]} avatar={users.byId[id].fullInfo?.avatar} />}
+      {<Avatar user={user || users.byId[userId]} />}
       <div class="info">
         {title && <h3 class="title">{title}</h3>}
         {subtitle && <p class="subtitle">{subtitle}</p>}

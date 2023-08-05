@@ -7,6 +7,8 @@ import {initializeApplication} from 'state/initialize'
 
 import {ApolloClient} from 'api/client'
 
+import './state/actions/ui/init'
+
 import './css/index.scss'
 
 async function init() {
