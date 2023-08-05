@@ -1,45 +1,62 @@
-import {type FC, memo, useState, useCallback, type TargetedEvent} from 'preact/compat'
-import {Button, FloatButton, Icon, InputText} from 'components/ui'
-import {UploadPhoto} from 'components/UploadPhoto'
+import {useSignal} from '@preact/signals'
+import {type FC, memo, useCallback, type TargetedEvent} from 'preact/compat'
 
-import {useLeftColumn} from '../context'
-import {LeftGoBack} from '../LeftGoBack'
+import {getDisplayedUserName} from 'state/helpers/users'
+import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
+
+import {FloatButton, Icon, InputText} from 'components/ui'
+import {UploadPhoto} from 'components/UploadPhoto'
+import {ListItem} from 'components/ChatItem'
 
 import {useBoolean} from 'hooks/useFlag'
 
+import {useLeftColumn} from '../context'
+import {LeftGoBack} from '../LeftGoBack'
 import styles from './CreateChatStep2.module.scss'
-import {getDisplayedUserName} from 'state/helpers/users'
-import {getGlobalState} from 'state/signal'
-import {ChatItem} from 'components/ChatItem'
 
 export interface CreateChatStep2Props {
   isGroup: boolean
   selectedIds: string[]
 }
 const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
+  const {createChannel, createGroup} = getActions()
   const {resetScreen} = useLeftColumn()
-  const [name, setName] = useState('')
+  const title = useSignal('')
+  const description = useSignal('')
   const globalState = getGlobalState()
-  const [description, setDescription] = useState('')
-  const {value: loading, /*  setTrue, setFalse, */ toggle} = useBoolean()
+  const {value: loading /*  setTrue, setFalse, */, setTrue, setFalse} = useBoolean()
   const handleChangeName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
     const {value} = e.currentTarget
 
-    setName(value)
+    title.value = value
   }, [])
   const handleChangeDescription = useCallback(
     (e: TargetedEvent<HTMLInputElement, Event>) => {
       const {value} = e.currentTarget
 
-      setDescription(value)
+      description.value = value
     },
     []
   )
 
-  const handleNextStep = useCallback(() => {
-    // setTrue()
-    resetScreen(true) // ( just create action, call it and change screen there)
-    // setFalse()
+  const handleNextStep = useCallback(async () => {
+    setTrue()
+    if (isGroup) {
+      await createGroup({
+        title: title.value,
+        users: selectedIds
+      })
+    } else {
+      await createChannel({
+        title: title.value,
+        users: selectedIds,
+        description: description.value
+      })
+    }
+
+    setFalse()
+    resetScreen(true)
   }, [])
 
   return (
@@ -53,7 +70,7 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
         <InputText
           label={isGroup ? 'Group Name' : 'Channel Name'}
           onInput={handleChangeName}
-          value={name}
+          value={title}
         />
         {!isGroup && (
           <InputText
@@ -75,7 +92,7 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
               {selectedIds.map((member) => {
                 const user = globalState.users.byId?.[member] || undefined
                 return (
-                  <ChatItem
+                  <ListItem
                     userId={member}
                     key={member}
                     title={getDisplayedUserName(user)}
@@ -90,10 +107,9 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
           </>
         )}
       </div>
-      <Button onClick={toggle}></Button>
       <FloatButton
         isLoading={loading}
-        shown={name.length > 0}
+        shown={title.value.length > 0}
         onClick={handleNextStep}
         icon={<Icon name="arrowRight" />}
         aria-label="Next step"

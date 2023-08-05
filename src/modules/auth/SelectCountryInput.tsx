@@ -16,10 +16,10 @@ import {MenuItem, Menu} from 'components/popups/menu'
 
 import {TRANSITION_DURATION_ZOOM_FADE} from 'common/config'
 
-import './SelectCountryInput.scss'
 import type {ApiCountry} from 'api/types/langPack'
-import {getGlobalState} from 'state/signal'
 // import {parseEmoji} from 'utilities/parseEmoji'
+
+import './SelectCountryInput.scss'
 
 interface SelectCountryInputProps {
   countryList: ApiCountry[]
@@ -53,7 +53,6 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
     const handleChange = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
       setStringName(e.currentTarget.value)
     }, [])
-
     const handleSelectCountry = useCallback((country: ApiCountry) => {
       setIsOpen(false)
       inputRef?.current?.blur()

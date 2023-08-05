@@ -22,7 +22,7 @@
 a:focus,
 a:active {
   outline: none;
-  color: initial;
+  color: inherit;
 }
 
 nav,
@@ -47,6 +47,7 @@ input,
 button,
 textarea {
   font-family: inherit;
+  color: inherit;
 }
 
 input::-webkit-outer-spin-button,
@@ -89,11 +90,11 @@ button::-moz-focus-inner {
 a,
 a:visited {
   text-decoration: none;
-  color: initial;
+  color: inherit;
 }
 a:hover {
   text-decoration: none;
-  color: initial;
+  color: inherit;
 }
 ul li {
   list-style: none;

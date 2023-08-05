@@ -4,21 +4,18 @@ import {
   memo,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   useLayoutEffect
 } from 'preact/compat'
+
+import type {ApiCountry} from 'api/types/langPack'
 
 import {changeLanguage, t, useTranslateString} from 'lib/i18n'
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 import {selectCountryByPhone, selectSuggestedCountry} from 'state/selectors/auth'
 import {initializeAuth} from 'state/initialize'
-
-import {formatPhoneNumber} from 'utilities/formatPhoneNumber'
-
-import {DEBUG} from 'common/config'
 
 import {Button, Checkbox} from 'components/ui'
 import {Logo} from 'components/Logo'
@@ -28,35 +25,29 @@ import {SelectCountryInput} from './SelectCountryInput'
 
 // import {updateGlobalState} from 'state/persist'
 import './AuthPhoneNumber.scss'
-import type {ApiCountry} from 'api/types/langPack'
-
-const IS_PHONE_VAL_REG = /^\+\d{1,4}\s?\d{10,}$/
-
-function validatePhone(phone: string) {
-  const matched = IS_PHONE_VAL_REG.test(phone)
-  if (DEBUG) {
-    return matched || phone === '+12345678'
-  }
-
-  return matched
-}
+import {useComputed, useSignal} from '@preact/signals'
+import {unformatStr} from 'utilities/stringRemoveSpacing'
+import {validatePhone} from 'utilities/phone'
 
 const AuthPhoneNumber: FC = () => {
   const {sendPhone, getCountries} = getActions()
   const state = getGlobalState()
   const phoneInputRef = useRef<HTMLInputElement>(null)
-  useLayoutEffect(() => {
-    initializeAuth()
-  }, [])
-  const [phone, setPhone] = useState<string>('')
+
+  const phone = useSignal('')
+  const isFormDisabled = useComputed(() => !validatePhone(unformatStr(phone.value)))
+
   const [country, setCountry] = useState<ApiCountry | undefined>(
     selectCountryByPhone(state)
   )
-  const [translateLoading, setTranslateLoading] = useState(false)
+  const translateLoading = useSignal(false)
   const translateString = useTranslateString(
     'Auth.ContinueOnLanguage',
     state.settings.suggestedLanguage
   )
+  useLayoutEffect(() => {
+    initializeAuth()
+  }, [])
   useEffect(() => {
     getCountries(state.settings.language)
   }, [state.settings.language])
@@ -67,24 +58,23 @@ const AuthPhoneNumber: FC = () => {
   useEffect(() => {
     if (state.auth.connection && state.countryList.length) {
       const suggestedCountry = selectSuggestedCountry(state)
-      if (suggestedCountry && !country && !phone.length) {
+      if (suggestedCountry && !country && !phone.value.length) {
         setCountry(suggestedCountry)
-        setPhone(suggestedCountry?.dial_code)
+        phone.value = suggestedCountry.dial_code
       }
     }
   }, [state.auth.connection, state.countryList])
 
   const handleChangePhone = useCallback(
-    (phone: string) => {
+    (value: string) => {
       const foundedCountry = state.countryList.find(
-        (country) => country.dial_code === phone.trim()
+        (country) => country.dial_code === value.trim()
       )
 
       if (foundedCountry) {
         setCountry(foundedCountry)
       }
-
-      setPhone(phone.replace(/\s/g, ''))
+      phone.value = value /* .replace(/\s/g, '') */
     },
     [state.countryList, country]
   )
@@ -92,8 +82,7 @@ const AuthPhoneNumber: FC = () => {
   const handleSelectCountry = useCallback(
     (country: ApiCountry) => {
       setCountry(country)
-      setPhone(country.dial_code)
-
+      phone.value = country.dial_code
       phoneInputRef.current?.focus()
     },
     [phoneInputRef]
@@ -101,10 +90,10 @@ const AuthPhoneNumber: FC = () => {
   const handleChangeLanguage = useCallback(async () => {
     const suggestedLng = state.settings.suggestedLanguage
     if (suggestedLng) {
-      setTranslateLoading(true)
+      translateLoading.value = true
       await changeLanguage(suggestedLng)
 
-      setTranslateLoading(false)
+      translateLoading.value = false
     }
   }, [state.settings.suggestedLanguage])
 
@@ -112,21 +101,11 @@ const AuthPhoneNumber: FC = () => {
     state.auth.rememberMe = checked
   }, [])
 
-  const formattedPhone = useMemo(
-    () => formatPhoneNumber(phone, country?.dial_code),
-    [phone, country?.dial_code]
-  )
+  const handleSubmit = (e: TargetedEvent<HTMLFormElement, Event>) => {
+    e.preventDefault()
 
-  const handleSubmit = useCallback(
-    (e: TargetedEvent<HTMLFormElement, Event>) => {
-      e.preventDefault()
-
-      sendPhone(formattedPhone.formatted)
-    },
-    [formattedPhone]
-  )
-
-  const isValidPhone = useMemo(() => validatePhone(phone.trim()), [phone])
+    sendPhone(phone.value)
+  }
 
   return (
     <>
@@ -145,8 +124,7 @@ const AuthPhoneNumber: FC = () => {
           autoFocus
           elRef={phoneInputRef}
           onInput={handleChangePhone}
-          remainingPattern={formattedPhone.remainingPattern}
-          value={formattedPhone.formatted}
+          value={phone}
         />
         <Checkbox
           id="remember-me"
@@ -156,23 +134,24 @@ const AuthPhoneNumber: FC = () => {
           /* якщо тут передати не сигнал, буде ререндер всього компоненту */
           checked={state.auth.$rememberMe!}
         />
-        {isValidPhone && (
-          <Button type="submit" isLoading={state.auth.isLoading}>
-            {state.auth.error || t('Next')}
+        <Button
+          type="submit"
+          isLoading={state.auth.isLoading}
+          isDisabled={isFormDisabled}
+        >
+          {state.auth.error || t('Next')}
+        </Button>
+
+        {state.settings.suggestedLanguage !== state.settings.i18n.lang_code && (
+          <Button
+            variant="transparent"
+            onClick={handleChangeLanguage}
+            isLoading={translateLoading.value}
+            isDisabled={state.auth.$isLoading}
+          >
+            {translateString}
           </Button>
         )}
-
-        {translateString &&
-          state.settings.suggestedLanguage !== state.settings.i18n.lang_code && (
-            <Button
-              variant="transparent"
-              onClick={handleChangeLanguage}
-              isLoading={translateLoading}
-              isDisabled={state.auth.isLoading}
-            >
-              {translateString}
-            </Button>
-          )}
       </form>
       <div id="auth-recaptcha-wrapper">
         <div id="auth-recaptcha" />

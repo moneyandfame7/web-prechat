@@ -1,5 +1,5 @@
-import type {FC, TargetedEvent} from 'preact/compat'
-import {memo, useRef} from 'preact/compat'
+import type {FC} from 'preact/compat'
+import {memo, useCallback, useRef} from 'preact/compat'
 import {useSignal} from '@preact/signals'
 
 import {getGlobalState} from 'state/signal'
@@ -8,12 +8,13 @@ import {AuthScreens} from 'types/screens'
 
 import {t} from 'lib/i18n'
 
-import {InputText, Icon} from 'components/ui'
+import {Icon} from 'components/ui'
 import {MonkeyTrack} from 'components/monkeys'
 
 import {generateRecaptcha} from 'lib/firebase'
 
 import './AuthCode.scss'
+import {CodeInput} from 'components/ui/CodeInput'
 
 const CODE_LENGTH = 6
 const AuthCode: FC = () => {
@@ -24,21 +25,20 @@ const AuthCode: FC = () => {
   const code = useSignal('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const handleChangeCode = async (e: TargetedEvent<HTMLInputElement, Event>) => {
-    e.preventDefault()
+  const handleChangeCode = useCallback(
+    (value: string) => {
+      code.value = value
+      if (auth.error) {
+        auth.error = undefined
+      }
 
-    const {value} = e.currentTarget
-    // setCode(value)
-    code.value = value
-    if (auth.error) {
-      auth.error = undefined
-    }
-
-    if (value.length === 6) {
-      // inputRef.current?.blur()  @commented to avoid flick monkey
-      verifyCode(value)
-    }
-  }
+      // if (value.length === 6) {
+      //   // inputRef.current?.blur()  @commented to avoid flick monkey
+      //   verifyCode(value)
+      // }
+    },
+    [auth.error]
+  )
   // t('WrongNumber?')
   const handleEditPhone = () => {
     code.value = ''
@@ -66,19 +66,16 @@ const AuthCode: FC = () => {
         </div>
       </h1>
       <p class="subtitle">{t('Auth.CodeSendOnPhone')}</p>
-      <InputText
-        inputMode="decimal"
-        type="tel"
-        elRef={inputRef}
+
+      <CodeInput
         autoFocus
         error={auth.error}
-        maxLength={CODE_LENGTH}
-        label={t('Code')}
-        value={code}
-        loading={auth.isLoading}
+        isLoading={auth.isLoading}
         onInput={handleChangeCode}
+        value={code}
+        cb={verifyCode}
+        elRef={inputRef}
       />
-      {/* {auth.loading && <Spinner size="large" />} */}
     </>
   )
 }

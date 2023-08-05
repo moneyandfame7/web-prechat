@@ -1,8 +1,13 @@
+//   background: #dce35b; /* fallback for old browsers */ // CHAT BACKGROUND
+//   background: -webkit-linear-gradient(to left, #dce35b, #45b649); /* Chrome 10-25, Safari 5.1-6 */
+//   background: linear-gradient(to left, #dce35b, #45b649); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26//+, Opera 1 +, Safari 7+ */
+//
+@use 'sass:color';
+
 $color-text-secondary: #707579;
-$color-scrollbar: rgb(207, 207, 207);
-$color-primary: #4da4f5;
+$color-primary: #3290ec;
 // $color-primary-lighter: #4da4f5;
-$color-primary-hover: darken($color-primary, 8%);
+
 $color-primary-transparent: rgba(78, 163, 252, 0.13);
 $color-primary-lighter: lighten($color-primary, 8%);
 $color-placeholder: #999;
@@ -26,30 +31,75 @@ $color-border: #dfe1e5;
 $color-border-hover: #c4c9cc;
 
 $input-border-radius: 12px;
-$input-base-height: 50px;
+$input-height: 50px;
 
 $transition-duration-zoom-fade: 200ms;
 $transition-duration-fade: 200ms;
 $transition-duration-slide: 220ms;
 
-$left-column-width: 350px;
 $z-menu-backdrop: 10;
 $z-menu: 11;
-:root {
-  --color-background: #{$color-background};
-  --color-background-secondary: #{$color-background-secondary};
-  --color-background-transparent: #{$color-background-transparent};
-  --color-text-secondary: #{$color-text-secondary};
-  --color-scrollbar: #{$color-scrollbar};
 
-  --color-primary: #{$color-primary};
-  --color-primary-lighter: #{$color-primary-lighter};
-  --color-primary-hover: #{$color-primary-hover};
-  --color-primary-transparent: #{$color-primary-transparent};
-  --color-primary-disabled: #{$color-primary-lighter};
+$c-bg: #fff;
+$c-surface: #ffffff;
+$c-surface-2: darken($c-surface, 2%);
+$c-surface-3: darken($c-surface, 5%);
+$c-surface-transparent: rgba($c-surface, 85%);
+
+$c-border: #dfe1e5;
+$c-border-hover: darken($c-border, 10%);
+
+$c-primary: #3290ec; // #50A2E9 - more lighter
+$c-primary-rgb: 50, 144, 236; // rgb(80,162,233)
+$c-primary-transparent: color.scale($c-primary, $alpha: 10%);
+$c-primary-hover: darken($c-primary, 8%);
+$c-icon: #707579;
+
+$c-ripple: rgba($c-icon, 8%);
+$c-icon-2: darken($c-icon, 10%);
+$c-scrollbar: lighten($c-icon, 40%);
+
+$c-font-primary: #000;
+$c-font-secondary: $c-icon;
+$c-font-secondary-2: $c-icon-2;
+$c-font-red: #df3f40;
+// AVATARS GRADIENTS
+$c-avatar-yellow: linear-gradient(
+  111.4deg,
+  rgba(238, 113, 113, 1) 1%,
+  rgba(246, 215, 148, 1) 58%
+);
+$c-avatar-blue: radial-gradient(
+  circle farthest-corner at 10% 20%,
+  rgba(126, 155, 212, 1) 0%,
+  rgba(87, 83, 247, 1) 90%
+);
+
+$c-avatar-green: linear-gradient(
+  109.6deg,
+  rgba(61, 131, 97, 1) 11.2%,
+  rgba(28, 103, 88, 1) 91.1%
+);
+$c-avatar-pink: linear-gradient(90deg, #ff9a8b 0%, #ff6a88 55%, #ff99ac 100%);
+$c-avatar-orange: linear-gradient(147deg, #ffe53b 0%, #ff2525 74%);
+$c-avatar-purple: linear-gradient(
+  62deg,
+  #4966a9 0%,
+  #e0c3fc 33%,
+  #ba4cfd 66%,
+  #641779 100%
+);
+
+$fs-messages: 16px;
+
+:root {
+  --c-scrollbar: #{$c-scrollbar};
+
+  --c-primary-hover: #{$c-primary-hover};
+  --c-primary-transparent: #{$color-primary-transparent};
+  --c-primary-disabled: #{$color-primary-lighter};
 
   --color-placeholder: #{$color-placeholder};
-  --color-border: #{$color-border};
   --color-error: #{$color-error};
   --color-error-secondary: #{$color-error-secondary};
 
@@ -66,24 +116,78 @@ $z-menu: 11;
   --color-border-hover: #{$color-border-hover};
 
   --input-border-radius: #{$input-border-radius};
-  --input-base-height: #{$input-base-height};
-
-  --transition-duration-zoom-fade: #{$transition-duration-zoom-fade};
-  --transition-duration-fade: #{$transition-duration-fade};
-  --transition-duration-slide: #{$transition-duration-slide};
-
-  --left-column-width: #{$left-column-width};
-
+  --input-height: #{$input-height};
   --z-menu-backdrop: #{$z-menu-backdrop};
   --z-menu: #{$z-menu};
-  &.dark {
-    --color-background: #000;
-    --color-background-transparent: rgba(0 0 0/90%);
-    --color-text-secondary: red;
 
-    --color-scrollbar: rgb(72, 72, 72);
-    --color-primary: #8774e1;
-    --color-primary-lighter: #9383e1;
-    --color-error: red;
+  //
+
+  // components
+  --c-border-input: #{$c-border};
+  --c-border-hover-input: #{$c-border-hover};
+  --c-placeholder: #{$c-font-secondary};
+  --c-bg: #{$c-bg};
+  --c-bg-rgb: 255 255 255;
+  --c-surface: #{$c-surface};
+  --c-surface-2: #{$c-surface-2};
+  --c-surface-3: #{$c-surface-3};
+  --c-surface-transparent: #{$c-surface-transparent};
+  --c-border: #{$c-border};
+  --c-border-hover: #{$c-border-hover};
+
+  --c-primary: #{$c-primary};
+  --c-primary-hover: #{$c-primary-hover};
+  --c-icon: #{$c-icon};
+  --c-icon-2: #{$c-icon-2};
+  --c-ripple: #{$c-ripple};
+  --c-error: #{$c-font-red};
+
+  --c-font-primary: #{$c-font-primary};
+  --c-font-secondary: #{$c-font-secondary};
+  --c-font-secondary-2: #{$c-font-secondary-2};
+  --c-font-red: #{$c-font-red};
+
+  --c-avatar-blue: #{$c-avatar-blue};
+  --c-avatar-green: #{$c-avatar-green};
+  --c-avatar-yellow: #{$c-avatar-yellow};
+  --c-avatar-pink: #{$c-avatar-pink};
+  --c-avatar-purple: #{$c-avatar-purple};
+  --c-avatar-orange: #{$c-avatar-orange};
+
+  // html.night & {}
+  &.night {
+    $c-primary: #888afd;
+    $c-bg-surface: #212121;
+    $c-bg: #212121;
+    $c-bg-rgb: 33 33 33;
+    $c-border: #0f0f0f;
+    $c-border-input: #303030;
+    $c-icon: #aaa;
+    $c-icon-2: lighten($c-icon, 10%);
+    $c-ripple: rgba($c-icon-2, 8%);
+    // components
+    --c-border-input: #{$c-border-input};
+    --c-border-hover-input: #{lighten($c-border-input, 5%)};
+
+    --c-bg: #{$c-bg};
+    --c-scrollbar: #{$c-icon};
+    --c-surface: #{$c-bg-surface};
+    --c-surface-2: #{lighten($c-bg-surface, 2%)};
+    --c-surface-3: #{lighten($c-bg-surface, 5%)};
+    --c-surface-transparent: #{rgba($c-bg-surface, 85%)};
+    --c-border: #{$c-border};
+    --c-border-hover: #{lighten($c-border, 3%)};
+
+    --c-primary: #{$c-primary};
+    --c-primary-hover: #{darken($c-primary, 3%)};
+    --c-primary-transparent: #{rgba($c-primary, 0.1)};
+
+    --c-icon: #{$c-icon};
+    --c-icon-2: #{$c-icon-2};
+    --c-ripple: #{$c-ripple};
+    --c-font-primary: #fff;
+    --c-font-secondary: #{$c-icon}; /* #AAAAAA; */
+    --c-font-secondary-2: #{$c-icon-2};
+    --c-font-red: #ff595a;
   }
 }

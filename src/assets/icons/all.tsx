@@ -23,6 +23,19 @@ import {ReactComponent as download} from './download.svg'
 import {ReactComponent as bug} from './bug.svg'
 import {ReactComponent as eyeOpen} from './eye1.svg'
 import {ReactComponent as eyeClose} from './eye2.svg'
+import {ReactComponent as more} from './more.svg'
+import {ReactComponent as info} from './info.svg'
+import {ReactComponent as unmute} from './unmute.svg'
+import {ReactComponent as data} from './data.svg'
+import {ReactComponent as devices} from './devices.svg'
+import {ReactComponent as folder} from './folder.svg'
+import {ReactComponent as language} from './language.svg'
+import {ReactComponent as lock} from './lock.svg'
+import {ReactComponent as info2} from './info2.svg'
+import {ReactComponent as username} from './username.svg'
+import {ReactComponent as fontsize} from './fontsize.svg'
+import {ReactComponent as favourites} from './favourites.svg'
+import {ReactComponent as phone} from './phone.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 
@@ -50,5 +63,18 @@ export {
   download,
   bug,
   eyeClose,
-  eyeOpen
+  eyeOpen,
+  more,
+  info,
+  unmute,
+  data,
+  devices,
+  lock,
+  folder,
+  language,
+  info2,
+  username,
+  fontsize,
+  favourites,
+  phone
 }

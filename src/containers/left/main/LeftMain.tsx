@@ -1,12 +1,12 @@
 import {type FC, memo, Fragment} from 'preact/compat'
-import {useCallback, useState, useRef} from 'preact/hooks'
+import {useCallback, useState, useRef, useEffect} from 'preact/hooks'
 
 import {SearchInput} from 'components/ui'
 import {SwitchTransition} from 'components/transitions'
 
 import {LeftColumnScreen} from 'types/ui'
 
-import {Chats} from './chats/Chats'
+import {Chats} from './chats/ChatList'
 import Search from './search/Search.async'
 
 import {LeftGoBack} from '../LeftGoBack'
@@ -31,25 +31,31 @@ const LeftMain: FC = (props) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const {activeScreen, setScreen} = useLeftColumn()
-  let activeGroup: LeftMainGroup = LeftMainGroup.Chats
-  switch (activeScreen) {
-    case LeftColumnScreen.Chats:
-      activeGroup = LeftMainGroup.Chats
-      break
-    case LeftColumnScreen.Search:
-      activeGroup = LeftMainGroup.Search
-  }
-  const renderScreen = useCallback((activeScreen: LeftMainGroup) => {
+  const [activeGroup, setActiveGroup] = useState(LeftMainGroup.Chats)
+
+  useEffect(() => {
     switch (activeScreen) {
+      case LeftColumnScreen.Chats:
+        setActiveGroup(LeftMainGroup.Chats)
+        break
+      case LeftColumnScreen.Search:
+        setActiveGroup(LeftMainGroup.Search)
+        break
+    }
+  }, [activeScreen])
+
+  const renderScreen = useCallback(() => {
+    switch (activeGroup) {
       case LeftMainGroup.Chats:
         return <Chats key={LeftMainGroup.Chats} />
       case LeftMainGroup.Search:
         return <Search key={LeftMainGroup.Search} />
     }
-  }, [])
-  const handleSearch = useCallback((value: string) => {
+  }, [activeGroup])
+  const handleSearch = (value: string) => {
+    // e.preventDefault()
     setSearch(value)
-  }, [])
+  }
   const handleFocusInput = useCallback(() => {
     setScreen(LeftColumnScreen.Search)
   }, [])
@@ -66,6 +72,7 @@ const LeftMain: FC = (props) => {
     <Fragment {...props}>
       <div class="LeftColumn-Header">
         {renderButton()}
+        {/* <InputText onFocus={handleFocusInput} elRef={inputRef} value={search} onInput={()=>)}/> */}
         <SearchInput
           elRef={inputRef}
           value={search}
@@ -82,7 +89,7 @@ const LeftMain: FC = (props) => {
           // shouldCleanup={[LeftMainGroup.Search]}
           initial={false}
         >
-          {renderScreen(activeGroup)}
+          {renderScreen()}
         </SwitchTransition>
         <CreateChatButton />
       </div>

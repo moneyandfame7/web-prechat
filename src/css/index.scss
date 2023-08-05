@@ -26,6 +26,10 @@ body {
       'Apple Color Emoji', 'Helvetica Neue', sans-serif;
   }
   line-height: 1.5;
+  background-color: var(--c-bg);
+  color: var(--c-font-primary);
+  // transition: color 0.1s ease, background-color 0.1s ease;
+  @include bgAndColorTransition();
 }
 
 html:not(.is-safari) .scrollable {
@@ -66,10 +70,10 @@ html:not(.is-safari) .scrollable {
     transition-duration: 0.4s;
   }
   &:hover {
-    scrollbar-color: #cccccc transparent;
+    scrollbar-color: var(--c-scrollbar) transparent;
 
     &::-webkit-scrollbar-thumb {
-      background-color: #cccccc;
+      background-color: var(--c-scrollbar);
       scrollbar-width: thin;
       display: initial;
     }
@@ -97,6 +101,10 @@ html:not(.is-safari) .scrollable {
 }
 .text-center {
   text-align: center;
+}
+
+html.hasOpenPopup {
+  overflow: hidden;
 }
 
 /* Animations  */

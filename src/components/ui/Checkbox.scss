@@ -20,6 +20,7 @@
   &.disabled {
     pointer-events: none;
   }
+
   .Icon-check {
     position: absolute;
     // left: 23px;
@@ -52,8 +53,8 @@
     }
 
     &:checked {
-      background-color: var(--color-primary);
-      border-color: var(--color-primary);
+      background-color: var(--c-primary);
+      border-color: var(--c-primary);
       & + .Icon-check {
         display: inline;
       }

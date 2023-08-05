@@ -1,5 +1,5 @@
 import type {RefObject, VNode} from 'preact'
-import type {CSSProperties} from 'preact/compat'
+import type {CSSProperties, TargetedEvent} from 'preact/compat'
 import type {ObjectOrValue} from 'types/common'
 import type {VNodeWithKey} from 'types/ui'
 
@@ -27,6 +27,7 @@ export interface SwitchTransitionProps<TKey extends string | number> {
   children: /* SwitchTransitionRenderCb<TKey> */ VNode
   initial?: ObjectOrValue<TKey, boolean>
   name: TransitionName
+  permanentClassname?: string
   classNames?: ObjectOrValue<TKey, string>
   durations?: ObjectOrValue<TKey, number>
   getTransitionByCase?: GetTransitionByCase<TKey>
@@ -54,6 +55,8 @@ export interface TransitionProps {
   alwaysMounted?: boolean
   children: VNode
   className?: string
+  onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   onStartTransition?: TransitionCb
   onEndTransition?: TransitionCb
+  onExitTransition?: TransitionCb
 }

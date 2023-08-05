@@ -48,6 +48,7 @@ interface InputProps {
   inputMode?: string
   variant?: InputVariant
   fixedLabel?: boolean
+  pattern?: string
 }
 
 export const InputText: FC<InputProps> = ({
@@ -59,6 +60,7 @@ export const InputText: FC<InputProps> = ({
   disabled,
   placeholder,
   maxLength,
+  pattern,
   withIndicator = maxLength ? true : false,
   autoFocus = false,
   onInput,
@@ -80,6 +82,7 @@ export const InputText: FC<InputProps> = ({
 }) => {
   const valueLength = useSignal(maxLength)
   const labelText = error || label
+  // const inputRef = useRef(elRef || null)
   const handleOnInput = (e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()
     const {value} = e.currentTarget
@@ -90,8 +93,9 @@ export const InputText: FC<InputProps> = ({
     onInput(e)
   }
   const handleOnFocus = (e: TargetedEvent<HTMLInputElement, Event>) => {
-    e.preventDefault()
+    // elRef?.current?.focus()
     onFocus?.(e)
+    // e.preventDefault()
   }
 
   const handleOnBlur = (e: TargetedEvent<HTMLInputElement, Event>) => {
@@ -110,7 +114,7 @@ export const InputText: FC<InputProps> = ({
 
   useLayoutEffect(() => {
     if (autoFocus && elRef?.current) {
-      elRef.current.focus()
+      elRef?.current.focus()
     }
   }, [])
 
@@ -137,6 +141,7 @@ export const InputText: FC<InputProps> = ({
     <div className={buildedClassname} {...dataProps}>
       <input
         // autoFocus={autoFocus}
+        pattern={pattern}
         inputMode={inputMode}
         tabIndex={tabIndex}
         ref={elRef}

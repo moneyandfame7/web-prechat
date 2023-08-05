@@ -37,6 +37,7 @@ export interface LeftColumnMainStore {
   setScreen: (screen: LeftColumnMainScreen) => void
 }
 
+/* PREACT */
 export type InputHandler = (e: TargetedEvent<HTMLInputElement, Event>) => void
 export type InputHandlerValue = (value: string) => void
 export type MouseClickHandler<T extends HTMLElement> = (
@@ -52,3 +53,4 @@ export type SignalOr<T> = Signal<T> | T
 export interface VNodeWithKey<T> extends VNode {
   key: T
 }
+export type Key = string | number

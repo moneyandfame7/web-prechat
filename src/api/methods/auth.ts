@@ -2,11 +2,11 @@ import {
   QUERY_AUTH_SEND_PHONE,
   MUTATION_AUTH_SIGN_IN,
   MUTATION_AUTH_SIGN_UP
-} from '../graphql/auth'
+} from 'api/graphql'
 
-import type {AuthSignInInput, AuthSignUpInput} from '../types/auth'
+import type {AuthSignInInput, AuthSignUpInput} from 'api/types'
 
-import {ApiBaseMethod} from './base'
+import {ApiBaseMethod} from '../base'
 
 export class ApiAuth extends ApiBaseMethod {
   /**

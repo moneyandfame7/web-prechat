@@ -2,6 +2,16 @@
   overflow: hidden;
   position: relative;
   width: 420px;
-  height: 100vh;
-  border-right: 1px solid var(--color-border);
+  height: 100dvh;
+  // border-right: 1px solid var(--c-border);
+  background-color: var(--c-surface);
+  // transition: color 0.1s ease, background-color 0.1s ease;
+
+  @include bgAndColorTransition();
+  @include responsive(tablet) {
+    width: 100%;
+  }
+}
+.Screen-container {
+  background-color: var(--c-surface);
 }

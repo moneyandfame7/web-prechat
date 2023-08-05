@@ -1,19 +1,17 @@
-import {Api} from 'api/client'
-import {database} from 'lib/database'
+import {Api} from 'api/manager'
+
 import {createAction} from 'state/action'
+import {updateUsers} from 'state/updates'
 
 createAction('getUser', async (state, _, payload) => {
   const result = await Api.users.getUsers({ids: [payload]})
-  const user = result.data.getUsers[0]
-
-  if (!user) {
+  if (!result) {
     return
   }
-  // state.users.byId = {
-  //   ...state.users.byId,
-  //   [payload]: cleanTypename(user)
-  // } as any
 
-  state.users.byId[payload] = {...user}
-  database.users.add(user)
+  const user = result[0]
+
+  updateUsers(state, {
+    [user.id]: user
+  })
 })

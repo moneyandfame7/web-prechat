@@ -91,21 +91,8 @@ export const TRANSITION_DURATION_ZOOM_FADE = 200
 export const TRANSITION_DURATION_SLIDE = 300
 export const TRANSITION_DURATION_MENU = 250 /* 150 */
 
-export const TRANSITION_DURATIONS = {
-  FADE: 200,
-  ZOOM_FADE: 200,
-  LAYER_SLIDE: 250,
-  POPUP: 200
-}
+export const NOTIFICATION_TRANSITION = 300
 
 export const LEFT_COLUMN_HEADER_PX = 72
 
 export const LEFT_COLUMN_WIDTH = 350
-export function getPortalRoot() {
-  const el = document.getElementById('portals')
-  if (!el) {
-    throw new Error('Root Portal not exist')
-  }
-
-  return el
-}

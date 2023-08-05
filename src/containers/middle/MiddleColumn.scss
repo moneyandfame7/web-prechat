@@ -1,11 +1,13 @@
 .MiddleColumn {
-  flex: 1;
-  background-color: white;
-
+  flex: 1 1 0%;
+  height: 100dvh;
   &-inner {
     position: relative;
     overflow: hidden;
-    width: 400px;
     height: 100%;
+  }
+
+  @include responsive(tablet) {
+    display: none;
   }
 }

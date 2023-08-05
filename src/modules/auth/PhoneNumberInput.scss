@@ -1,18 +1,28 @@
 .PhoneNumberInput {
-  margin-top: 10px;
-  > input {
-    color: transparent;
+  // .input-value {
+  //   pointer-events: none;
+  //   max-width: 80%;
+  //   overflow: hidden;
+  //   white-space: nowrap;
+  //   &::after {
+  //     content: attr(data-remaining-pattern);
+  //     display: inline-block;
+  //     color: var(--color-placeholder);
+  //     letter-spacing: 2px;
+  //   }
+  // }
+  input {
+    color: red;
   }
   .input-value {
     pointer-events: none;
-    max-width: 80%;
-    overflow: hidden;
-    white-space: nowrap;
+    // letter-spacing: 0.5px;
+
     &::after {
-      content: attr(data-remaining-pattern);
+      content: attr(data-pattern);
       display: inline-block;
       color: var(--color-placeholder);
-      letter-spacing: 2px;
+      letter-spacing: -0.65px;
     }
   }
 }

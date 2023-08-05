@@ -1,16 +1,17 @@
-import {useEffect, type FC, TargetedEvent} from 'preact/compat'
+import {useEffect, type FC /* TargetedEvent */} from 'preact/compat'
 import type {Signal} from '@preact/signals'
 import clsx from 'clsx'
 
-import {Checkbox} from './ui'
+import {Checkbox} from './ui/Checkbox'
 
 import {Ripple} from './Ripple'
-import {Avatar} from './Avatar'
 import {getActions} from 'state/action'
 
 import './ChatItem.scss'
 import {getGlobalState} from 'state/signal'
-import {ApiUser} from 'types/api'
+import type {ApiUser} from 'api/types/users'
+import {AvatarTest} from './ui/AvatarTest'
+// import {ApiUser} from 'types/api'
 
 interface ContextAction {
   icon: string
@@ -30,7 +31,7 @@ export interface ChatItemProps {
   userId: string
 }
 
-export const ChatItem: FC<ChatItemProps> = ({
+export const ListItem: FC<ChatItemProps> = ({
   withCheckbox,
   // hover,
   // contextActions,
@@ -38,15 +39,14 @@ export const ChatItem: FC<ChatItemProps> = ({
   checked,
   title,
   subtitle,
-  user,
   userId
 }) => {
   const {getUser} = getActions()
   const {users} = getGlobalState()
   useEffect(() => {
-    // if (!user) {
-    getUser(userId)
-    // }
+    if (!users.byId[userId]) {
+      getUser(userId)
+    }
   }, [])
 
   const buildedClass = clsx('ChatItem', {
@@ -64,7 +64,12 @@ export const ChatItem: FC<ChatItemProps> = ({
       {withCheckbox && <Checkbox withRipple={false} checked={checked} />}
 
       {onClick && <Ripple />}
-      {<Avatar user={user || users.byId[userId]} />}
+      <AvatarTest
+        fullName={title}
+        size="m"
+        variant={users.byId[userId].fullInfo?.avatar.avatarVariant}
+      />
+      {/* {<Avatar user={user || users.byId[userId]} />} */}
       <div class="info">
         {title && <h3 class="title">{title}</h3>}
         {subtitle && <p class="subtitle">{subtitle}</p>}

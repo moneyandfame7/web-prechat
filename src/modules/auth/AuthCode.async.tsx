@@ -1,15 +1,10 @@
-import {type FC, Suspense, lazy, memo} from 'preact/compat'
-
-import {ScreenLoader} from 'components/ScreenLoader'
+import {type FC, memo} from 'preact/compat'
+import {useLazyComponent} from 'hooks/useLazy'
 
 const AuthCodeAsync: FC = (props) => {
-  const AuthCode = lazy(() => import('./AuthCode').then((module) => module.default))
+  const AuthCode = useLazyComponent('AuthCode')
 
-  return (
-    <Suspense fallback={<ScreenLoader />}>
-      <AuthCode {...props} />
-    </Suspense>
-  )
+  return AuthCode ? <AuthCode {...props} /> : null
 }
 
 export default memo(AuthCodeAsync)

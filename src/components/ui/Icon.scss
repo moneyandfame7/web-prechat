@@ -1,30 +1,32 @@
 .Icon {
+  height: 24px;
+  width: 24px;
   &-default {
     path {
-      fill: #000;
+      fill: var(--c-icon);
     }
-    &:hover {
-      path {
-        fill: #000 !important;
-      }
-    }
+    // &:hover {
+    //   path {
+    //     fill: var(--c-icon);
+    //   }
+    // }
   }
   &-secondary {
     path {
-      fill: var(--color-neutral);
+      fill: var(--c-icon);
     }
-    &:hover {
-      path {
-        fill: #000 !important;
-      }
-    }
+    // &:hover {
+    //   path {
+    //     fill: var(--c-icon);
+    //   }
+    // }
   }
   path {
     transition: all 0.2s ease !important;
   }
-  &:hover {
-    path {
-      fill: var(--color-neutral);
-    }
-  }
+  // &:hover {
+  //   path {
+  //     fill: var(--c-icon-2);
+  //   }
+  // }
 }

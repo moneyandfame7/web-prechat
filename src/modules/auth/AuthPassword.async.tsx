@@ -1,10 +1,11 @@
-import { type FC, Suspense, lazy, memo } from 'preact/compat'
+import {type FC, Suspense, lazy, memo} from 'preact/compat'
+import {ScreenLoader} from 'components/ScreenLoader'
+
+const AuthPassword = lazy(() => import('./AuthPassword'))
 
 const AuthPasswordAsync: FC = () => {
-  const AuthPassword = lazy(() => import('./AuthPassword'))
-
   return (
-    <Suspense fallback="LOADING...">
+    <Suspense fallback={<ScreenLoader />}>
       <AuthPassword />
     </Suspense>
   )

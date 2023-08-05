@@ -7,15 +7,17 @@ import {Icon} from 'components/ui'
 
 import {Ripple} from '../Ripple'
 
+import type {SignalOr} from 'types/ui'
+
 import './Checkbox.scss'
 
 interface CheckboxProps {
   id?: string
   label?: string | Signal<string>
   onToggle?: (checked: boolean) => void
-  checked?: boolean | Signal<boolean>
+  checked?: SignalOr<boolean>
   withRipple?: boolean
-  disabled?: boolean | Signal<boolean>
+  disabled?: SignalOr<boolean>
 }
 
 export const Checkbox: FC<CheckboxProps> = ({
@@ -34,16 +36,13 @@ export const Checkbox: FC<CheckboxProps> = ({
     'disabled': disabled,
     'ripple': withRipple
   })
+  /* подумати потім, як переробити щоб працювали signals */
+  // https://codepen.io/bradyhullopeter/pen/bGrjzJy
+
   return (
     <label htmlFor={id} class={buildedClass}>
       <div class="Checkbox-wrapper">
-        <input
-          id={id}
-          type="checkbox"
-          onChange={handleChange}
-          checked={checked}
-          disabled={disabled}
-        />
+        <input id={id} type="checkbox" onChange={handleChange} checked={checked} />
         {/* <Transition
         appear={false}
         withMount={false}

@@ -54,7 +54,7 @@ export const CreateChatButton: FC = () => {
         <Icon name="editFilled" />
       </>
     )
-  }, [value])
+  }, [])
 
   const buildedClass = clsx('CreateChat-Button', {
     open: value
@@ -72,7 +72,6 @@ export const CreateChatButton: FC = () => {
         className="CreateChat-Menu"
         isOpen={value}
         onClose={setFalse}
-        withMount={false}
       >
         {renderItems}
       </Menu>

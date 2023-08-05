@@ -6,6 +6,7 @@ import {ApiUsers} from './methods/users'
 import {ApiLangPack} from './methods/langPack'
 
 import type {ApolloClientWrapper} from './apollo'
+import {ApiChats} from './methods/chats'
 
 export class ServiceFactory {
   public constructor(public readonly apolloClient: ApolloClientWrapper) {}
@@ -32,5 +33,9 @@ export class ServiceFactory {
 
   public createUsers() {
     return new ApiUsers(this.apolloClient.getClient())
+  }
+
+  public createChats() {
+    return new ApiChats(this.apolloClient.getClient())
   }
 }

@@ -1,5 +1,11 @@
 import type {API_AVATAR_VARIANTS} from 'common/config'
 
+export interface ApiInputUser {
+  userId: string
+}
+export interface ApiInputGetUsers {
+  ids: string[]
+}
 export interface ApiUser {
   id: string
   firstName: string

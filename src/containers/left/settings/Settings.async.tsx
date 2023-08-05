@@ -1,12 +1,12 @@
 import {type FC, Suspense, lazy, memo} from 'preact/compat'
 
-import {timeout} from 'utilities/timeout'
 import {ScreenLoader} from 'components/ScreenLoader'
 
-const SettingsAsync: FC = (props) => {
-  const Settings = lazy(() =>
-    import('./Settings').then((module) => module.default).then(timeout(10000))
-  )
+import type {SettingsProps} from './Settings'
+
+const SettingsAsync: FC<SettingsProps> = (props) => {
+  const Settings = lazy(() => import('./Settings'))
+
   return (
     <Suspense fallback={<ScreenLoader />}>
       <Settings {...props} />

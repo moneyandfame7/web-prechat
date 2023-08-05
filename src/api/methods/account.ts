@@ -1,8 +1,6 @@
-import {
-  // MUTATION_ACCOUNT_UPDATE_PASSWORD,
-  QUERY_ACCOUNT_GET_PASSWORD
-} from './../graphql/account'
-import {ApiBaseMethod} from './base'
+import {QUERY_ACCOUNT_GET_PASSWORD} from 'api/graphql'
+
+import {ApiBaseMethod} from '../base'
 
 export class ApiAccount extends ApiBaseMethod {
   public async getPassword() {

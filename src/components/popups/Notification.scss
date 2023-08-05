@@ -1,0 +1,34 @@
+.Notification {
+  // background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  // user-select: none;
+  pointer-events: none;
+  padding-block-start: 15%;
+  // background-color: red;
+  &-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: filter 0.3s ease;
+    pointer-events: all !important;
+    user-select: none;
+    min-width: 200px;
+    padding-block: 5px;
+    padding-inline: 15px;
+    border-radius: 12px;
+    background-color: rgba(0 0 0 / 70%);
+    // backdrop-filter: blur(25px);
+    // display: flex;
+    text-align: center;
+    color: #fff;
+    .Icon {
+      width: 20px;
+    }
+    .Icon path {
+      fill: #fff;
+    }
+  }
+}

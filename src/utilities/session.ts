@@ -1,4 +1,5 @@
 import ls from 'localstorage-slim'
+import {forcePersist} from 'state/persist'
 
 export function removeSession() {
   const result = ls.remove('prechat-session')
@@ -13,7 +14,11 @@ export function saveSession(session: string) {
 
   if (typeof result !== 'undefined') {
     console.error('SET PERSIST ERROR')
-  }
+  } /* else {
+    startPersist()
+  } */
+
+  forcePersist()
 }
 
 export function hasActiveSession() {

@@ -1,16 +1,8 @@
 import Dexie from 'dexie'
 
-import {logDebugInfo} from 'lib/logger'
-
 import AuthTable from './tables/auth'
 import UsersTable from './tables/users'
 import SettingsTable from './tables/settings'
-
-export enum DatabaseTableNames {
-  Users = 'users',
-  Auth = 'auth',
-  Settings = 'settings'
-}
 
 class Database {
   private readonly _db: Dexie
@@ -20,6 +12,7 @@ class Database {
   public readonly users: UsersTable
   public readonly auth: AuthTable
   public readonly settings: SettingsTable
+
   public constructor() {
     this._db = new Dexie(this.DB_NAME)
     this._db.version(1).stores({
@@ -29,9 +22,9 @@ class Database {
     })
     this._db.open()
 
-    this.users = new UsersTable(this._db.table(DatabaseTableNames.Users))
-    this.settings = new SettingsTable(this._db.table(DatabaseTableNames.Settings))
-    this.auth = new AuthTable(this._db.table(DatabaseTableNames.Auth))
+    this.users = new UsersTable(this._db.table('users'))
+    this.settings = new SettingsTable(this._db.table('settings'))
+    this.auth = new AuthTable(this._db.table('auth'))
   }
 
   public async getInitialState() /* : Promise<DeepPartial<PersistGlobalState>> */ {
@@ -41,21 +34,26 @@ class Database {
       // this.users.getInitialState()
     ])
 
-    return {
-      auth,
-      settings
+    const obj = {
+      ...(auth ? {auth} : undefined),
+      ...(settings ? {settings} : undefined)
     }
+    if (!Object.keys(obj).length) {
+      return undefined
+    }
+
+    return obj
   }
 
-  public async resetState(): Promise<void> {
-    const start = Date.now()
+  public async clear() {
+    const tables = this._db.tables
 
-    logDebugInfo(Date.now() - start, '[DB INIT]')
+    for (const table of tables) {
+      await table.clear()
+    }
+
+    // console.log('All tables cleared!');
   }
 }
 
 export const database = new Database()
-
-// export function updateUserDb(users:ApiUser[]){
-// // database.users.put()
-// }

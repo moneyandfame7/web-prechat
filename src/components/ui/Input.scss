@@ -10,14 +10,17 @@
     font-size: 16px;
     border-radius: var(--input-border-radius);
     padding: 0 20px;
-    height: var(--input-base-height);
+    height: var(--input-height);
     width: 100%;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--c-border-input);
     background-color: transparent;
-    transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
+    // transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
+    @include bgAndColorTransition(border-color);
 
     &::placeholder {
-      transition: color 0.2s ease-out;
+      // transition: color 0.2s ease-out;
+      // @include bgAndColorTransition();
+
       color: var(--color-placeholder);
     }
 
@@ -25,51 +28,51 @@
     &:-webkit-autofill-strong-password,
     &:-webkit-autofill-strong-password-viewable,
     &:-webkit-autofill-and-obscured {
-      box-shadow: inset 0 0 0 10rem var(--color-background);
+      box-shadow: inset 0 0 0 10rem var(--c-surface);
       -webkit-text-fill-color: var(--color-text);
     }
 
     &:focus {
       outline: none;
-      caret-color: var(--color-primary);
+      caret-color: var(--c-primary);
       ~ .input-border {
         opacity: 1;
       }
       &::placeholder,
       ~ label,
       ~ .length-indicator {
-        color: var(--color-primary);
+        color: var(--c-primary);
       }
       ~ .Icon path {
-        fill: var(--color-primary);
+        fill: var(--c-primary);
       }
     }
 
     &:hover {
-      border-color: var(--color-primary);
+      border-color: var(--c-primary);
       ~ label,
       &::placeholder,
       ~ .length-indicator {
-        color: var(--color-primary);
+        color: var(--c-primary);
       }
 
       ~ .Icon path,
       .Icon path {
-        fill: var(--color-primary);
+        fill: var(--c-primary);
       }
     }
 
     &:placeholder-shown ~ label,
     &:focus ~ label {
       transform: scale(0.75) translate(-5px, -35px);
-      background-color: var(--color-background);
+      background-color: var(--c-surface);
     }
   }
 
   &.fixed-label {
     > label {
       transform: scale(0.75) translate(-5px, -35px);
-      background-color: var(--color-background);
+      background-color: var(--c-surface);
     }
   }
 
@@ -131,7 +134,7 @@
   }
   &.not-empty label {
     transform: scale(0.75) translate(-5px, -35px);
-    background-color: var(--color-background);
+    background-color: var(--c-surface);
   }
 
   /* Variant */
@@ -173,7 +176,7 @@
     bottom: 0;
     opacity: 0;
     border-radius: 12px;
-    border: 2px solid var(--color-primary);
+    border: 2px solid var(--c-primary);
     pointer-events: none;
     transition: opacity 0.2s ease-out;
   }
@@ -185,7 +188,7 @@
     padding: 0px 5px;
     font-size: 14px;
     color: var(--color-placeholder);
-    background-color: var(--color-background);
+    background-color: var(--c-surface);
   }
   .input-value {
     position: absolute;

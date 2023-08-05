@@ -1,7 +1,7 @@
 .select-container {
   position: relative;
   .Menu {
-    top: calc(var(--input-base-height) + 5px);
+    top: calc(var(--input-height) + 5px);
     max-height: 350px;
     width: 100% !important;
     &_item {
@@ -21,7 +21,7 @@
       ~ * .Icon-chevronDown {
         transform: rotate(180deg) !important;
         path {
-          fill: var(--color-primary);
+          fill: var(--c-primary);
         }
       }
     }
@@ -40,5 +40,5 @@
   padding: 0 20px;
 }
 .country-code {
-  color: var(--color-text-secondary);
+  color: var(--c-font-secondary);
 }

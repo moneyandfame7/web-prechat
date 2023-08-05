@@ -17,8 +17,10 @@ export const TransitionTest: FC<TransitionProps> = ({
   alwaysMounted = false,
   children,
   className,
+  onClick,
   onEndTransition,
-  onStartTransition
+  onStartTransition,
+  onExitTransition
 }) => {
   const buildedStyles = buildCustomTransitionProperties({name, duration})
 
@@ -40,6 +42,7 @@ export const TransitionTest: FC<TransitionProps> = ({
       alwaysMounted={alwaysMounted}
       onEntered={onEndTransition}
       onEnter={onStartTransition}
+      onExited={onExitTransition}
     >
       <div
         ref={elRef}
@@ -47,6 +50,7 @@ export const TransitionTest: FC<TransitionProps> = ({
           ...buildedStyles,
           ...styles
         }}
+        onClick={onClick}
         class={buildedClassname}
       >
         {children}

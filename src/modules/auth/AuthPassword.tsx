@@ -23,7 +23,7 @@ const AuthPassword: FC = () => {
       <h1 class="title">Enter a Password</h1>
       <p class="subtitle">Your account is protected with an additional password.</p>
       <PasswordInput
-        disabled={auth.$loading}
+        disabled={auth.$isLoading}
         value={password}
         onInput={handleChange}
         label="Password"

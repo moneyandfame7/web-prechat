@@ -5,7 +5,9 @@ import {Application} from 'modules/App'
 
 import {initializeApplication} from 'state/initialize'
 
-import {ApolloClient} from 'api/client'
+import {ApolloClient} from 'api/manager'
+
+import './state/actions/ui/init'
 
 import './state/actions/ui/init'
 
@@ -22,8 +24,6 @@ async function init() {
     .catch((err) => {
       console.warn({err})
     })
-
-  // effect(() => console.log(state.auth, 'REMEMBER ME???'))
 }
 init()
 render(

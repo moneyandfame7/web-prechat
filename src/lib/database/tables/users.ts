@@ -14,8 +14,8 @@ export default class Users {
     }
   }
 
-  public async updateList(users: ApiUser[]) {
-    return this.table.bulkPut(users)
+  public async put(users: ApiUser[] | ApiUser) {
+    return users instanceof Array ? this.table.bulkPut(users) : this.table.put(users)
   }
 
   public async add(user: ApiUser) {

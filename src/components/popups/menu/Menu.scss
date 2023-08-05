@@ -11,11 +11,11 @@
   min-width: 180px;
   width: max-content !important;
   padding: 5px;
-  background-color: rgb(255 255 255/85%);
+  background-color: var(--c-surface-transparent);
   backdrop-filter: blur(10px);
   border-radius: 12px;
   max-height: inherit;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
   &_item {
     width: 100%;
     font-size: 14px;
@@ -28,17 +28,17 @@
     transition: transform 0.15s ease-in-out;
     cursor: pointer;
     &:focus-within {
-      background-color: #d5d5d55c;
+      background-color: var(--c-surface-3);
     }
     &:hover {
-      background-color: #d5d5d55c;
+      background-color: var(--c-surface-3);
     }
     &:active {
       transform: scale(0.97);
       transition: transform 0.15s ease-in-out;
     }
     &.no-results {
-      color: var(--color-text-secondary);
+      color: var(--c-font-secondary);
     }
     &.hidden {
       display: none;
@@ -60,9 +60,9 @@
 
 .backdrop {
   position: fixed;
-  top: -100vh;
-  right: -100vw;
-  left: -100vw;
-  bottom: -100vh;
+  top: -100dvh;
+  right: -100dvw;
+  left: -100dvw;
+  bottom: -100dvh;
   z-index: var(--z-menu-backdrop);
 }

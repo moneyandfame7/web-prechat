@@ -95,6 +95,7 @@ const CreateChat: FC<CreateChatProps> = ({isGroup}) => {
       classNames={screenClassnames}
       activeKey={activeGroup}
       name="fade"
+      permanentClassname="Screen-container"
       getTransitionByCase={getTransitionByCase}
     >
       {renderScreen(activeGroup)}

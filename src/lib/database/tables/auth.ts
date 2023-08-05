@@ -1,10 +1,8 @@
 import type Dexie from 'dexie'
 
-import type {PersistGlobalState} from 'state/persist'
 import {AuthScreens} from 'types/screens'
 import {DatabaseTable, type TableKeys} from '../table'
-import type {DatabaseTableNames} from '../root'
-const INITIAL_AUTH_STATE: PersistGlobalState[DatabaseTableNames.Auth] = {
+const INITIAL_AUTH_STATE = {
   rememberMe: true,
   email: undefined,
   passwordHint: undefined,
@@ -14,10 +12,7 @@ const INITIAL_AUTH_STATE: PersistGlobalState[DatabaseTableNames.Auth] = {
   screen: AuthScreens.PhoneNumber
 }
 
-export default class AuthTable extends DatabaseTable<
-  DatabaseTableNames.Auth,
-  TableKeys<DatabaseTableNames.Auth>
-> {
+export default class AuthTable extends DatabaseTable<'auth', TableKeys<'auth'>> {
   public constructor(table: Dexie.Table) {
     super(table, INITIAL_AUTH_STATE)
   }

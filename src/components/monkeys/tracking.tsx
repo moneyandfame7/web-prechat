@@ -46,6 +46,22 @@ export const MonkeyTrack: FC<MonkeyTrackProps> = memo(
       }
     }, [FRAGMENTS])
 
+    /*     useEffect(() => {
+      const handleFocus = (e: FocusEvent) => {
+        setIsIdle(false)
+      }
+      const handleBlur = (e: FocusEvent) => {
+        setIsIdle(true)
+      }
+      inputRef.current?.addEventListener('blur', handleBlur)
+      inputRef.current?.addEventListener('focus', handleFocus)
+
+      return () => {
+        inputRef.current?.removeEventListener('blur', handleBlur)
+        inputRef.current?.removeEventListener('focus', handleFocus)
+      }
+    }, []) */
+
     useEffect(() => {
       if (
         (typeof previousLength === 'undefined' && currentLength === 0) ||
@@ -95,12 +111,12 @@ export const MonkeyTrack: FC<MonkeyTrackProps> = memo(
       <>
         <LottiePlayer
           hidden={!isIdle}
-          withBlur={true}
+          withBlur
           size={size}
           lottieRef={monkeyRefIdle}
           name="Monkey-idle"
-          loop={true}
-          autoplay={true}
+          loop
+          autoplay
           loading={false}
           isPausable
         />

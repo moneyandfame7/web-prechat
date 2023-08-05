@@ -1,44 +1,39 @@
 /* eslint-disable no-console */
 import * as firebase from 'lib/firebase'
 
-import {updateGlobalState} from 'state/persist'
 import {createAction} from 'state/action'
 import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
 
-import type {SignUpInput} from 'types/api'
 import type {ApiLangCode} from 'types/lib'
 import {AuthScreens} from 'types/screens'
 
 import {USER_BROWSER, USER_PLATFORM} from 'common/config'
 import {logDebugWarn} from 'lib/logger'
 import {unformatStr} from 'utilities/stringRemoveSpacing'
-import {Api} from 'api/client'
+import {Api} from 'api/manager'
 import {makeRequest} from 'utilities/makeRequest'
 import {logger} from 'utilities/logger'
 import {ApolloError} from '@apollo/client'
-import {AuthSignInResponse} from 'api/types/auth'
-import {saveSession} from 'utilities/session'
+import type {AuthSignInResponse, AuthSignUpInput} from 'api/types/auth'
+import {removeSession, saveSession} from 'utilities/session'
+import {updateAuthState} from 'state/updates/auth'
+import {updateSettingsState} from 'state/updates/settings'
 
 /**
  * Get user connection info, country ( dial code, etc )
  */
-createAction('getConnection', async () => {
+createAction('getConnection', async (state) => {
   const connection = await makeRequest('connection')
 
   const suggestedLanguage = connection.countryCode.toLowerCase() as ApiLangCode
   const existLanguage = LANGUAGES_CODE_ARRAY.find((code) => code === suggestedLanguage)
 
-  updateGlobalState(
-    {
-      auth: {
-        connection
-      },
-      settings: {
-        suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
-      }
-    },
-    false
-  )
+  updateAuthState(state, {
+    connection
+  })
+  updateSettingsState(state, {
+    suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
+  })
 })
 
 /**
@@ -170,16 +165,11 @@ createAction('signIn', async (state, _, payload) => {
     IF REMEMBER ME - TRUE */
   saveSession(response.sessionHash)
 
-  updateGlobalState(
-    {
-      auth: {
-        session: response.sessionHash,
-        isLoading: false
-      }
-    },
-    state.auth.rememberMe,
-    true
-  )
+  updateAuthState(state, {
+    session: response.sessionHash,
+    isLoading: false
+  })
+  saveSession(response.sessionHash)
 })
 
 /**
@@ -197,7 +187,7 @@ createAction('signUp', async (state, _, payload) => {
   }
 
   const unformatted = unformatStr(state.auth.phoneNumber)
-  const input: SignUpInput['input'] = {
+  const input: AuthSignUpInput['input'] = {
     silent,
     firstName,
     lastName,
@@ -215,15 +205,15 @@ createAction('signUp', async (state, _, payload) => {
     console.warn('[AUTH]: Sign Up error')
     return
   }
+  updateAuthState(state, {
+    session: response.sessionHash,
+    isLoading: false
+  })
   saveSession(response.sessionHash)
-  updateGlobalState(
-    {
-      auth: {
-        session: response.sessionHash,
-        isLoading: false
-      }
-    },
-    state.auth.rememberMe,
-    true
-  )
+})
+
+createAction('signOut', async (_, actions) => {
+  removeSession()
+
+  actions.reset()
 })

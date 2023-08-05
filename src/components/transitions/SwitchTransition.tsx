@@ -7,6 +7,7 @@ import {usePrevious} from 'hooks'
 import {TransitionTest} from './Transition'
 import type {SwitchTransitionProps, TransitionCases} from './types'
 import {getTransitionProperty, getCleanupElements} from './helpers'
+import clsx from 'clsx'
 
 const SwitchTransition = <TKey extends string | number>({
   activeKey,
@@ -17,6 +18,7 @@ const SwitchTransition = <TKey extends string | number>({
   classNames,
   durations,
   cleanupException,
+  permanentClassname,
   getTransitionByCase
 }: SwitchTransitionProps<TKey>) => {
   const newEl: VNodeWithKey<TKey> = useMemo(
@@ -67,6 +69,7 @@ const SwitchTransition = <TKey extends string | number>({
       const transitionPropertiesByCase = isMounted
         ? transitions.current?.enter
         : transitions.current?.exit
+
       return (
         <TransitionTest
           isMounted={isMounted}
@@ -81,7 +84,7 @@ const SwitchTransition = <TKey extends string | number>({
             transitionPropertiesByCase?.duration ??
             0
           }
-          className={getTransitionProperty(classNames, el.key)}
+          className={clsx(getTransitionProperty(classNames, el.key), permanentClassname)}
         >
           {el}
         </TransitionTest>

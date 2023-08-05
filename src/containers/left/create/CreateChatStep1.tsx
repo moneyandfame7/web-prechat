@@ -1,14 +1,12 @@
 import {type FC, memo} from 'preact/compat'
-import {useCallback} from 'preact/hooks'
-import {getActions} from 'state/action'
+import {useCallback, useRef, useState} from 'preact/hooks'
 import {getGlobalState} from 'state/signal'
 import {FloatButton, Icon, InputText, Divider} from 'components/ui'
 import {LeftColumnScreen} from 'types/ui'
 
 import {useInputValue} from 'hooks'
 
-import {ChatItem} from 'components/ChatItem'
-import {ScreenLoader} from 'components/ScreenLoader'
+import {ListItem} from 'components/ChatItem'
 
 import {getDisplayedUserName} from 'state/helpers/users'
 
@@ -16,6 +14,8 @@ import {LeftGoBack} from '../LeftGoBack'
 import {useLeftColumn} from '../context'
 
 import './CreateChatStep1.scss'
+import {fromRecord} from 'utilities/array/fromRecord'
+import {selectContacts} from 'state/selectors/users'
 
 export interface CreateChatStep1Props {
   isGroup: boolean
@@ -29,83 +29,44 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
   handleSelect
 }) => {
   const {setScreen} = useLeftColumn()
-  const {searchUsers} = getActions()
-  const {globalSearch, users} = getGlobalState()
+  const global = getGlobalState()
+  const [filteredList, setFilteredList] = useState(fromRecord(selectContacts(global)))
   const handleNextStep = useCallback(() => {
     setScreen(isGroup ? LeftColumnScreen.NewGroupStep2 : LeftColumnScreen.NewChannelStep2)
   }, [isGroup])
 
   const {value, handleInput} = useInputValue({
-    cb: (value) => {
-      searchUsers(value.currentTarget.value)
+    cb: (e) => {
+      const {value} = e.currentTarget
+
+      if (value.length === 0) {
+        setFilteredList(fromRecord(selectContacts(global)))
+      } else {
+        setFilteredList((prev) => prev.filter((u) => u.username?.includes(value)))
+      }
     }
   })
-
+  const render = useRef(0)
+  render.current += 1
   function renderList() {
-    if (!value.length) {
-      return (
-        <>
-          <h5 class="subtitle">Contacts</h5>
-          {users.contactIds.map((id) => {
-            const user = users.byId[id]
-
-            return (
-              <ChatItem
-                userId={user.id}
-                user={user}
-                key={id}
-                title={getDisplayedUserName(user)}
-                subtitle={user.username ? `@${user.username}` : undefined}
-                onClick={() => {
-                  handleSelect(id)
-                }}
-                withCheckbox
-                checked={selectedIds.includes(id)}
-              />
-            )
-          })}
-        </>
-      )
-    }
-    if (globalSearch.isLoading) {
-      return <ScreenLoader />
-    }
-    if (!globalSearch.known?.users?.length && !globalSearch.global?.users?.length) {
-      return <h4>No results </h4>
-    }
-
     return (
       <>
-        <h5 class="subtitle">Contacts</h5>
-        {globalSearch.known?.users?.map((u) => (
-          <ChatItem
-            user={u}
-            userId={u.id}
-            withCheckbox
-            checked={selectedIds.includes(u.id)}
-            key={u.id}
-            title={getDisplayedUserName(u)}
-            subtitle={`@${u.username}`}
-            onClick={() => {
-              handleSelect(u.id)
-            }}
-          />
-        ))}
-        <h5 class="subtitle">Global</h5>
-        {globalSearch.global?.users?.map((u) => (
-          <ChatItem
-            user={u}
-            userId={u.id}
-            withCheckbox
-            checked={selectedIds.includes(u.id)}
-            key={u.id}
-            title={getDisplayedUserName(u)}
-            subtitle={`@${u.username}`}
-            onClick={() => {
-              handleSelect(u.id)
-            }}
-          />
-        ))}
+        {filteredList.map((user) => {
+          return (
+            <ListItem
+              userId={user.id}
+              user={user}
+              key={user.id}
+              title={getDisplayedUserName(user)}
+              subtitle={user.username ? `@${user.username}` : undefined}
+              onClick={() => {
+                handleSelect(user.id)
+              }}
+              withCheckbox
+              checked={selectedIds.includes(user.id)}
+            />
+          )
+        })}
       </>
     )
   }
@@ -114,7 +75,7 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
     <>
       <div class="LeftColumn-Header">
         <LeftGoBack />
-        <p class="LeftColumn-Header_title">Add Members</p>
+        <p class="LeftColumn-Header_title">Add Members {render.current}</p>
       </div>
       <InputText
         value={value}
@@ -125,7 +86,7 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
       <Divider />
       <div class="picker-list scrollable">{renderList()}</div>
       {selectedIds.map((id) => (
-        <p>{users.byId[id].firstName}</p>
+        <p>{global.users.byId[id].firstName}</p>
       ))}
       <FloatButton
         shown

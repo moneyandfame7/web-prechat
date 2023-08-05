@@ -5,31 +5,27 @@ import {
   InMemoryCache,
   createHttpLink,
   split,
-  type FetchResult,
-  type ApolloQueryResult,
   ApolloError
 } from '@apollo/client'
 import {RetryLink} from '@apollo/client/link/retry'
 import {setContext} from '@apollo/client/link/context'
 import {onError} from '@apollo/client/link/error'
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions'
-import {type Observable, getMainDefinition} from '@apollo/client/utilities'
+import {getMainDefinition} from '@apollo/client/utilities'
 import {createClient} from 'graphql-ws'
 
 import {getGlobalState} from 'state/signal'
 import {logDebugWarn} from 'lib/logger'
 
-export type Mutation<T> = Promise<FetchResult<T>>
-
-export type Query<T> = Promise<ApolloQueryResult<T>>
-
-export type Subscribe<T> = Promise<Observable<FetchResult<T>>>
+export type GqlDoc = {
+  __typename: string
+}
 
 /**
  * Simple apollo wraper with apollo links and error handling
  */
 export class ApolloClientWrapper {
-  protected readonly _client: ApolloClient<NormalizedCacheObject>
+  public readonly client: ApolloClient<NormalizedCacheObject>
 
   private readonly _wsLink: GraphQLWsLink
 
@@ -45,7 +41,7 @@ export class ApolloClientWrapper {
     this._httpLink = this.getHttpLink(httpUrl)
     this._wsLink = this.getWsLink(wsUrl)
     this._splittedLinks = this.getSplittedLinks(this._wsLink, this._httpLink)
-    this._client = new ApolloClient({
+    this.client = new ApolloClient({
       link: ApolloLink.from([
         this._retryLink,
         this._errorLink,
@@ -57,7 +53,7 @@ export class ApolloClientWrapper {
   }
 
   public getClient(): ApolloClient<NormalizedCacheObject> {
-    return this._client
+    return this.client
   }
 
   /**
@@ -107,11 +103,16 @@ export class ApolloClientWrapper {
    * {@link https://www.apollographql.com/docs/react/data/subscriptions/#2-initialize-a-graphqlwslink Graphql WebSocket Link}
    */
   private getWsLink(url: string) {
+    const {auth} = getGlobalState()
+
     return new GraphQLWsLink(
       createClient({
         url,
         connectionParams: async () => ({
-          isWebsocket: true
+          isWebsocket: true,
+          headers: {
+            'prechat-session': auth.session || ''
+          }
         })
       })
     )
@@ -138,7 +139,9 @@ export class ApolloClientWrapper {
     return new RetryLink({
       attempts: {
         max: 3,
-        retryIf: (error) => !!error
+        retryIf: (error: ApolloError) => {
+          return error.message === 'Failed to fetch'
+        }
       },
       delay: (count /* operation, error */) => {
         return count * 5000 * Math.random()

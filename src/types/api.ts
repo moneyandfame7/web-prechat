@@ -1,91 +1,9 @@
 import type {API_AVATAR_VARIANTS} from 'common/config'
-import type {ErrorPack, LanguagePack} from './lib'
 import type {UserConnection} from './request'
 
-export interface ApiClientConnection {
-  apiToken: string
-  httpUrl: string
-  wsUrl: string
-}
 export type Platform = 'macOS' | 'iOS' | 'Windows' | 'Android' | 'Linux' | 'Unknown'
 
-export interface Session {
-  id: string
-  ip: string
-  region: string
-  country: string
-  platform: string
-  createdAt: string
-  activeAt: string
-  hash: string
-}
-
 export type AuthConnection = UserConnection & {browser: string; platform: string}
-
-export interface TwoFactorAuth {
-  hint?: string
-  email: string
-}
-
-/* Arguments and response */
-export interface SendPhoneResponse {
-  userId?: string
-}
-
-export interface SignUpInput {
-  input: {
-    silent: boolean
-    firstName: string
-    lastName?: string
-    phoneNumber: string
-    /* Firebase token after validating phone with code */
-    firebase_token: string
-    connection: AuthConnection
-  }
-  photo?: File
-}
-export interface SignUpResponse {
-  session: string
-}
-
-export interface SignInInput {
-  firebase_token: string
-  connection: AuthConnection
-  userId: string
-}
-export interface SignInResponse {
-  session: string
-}
-
-// interface AuthResponse {
-//   session_hash: string
-// }
-
-export interface ApiSearchGlobalInput {
-  limit?: number
-  query: string
-}
-
-export interface ApiInputGetUsers {
-  ids: string[]
-}
-export interface ApiInputUser {
-  id: string
-}
-export interface ApiSearchGlobalResponse {
-  knownChats: any[]
-  knownUsers: ApiUser[]
-  globalChats: any[]
-  globalUsers: ApiUser[]
-}
-
-export type ApiSearchUsersResponse = Pick<
-  ApiSearchGlobalResponse,
-  'globalUsers' | 'knownUsers'
->
-
-export interface ApiChat {}
-export interface ApiChatInfo {}
 
 export interface ApiUser {
   id: string

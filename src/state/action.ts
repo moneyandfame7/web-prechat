@@ -3,28 +3,47 @@ import type {ApiLangCode} from 'types/lib'
 import type {SignInPayload, SignUpPayload} from 'types/action'
 import {DEBUG} from 'common/config'
 
+import type {ApiLangKey, ApiLanguage} from 'api/types/langPack'
+import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
+import type {SettingsScreens} from 'types/screens'
+
 import {getGlobalState} from './signal'
-import {ApiLanguage, ApiLanguageCode, ApiLanguageKey} from 'api/types/settings'
 
 /**
- * The idea for actions was taken from this repository because I really liked it
+ * The idea of state management was taken from this repo
  * https://github.com/Ajaxy/telegram-tt
  */
 interface ActionPayloads {
   /* Auth  */
   signUp: SignUpPayload
   signIn: SignInPayload
+  signOut: void
 
   // Search
   searchGlobal: string
   searchUsers: string
   searchGlobalClear: void
 
-  /* Auth ui */
   uploadAvatar: File
-  /* Ui */
+  /** UI */
   reset: void
   init: void
+
+  // Differents
+  openAddContactModal: {userId: string}
+  closeAddContactModal: void
+
+  openCreateContactModal: void
+
+  showNotification: {title: string}
+  closeNotification: void
+
+  changeSettingsScreen: SettingsScreens
+
+  copyToClipboard: {
+    toCopy: string
+    title: string
+  }
 
   changeTheme: Theme
   changeLanguage: ApiLangCode
@@ -34,9 +53,17 @@ interface ActionPayloads {
   getContactList: void
   getUser: string
 
+  /* Contacts */
+  addContact: {firstName: string; phone: string; lastName?: string; userId?: string}
+
+  /* Chats */
+  createChannel: CreateChannelInput
+  createGroup: CreateGroupInput
+  getChats: void
+
   // Localization
-  getLangPack: ApiLanguageCode
-  getLanguageString: {code: ApiLanguageCode; key: ApiLanguageKey}
+  getLangPack: ApiLangCode
+  getLanguageString: {code: ApiLangCode; key: ApiLangKey}
   getLanguages: ApiLanguage[]
 
   getConnection: void
@@ -45,8 +72,8 @@ interface ActionPayloads {
 }
 
 type ActionNames = keyof ActionPayloads
-type Actions = {
-  [key in ActionNames]: (payload: ActionPayloads[key]) => void | Promise<void>
+export type Actions = {
+  [key in ActionNames]: (payload: ActionPayloads[key]) => Promise<void> | void
 }
 const actions = {} as Actions
 
@@ -56,7 +83,7 @@ export function createAction<Name extends ActionNames>(
     state: SignalGlobalState,
     actions: Actions,
     payload: ActionPayloads[Name]
-  ) => void | Promise<void>
+  ) => Promise<void> | void
 ) {
   if (actions[name]) {
     // eslint-disable-next-line no-console
@@ -64,21 +91,31 @@ export function createAction<Name extends ActionNames>(
     return
   }
 
-  actions[name] = (payload: unknown) => {
+  actions[name] = (payload: unknown): ReturnType<typeof handler> => {
     if (DEBUG) {
       // eslint-disable-next-line no-console
       console.warn(`Was called action with name «${name}»`)
     }
     const globalState = getGlobalState()
-    handler(globalState, actions, payload as ActionPayloads[Name])
+    const result = handler(globalState, actions, payload as ActionPayloads[Name])
+    if (result instanceof Promise) {
+      return result
+    }
   }
 }
 
-export function getActions(): Actions
-export function getActions<Name extends ActionNames>(name: Name): Actions[Name]
-export function getActions<Name extends ActionNames>(name?: Name) {
-  if (name) {
-    return actions[name] as Actions[Name]
-  }
+export function getActions() {
   return actions
 }
+
+// : Object.keys(reducers).reduce((actns, reducerName) => {
+//   actns[reducerName] = (payload) => {
+//     console.log(`Will be called reducer ${reducerName}`)
+//     const updated = reducers[reducerName](state as any, payload)
+
+//     console.log(`This is updated state: ${updated}`)
+//     /* updateByKey???? check if object, nested update, else just update */
+//   }
+
+//   return actns
+// }, {} as Record<string, (payload:any) => void>)

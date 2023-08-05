@@ -20,6 +20,7 @@ export interface ButtonProps {
   ripple?: boolean
   onClick?: () => void
   className?: string
+  fullWidth?: boolean
   'aria-label'?: SignalOrString
 }
 
@@ -32,6 +33,7 @@ export const Button: FC<ButtonProps> = ({
   children,
   withFastClick = true,
   ripple = true,
+  fullWidth = true,
   onClick,
   className,
   'aria-label': ariaLabel
@@ -40,7 +42,8 @@ export const Button: FC<ButtonProps> = ({
     'Button',
     `Button-${variant}`,
     {
-      'Button-loading': isLoading
+      'Button-loading': isLoading,
+      'Button-fullwidth': fullWidth
     },
     className
   )

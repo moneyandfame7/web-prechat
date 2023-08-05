@@ -11,4 +11,5 @@ const firebaseApp = initializeApp(firebaseConfig)
 export const authentication = initializeAuth(firebaseApp, {
   persistence: inMemoryPersistence
 })
+
 authentication.settings.appVerificationDisabledForTesting = true

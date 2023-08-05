@@ -63,7 +63,7 @@ export default ({mode}) => {
     },
     css: {
       postcss: {
-        plugins: [autoprefixer({})]
+        plugins: [autoprefixer({add: true})]
       },
       modules: {
         localsConvention: 'camelCase'
@@ -91,7 +91,8 @@ export default ({mode}) => {
         'state': '/src/state',
         'assets': '/src/assets',
         'common': '/src/common',
-        'utilities': '/src/utilities'
+        'utilities': '/src/utilities',
+        'context': '/src/context'
       }
     },
     server: {

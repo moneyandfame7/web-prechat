@@ -1,5 +1,5 @@
-import type { FC} from 'preact/compat';
-import { Suspense, lazy, memo } from 'preact/compat'
+import type {FC} from 'preact/compat'
+import {Suspense, lazy, memo} from 'preact/compat'
 
 // function timeout<T>(time: number) {
 //   return (value: T) =>

@@ -1,4 +1,4 @@
-import type {VNode} from 'preact'
+import type {/* Key, */ VNode} from 'preact'
 import {createContext} from 'preact'
 import {useContext} from 'preact/hooks'
 

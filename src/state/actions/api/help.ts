@@ -1,4 +1,4 @@
-import {Api} from 'api/client'
+import {Api} from 'api/manager'
 import {createAction} from 'state/action'
 import type {ApiLangCode} from 'types/lib'
 

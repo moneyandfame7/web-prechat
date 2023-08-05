@@ -1,10 +1,10 @@
 .Button {
   position: relative;
   overflow: hidden;
-  background-color: var(--color-primary);
+  background-color: var(--c-primary);
   color: #fff;
   height: 50px;
-  width: 100%;
+  padding: 5px 15px;
   border-radius: 12px;
   text-transform: uppercase;
   font-size: 16px;
@@ -13,20 +13,23 @@
   justify-content: center;
   align-items: center;
   gap: 15px;
-  transition: background-color 0.3s ease;
-
+  // transition: background-color 0.3s ease;
+  @include bgAndColorTransition();
   body.animation-none {
     transition: none !important;
   }
   &:hover {
-    background-color: var(--color-primary-hover);
+    background-color: var(--c-primary-hover);
+  }
+  &-fullwidth {
+    width: 100%;
   }
   &-transparent {
-    --color-ripple: var(--color-primary-transparent);
+    --color-ripple: var(--c-primary-transparent);
     background-color: transparent;
-    color: var(--color-primary);
+    color: var(--c-primary);
     &:hover {
-      background-color: var(--color-primary-transparent);
+      background-color: var(--c-primary-transparent);
     }
     font-weight: 400;
 
@@ -46,11 +49,12 @@
   }
   &-loading.Button-transparent {
     color: #fff;
-    background-color: var(--color-primary-transparent);
+    background-color: var(--c-primary-transparent);
   }
 
   &:disabled {
     pointer-events: none;
-    background-color: var(--color-primary-lighter);
+
+    opacity: 0.5;
   }
 }

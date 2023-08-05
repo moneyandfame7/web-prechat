@@ -7,8 +7,12 @@
   }
   input {
     border-radius: var(--input-search-radius);
-    border: none;
-    background-color: var(--color-gray);
+    border-color: var(--c-border-input) !important;
+    // border: none;
+    // background-color: var(--color-gray);
+    @include whenNight {
+      background-color: var(--c-bg);
+    }
     padding: 0 40px;
     height: 43px;
     // border: none;
@@ -18,7 +22,7 @@
       color: #9b9b9b;
     }
     &:hover {
-      border-color: var(--color-border-hover);
+      border-color: var(--c-border-hover-input) !important;
       ~ label,
       &::placeholder,
       ~ .length-indicator {
@@ -32,7 +36,7 @@
     }
 
     &:focus {
-      background-color: var(--color-background);
+      // background-color: var(--color-background);
       &::placeholder,
       ~ label,
       ~ .length-indicator {
@@ -41,7 +45,7 @@
 
       ~ .Icon {
         path {
-          fill: var(--color-primary) !important;
+          fill: var(--c-primary) !important;
         }
       }
     }

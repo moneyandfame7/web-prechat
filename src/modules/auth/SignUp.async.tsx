@@ -1,11 +1,12 @@
-import type { FC} from 'preact/compat';
-import { Suspense, lazy, memo } from 'preact/compat'
+import type {FC} from 'preact/compat'
+import {Suspense, lazy, memo} from 'preact/compat'
+import {ScreenLoader} from 'components/ScreenLoader'
+
+const SignUp = lazy(() => import('./SignUp'))
 
 const SignUpAsync: FC = () => {
-  const SignUp = lazy(() => import('./SignUp'))
-
   return (
-    <Suspense fallback="Loading...">
+    <Suspense fallback={<ScreenLoader />}>
       <SignUp />
     </Suspense>
   )

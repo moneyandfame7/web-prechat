@@ -1,0 +1,13 @@
+.ListItem {
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  min-height: 52px;
+  &:hover {
+    background-color: var(--c-ripple);
+  }
+}

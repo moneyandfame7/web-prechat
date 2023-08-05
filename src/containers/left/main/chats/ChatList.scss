@@ -1,0 +1,73 @@
+.LeftColumn-Chats {
+  overflow-y: scroll;
+}
+
+.skeleton {
+  animation: skeleton-loading 1.2s linear infinite alternate;
+  // background-color: var(--c-surface-2);
+  // @include bgAndColorTransition();
+
+  &-chat-item {
+    min-height: 70px;
+    width: 100%;
+    // border: 1px solid red;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px 5px 10px;
+    gap: 10px;
+  }
+
+  &-avatar {
+    width: 50px;
+    height: 50px;
+    // align-self: center;
+    border-radius: 50%;
+  }
+
+  &-info {
+    // overflow: hidden;
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-right: 10px;
+    gap: 15px;
+  }
+
+  &-info-row {
+    display: flex;
+    justify-content: space-between;
+    // flex-direction: column;
+  }
+
+  &-title {
+    width: 80px;
+    border-radius: 8px;
+    height: 10px;
+    white-space: nowrap;
+  }
+  &-subtitle {
+    width: 220px;
+    border-radius: 8px;
+    height: 10px;
+    color: var(--c-font-secondary);
+    white-space: nowrap;
+  }
+  &-meta {
+    width: 25px;
+    height: 10px;
+    justify-self: center;
+    border-radius: 8px;
+    font-size: 10px;
+    color: var(--c-font-secondary);
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-color: var(--c-surface-2);
+  }
+  100% {
+    background-color: var(--c-surface-3);
+  }
+}

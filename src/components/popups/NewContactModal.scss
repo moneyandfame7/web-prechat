@@ -1,0 +1,81 @@
+.Modal {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .Button {
+    width: max-content;
+    height: 40px;
+    font-size: 14px;
+  }
+  // &-content {
+  //   padding: 10px;
+  //   border-radius: 12px;
+  //   background-color: var(--color-background);
+  //   min-height: 200px;
+  //   min-width: 300px;
+  //   animation: modal-open 0.2s ease-out;
+  //   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  // }
+
+  &-header {
+    display: flex;
+    align-items: center;
+
+    .title {
+      flex: 1;
+      padding: 0 10px;
+      font-weight: 500;
+    }
+  }
+  &-body {
+    padding: 15px 0;
+  }
+
+  .avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-image: linear-gradient(
+      111.4deg,
+      rgba(238, 113, 113, 1) 1%,
+      rgba(246, 215, 148, 1) 58%
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 28px;
+    color: #fff;
+    text-transform: uppercase;
+  }
+  .form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+
+  &-footer {
+    display: flex;
+    align-items: center;
+  }
+}
+
+@keyframes modal-open {
+  from {
+    transform: translate3d(0, 15%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}

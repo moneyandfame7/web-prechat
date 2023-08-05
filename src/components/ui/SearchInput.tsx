@@ -1,6 +1,6 @@
 import {type RefObject} from 'preact'
-import {useCallback} from 'preact/hooks'
-import {type FC, type TargetedEvent, memo} from 'preact/compat'
+// import {useCallback} from 'preact/hooks'
+import {type FC, /* type TargetedEvent, */ memo} from 'preact/compat'
 
 import type {InputHandler} from 'types/ui'
 
@@ -17,12 +17,13 @@ interface SearchInputProps {
   placeholder?: string
   elRef: RefObject<HTMLInputElement>
 }
+
 export const SearchInput: FC<SearchInputProps> = memo(
   ({value, onInput, placeholder = 'Search', onFocus, elRef}) => {
-    const handleChangeInput = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    const handleOnInput: InputHandler = (e) => {
+      e.preventDefault()
       onInput(e.currentTarget.value)
-    }, [])
-
+    }
     return (
       <div class="SearchInput">
         <InputText
@@ -30,7 +31,7 @@ export const SearchInput: FC<SearchInputProps> = memo(
           elRef={elRef}
           value={value}
           onFocus={onFocus}
-          onInput={handleChangeInput}
+          onInput={handleOnInput}
           placeholder={placeholder || t('Search')}
           startIcon="search"
         />

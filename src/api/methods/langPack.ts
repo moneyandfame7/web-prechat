@@ -1,7 +1,7 @@
 import * as LangPack from 'api/graphql/langPack'
 import type {ApiLangCode, GetLangStringInput} from 'api/types/langPack'
 
-import {ApiBaseMethod} from './base'
+import {ApiBaseMethod} from '../base'
 
 export class ApiLangPack extends ApiBaseMethod {
   public async getLangPack(code: ApiLangCode) {
@@ -71,7 +71,7 @@ export class ApiLangPack extends ApiBaseMethod {
       fetchPolicy: 'cache-first'
     })
 
-    if (!data.getLanguages) {
+    if (!data.getLanguages || data.getLanguages.length === 0) {
       return undefined
     }
 

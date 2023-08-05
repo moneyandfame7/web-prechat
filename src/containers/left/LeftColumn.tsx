@@ -1,14 +1,14 @@
-import {type FC, memo, useState} from 'preact/compat'
+import {type FC, memo, useState, useEffect} from 'preact/compat'
 
 import {LeftColumnGroup, LeftColumnScreen} from 'types/ui'
 
 import SwitchTransition from 'components/transitions/SwitchTransition'
 import type {TransitionCases} from 'components/transitions/types'
 import {
-  SLIDE_FADE_OUT,
-  SLIDE_FADE_IN,
   ZOOM_SLIDE_IN,
   ZOOM_SLIDE_OUT
+  // ZOOM_SLIDE_IN,
+  // ZOOM_SLIDE_OUT
 } from 'components/transitions/helpers'
 
 import LeftMain from './main/LeftMain'
@@ -19,6 +19,8 @@ import Contacts from './contacts/Contacts.async'
 import {LeftColumnProvider} from './context'
 
 import './LeftColumn.scss'
+import {SettingsScreens} from 'types/screens'
+import {getGlobalState} from 'state/signal'
 
 const classNames: Record<LeftColumnGroup, string> = {
   [LeftColumnGroup.Main]: 'LeftColumn-Main',
@@ -59,43 +61,8 @@ const getTransitionByCase = (
   return ZOOM_SLIDE_OUT
 }
 const LeftColumn: FC = () => {
-  // const leftColumnWidth = getGlobalState((state) => state.settings.leftColumnWidth)
-  // const {ref, resize, width} = useResize<HTMLDivElement>({
-  //   initialWidth: leftColumnWidth,
-  //   minWidth: 250,
-  //   maxWidth: 430,
-  //   debounceCb: (width) => {
-  //     updateGlobalState({
-  //       settings: {
-  //         leftColumnWidth: width
-  //       }
-  //     })
-  //   }
-  // })
-
-  // const {setScreen, renderScreen, resetScreen, activeScreen} =
-  //   useScreenManager<LeftColumnScreen>({
-  //     initial: LeftColumnScreen.Main,
-  //     cases: screenCases,
-  //     resetCb: (currentScreen, force) => {
-  //       if (force) {
-  //         setScreen(LeftColumnScreen.Main)
-  //         return
-  //       }
-
-  //       if (currentScreen === LeftColumnScreen.NewChannelStep2) {
-  //         setScreen(LeftColumnScreen.NewChannelStep1)
-  //         return
-  //       }
-  //       if (currentScreen === LeftColumnScreen.NewGroupStep2) {
-  //         setScreen(LeftColumnScreen.NewGroupStep1)
-  //         return
-  //       }
-
-  //       setScreen(LeftColumnScreen.Main)
-  //     }
-  //   })
   const [activeScreen, setActiveScreen] = useState(LeftColumnScreen.Chats)
+  const [settingsScreen, setSettingsScreen] = useState(SettingsScreens.Main)
   let activeGroup: LeftColumnGroup = LeftColumnGroup.Main
 
   switch (activeScreen) {
@@ -143,6 +110,15 @@ const LeftColumn: FC = () => {
 
     setActiveScreen(LeftColumnScreen.Chats)
   }
+  const {globalSettingsScreen} = getGlobalState()
+
+  useEffect(() => {
+    /* використовую глобальну змінну для того, щоб відкривати налаштування з інших екранів  */
+    if (globalSettingsScreen !== undefined) {
+      setActiveScreen(LeftColumnScreen.Settings)
+      setSettingsScreen(globalSettingsScreen)
+    }
+  }, [globalSettingsScreen])
 
   const renderScreen = (activeKey: LeftColumnGroup) => {
     switch (activeKey) {
@@ -155,7 +131,7 @@ const LeftColumn: FC = () => {
       case LeftColumnGroup.NewGroup:
         return <CreateChat isGroup />
       case LeftColumnGroup.Settings:
-        return <Settings />
+        return <Settings currentScreen={settingsScreen} />
     }
   }
 
@@ -167,36 +143,17 @@ const LeftColumn: FC = () => {
         activeScreen
       }}
     >
-      <div
-        class="LeftColumn"
-        // ref={ref}
-        // style={{width, '--left-column-width': width + 'px'}}
-      >
+      <div class="LeftColumn">
         <SwitchTransition
           activeKey={activeGroup}
           classNames={classNames}
           cleanupException={[LeftColumnGroup.Main]}
           name="fade"
+          permanentClassname="Screen-container"
           getTransitionByCase={getTransitionByCase}
         >
           {renderScreen(activeGroup)}
         </SwitchTransition>
-        {/* <MountTransition
-          classNames={classNames}
-          shouldCleanup={[
-            LeftColumnGroup.Settings,
-            LeftColumnGroup.Contacts,
-            LeftColumnGroup.NewChannel,
-            LeftColumnGroup.NewGroup
-          ]}
-          activeKey={activeGroup}
-          initial={false}
-          // name="zoomSlide"
-          getTransitionForNew={getScreenTransition}
-        >
-          {renderScreen()}
-        </MountTransition> */}
-        {/* <div class="LeftColumn-resizer" onMouseDown={resize} /> */}
       </div>
     </LeftColumnProvider>
   )

@@ -15,6 +15,7 @@
 
     &_title {
       padding-left: 20px;
+      flex: 1;
       font-weight: 500;
       font-size: 20px;
     }
@@ -23,16 +24,16 @@
   &-Main {
     display: flex;
     flex-direction: column;
+    // @include bgAndColorTransition();
 
-    > .LeftColumn-Header {
-      border-bottom: 1px solid var(--color-border);
-    }
+    // background-color: red;
   }
   &-Main_inner {
     position: relative;
     overflow: hidden;
     width: 100%;
     height: 100%;
+    // @include bgAndColorTransition();
     // > .Transition {
     //   --transform-zoom-fade-init: scale(1.05);
     //   // transform-origin: top center;

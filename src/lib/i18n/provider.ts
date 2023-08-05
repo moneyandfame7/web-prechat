@@ -1,34 +1,34 @@
-import {updateGlobalState} from 'state/persist'
 // import {deepClone} from 'utilities/deepClone'
 /* eslint-disable no-console */
 import {type Signal, useSignal} from '@preact/signals'
 import {useEffect} from 'preact/hooks'
 
 import * as cache from 'lib/cache'
-import {Api} from 'api/client'
+import {Api} from 'api/manager'
 
 import type {LanguagePackKeys, ApiLangCode} from 'types/lib'
 
 import {getGlobalState} from 'state/signal'
-import {logDebugError} from 'lib/logger'
 import {DEBUG} from 'common/config'
-import {hasSession} from 'state/helpers/auth'
 import type {ApiLanguagePack} from 'api/types/langPack'
+import {updateI18nState} from 'state/updates'
 
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
-
+  // Using signals, we avoid rerenders
   const translate = i18n.pack[`$${key}`] as unknown as Signal<string>
-  if (!translate?.value) {
-    logDebugError(`[UI]: Translation for «${key}» not found`)
-    // throw new Error('[UI]: Translation not found')
-    // return key
-  }
+  // if (!translate?.value) {
+  //   logDebugError(`[UI]: Translation for «${key}» not found`)
+  //   // throw new Error('[UI]: Translation not found')
+  //   // return key
+  // }
+  // console.log(translate)
   return translate
 }
 
 export async function changeLanguage(language: ApiLangCode) {
-  // const state = getGlobalState()
+  console.time('PROVIDER_LANGUAGE')
+  const global = getGlobalState()
   let data
 
   if (!DEBUG) {
@@ -43,18 +43,21 @@ export async function changeLanguage(language: ApiLangCode) {
     })
   }
 
-  updateGlobalState(
-    {
-      settings: {
-        i18n: {
-          pack: data,
-          lang_code: language
-        },
-        language
-      }
-    },
-    hasSession()
-  )
+  updateI18nState(global, {
+    pack: data,
+    lang_code: language
+  })
+  // Object.assign(global, {
+  //   settings: {
+  //     i18n: {
+  //       pack: data,
+  //       lang_code: language
+  //     }
+  //   }
+  // })
+  global.settings.language = language
+
+  console.timeEnd('PROVIDER_LANGUAGE')
 }
 
 export async function translateByString(code: ApiLangCode, key: LanguagePackKeys) {

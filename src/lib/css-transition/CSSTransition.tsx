@@ -1,5 +1,5 @@
 import type {VNode} from 'preact'
-import {cloneElement, createElement} from 'preact'
+import {cloneElement} from 'preact'
 import {memo} from 'preact/compat'
 
 import Transition from './Transition'
@@ -13,22 +13,33 @@ import {type CSSTransitionProps, type TransitionState} from './types'
 export const CSSTransition = memo((props: CSSTransitionProps): VNode => {
   const {children, classNames, ...rest} = props
 
-  return createElement(
-    Transition,
-    /**
-     * @todo пофіксити це? тут немає children, але він потрібен для створення..
-     */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    rest as any,
-    (_state: TransitionState, phase: Phase) => {
-      const {className} = children.props
+  const handler = (_state: TransitionState, phase: Phase) => {
+    const {className} = children.props
 
-      const finalClassName = joinClassNames(
-        className,
-        classNames,
-        computeClassName(phase, classNames)
-      )
-      return cloneElement(children, {className: finalClassName})
-    }
-  )
+    const finalClassName = joinClassNames(
+      className,
+      classNames,
+      computeClassName(phase, classNames)
+    )
+    return cloneElement(children, {className: finalClassName})
+  }
+  return <Transition {...rest}>{handler}</Transition>
+  // return createElement(
+  //   Transition,
+  //   /**
+  //    * @todo пофіксити це? тут немає children, але він потрібен для створення..
+  //    */
+  //   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  //   rest as any,
+  //   (_state: TransitionState, phase: Phase) => {
+  //     const {className} = children.props
+
+  //     const finalClassName = joinClassNames(
+  //       className,
+  //       classNames,
+  //       computeClassName(phase, classNames)
+  //     )
+  //     return cloneElement(children, {className: finalClassName})
+  //   }
+  // )
 })
