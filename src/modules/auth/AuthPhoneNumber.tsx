@@ -26,8 +26,8 @@ import {SelectCountryInput} from './SelectCountryInput'
 // import {updateGlobalState} from 'state/persist'
 import './AuthPhoneNumber.scss'
 import {useComputed, useSignal} from '@preact/signals'
-import {unformatStr} from 'utilities/stringRemoveSpacing'
-import {validatePhone} from 'utilities/phone'
+import {unformatStr} from 'utilities/string/stringRemoveSpacing'
+import {validatePhone} from 'utilities/phone/validatePhone'
 
 const AuthPhoneNumber: FC = () => {
   const {sendPhone, getCountries} = getActions()

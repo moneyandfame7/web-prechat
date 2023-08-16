@@ -1,4 +1,4 @@
-import {deepClone} from 'utilities/deepClone'
+import {deepClone} from 'utilities/object/deepClone'
 import type {Key} from 'types/ui'
 
 export type BuildedRecord<T> = Record<Key, T>

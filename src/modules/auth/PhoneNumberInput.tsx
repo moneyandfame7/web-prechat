@@ -3,7 +3,7 @@ import {useSignal} from '@preact/signals'
 import type {FC, RefObject, TargetedEvent} from 'preact/compat'
 
 import type {SignalOr} from 'types/ui'
-import {formatPhone, validKeys} from 'utilities/phone'
+import {formatPhone} from 'utilities/phone/formatPhone'
 
 import {InputText} from 'components/ui'
 import {t} from 'lib/i18n'
@@ -16,7 +16,7 @@ interface PhoneNumberInputProps {
   elRef: RefObject<HTMLInputElement>
   autoFocus?: boolean
 }
-
+const validKeys = ['ArrowLeft', 'ArrowRight', 'Tab', 'Delete', 'Backspace', 'Enter']
 export const PhoneNumberInput: FC<PhoneNumberInputProps> = ({
   elRef,
   onInput,

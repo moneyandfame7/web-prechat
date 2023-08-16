@@ -11,13 +11,13 @@ import {useComputed, useSignal} from '@preact/signals'
 
 import {Button, InputText} from 'components/ui'
 
-import {validatePhone} from 'utilities/phone'
+import {validatePhone} from 'utilities/phone/validatePhone'
 
 import {getActions} from 'state/action'
 
 import {PhoneNumberInput} from 'modules/auth/PhoneNumberInput'
 
-import {unformatStr} from 'utilities/stringRemoveSpacing'
+import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 import {getRandomAvatarVariant} from 'utilities/avatar'
 import {useEventListener} from 'hooks/useEventListener'
 

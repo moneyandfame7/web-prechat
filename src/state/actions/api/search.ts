@@ -1,5 +1,5 @@
 import {createAction} from 'state/action'
-import {throttle} from 'utilities/throttle'
+import {throttle} from 'utilities/schedulers/throttle'
 
 // const SEARCH_USERS_LIMIT = 10
 

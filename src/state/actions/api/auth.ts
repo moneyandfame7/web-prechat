@@ -9,7 +9,7 @@ import {AuthScreens} from 'types/screens'
 
 import {USER_BROWSER, USER_PLATFORM} from 'common/config'
 import {logDebugWarn} from 'lib/logger'
-import {unformatStr} from 'utilities/stringRemoveSpacing'
+import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 import {Api} from 'api/manager'
 import {makeRequest} from 'utilities/makeRequest'
 import {logger} from 'utilities/logger'

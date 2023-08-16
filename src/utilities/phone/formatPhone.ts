@@ -1,22 +1,10 @@
-import {DEBUG} from 'common/config'
-
 const patterns = {
   '+380': '## ### ## ##',
   '+1': '### ### ####',
   '+44': '## #### ####',
   '+48': '## ### ## ##',
-  '+81': '##-####-####' // Japan
+  '+81': '## #### ####'
 }
-export const validKeys = [
-  'ArrowLeft',
-  'ArrowRight',
-  'Tab',
-  'Delete',
-  'Backspace',
-  'Enter'
-]
-
-export const PHONE_REGEX = /^\+\d{1,4}\s?\d{10,}$/
 
 export const formatPhone = (phone: string) => {
   if (phone.length < 2) {
@@ -49,13 +37,4 @@ export const formatPhone = (phone: string) => {
   }
 
   return {formatted: phone}
-}
-
-export const validatePhone = (phone: string) => {
-  const matched = PHONE_REGEX.test(phone)
-  if (DEBUG) {
-    return matched || phone === '+12345678'
-  }
-
-  return matched
 }

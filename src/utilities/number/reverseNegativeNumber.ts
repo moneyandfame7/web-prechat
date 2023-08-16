@@ -5,5 +5,6 @@
  */
 export const reverseNegativeNumber = <T extends number>(number: T) => {
   const splitted = number.toString().split('-')
+
   return parseInt(splitted[1] || splitted[0])
 }

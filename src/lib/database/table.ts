@@ -1,4 +1,4 @@
-import {deepClone} from 'utilities/deepClone'
+import {deepClone} from 'utilities/object/deepClone'
 import type Dexie from 'dexie'
 import {logDebugWarn} from 'lib/logger'
 

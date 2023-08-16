@@ -1,18 +1,18 @@
-import type { FC} from 'preact/compat';
-import { memo, useEffect, useRef } from 'preact/compat'
+import type {FC} from 'preact/compat'
+import {memo, useEffect, useRef} from 'preact/compat'
 
-import type { LottieRefCurrentProps } from 'lottie-react'
+import type {LottieRefCurrentProps} from 'lottie-react'
 import clsx from 'clsx'
 
 // import animationData from 'assets/animations/TwoFactorSetupMonkeyPeek.json'
-import { reverseNegativeNumber } from 'utilities/reverseNegativeNumber'
+import {reverseNegativeNumber} from 'utilities/number/reverseNegativeNumber'
 
-import { usePrevious } from 'hooks'
+import {usePrevious} from 'hooks'
 
-import { logDebugWarn } from 'lib/logger'
+import {logDebugWarn} from 'lib/logger'
 
-import { LottiePlayer } from 'lib/lottie'
-import type { Size } from 'types/ui'
+import {LottiePlayer} from 'lib/lottie'
+import type {Size} from 'types/ui'
 
 import './Monkey.scss'
 
@@ -43,9 +43,9 @@ interface MonkeyProps {
 //   track: import('assets/animations/Monkey-track.json').then((m) => m.default)
 // }
 
-const Monkey: FC<MonkeyProps> = ({ loading, size = 'small', maxLength, currentLength }) => {
+const Monkey: FC<MonkeyProps> = ({loading, size = 'small', maxLength, currentLength}) => {
   const monkeyRef = useRef<LottieRefCurrentProps>(null)
-  const ref = useRef<AnimationSegments>({ firstS: 0, secondS: 0, speed: 2 })
+  const ref = useRef<AnimationSegments>({firstS: 0, secondS: 0, speed: 2})
   const FRAGMENTS = MONKEY_LAST_SEGMENT_ON_INPUT / maxLength
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const previousLength = usePrevious(currentLength)

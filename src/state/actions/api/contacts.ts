@@ -5,7 +5,7 @@ import {updateUsers} from 'state/updates'
 
 import {logger} from 'utilities/logger'
 import {buildRecord} from 'utilities/object/buildRecord'
-import {unformatStr} from 'utilities/stringRemoveSpacing'
+import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
 createAction('getContactList', async (state) => {
   const users = await Api.contacts.getContacts()
