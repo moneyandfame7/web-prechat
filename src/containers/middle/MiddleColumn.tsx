@@ -22,19 +22,6 @@ export const MiddleColumn: FC = () => {
   const global = getGlobalState()
   const actions = getActions()
   render.current += 1
-  const persist = () => {
-    ls.set('STATE', global, {encrypt: false, secret: 1488})
-  }
-
-  const update = () => {
-    Object.assign(global, INITIAL_STATE)
-
-    persist()
-  }
-
-  const changeNumber = () => {
-    global.auth.phoneNumber = 'NINE STHEFAN'
-  }
 
   const signOut = () => {
     actions.signOut()

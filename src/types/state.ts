@@ -10,12 +10,10 @@ import type {UserConnection} from 'types/request'
 import type {AuthScreens, SettingsScreens} from './screens'
 
 export type Theme = 'light' | 'dark'
-export type Theme = 'light' | 'dark'
 
 export interface SettingsState {
   theme: Theme
   i18n: {
-    lang_code: ApiLangCode
     lang_code: ApiLangCode
     pack: LanguagePack
   }

@@ -193,7 +193,6 @@ export function forcePersist() {
     return persist.users.byId[id]
   })
 
-  console.log({users})
   database.users.put(users)
 }
 
@@ -202,14 +201,13 @@ export async function readPersist(): Promise<GlobalState | undefined> {
     return undefined
   }
   const persisted = await database.getInitialState()
-  console.log('READ PERSIST STATE')
   if (hasActiveSession()) {
     startPersist()
 
     return {
       ...INITIAL_STATE,
       ...persisted
-    } as any
+    } as GlobalState
   } else {
     stopPersist()
 
