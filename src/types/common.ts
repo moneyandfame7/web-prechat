@@ -13,4 +13,4 @@ export type ObjectOrValue<TKey extends string | number, TValue> =
   | TValue
 
 export type AnyFunction = (...args: any[]) => void
-export type AnyObject = Record<any, any>
+export type AnyObject = Record<string, any>

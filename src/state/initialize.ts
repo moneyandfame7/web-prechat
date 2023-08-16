@@ -13,9 +13,6 @@ export async function initializeAuth() {
   state.auth.isLoading = true
 
   getConnection()
-  state.auth.isLoading = true
-
-  getConnection()
 
   await generateRecaptcha(state.auth)
 

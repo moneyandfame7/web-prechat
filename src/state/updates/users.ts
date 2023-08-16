@@ -2,6 +2,7 @@ import type {ApiUser} from 'api/types/users'
 import type {GlobalState, SignalGlobalState} from 'types/state'
 
 import {updateByKey} from 'utilities/object/updateByKey'
+import {storageManager} from 'lib/idb/manager'
 
 const initialNewContact: GlobalState['newContact'] = {
   userId: undefined,
@@ -34,23 +35,23 @@ export function updateUser(
   }
 
   updateByKey(user, updUser)
+  storageManager.users.set({
+    [id]: {
+      ...user,
+      ...updUser
+    }
+  })
 
   updateContactList(global, [user])
 }
 
 export function updateUsers(
   global: SignalGlobalState,
-  usersById: Record<string, ApiUser>,
-  shouldOverwrite = false
+  usersById: Record<string, ApiUser>
 ) {
-  Object.keys(usersById).forEach((id) => {
-    if (!shouldOverwrite && global.chats.byId[id]) {
-      return
-    }
-    updateByKey(global.users.byId, {
-      [id]: usersById[id]
-    })
-  })
+  updateByKey(global.users.byId, usersById)
+
+  storageManager.users.set(usersById)
 
   updateContactList(global, Object.values(usersById))
 }

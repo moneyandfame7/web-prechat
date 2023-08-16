@@ -1,7 +1,6 @@
+import {storageManager} from './../lib/idb/manager'
 import type {DeepPartial} from 'types/common'
-import type {SignalGlobalState, GlobalState} from 'types/state'
-
-import {database} from 'lib/database'
+import type {GlobalState, SignalGlobalState} from 'types/state'
 import {getGlobalState} from './signal'
 import {deepClone} from 'utilities/object/deepClone'
 import {pick} from 'utilities/object/pick'
@@ -36,22 +35,6 @@ export function setGlobalState(forUpd: GlobalState) {
   updateI18nState(global, forUpd.settings.i18n)
   updateAuthState(global, forUpd.auth)
   updateNewContactState(global, forUpd.newContact)
-}
-
-export function clearGlobalState() {
-  const global = getGlobalState()
-  Object.assign<SignalGlobalState, DeepPartial<GlobalState>>(global, {
-    settings: {
-      ...INITIAL_STATE.settings
-    },
-    auth: {
-      ...INITIAL_STATE.auth
-    },
-    countryList: [],
-    globalSearch: {},
-    users: {},
-    initialization: false
-  })
 }
 
 export const INITIAL_STATE: GlobalState = {
@@ -121,6 +104,7 @@ export const INITIAL_STATE: GlobalState = {
 function pickPersistGlobal(global: GlobalState) {
   const reduced = {
     ...pick(global, ['users']),
+    ...pick(global, ['chats']),
     auth: pick(global.auth, [
       'userId',
       'rememberMe',
@@ -140,7 +124,8 @@ function pickPersistGlobal(global: GlobalState) {
     ])
   } satisfies DeepPartial<GlobalState>
 
-  return reduced
+  const {chats, users, ...state} = reduced
+  return {chats, users, state}
 }
 
 export type PersistedState = ReturnType<typeof pickPersistGlobal>
@@ -152,61 +137,60 @@ export function startPersist() {
   console.log('WAS START PERSISTING STATE!!!')
   isPersist = true
   window.addEventListener('unload', persist)
-  // window.addEventListener('blur', persist)
 }
 
 function stopPersist() {
   console.log('WAS STOPPED PERSISTING STATE!!!')
-
+  storageManager.clearAll()
   isPersist = false
   window.removeEventListener('unload', persist)
-  // window.removeEventListener('blur', persist)
 }
 
 export function resetPersist() {
-  database.clear()
+  storageManager.clearAll()
 
   stopPersist()
 }
 
-async function persist() {
+export async function persist() {
   const global = getGlobalState()
-  console.log(global)
 
-  alert('SMTH LIKE ME')
   if (!isPersist || !global.auth.session) {
-    console.log({isPersist}, global.auth)
     return
   }
 
-  forcePersist()
+  await forcePersist()
 }
 
-export function forcePersist() {
+export async function forcePersist() {
   const global = getGlobalState()
 
-  const persist = pickPersistGlobal(deepClone(global) as GlobalState)
+  const persisted = pickPersistGlobal(deepClone(global) as GlobalState)
 
-  database.auth.change({...persist.auth})
-  database.settings.change({...persist.settings})
-  const users = Object.keys(persist.users.byId).map((id) => {
-    return persist.users.byId[id]
-  })
-
-  database.users.put(users)
+  storageManager.state.set(persisted.state)
+  storageManager.chats.set(persisted.chats.byId)
+  storageManager.users.set(persisted.users.byId)
+  // localStorage.setItem('chats', JSON.stringify(persist.chats.byId))
+  // storageManager.chats.set(persist.chats.byId)
+  // await storageManager.users.set(persist.users.byId)
+  // await storageManager.state.set(persist.state)
+  // const users = Object.keys(persist.users.byId).map((id) => persist.users.byId[id])
+  // database.users.put(users)
 }
 
 export async function readPersist(): Promise<GlobalState | undefined> {
   if (STATE_PERSIST_DISABLED) {
     return undefined
   }
-  const persisted = await database.getInitialState()
-  if (hasActiveSession()) {
+  // const persisted = await database.getInitialState()
+  const loaded = await storageManager.loadAll()
+
+  if (/* hasActiveSession() && */ loaded.state?.auth?.session) {
     startPersist()
 
     return {
       ...INITIAL_STATE,
-      ...persisted
+      ...loaded.state
     } as GlobalState
   } else {
     stopPersist()

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import {DatabaseOptions, StorageName, StorageOptions} from 'lib/idb/database'
 import type {Platform} from 'types/api'
 
 /*

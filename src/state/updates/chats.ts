@@ -4,24 +4,15 @@ import {selectChat} from 'state/selectors/chats'
 import type {SignalGlobalState} from 'types/state'
 
 import {updateByKey} from 'utilities/object/updateByKey'
+import {storageManager} from 'lib/idb/manager'
 
-/**
- *
- * @param shouldOverwrite @default false
- */
 export function updateChats(
   global: SignalGlobalState,
-  chatsById: Record<string, ApiChat>,
-  shouldOverwrite = false
+  chatsById: Record<string, ApiChat>
 ) {
-  Object.keys(chatsById).forEach((id) => {
-    if (!shouldOverwrite && global.chats.byId[id]) {
-      return
-    }
-    updateByKey(global.chats.byId, {
-      [id]: chatsById[id]
-    })
-  })
+  updateByKey(global.chats.byId, chatsById)
+
+  storageManager.chats.set(chatsById)
 }
 
 export function updateChat(
@@ -36,4 +27,17 @@ export function updateChat(
   }
 
   updateByKey(chat, chatToUpd)
+  storageManager.chats.set({
+    [chatId]: {
+      ...chat,
+      ...chatToUpd
+    }
+  })
+
+  // storageManager.chats.set({
+  //   [chatId]: {
+  //     ...chat,
+  //     ...chatToUpd
+  //   }
+  // })
 }

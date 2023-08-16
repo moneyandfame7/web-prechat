@@ -92,7 +92,9 @@ export default ({mode}) => {
         'assets': '/src/assets',
         'common': '/src/common',
         'utilities': '/src/utilities',
-        'context': '/src/context'
+        'context': '/src/context',
+        'managers': '/src/managers',
+        'storages': '/src/storages'
       }
     },
     server: {

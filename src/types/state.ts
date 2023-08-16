@@ -2,7 +2,7 @@ import type {DeepSignal} from 'deepsignal'
 
 import type {ConfirmationResult, RecaptchaVerifier} from 'firebase/auth'
 
-import type {ApiUser, ApiChat, ApiCountry} from 'api/types'
+import type {ApiUser, ApiChat, ApiCountry, ApiLanguage} from 'api/types'
 
 import type {LanguagePack, ApiLangCode} from 'types/lib'
 import type {UserConnection} from 'types/request'
@@ -81,6 +81,38 @@ export interface GlobalState {
 }
 
 export type SignalGlobalState = DeepSignal<GlobalState>
+
+export type TransitionsTypeKey = 'menuBlur' | 'pageTransitions'
+export type TransitionsType = {
+  [key in TransitionsTypeKey]: boolean
+}
+
+export type AuthStage =
+  | 'waitPhone'
+  | 'waitCode'
+  | 'waitPassword'
+  | 'waitRegister'
+  | 'authReady'
+export type State = {
+  settings: {
+    transitions: TransitionsType
+    theme: Theme
+    messageSendKey: 'enter' | 'ctrlEnter'
+    distanceUnit: 'kilometers' | 'miles'
+    language: ApiLangCode
+    languages?: ApiLanguage[]
+    messageTextSize: number
+    timeFormat: '12h' | '24h'
+  }
+
+  auth: {
+    currentUserId?: string
+    phoneNumber?: string
+    rememberMe: boolean
+    session?: string
+    screen: AuthScreens
+  }
+}
 
 // type NoUndefinedField<T> = {[P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>}
 

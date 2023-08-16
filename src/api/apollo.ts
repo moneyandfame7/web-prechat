@@ -43,7 +43,7 @@ export class ApolloClientWrapper {
     this._splittedLinks = this.getSplittedLinks(this._wsLink, this._httpLink)
     this.client = new ApolloClient({
       link: ApolloLink.from([
-        this._retryLink,
+        // this._retryLink,
         this._errorLink,
         this._headersLink,
         this._splittedLinks

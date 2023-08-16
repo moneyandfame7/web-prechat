@@ -28,6 +28,7 @@ import './AuthPhoneNumber.scss'
 import {useComputed, useSignal} from '@preact/signals'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 import {validatePhone} from 'utilities/phone/validatePhone'
+import {appManager} from 'managers/manager'
 
 const AuthPhoneNumber: FC = () => {
   const {sendPhone, getCountries} = getActions()
@@ -104,7 +105,9 @@ const AuthPhoneNumber: FC = () => {
   const handleSubmit = (e: TargetedEvent<HTMLFormElement, Event>) => {
     e.preventDefault()
 
-    sendPhone(phone.value)
+    // sendPhone(phone.value)
+    console.log(phone.value)
+    appManager.appAuthManager.sendPhone(phone.value)
   }
 
   return (

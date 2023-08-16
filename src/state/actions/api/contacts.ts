@@ -38,13 +38,9 @@ createAction('addContact', async (state, actions, payload) => {
     return
   }
 
-  updateUsers(
-    state,
-    {
-      [result.id]: result
-    },
-    true
-  )
+  updateUsers(state, {
+    [result.id]: result
+  })
   actions.closeAddContactModal()
 
   if (payload.userId) {

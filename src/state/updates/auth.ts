@@ -27,6 +27,13 @@ export function resetAuthState(global: SignalGlobalState) {
 export function updateAuthState(global: SignalGlobalState, auth: Partial<AuthState>) {
   updateByKey(global.auth, auth)
 
+  // persistIfCan(global)
+  // storageManager.state.set({
+  //   auth: {
+  //     ...global.auth,
+  //     ...auth
+  //   }
+  // })
   // auth lost reference.
   // global.auth = {
   //   ...global.auth,

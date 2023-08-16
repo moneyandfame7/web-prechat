@@ -5,6 +5,8 @@ import {INITIAL_STATE, readPersist, resetPersist, setGlobalState} from 'state/pe
 import {resetAuthState} from 'state/updates/auth'
 import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/config'
 import {changeLanguage} from 'lib/i18n'
+import {appManager, createManagers} from 'managers/manager'
+// import {appManager, createManagers} from 'managers/manager'
 
 createAction('reset', async (state, actions) => {
   resetPersist()
@@ -19,9 +21,10 @@ createAction('reset', async (state, actions) => {
 })
 
 createAction('init', async (state) => {
-  console.time('INIT>>>')
   state.initialization = true
-  const persisted = (await readPersist()) || INITIAL_STATE
+  const managers = await createManagers()
+  appManager.setManagers(managers)
+  // const persisted = (await readPersist()) || INITIAL_STATE
 
   if (USER_PLATFORM === 'macOS') {
     document.documentElement.classList.add('is-mac')
@@ -33,19 +36,17 @@ createAction('init', async (state) => {
     document.documentElement.classList.add('is-safari')
   }
 
-  if (persisted.settings.theme === 'dark') {
-    document.documentElement.classList.add('night')
-  }
+  // if (persisted.settings.theme === 'dark') {
+  //   document.documentElement.classList.add('night')
+  // }
 
-  const packLength = Object.keys(persisted?.settings?.i18n.pack)
-  if (!packLength) {
-    await changeLanguage(persisted.settings.suggestedLanguage || 'en')
-  }
+  // const packLength = Object.keys(persisted?.settings?.i18n.pack)
+  // if (!packLength) {
+  //   await changeLanguage(persisted.settings.suggestedLanguage || 'en')
+  // }
 
-  setGlobalState(persisted)
+  // setGlobalState(persisted)
   // setTimeout(() => {
   state.initialization = false
   // }, 400)
-
-  console.timeEnd('INIT>>>')
 })

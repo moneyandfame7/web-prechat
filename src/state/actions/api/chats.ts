@@ -41,6 +41,6 @@ createAction('getChats', async (state) => {
   if (!chats) {
     return
   }
-
-  updateChats(state, buildRecord(chats, 'id'))
+  const record = buildRecord(chats, 'id')
+  updateChats(state, record)
 })

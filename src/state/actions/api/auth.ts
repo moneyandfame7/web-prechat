@@ -18,6 +18,7 @@ import type {AuthSignInResponse, AuthSignUpInput} from 'api/types/auth'
 import {removeSession, saveSession} from 'utilities/session'
 import {updateAuthState} from 'state/updates/auth'
 import {updateSettingsState} from 'state/updates/settings'
+import {forcePersist} from 'state/persist'
 
 /**
  * Get user connection info, country ( dial code, etc )
@@ -70,13 +71,19 @@ createAction('sendPhone', async (state, _, payload) => {
 
   logger.warn('Code from firebase was sent.')
 
-  state.auth = {
-    ...state.auth,
+  // state.auth = {
+  //   ...state.auth,
+  //   screen: AuthScreens.Code,
+  //   userId: response.userId,
+  //   phoneNumber: payload,
+  //   isLoading: false
+  // }
+  updateAuthState(state, {
     screen: AuthScreens.Code,
     userId: response.userId,
     phoneNumber: payload,
     isLoading: false
-  }
+  })
 })
 
 /**
@@ -163,13 +170,14 @@ createAction('signIn', async (state, _, payload) => {
 
   /* FORCE UPDATE, for update all state ( i18n settings, auth and other)
     IF REMEMBER ME - TRUE */
-  saveSession(response.sessionHash)
+  // saveSession(response.sessionHash)
 
   updateAuthState(state, {
     session: response.sessionHash,
     isLoading: false
   })
   saveSession(response.sessionHash)
+  await forcePersist()
 })
 
 /**
@@ -205,11 +213,13 @@ createAction('signUp', async (state, _, payload) => {
     console.warn('[AUTH]: Sign Up error')
     return
   }
+
   updateAuthState(state, {
     session: response.sessionHash,
     isLoading: false
   })
   saveSession(response.sessionHash)
+  await forcePersist()
 })
 
 createAction('signOut', async (_, actions) => {
