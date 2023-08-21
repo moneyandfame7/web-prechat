@@ -14,12 +14,12 @@ export class RootManager {
   public async init() {
     this.settings = this.appStateManager.state.settings
     this.myId = this.appStateManager.state.auth.currentUserId
-    this.fetchConnection()
+    await this.fetchConnection()
 
     console.log('$$$$ROOOOT$$$$', this)
   }
 
-  private async fetchConnection(): Promise<void> {
+  public async fetchConnection(): Promise<void> {
     const userConnection = await makeRequest('connection')
 
     this.connection = {

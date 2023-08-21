@@ -7,18 +7,18 @@ import {getActions} from 'state/action'
 import {AuthScreens} from 'types/screens'
 
 import {t} from 'lib/i18n'
+import {generateRecaptcha} from 'lib/firebase'
 
 import {Icon} from 'components/ui'
 import {MonkeyTrack} from 'components/monkeys'
-
-import {generateRecaptcha} from 'lib/firebase'
+import {CodeInput} from 'components/ui/CodeInput'
 
 import './AuthCode.scss'
-import {CodeInput} from 'components/ui/CodeInput'
+import {appManager} from 'managers/manager'
 
 const CODE_LENGTH = 6
 const AuthCode: FC = () => {
-  const {auth} = getGlobalState()
+  const {tempState} = appManager.appAuthManager
   const {verifyCode} = getActions()
 
   // const [code, setCode] = useState('')
@@ -28,8 +28,8 @@ const AuthCode: FC = () => {
   const handleChangeCode = useCallback(
     (value: string) => {
       code.value = value
-      if (auth.error) {
-        auth.error = undefined
+      if (tempState.error) {
+        tempState.error = undefined
       }
 
       // if (value.length === 6) {
@@ -37,13 +37,15 @@ const AuthCode: FC = () => {
       //   verifyCode(value)
       // }
     },
-    [auth.error]
+    [tempState.error]
   )
   // t('WrongNumber?')
   const handleEditPhone = () => {
     code.value = ''
-    generateRecaptcha(auth)
-    auth.screen = AuthScreens.PhoneNumber
+    generateRecaptcha(tempState)
+
+    // auth.screen = AuthScreens.PhoneNumber
+    tempState.screen = AuthScreens.PhoneNumber
   }
   return (
     <>
@@ -54,7 +56,7 @@ const AuthCode: FC = () => {
         currentLength={code.value.length}
       />
       <h1 class="title">
-        {auth.$phoneNumber}
+        {tempState.$phoneNumber}
         <div title={t('WrongNumber?')}>
           <Icon
             name="edit"
@@ -69,8 +71,8 @@ const AuthCode: FC = () => {
 
       <CodeInput
         autoFocus
-        error={auth.error}
-        isLoading={auth.isLoading}
+        error={tempState.error}
+        isLoading={tempState.isLoading}
         onInput={handleChangeCode}
         value={code}
         cb={verifyCode}

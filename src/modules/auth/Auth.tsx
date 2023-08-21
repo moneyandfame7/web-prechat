@@ -13,7 +13,6 @@ import AuthCode from './AuthCode.async'
 import AuthPassword from './AuthPassword.async'
 import AuthPhoneNumber from './AuthPhoneNumber'
 import {appManager} from 'managers/manager'
-import {AuthStage} from 'types/state'
 // import {appManager} from 'managers/manager'
 
 const classNames = {
@@ -36,7 +35,6 @@ const classNames = {
 // }
 
 const Auth: FC = () => {
-  const {auth} = getGlobalState()
   const {tempState} = appManager.appAuthManager
 
   const renderScreen = useCallback(() => {

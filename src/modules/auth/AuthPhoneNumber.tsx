@@ -15,7 +15,6 @@ import {changeLanguage, t, useTranslateString} from 'lib/i18n'
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 import {selectCountryByPhone, selectSuggestedCountry} from 'state/selectors/auth'
-import {initializeAuth} from 'state/initialize'
 
 import {Button, Checkbox} from 'components/ui'
 import {Logo} from 'components/Logo'
@@ -31,7 +30,8 @@ import {validatePhone} from 'utilities/phone/validatePhone'
 import {appManager} from 'managers/manager'
 
 const AuthPhoneNumber: FC = () => {
-  const {sendPhone, getCountries} = getActions()
+  const {tempState} = appManager.appAuthManager
+  const {getCountries} = getActions()
   const state = getGlobalState()
   const phoneInputRef = useRef<HTMLInputElement>(null)
 
@@ -47,7 +47,8 @@ const AuthPhoneNumber: FC = () => {
     state.settings.suggestedLanguage
   )
   useLayoutEffect(() => {
-    initializeAuth()
+    // initializeAuth()
+    appManager.appAuthManager.init()
   }, [])
   useEffect(() => {
     getCountries(state.settings.language)
@@ -117,7 +118,7 @@ const AuthPhoneNumber: FC = () => {
       <p class="subtitle">{t('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>
         <SelectCountryInput
-          loading={!state.countryList.length || !state.auth.connection}
+          loading={/* !state.countryList.length || */ !state.auth.connection}
           countryList={state.countryList}
           handleSelect={handleSelectCountry}
           selectedCountry={country}

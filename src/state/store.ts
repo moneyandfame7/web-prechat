@@ -3,7 +3,7 @@
 
 /**
  * Можливо колись розібʼю стейт на різні обʼєкти,
- * але поки що є один глобальний.
+ * але наразі лише один глобальний.
  * ( цей store просто для навчальних цілей, поки що не
  *  збираюсь  його ніяк використовувати )
  */
@@ -87,6 +87,48 @@ const test = testStore({
     counter: 0
   }
 })
+
+// type CombinedStores<T extends Record<keyof T, Store<any, any>>> = {
+//   [K in keyof T]: ReturnType<T[K]['getState']>
+// }
+
+type CombinedStoreOptions = {
+  [K in string]: Store<any, any>
+}
+type CombinedStoreState<T extends CombinedStoreOptions> = {
+  [K in keyof T]: ReturnType<T[K]['getState']>
+}
+type CombinedStoreParsedState<T extends CombinedStoreOptions> = {
+  [K in keyof T]: ReturnType<T[K]['getParsedState']>
+}
+export function combineStores<T extends CombinedStoreOptions>(stores: T) {
+  function getState() {
+    return Object.keys(stores).reduce((acc, name: keyof T) => {
+      acc[name] = stores[name].getState() /* as ReturnType<T[keyof T]['getState']> */
+
+      return acc
+    }, {} as CombinedStoreState<T>)
+  }
+
+  function getParsedState() {
+    return Object.keys(stores).reduce((acc, name: keyof T) => {
+      acc[name] = stores[name].getParsedState()
+
+      return acc
+    }, {} as CombinedStoreParsedState<T>)
+  }
+  return {
+    getState,
+    getParsedState
+  }
+}
+
+const rootStore = combineStores({
+  test
+})
+
+type SignalRootState = ReturnType<typeof rootStore.getState>
+type RootState = ReturnType<typeof rootStore.getParsedState>
 
 export const {getState} = test
 

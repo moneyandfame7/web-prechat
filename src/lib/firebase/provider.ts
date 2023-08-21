@@ -5,12 +5,12 @@ import {RecaptchaVerifier, signInWithPhoneNumber} from 'firebase/auth'
 import {FirebaseError} from 'firebase/app'
 
 import type {ApiLangCode} from 'types/lib'
-import type {AuthState} from 'types/state'
 
 import {authentication} from './config'
 import {throwFirebaseError, getFirebaseErrorMessage} from './errors'
+import type {TempAuthState} from 'managers/appAuthManager'
 
-export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
+export async function generateRecaptcha(auth: DeepSignal<TempAuthState>) {
   // if (auth.captcha) {
   //   await resetCaptcha(auth)
   //   return
@@ -29,7 +29,7 @@ export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
 }
 
 export async function sendCode(
-  auth: DeepSignal<AuthState>,
+  auth: DeepSignal<TempAuthState>,
   lang: ApiLangCode,
   phone: string
 ) {
@@ -50,7 +50,7 @@ export async function sendCode(
 }
 
 export async function verifyCode(
-  auth: DeepSignal<AuthState>,
+  auth: DeepSignal<TempAuthState>,
   language: ApiLangCode,
   code: string
 ) {
@@ -68,7 +68,7 @@ export async function verifyCode(
   }
 }
 
-export async function resetCaptcha(auth: DeepSignal<AuthState>) {
+export async function resetCaptcha(auth: DeepSignal<TempAuthState>) {
   if (auth.captcha) {
     auth.captcha.clear()
     const captchaWrapper = document.getElementById('auth-recaptcha-wrapper')

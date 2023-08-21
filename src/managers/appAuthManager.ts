@@ -2,7 +2,7 @@ import {deepSignal} from 'deepsignal'
 import type {ConfirmationResult, RecaptchaVerifier} from 'firebase/auth'
 
 import {Api} from 'api/manager'
-// import * as firebase from 'lib/firebase'
+import * as firebase from 'lib/firebase'
 
 // import type {AppManager} from './manager'
 import {updateByKey} from 'utilities/object/updateByKey'
@@ -14,9 +14,9 @@ import type {RootManager} from './root'
 import {timeout} from 'utilities/schedulers/timeout'
 import {AuthScreens} from 'types/screens'
 
-type TempState = {
+export type TempAuthState = {
   error?: string
-  isLoading?: boolean
+  isLoading: boolean
   firebase_token?: string
   captcha?: RecaptchaVerifier
   confirmResult?: ConfirmationResult
@@ -26,15 +26,31 @@ type TempState = {
   rememberMe: boolean
 }
 export class AppAuthManager {
+  public tempState = deepSignal<TempAuthState>({
+    screen: AuthScreens.PhoneNumber,
+    rememberMe: true,
+    isLoading: false
+  })
+
   public constructor(
     private $root: RootManager,
     private appStateManager: AppStateManager
   ) {}
 
-  public tempState = deepSignal<TempState>({
-    screen: AuthScreens.PhoneNumber,
-    rememberMe: true
-  })
+  public async init() {
+    this.setTempByKeys({
+      isLoading: true
+    })
+    if (!this.$root.connection) {
+      await this.$root.fetchConnection()
+    }
+    firebase.generateRecaptcha(this.tempState)
+
+    this.setTempByKeys({
+      isLoading: false
+    })
+  }
+
   public async sendPhone(phone: string) {
     this.setTempByKeys({isLoading: true})
 
@@ -48,15 +64,14 @@ export class AppAuthManager {
     }
 
     const {
-      auth,
       settings: {language}
     } = this.appStateManager.state
 
-    await timeout(500)(true).then((mockSucessful) => {
-      console.log({mockSucessful})
-    })
-    // const successfully = await firebase.sendCode(auth as any, language, phone)
-
+    // await timeout(500)(true).then((mockSucessful) => {
+    //   console.log({mockSucessful})
+    // })
+    const successfully = await firebase.sendCode(this.tempState, language, phone)
+    console.log({successfully})
     // if (!successfully) {
     //   return
     // }
@@ -73,11 +88,10 @@ export class AppAuthManager {
     this.setTempByKeys({isLoading: true})
 
     const {
-      auth,
       settings: {language}
     } = this.appStateManager.state
 
-    // const firebase_token = await firebase.verifyCode(auth as any, language, code)
+    const firebase_token = await firebase.verifyCode(this.tempState, language, code)
     // if (!firebase_token) {
     //   return
     // }
@@ -128,7 +142,7 @@ export class AppAuthManager {
   //   this.tempState[key] = value
   // }
 
-  private setTempByKeys(value: Partial<TempState>) {
+  public setTempByKeys(value: Partial<TempAuthState>) {
     updateByKey(this.tempState, value)
   }
 
