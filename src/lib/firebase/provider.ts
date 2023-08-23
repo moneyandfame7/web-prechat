@@ -9,8 +9,9 @@ import type {ApiLangCode} from 'types/lib'
 import {authentication} from './config'
 import {throwFirebaseError, getFirebaseErrorMessage} from './errors'
 import type {TempAuthState} from 'managers/appAuthManager'
+import type {AuthState} from 'store/auth.store'
 
-export async function generateRecaptcha(auth: DeepSignal<TempAuthState>) {
+export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
   // if (auth.captcha) {
   //   await resetCaptcha(auth)
   //   return
@@ -29,7 +30,7 @@ export async function generateRecaptcha(auth: DeepSignal<TempAuthState>) {
 }
 
 export async function sendCode(
-  auth: DeepSignal<TempAuthState>,
+  auth: DeepSignal<AuthState>,
   lang: ApiLangCode,
   phone: string
 ) {
@@ -50,7 +51,7 @@ export async function sendCode(
 }
 
 export async function verifyCode(
-  auth: DeepSignal<TempAuthState>,
+  auth: DeepSignal<AuthState>,
   language: ApiLangCode,
   code: string
 ) {

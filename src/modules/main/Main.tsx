@@ -1,9 +1,5 @@
 import {type FC, memo, useEffect} from 'preact/compat'
 
-import 'state/actions/all'
-import {getActions} from 'state/action'
-import {getGlobalState} from 'state/signal'
-
 import {MiddleColumn} from 'containers/middle'
 import LeftColumn from 'containers/left/LeftColumn'
 import RightColumn from 'containers/right/RightColumn'
@@ -13,21 +9,21 @@ import NewContactModal from 'components/popups/NewContactModal.async'
 
 import {destroySubscribe, getSubscriptions} from 'state/subscribe'
 
+import {combinedStore} from 'store/combined'
 import './Main.scss'
 
 const Main: FC = () => {
-  const global = getGlobalState()
-  const {getContactList, getChats} = getActions()
+  const appActions = combinedStore.getActions()
+  const appState = combinedStore.getState()
   const subscriptions = getSubscriptions()
   useEffect(() => {
-    getContactList()
-    getChats()
+    appActions.users.getContactsList()
+    appActions.chats.getChats()
+    // subscriptions.onChatCreated()
 
-    subscriptions.onChatCreated()
-
-    return () => {
-      destroySubscribe('onChatCreated')
-    }
+    // return () => {
+    //   destroySubscribe('onChatCreated')
+    // }
   }, [])
   return (
     <div class="Main">
@@ -35,10 +31,13 @@ const Main: FC = () => {
       <MiddleColumn />
       <RightColumn />
       <NewContactModal
-        isOpen={Boolean(global.newContact.userId) || global.newContact.isByPhoneNumber}
-        userId={global.newContact.userId}
+        isOpen={
+          Boolean(appState.users.newContact.userId) ||
+          appState.users.newContact.isByPhoneNumber
+        }
+        userId={appState.users.newContact.userId}
       />
-      <Notification isOpen={global.notification.isOpen} />
+      <Notification isOpen={appState.ui.notification.isOpen} />
     </div>
   )
 }

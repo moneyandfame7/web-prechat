@@ -6,10 +6,11 @@ import {t} from 'lib/i18n'
 
 import {Button, PasswordInput} from 'components/ui'
 import {MonkeyPassword} from 'components/monkeys'
-import {getGlobalState} from 'state/signal'
+import {authStore} from 'store/auth.store'
 
 const AuthPassword: FC = () => {
-  const {auth} = getGlobalState()
+  // const {auth} = getGlobalState()
+  const authState = authStore.getState()
   const password = useSignal('')
   const showPassword = useSignal(false)
 
@@ -23,13 +24,13 @@ const AuthPassword: FC = () => {
       <h1 class="title">Enter a Password</h1>
       <p class="subtitle">Your account is protected with an additional password.</p>
       <PasswordInput
-        disabled={auth.$isLoading}
+        disabled={authState.$isLoading}
         value={password}
         onInput={handleChange}
         label="Password"
         showPassword={showPassword}
       />
-      <Button isLoading={auth.isLoading}>{t('Next')}</Button>
+      <Button isLoading={authState.isLoading}>{t('Next')}</Button>
     </>
   )
 }

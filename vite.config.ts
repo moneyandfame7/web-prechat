@@ -94,7 +94,8 @@ export default ({mode}) => {
         'utilities': '/src/utilities',
         'context': '/src/context',
         'managers': '/src/managers',
-        'storages': '/src/storages'
+        'storages': '/src/storages',
+        'store': '/src/store'
       }
     },
     server: {

@@ -125,6 +125,7 @@ function pickPersistGlobal(global: GlobalState) {
   } satisfies DeepPartial<GlobalState>
 
   const {chats, users, ...state} = reduced
+
   return {chats, users, state}
 }
 

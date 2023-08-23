@@ -8,13 +8,13 @@ import {
   useState,
   useLayoutEffect
 } from 'preact/compat'
+import {useComputed, useSignal} from '@preact/signals'
 
 import type {ApiCountry} from 'api/types/langPack'
 
 import {changeLanguage, t, useTranslateString} from 'lib/i18n'
-import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
-import {selectCountryByPhone, selectSuggestedCountry} from 'state/selectors/auth'
+import {selectSuggestedCountry} from 'state/selectors/auth'
 
 import {Button, Checkbox} from 'components/ui'
 import {Logo} from 'components/Logo'
@@ -22,54 +22,59 @@ import {Logo} from 'components/Logo'
 import {PhoneNumberInput} from './PhoneNumberInput'
 import {SelectCountryInput} from './SelectCountryInput'
 
-// import {updateGlobalState} from 'state/persist'
-import './AuthPhoneNumber.scss'
-import {useComputed, useSignal} from '@preact/signals'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 import {validatePhone} from 'utilities/phone/validatePhone'
-import {appManager} from 'managers/manager'
+
+import {combinedStore} from 'store/combined'
+
+import './AuthPhoneNumber.scss'
 
 const AuthPhoneNumber: FC = () => {
-  const {tempState} = appManager.appAuthManager
-  const {getCountries} = getActions()
+  const appState = combinedStore.getState()
+  const appActions = combinedStore.getActions()
+  // const {getCountries} = getActions()
   const state = getGlobalState()
   const phoneInputRef = useRef<HTMLInputElement>(null)
 
   const phone = useSignal('')
   const isFormDisabled = useComputed(() => !validatePhone(unformatStr(phone.value)))
 
-  const [country, setCountry] = useState<ApiCountry | undefined>(
-    selectCountryByPhone(state)
-  )
+  const [country, setCountry] = useState<ApiCountry | undefined>()
   const translateLoading = useSignal(false)
   const translateString = useTranslateString(
     'Auth.ContinueOnLanguage',
-    state.settings.suggestedLanguage
+    appState.settings.suggestedLanguage
   )
   useLayoutEffect(() => {
     // initializeAuth()
-    appManager.appAuthManager.init()
+    // appManager.appAuthManager.init()
+    appActions.auth.init()
   }, [])
   useEffect(() => {
-    getCountries(state.settings.language)
-  }, [state.settings.language])
+    appActions.help.getCountriesList({
+      lang: appState.settings.language
+    })
+  }, [appState.settings.language])
 
   useEffect(() => {
-    setCountry(state.countryList.find((c) => c.dial_code === country?.dial_code))
-  }, [state.countryList])
+    const suggested = appState.help.countriesList.find(
+      (c) => c.dial_code === country?.dial_code
+    )
+    setCountry(suggested)
+  }, [appState.help.countriesList])
   useEffect(() => {
-    if (state.auth.connection && state.countryList.length) {
-      const suggestedCountry = selectSuggestedCountry(state)
+    if (appState.auth.connection && appState.help.countriesList.length) {
+      const suggestedCountry = combinedStore.select(selectSuggestedCountry)
       if (suggestedCountry && !country && !phone.value.length) {
         setCountry(suggestedCountry)
         phone.value = suggestedCountry.dial_code
       }
     }
-  }, [state.auth.connection, state.countryList])
+  }, [appState.auth.connection, appState.help.countriesList])
 
   const handleChangePhone = useCallback(
     (value: string) => {
-      const foundedCountry = state.countryList.find(
+      const foundedCountry = appState.help.countriesList.find(
         (country) => country.dial_code === value.trim()
       )
 
@@ -78,7 +83,7 @@ const AuthPhoneNumber: FC = () => {
       }
       phone.value = value /* .replace(/\s/g, '') */
     },
-    [state.countryList, country]
+    [appState.help.countriesList, country]
   )
 
   const handleSelectCountry = useCallback(
@@ -87,28 +92,30 @@ const AuthPhoneNumber: FC = () => {
       phone.value = country.dial_code
       phoneInputRef.current?.focus()
     },
-    [phoneInputRef]
+    [
+      /* phoneInputRef */
+    ]
   )
   const handleChangeLanguage = useCallback(async () => {
-    const suggestedLng = state.settings.suggestedLanguage
+    const suggestedLng = appState.settings.suggestedLanguage
     if (suggestedLng) {
       translateLoading.value = true
       await changeLanguage(suggestedLng)
 
       translateLoading.value = false
     }
-  }, [state.settings.suggestedLanguage])
+  }, [appState.settings.suggestedLanguage])
 
   const handleChangeRememberMe = useCallback((checked: boolean) => {
-    state.auth.rememberMe = checked
+    // state.auth.rememberMe = checked
+    appState.auth.rememberMe = checked
   }, [])
 
   const handleSubmit = (e: TargetedEvent<HTMLFormElement, Event>) => {
     e.preventDefault()
 
-    // sendPhone(phone.value)
-    console.log(phone.value)
-    appManager.appAuthManager.sendPhone(phone.value)
+    // console.log(phone.value)
+    appActions.auth.sendPhone(phone.value)
   }
 
   return (
@@ -118,8 +125,8 @@ const AuthPhoneNumber: FC = () => {
       <p class="subtitle">{t('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>
         <SelectCountryInput
-          loading={/* !state.countryList.length || */ !state.auth.connection}
-          countryList={state.countryList}
+          loading={/* !state.countryList.length || */ !appState.auth.connection}
+          countryList={appState.help.countriesList}
           handleSelect={handleSelectCountry}
           selectedCountry={country}
         />
@@ -134,24 +141,24 @@ const AuthPhoneNumber: FC = () => {
           id="remember-me"
           label={t('RememberMe')}
           onToggle={handleChangeRememberMe}
-          disabled={state.auth.isLoading}
+          disabled={appState.auth.isLoading}
           /* якщо тут передати не сигнал, буде ререндер всього компоненту */
-          checked={state.auth.$rememberMe!}
+          checked={appState.auth.$rememberMe!}
         />
         <Button
           type="submit"
-          isLoading={state.auth.isLoading}
+          isLoading={appState.auth.isLoading}
           isDisabled={isFormDisabled}
         >
-          {state.auth.error || t('Next')}
+          {appState.auth.error || t('Next')}
         </Button>
 
-        {state.settings.suggestedLanguage !== state.settings.i18n.lang_code && (
+        {appState.settings.suggestedLanguage !== state.settings.i18n.lang_code && (
           <Button
             variant="transparent"
             onClick={handleChangeLanguage}
             isLoading={translateLoading.value}
-            isDisabled={state.auth.$isLoading}
+            isDisabled={appState.auth.$isLoading}
           >
             {translateString}
           </Button>
