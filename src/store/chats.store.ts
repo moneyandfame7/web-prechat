@@ -4,6 +4,7 @@ import type {ApiChat, CreateChannelInput, CreateGroupInput} from 'api/types'
 import {createStore} from 'lib/store'
 import {buildRecord} from 'utilities/object/buildRecord'
 import {deepUpdate} from 'utilities/object/deepUpdate'
+import {chatsStorage} from './storages/chats.storage'
 
 interface ChatsState {
   byId: Record<string, ApiChat>
@@ -47,6 +48,8 @@ export const chatsStore = createStore({
       const record = buildRecord(chats, 'id')
 
       deepUpdate(state.byId, record)
+
+      chatsStorage.put(record)
     }
   }
 })

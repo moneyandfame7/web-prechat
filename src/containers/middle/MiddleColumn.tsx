@@ -10,11 +10,12 @@ import {deepSignal} from 'deepsignal'
 
 import {SwitchLanguageTest} from 'components/test'
 import {t} from 'lib/i18n'
-import './MiddleColumn.scss'
 import {SettingsScreens} from 'types/screens'
 import {ImageUpload} from 'components/UploadPhoto'
 import {saveEncryptSession, decryptSession} from 'utilities/encryption/storage'
 import {useSignal} from '@preact/signals'
+
+import './MiddleColumn.scss'
 
 export const skeleton = deepSignal({
   isLoading: true
@@ -635,14 +636,6 @@ export const MiddleColumn: FC = () => {
     decryptSession(password)
   }
 
-  async function persistState() {
-    // persistIfCan(global)
-  }
-
-  function logGloba() {
-    // console.log(global)
-  }
-
   const password = useSignal('')
   const showPassword = useSignal(false)
   return (
@@ -667,8 +660,6 @@ export const MiddleColumn: FC = () => {
         >
           READ
         </Button>
-        <Button onClick={logGloba}>LOG_GLOBAL</Button>
-        <Button onClick={persistState}>PERSIST_STATE</Button>
         <PasswordInput
           onInput={(e) => {
             password.value = e

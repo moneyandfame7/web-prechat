@@ -1,5 +1,7 @@
+import type {ConfirmationResult, RecaptchaVerifier} from 'firebase/auth'
+
 import {Api} from 'api/manager'
-import type {AuthSignUpInput} from 'api/types'
+import type {ApiLangCode, AuthSignUpInput} from 'api/types'
 
 import * as firebase from 'lib/firebase'
 
@@ -16,6 +18,8 @@ import type {SignInPayload, SignUpPayload} from 'types/action'
 import {settingsStore} from './settings.store'
 import {startPersist} from './storages/helpers'
 import {uiStore} from './ui.store'
+import {makeRequest} from 'utilities/makeRequest'
+import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
 
 export interface AuthState {
   isLoading: boolean
@@ -27,6 +31,8 @@ export interface AuthState {
   firebase_token?: string
   session?: string
   screen: AuthScreens
+  captcha?: RecaptchaVerifier
+  confirmResult?: ConfirmationResult
 }
 /* Create store twoFaStore? hint, email, etc */
 
@@ -39,6 +45,29 @@ export const authStore = createStore({
   name: 'authStore',
   initialState,
   actionHandlers: {
+    mockAuth: (state) => {
+      state.session = 'PAVAPEPEGEMABODY'
+    },
+    init: async (state) => {
+      state.isLoading = true
+      if (!state.connection) {
+        const connection = await makeRequest('connection')
+
+        const suggestedLanguage = connection.countryCode.toLowerCase() as ApiLangCode
+        const existLanguage = LANGUAGES_CODE_ARRAY.find(
+          (code) => code === suggestedLanguage
+        )
+
+        state.connection = connection
+        settingsStore.setState({
+          suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
+        })
+      }
+
+      firebase.generateRecaptcha(state)
+
+      state.isLoading = false
+    },
     sendPhone: async (state, payload: string) => {
       state.isLoading = true
 
@@ -49,7 +78,6 @@ export const authStore = createStore({
         state.isLoading = false
         return
       }
-
       /* Validate has active session, then send code from app. */
       const {language} = settingsStore.getState()
       const successfully = await firebase.sendCode(state, language, unformatted)
@@ -64,6 +92,8 @@ export const authStore = createStore({
         phoneNumber: payload,
         isLoading: false
       })
+
+      console.log({state}, 'SEND PHONE')
     },
     verifyCode: async (state, payload: string) => {
       state.isLoading = true
@@ -101,14 +131,10 @@ export const authStore = createStore({
         return
       }
 
-      deepUpdate(state, {
-        session: response.sessionHash,
-        isLoading: false
-      })
-
-      await startPersist()
-      // need to forcePersist here!!! idk how
-      // authStorage.put()
+      state.isLoading = false
+      if (state.rememberMe) {
+        authStore.actions.saveSession(response.sessionHash)
+      }
     },
     signUp: async (state, payload: SignUpPayload) => {
       state.isLoading = true
@@ -141,16 +167,18 @@ export const authStore = createStore({
         return
       }
 
-      deepUpdate(state, {
-        session: response.sessionHash,
-        isLoading: false
-      })
-
-      await startPersist()
+      state.isLoading = false
+      if (state.rememberMe) {
+        authStore.actions.saveSession(response.sessionHash)
+      }
     },
     signOut: async () => {
       /* call api, then */
       await uiStore.actions.reset()
+    },
+    saveSession: async (state, payload: string) => {
+      state.session = payload
+      await startPersist()
     }
   }
 })

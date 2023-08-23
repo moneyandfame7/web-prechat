@@ -20,13 +20,13 @@ export class RootManager {
   }
 
   public async fetchConnection(): Promise<void> {
-    const userConnection = await makeRequest('connection')
+    // const userConnection = await makeRequest('connection')
 
-    this.connection = {
-      ...userConnection,
-      browser: USER_BROWSER,
-      platform: USER_PLATFORM
-    }
+    // this.connection = {
+    //   ...userConnection,
+    //   browser: USER_BROWSER,
+    //   platform: USER_PLATFORM
+    // }
     console.log('WAS SETTED CONNECTION')
   }
 }

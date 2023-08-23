@@ -5,6 +5,8 @@ import {
   USER_PLATFORM
 } from 'common/config'
 import {createStore} from 'lib/store'
+import * as cache from 'lib/cache'
+
 import type {SettingsScreens} from 'types/screens'
 import {deepUpdate} from 'utilities/object/deepUpdate'
 import {hydrateStore, stopPersist} from './storages/helpers'
@@ -48,6 +50,11 @@ export const uiStore = createStore({
       state.isInitialization = false
     },
     reset: async () => {
+      cache.clear('prechat-avatars')
+      cache.clear('prechat-i18n-pack')
+      cache.clear('prechat-i18n-string')
+      cache.clear('prechat-assets')
+
       await stopPersist()
 
       await uiStore.actions.init()

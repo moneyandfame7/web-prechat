@@ -17,6 +17,7 @@ export interface SettingsState {
     isScreenLocked: boolean
     isLoading: boolean
   }
+  suggestedLanguage?: ApiLangCode
 }
 
 const initialState: SettingsState = {
@@ -34,7 +35,8 @@ const initialState: SettingsState = {
     hasPasscode: false,
     isLoading: false,
     isScreenLocked: false
-  }
+  },
+  suggestedLanguage: undefined
 }
 export const settingsStore = createStore({
   name: 'settingsStore',

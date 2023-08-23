@@ -2,17 +2,16 @@ import {type FC, useCallback} from 'preact/compat'
 
 import 'state/actions/imporant'
 import {AuthScreens} from 'types/screens'
-// import {saveSession} from 'utilities/session'
 
 import {SwitchTransition} from 'components/transitions'
 import {Button} from 'components/ui'
+
+import {authStore} from 'store/auth.store'
 
 import SignUp from './SignUp.async'
 import AuthCode from './AuthCode.async'
 import AuthPassword from './AuthPassword.async'
 import AuthPhoneNumber from './AuthPhoneNumber'
-import {appManager} from 'managers/manager'
-import {authStore} from 'store/auth.store'
 // import {appManager} from 'managers/manager'
 
 const classNames = {
@@ -22,6 +21,7 @@ const classNames = {
   [AuthScreens.SignUp]: 'Auth_signup'
 }
 
+// прелоад манкі??
 // не знаю як пофіксити кейс, коли з асинхронними компонентами flickering mount компонента, тому використовую fade, там це непомітно
 // const getTransitionByCase = (
 //   _: AuthScreens,
@@ -35,11 +35,10 @@ const classNames = {
 // }
 
 const Auth: FC = () => {
-  const {tempState} = appManager.appAuthManager
   const authState = authStore.getState()
   // authState.
   const renderScreen = useCallback(() => {
-    switch (tempState.screen) {
+    switch (authState.screen) {
       case AuthScreens.Code:
         return <AuthCode />
       case AuthScreens.Password:
@@ -49,7 +48,7 @@ const Auth: FC = () => {
       case AuthScreens.SignUp:
         return <SignUp />
     }
-  }, [tempState.screen])
+  }, [authState.screen])
 
   return (
     <div class="scrollable scrollable-hidden" id="auth-scroll">
@@ -57,6 +56,7 @@ const Auth: FC = () => {
         <Button
           onClick={() => {
             // appManager.appAuthManager.mockAuth()
+            authStore.actions.mockAuth()
           }}
         >
           Mock auth
@@ -65,7 +65,7 @@ const Auth: FC = () => {
           <SwitchTransition
             shouldCleanup={false}
             name="zoomFade"
-            activeKey={tempState.screen}
+            activeKey={authState.screen}
             // permanentClassname="Screen-container"
             classNames={classNames}
             durations={300}

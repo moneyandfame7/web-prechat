@@ -23,10 +23,6 @@ export function createActions<
           subscribers.forEach((cb) => {
             cb(state)
           })
-          if (DEBUG) {
-            // eslint-disable-next-line no-console
-            console.log(`A$sync action ${String(actionName)} was called`)
-          }
         })
       }
 

@@ -2,9 +2,9 @@ import type {FC} from 'preact/compat'
 import {memo, useCallback, useRef} from 'preact/compat'
 import {useSignal} from '@preact/signals'
 
-import {getGlobalState} from 'state/signal'
-import {getActions} from 'state/action'
 import {AuthScreens} from 'types/screens'
+
+import {combinedStore} from 'store/combined'
 
 import {t} from 'lib/i18n'
 import {generateRecaptcha} from 'lib/firebase'
@@ -14,12 +14,12 @@ import {MonkeyTrack} from 'components/monkeys'
 import {CodeInput} from 'components/ui/CodeInput'
 
 import './AuthCode.scss'
-import {appManager} from 'managers/manager'
 
 const CODE_LENGTH = 6
 const AuthCode: FC = () => {
-  const {tempState} = appManager.appAuthManager
-  const {verifyCode} = getActions()
+  const {auth: authState} = combinedStore.getState()
+  const appActions = combinedStore.getActions()
+  // const {verifyCode} = getActions()
 
   // const [code, setCode] = useState('')
   const code = useSignal('')
@@ -28,24 +28,19 @@ const AuthCode: FC = () => {
   const handleChangeCode = useCallback(
     (value: string) => {
       code.value = value
-      if (tempState.error) {
-        tempState.error = undefined
+      if (authState.error) {
+        authState.error = undefined
       }
-
-      // if (value.length === 6) {
-      //   // inputRef.current?.blur()  @commented to avoid flick monkey
-      //   verifyCode(value)
-      // }
     },
-    [tempState.error]
+    [authState.error]
   )
   // t('WrongNumber?')
   const handleEditPhone = () => {
     code.value = ''
-    generateRecaptcha(tempState)
+    generateRecaptcha(authState)
 
     // auth.screen = AuthScreens.PhoneNumber
-    tempState.screen = AuthScreens.PhoneNumber
+    authState.screen = AuthScreens.PhoneNumber
   }
   return (
     <>
@@ -56,7 +51,7 @@ const AuthCode: FC = () => {
         currentLength={code.value.length}
       />
       <h1 class="title">
-        {tempState.$phoneNumber}
+        {authState.$phoneNumber}
         <div title={t('WrongNumber?')}>
           <Icon
             name="edit"
@@ -71,11 +66,11 @@ const AuthCode: FC = () => {
 
       <CodeInput
         autoFocus
-        error={tempState.error}
-        isLoading={tempState.isLoading}
+        error={authState.error}
+        isLoading={authState.isLoading}
         onInput={handleChangeCode}
         value={code}
-        cb={verifyCode}
+        cb={appActions.auth.verifyCode}
         elRef={inputRef}
       />
     </>

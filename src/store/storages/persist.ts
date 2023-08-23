@@ -1,7 +1,7 @@
-import {createPersistStore} from 'lib/store/storage/createPersistDb'
-import type {AppCombinedStore} from 'store/combined'
+import {createPersistStore} from 'lib/store/persist/createPersistStore'
+// import type {AppCombinedStore} from 'store/combined'
 
-export const persistStore = createPersistStore<AppCombinedStore>({
+export const persistStore = createPersistStore({
   databaseName: 'prechat-state',
   storages: {
     auth: {

@@ -2,9 +2,6 @@ import {type FC} from 'preact/compat'
 
 import {ClientError} from 'lib/error/error'
 
-import {getGlobalState} from 'state/signal'
-import {hasSession} from 'state/helpers/auth'
-
 import {ErrorCatcher} from 'components/ErrorCatcher'
 import {ScreenLoader} from 'components/ScreenLoader'
 import {SwitchTransition} from 'components/transitions'
@@ -14,6 +11,8 @@ import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
 
 import {ServiceWorker} from '../serviceWorker'
+
+import {combinedStore} from 'store/combined'
 
 import './App.scss'
 
@@ -26,21 +25,21 @@ enum AppScreens {
 }
 
 const Application: FC = () => {
-  const state = getGlobalState()
+  const globalState = combinedStore.getState()
 
   let initialScreen: AppScreens
   if (ClientError.getError().value.length) {
     initialScreen = AppScreens.Error
-  } else if (state.initialization) {
+  } else if (globalState.ui.isInitialization) {
     initialScreen = AppScreens.Loading
-  } else if (hasSession()) {
+  } else if (globalState.auth.session) {
     initialScreen = AppScreens.Main
   } else {
     initialScreen = AppScreens.Auth
   }
 
-  const renderScreen = (activeScreen: AppScreens) => {
-    switch (activeScreen) {
+  const renderScreen = () => {
+    switch (initialScreen) {
       case AppScreens.Auth:
         return <Auth key={AppScreens.Auth} />
       case AppScreens.Lock:
@@ -63,7 +62,7 @@ const Application: FC = () => {
           durations={500}
           activeKey={initialScreen}
         >
-          {renderScreen(initialScreen)}
+          {renderScreen()}
         </SwitchTransition>
       </>
     </ErrorCatcher>
