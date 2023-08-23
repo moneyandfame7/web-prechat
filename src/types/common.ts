@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>
+  [P in keyof T]?: T extends AnyObject ? DeepPartial<T[P]> : T[P]
 }
 
 /**

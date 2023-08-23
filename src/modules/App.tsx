@@ -27,6 +27,7 @@ enum AppScreens {
 
 const Application: FC = () => {
   const state = getGlobalState()
+
   let initialScreen: AppScreens
   if (ClientError.getError().value.length) {
     initialScreen = AppScreens.Error

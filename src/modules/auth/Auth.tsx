@@ -1,7 +1,6 @@
-import {type FC, useCallback, useEffect, useState} from 'preact/compat'
+import {type FC, useCallback} from 'preact/compat'
 
 import 'state/actions/imporant'
-import {getGlobalState} from 'state/signal'
 import {AuthScreens} from 'types/screens'
 // import {saveSession} from 'utilities/session'
 
@@ -13,6 +12,7 @@ import AuthCode from './AuthCode.async'
 import AuthPassword from './AuthPassword.async'
 import AuthPhoneNumber from './AuthPhoneNumber'
 import {appManager} from 'managers/manager'
+import {authStore} from 'store/auth.store'
 // import {appManager} from 'managers/manager'
 
 const classNames = {
@@ -36,7 +36,8 @@ const classNames = {
 
 const Auth: FC = () => {
   const {tempState} = appManager.appAuthManager
-
+  const authState = authStore.getState()
+  // authState.
   const renderScreen = useCallback(() => {
     switch (tempState.screen) {
       case AuthScreens.Code:

@@ -23,6 +23,7 @@ createAction('reset', async (state, actions) => {
 createAction('init', async (state) => {
   state.initialization = true
   const managers = await createManagers()
+  // managers.appAuthManager.
   appManager.setManagers(managers)
   // const persisted = (await readPersist()) || INITIAL_STATE
 
