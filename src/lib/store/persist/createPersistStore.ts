@@ -1,18 +1,18 @@
+import type {Signal} from '@preact/signals'
 import {type IDBPDatabase, openDB} from 'idb'
 import {deepSignal} from 'deepsignal'
 
+import {logDebugWarn} from 'lib/logger'
+
 import type {AnyObject} from 'types/common'
 
-import type {CombinedStore} from '../types'
-import type {PersistDbConfig, PersistIdbStorage} from './types'
-import type {Signal} from '@preact/signals'
-import {logDebugWarn} from 'lib/logger'
 import {deepCopy} from 'utilities/object/deepCopy'
+
+import type {PersistDbConfig, PersistIdbStorage, StoragesName} from './types'
 
 export function createPersistStore<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  RootStore extends CombinedStore<any>,
-  Config extends PersistDbConfig<RootStore> = PersistDbConfig<RootStore>
+  Config extends PersistDbConfig = PersistDbConfig
 >(config: Config) {
   const {databaseName, storages, version} = config
   if (!storages) {
@@ -22,25 +22,15 @@ export function createPersistStore<
     initialized: false,
     enabled: false
   })
-  const storagesNames = Object.keys(storages).map((stores) => storages[stores]?.name)
 
   const dbPromise = openDB(databaseName, version, {
     upgrade: (upgradeDb) => {
       if (!storages) {
         return
       }
-      Object.keys(storages).forEach((key) => {
-        if (!storages[key]) {
-          return
-        }
-        const storageName = storages[key]!.name
-
-        const storagesParameters = storages[key]?.optionalParameters
-        if (!upgradeDb.objectStoreNames.contains(storages[key]!.name)) {
-          upgradeDb.createObjectStore(
-            storageName,
-            storagesParameters as IDBObjectStoreParameters
-          )
+      storages.map((storage) => {
+        if (!upgradeDb.objectStoreNames.contains(storage.name)) {
+          upgradeDb.createObjectStore(storage.name, storage.optionalParameters)
         }
       })
     }
@@ -54,36 +44,22 @@ export function createPersistStore<
   function injectStorage<
     T extends AnyObject /*  = ReturnType<RootStore["getInitialState"]>[StoreName], */
     /* StoreName extends keyof Config["storages"] = string, */
-  >(config: {forStore: keyof Config['storages']}) {
-    const {forStore} = config
+  >(config: {storageName: StoragesName}) {
+    const {storageName} = config
 
-    const storageNameFromStore = storages[forStore]?.name
+    // console.log({storageName}, storages)
+    const storageWithName = storages.find((storage) => storage.name === storageName)
 
-    if (!storagesNames.includes(storageNameFromStore) || !storageNameFromStore) {
-      throw new Error(
-        `Store ${
-          storageNameFromStore || String(forStore)
-        } not defined in "createPeristDb"`
-      )
+    if (!storageWithName) {
+      throw new Error('alsdlasld')
     }
 
     const idbStorage = idbMethods<T>({
       dbPromise,
-      storeName: storageNameFromStore,
-      optionalParameters: storages[forStore]
-        ?.optionalParameters as IDBObjectStoreParameters,
+      storeName: storageWithName.name,
+      optionalParameters: storageWithName?.optionalParameters,
       enabled: store.$enabled!
     })
-
-    // store.$enabled?.subscribe((IS_ENABLED) => {
-    //   console.log({ IS_ENABLED })
-    //   // idbStorage.put()
-    //   /* forcePersist if i enable persist??? */
-    //   // @ts-ignore
-    //   // const mySukaState = rootStore2.getState()[forStore]
-
-    //   // console.log({ mySukaState })
-    // })
 
     return idbStorage
   }
@@ -107,7 +83,7 @@ export function createPersistStore<
 
 interface IdbMethodsConfig {
   dbPromise: Promise<IDBPDatabase<unknown>>
-  storeName: string
+  storeName: StoragesName
   optionalParameters?: IDBObjectStoreParameters
   enabled: Signal<boolean>
 }

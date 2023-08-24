@@ -6,12 +6,11 @@ import {AuthScreens} from 'types/screens'
 import {SwitchTransition} from 'components/transitions'
 import {Button} from 'components/ui'
 
-import {authStore} from 'store/auth.store'
-
 import SignUp from './SignUp.async'
 import AuthCode from './AuthCode.async'
 import AuthPassword from './AuthPassword.async'
 import AuthPhoneNumber from './AuthPhoneNumber'
+import {getGlobalState} from 'state/signal'
 // import {appManager} from 'managers/manager'
 
 const classNames = {
@@ -35,10 +34,10 @@ const classNames = {
 // }
 
 const Auth: FC = () => {
-  const authState = authStore.getState()
+  const {auth} = getGlobalState()
   // authState.
   const renderScreen = useCallback(() => {
-    switch (authState.screen) {
+    switch (auth.screen) {
       case AuthScreens.Code:
         return <AuthCode />
       case AuthScreens.Password:
@@ -48,7 +47,7 @@ const Auth: FC = () => {
       case AuthScreens.SignUp:
         return <SignUp />
     }
-  }, [authState.screen])
+  }, [auth.screen])
 
   return (
     <div class="scrollable scrollable-hidden" id="auth-scroll">
@@ -56,7 +55,8 @@ const Auth: FC = () => {
         <Button
           onClick={() => {
             // appManager.appAuthManager.mockAuth()
-            authStore.actions.mockAuth()
+            // authStore.actions.mockAuth()
+            auth.session = '12348123848128348128348143'
           }}
         >
           Mock auth
@@ -65,7 +65,7 @@ const Auth: FC = () => {
           <SwitchTransition
             shouldCleanup={false}
             name="zoomFade"
-            activeKey={authState.screen}
+            activeKey={auth.screen}
             // permanentClassname="Screen-container"
             classNames={classNames}
             durations={300}

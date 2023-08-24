@@ -1,6 +1,7 @@
 import {type FC} from 'preact/compat'
 
 import {ClientError} from 'lib/error/error'
+import {getGlobalState} from 'state/signal'
 
 import {ErrorCatcher} from 'components/ErrorCatcher'
 import {ScreenLoader} from 'components/ScreenLoader'
@@ -11,8 +12,6 @@ import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
 
 import {ServiceWorker} from '../serviceWorker'
-
-import {combinedStore} from 'store/combined'
 
 import './App.scss'
 
@@ -25,14 +24,14 @@ enum AppScreens {
 }
 
 const Application: FC = () => {
-  const globalState = combinedStore.getState()
+  const global = getGlobalState()
 
   let initialScreen: AppScreens
   if (ClientError.getError().value.length) {
     initialScreen = AppScreens.Error
-  } else if (globalState.ui.isInitialization) {
+  } else if (global.initialization) {
     initialScreen = AppScreens.Loading
-  } else if (globalState.auth.session) {
+  } else if (global.auth.session) {
     initialScreen = AppScreens.Main
   } else {
     initialScreen = AppScreens.Auth

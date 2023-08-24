@@ -1,3 +1,4 @@
+import {updateSettingsState} from 'state/updates/settings'
 /* eslint-disable no-console */
 import * as firebase from 'lib/firebase'
 
@@ -17,8 +18,6 @@ import {ApolloError} from '@apollo/client'
 import type {AuthSignInResponse, AuthSignUpInput} from 'api/types/auth'
 import {removeSession, saveSession} from 'utilities/session'
 import {updateAuthState} from 'state/updates/auth'
-import {updateSettingsState} from 'state/updates/settings'
-import {forcePersist} from 'state/persist'
 
 /**
  * Get user connection info, country ( dial code, etc )
@@ -35,6 +34,18 @@ createAction('getConnection', async (state) => {
   updateSettingsState(state, {
     suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
   })
+})
+
+createAction('authInit', async (state, actions) => {
+  state.auth.isLoading = true
+
+  if (!state.auth.connection) {
+    await actions.getConnection()
+  }
+
+  await firebase.generateRecaptcha(state.auth)
+
+  state.auth.isLoading = false
 })
 
 /**

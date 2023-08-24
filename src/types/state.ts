@@ -22,6 +22,11 @@ export interface SettingsState {
   showTranslate: boolean
   isCacheSupported: boolean
   animationLevel: 0 | 1 | 2
+  passcode: {
+    hasPasscode: boolean
+    isScreenLocked: boolean
+    isLoading: boolean
+  }
 }
 
 export interface AuthState {
@@ -113,7 +118,3 @@ export type State = {
     screen: AuthScreens
   }
 }
-
-// type NoUndefinedField<T> = {[P in keyof T]-?: NoUndefinedField<NonNullable<T[P]>>}
-
-// export type Test = NoUndefinedField<SignalGlobalState>

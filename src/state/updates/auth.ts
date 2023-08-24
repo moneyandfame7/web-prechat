@@ -1,3 +1,4 @@
+import {storages} from 'state/storages'
 import {AuthScreens} from 'types/screens'
 import type {AuthState, SignalGlobalState} from 'types/state'
 
@@ -20,6 +21,11 @@ const INIT_AUTH_STATE: AuthState = {
 }
 
 //  We use for loop for update properties without change ref to auth/settings and other objects
+// auth lost reference.
+// global.auth = {
+//   ...global.auth,
+//   ...auth
+// }
 export function resetAuthState(global: SignalGlobalState) {
   updateByKey(global.auth, INIT_AUTH_STATE)
 }
@@ -27,16 +33,5 @@ export function resetAuthState(global: SignalGlobalState) {
 export function updateAuthState(global: SignalGlobalState, auth: Partial<AuthState>) {
   updateByKey(global.auth, auth)
 
-  // persistIfCan(global)
-  // storageManager.state.set({
-  //   auth: {
-  //     ...global.auth,
-  //     ...auth
-  //   }
-  // })
-  // auth lost reference.
-  // global.auth = {
-  //   ...global.auth,
-  //   ...auth
-  // }
+  storages.auth.put(auth)
 }
