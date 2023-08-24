@@ -8,8 +8,7 @@ import type {ApiLangCode} from 'types/lib'
 
 import {authentication} from './config'
 import {throwFirebaseError, getFirebaseErrorMessage} from './errors'
-import type {TempAuthState} from 'managers/appAuthManager'
-import type {AuthState} from 'store/auth.store'
+import type {AuthState} from 'types/state'
 
 export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
   // if (auth.captcha) {
@@ -69,7 +68,7 @@ export async function verifyCode(
   }
 }
 
-export async function resetCaptcha(auth: DeepSignal<TempAuthState>) {
+export async function resetCaptcha(auth: DeepSignal<AuthState>) {
   if (auth.captcha) {
     auth.captcha.clear()
     const captchaWrapper = document.getElementById('auth-recaptcha-wrapper')

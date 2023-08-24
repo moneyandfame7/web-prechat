@@ -28,6 +28,7 @@ interface ActionPayloads {
   /** UI */
   reset: void
   init: void
+  authInit: void
 
   // Differents
   openAddContactModal: {userId: string}

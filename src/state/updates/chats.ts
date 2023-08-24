@@ -5,6 +5,7 @@ import type {SignalGlobalState} from 'types/state'
 
 import {updateByKey} from 'utilities/object/updateByKey'
 import {storageManager} from 'lib/idb/manager'
+import {DEBUG} from 'common/config'
 
 export function updateChats(
   global: SignalGlobalState,
@@ -23,6 +24,10 @@ export function updateChat(
   const chat = selectChat(global, chatId)
 
   if (!chat) {
+    if (DEBUG) {
+      // eslint-disable-next-line no-console
+      console.warn(`CHAT ${chatId} to update not found`)
+    }
     return
   }
 

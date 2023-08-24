@@ -1,16 +1,12 @@
 import * as cache from 'lib/cache'
-
 import {createAction} from 'state/action'
-import {INITIAL_STATE, readPersist, resetPersist, setGlobalState} from 'state/persist'
-import {resetAuthState} from 'state/updates/auth'
-import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/config'
-import {changeLanguage} from 'lib/i18n'
-import {appManager, createManagers} from 'managers/manager'
-// import {appManager, createManagers} from 'managers/manager'
 
-createAction('reset', async (state, actions) => {
+import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/config'
+import {hydrateStore} from 'state/storages'
+
+createAction('reset', async (_state, actions) => {
   resetPersist()
-  resetAuthState(state)
+  // resetAuthState(state)
 
   cache.clear('prechat-avatars')
   cache.clear('prechat-i18n-pack')
@@ -20,12 +16,9 @@ createAction('reset', async (state, actions) => {
   actions.init()
 })
 
-createAction('init', async (state) => {
+createAction('init', async (state): Promise<void> => {
   state.initialization = true
-  const managers = await createManagers()
-  // managers.appAuthManager.
-  appManager.setManagers(managers)
-  // const persisted = (await readPersist()) || INITIAL_STATE
+  await hydrateStore()
 
   if (USER_PLATFORM === 'macOS') {
     document.documentElement.classList.add('is-mac')
@@ -37,9 +30,9 @@ createAction('init', async (state) => {
     document.documentElement.classList.add('is-safari')
   }
 
-  // if (persisted.settings.theme === 'dark') {
-  //   document.documentElement.classList.add('night')
-  // }
+  if (state.settings.theme === 'dark') {
+    document.documentElement.classList.add('night')
+  }
 
   // const packLength = Object.keys(persisted?.settings?.i18n.pack)
   // if (!packLength) {

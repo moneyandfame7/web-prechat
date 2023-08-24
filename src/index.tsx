@@ -1,24 +1,20 @@
-import 'store/combined'
-
 import {render} from 'preact'
 import {ApolloProvider} from '@apollo/client'
 import {Application} from 'modules/App'
 
 import {ApolloClient} from 'api/manager'
 
-import {uiStore} from 'store/ui.store'
-
-// import './state/actions/ui/init'
-
-// import './state/actions/ui/init'
+import {getActions} from 'state/action'
 
 import './css/index.scss'
 
 async function init() {
   // eslint-disable-next-line no-console
   console.time('>>> INIT <<<')
+  const actions = getActions()
 
-  await uiStore.actions.init()
+  await actions.init()
+  // await uiStore.actions.init()
 
   // eslint-disable-next-line no-console
   console.timeEnd('>>> INIT <<<')

@@ -4,7 +4,8 @@ import {useSignal} from '@preact/signals'
 
 import {AuthScreens} from 'types/screens'
 
-import {combinedStore} from 'store/combined'
+import {getGlobalState} from 'state/signal'
+import {getActions} from 'state/action'
 
 import {t} from 'lib/i18n'
 import {generateRecaptcha} from 'lib/firebase'
@@ -17,30 +18,27 @@ import './AuthCode.scss'
 
 const CODE_LENGTH = 6
 const AuthCode: FC = () => {
-  const {auth: authState} = combinedStore.getState()
-  const appActions = combinedStore.getActions()
-  // const {verifyCode} = getActions()
+  const {auth} = getGlobalState()
+  const {verifyCode} = getActions()
 
-  // const [code, setCode] = useState('')
   const code = useSignal('')
   const inputRef = useRef<HTMLInputElement>(null)
 
   const handleChangeCode = useCallback(
     (value: string) => {
       code.value = value
-      if (authState.error) {
-        authState.error = undefined
+      if (auth.error) {
+        auth.error = undefined
       }
     },
-    [authState.error]
+    [auth.error]
   )
   // t('WrongNumber?')
   const handleEditPhone = () => {
     code.value = ''
-    generateRecaptcha(authState)
+    generateRecaptcha(auth)
 
-    // auth.screen = AuthScreens.PhoneNumber
-    authState.screen = AuthScreens.PhoneNumber
+    auth.screen = AuthScreens.PhoneNumber
   }
   return (
     <>
@@ -51,7 +49,7 @@ const AuthCode: FC = () => {
         currentLength={code.value.length}
       />
       <h1 class="title">
-        {authState.$phoneNumber}
+        {auth.$phoneNumber}
         <div title={t('WrongNumber?')}>
           <Icon
             name="edit"
@@ -66,11 +64,11 @@ const AuthCode: FC = () => {
 
       <CodeInput
         autoFocus
-        error={authState.error}
-        isLoading={authState.isLoading}
+        error={auth.error}
+        isLoading={auth.isLoading}
         onInput={handleChangeCode}
         value={code}
-        cb={appActions.auth.verifyCode}
+        cb={verifyCode}
         elRef={inputRef}
       />
     </>

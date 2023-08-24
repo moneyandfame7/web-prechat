@@ -1,5 +1,3 @@
-// import {combinedStore} from 'store/combined'
-
 import {
   type NormalizedCacheObject,
   ApolloClient,
@@ -17,7 +15,7 @@ import {getMainDefinition} from '@apollo/client/utilities'
 import {createClient} from 'graphql-ws'
 
 import {logDebugWarn} from 'lib/logger'
-import {authStore} from 'store/auth.store'
+import {getGlobalState} from 'state/signal'
 
 export type GqlDoc = {
   __typename: string
@@ -72,13 +70,13 @@ export class ApolloClientWrapper {
    */
   private getHeadersLink() {
     return setContext(async (_, {headers}) => {
-      const {session} = authStore.getState()
+      const {auth} = getGlobalState()
 
       return {
         headers: {
           ...headers,
           // 'prechat-language': /*  settings.i18n.lang_code */ settings.language,
-          'prechat-session': session || ''
+          'prechat-session': auth.session
         }
       }
     })
@@ -105,7 +103,7 @@ export class ApolloClientWrapper {
    * {@link https://www.apollographql.com/docs/react/data/subscriptions/#2-initialize-a-graphqlwslink Graphql WebSocket Link}
    */
   private getWsLink(url: string) {
-    const {session} = authStore.getState()
+    const {auth} = getGlobalState()
 
     return new GraphQLWsLink(
       createClient({
@@ -113,7 +111,7 @@ export class ApolloClientWrapper {
         connectionParams: async () => ({
           isWebsocket: true,
           headers: {
-            'prechat-session': session || ''
+            'prechat-session': auth.session || ''
           }
         })
       })

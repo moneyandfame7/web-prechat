@@ -1,13 +1,12 @@
-import type {AppState, SignalAppState} from 'store/combined'
 import type {SignalGlobalState} from 'types/state'
 
-export const selectSuggestedCountry = (state: SignalAppState) => {
+export const selectSuggestedCountry = (state: SignalGlobalState) => {
   const code = state.auth.connection?.countryCode
   if (!code) return
-  return state.help.countriesList.find((country) => country.code === code)
+  return state.countryList.find((country) => country.code === code)
 }
 
-export const selectCountryByPhone = (state: SignalAppState) => {
+export const selectCountryByPhone = (state: SignalGlobalState) => {
   const {
     auth: {phoneNumber},
     countryList
