@@ -35,7 +35,7 @@
 
     &:disabled {
       opacity: 0.8;
-      background-color: transparent !important;
+      background-color: var(--c-primary-transparent);
     }
   }
 
@@ -48,7 +48,7 @@
     }
   }
   &-loading.Button-transparent {
-    color: #fff;
+    // color: #fff;
     background-color: var(--c-primary-transparent);
   }
 

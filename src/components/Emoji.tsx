@@ -1,4 +1,5 @@
 import {type FC, memo} from 'preact/compat'
+
 // import {parseEmoji} from 'utilities/parseEmoji'
 
 interface EmojiProps {

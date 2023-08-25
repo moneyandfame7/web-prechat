@@ -1,11 +1,12 @@
-import type { FC, TargetedEvent } from 'preact/compat'
+import type {FC, TargetedEvent} from 'preact/compat'
 
-import { logDebugWarn } from 'lib/logger'
-import { IS_SENSOR } from 'common/config'
+import {logDebugWarn} from 'lib/logger'
 
-import type { ButtonProps } from './Button'
-import { Icon, type IconName } from './Icon'
-import { Ripple } from '../Ripple'
+import {IS_SENSOR} from 'common/config'
+
+import {Ripple} from '../Ripple'
+import type {ButtonProps} from './Button'
+import {Icon, type IconName} from './Icon'
 
 import './IconButton.scss'
 

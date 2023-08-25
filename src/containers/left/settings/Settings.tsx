@@ -1,5 +1,4 @@
-import type {FC} from 'preact/compat'
-import {memo, useCallback, useMemo, useState} from 'preact/compat'
+import {type FC, memo, useCallback, useMemo, useState} from 'preact/compat'
 
 import {
   SwitchTransition,
@@ -7,7 +6,7 @@ import {
   // ZOOM_SLIDE_IN,
   // ZOOM_SLIDE_OUT,
   ZOOM_SLIDE_IN,
-  ZOOM_SLIDE_OUT
+  ZOOM_SLIDE_OUT,
 } from 'components/transitions'
 import {SettingsContext} from 'context/settings'
 
@@ -47,7 +46,7 @@ const classNames: Record<SettingsGroup, string> = {
   [SettingsGroup.Language]: 'Settings-Language',
   [SettingsGroup.Notifications]: 'Settings-Notifications',
   [SettingsGroup.Privacy]: 'Settings-Privacy',
-  [SettingsGroup.Appearance]: 'Settings-Appearance'
+  [SettingsGroup.Appearance]: 'Settings-Appearance',
 }
 
 export interface SettingsProps {
@@ -106,7 +105,7 @@ const Settings: FC<SettingsProps> = ({currentScreen}) => {
       store={{
         resetScreen: handleReset,
         activeScreen,
-        setScreen: setActiveScreen
+        setScreen: setActiveScreen,
       }}
     >
       {/* <div class="LeftColumn-Header">Settings</div> */}

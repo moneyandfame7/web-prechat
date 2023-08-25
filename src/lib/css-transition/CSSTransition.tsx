@@ -1,12 +1,9 @@
-import type {VNode} from 'preact'
-import {cloneElement} from 'preact'
+import {type VNode, cloneElement} from 'preact'
 import {memo} from 'preact/compat'
 
 import Transition from './Transition'
 import {computeClassName, joinClassNames} from './helpers'
-import type {Phase} from './types'
-import {type CSSTransitionProps, type TransitionState} from './types'
-
+import type {Phase, CSSTransitionProps, TransitionState} from './types'
 /**
  * Taken from https://github.com/fakundo/preact-transitioning and modified
  */

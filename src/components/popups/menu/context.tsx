@@ -1,5 +1,5 @@
-import { createContext } from 'preact'
-import { type FC, type PropsWithChildren, useContext } from 'preact/compat'
+import {createContext} from 'preact'
+import {type FC, type PropsWithChildren, useContext} from 'preact/compat'
 
 interface MenuContextType {
   onClose: () => void
@@ -12,7 +12,7 @@ interface MenuProviderProps extends PropsWithChildren {
 
 const MenuContext = createContext<MenuContextType | null>(null)
 
-export const MenuProvider: FC<MenuProviderProps> = ({ props, children }) => {
+export const MenuProvider: FC<MenuProviderProps> = ({props, children}) => {
   return <MenuContext.Provider value={props}>{children}</MenuContext.Provider>
 }
 export function useMenuContext() {

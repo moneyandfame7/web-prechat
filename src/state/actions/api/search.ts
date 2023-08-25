@@ -5,7 +5,7 @@ import {throttle} from 'utilities/schedulers/throttle'
 
 // const SEARCH_GLOBAL_LIMIT = 20
 
-const throttledSearch = throttle((cb) => cb(), 500, false)
+const throttledSearch = throttle(cb => cb(), 500, false)
 createAction('searchGlobal', async (/* state, actions, payload */) => {
   // if (!payload.length) {
   //   return
@@ -22,7 +22,7 @@ createAction('searchUsers', async (state, _, payload) => {
 
   void throttledSearch(async () => {
     state.globalSearch = {
-      'isLoading': false
+      isLoading: false,
     }
   })
 })

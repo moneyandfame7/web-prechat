@@ -13,7 +13,7 @@ import {getGlobalState} from './signal'
 import {getActions, type Actions} from './action'
 
 interface SubscribeResult {
-  'onChatCreated': ApiChatSub
+  onChatCreated: ApiChatSub
 }
 type SubscribeName = keyof SubscribeResult
 export interface Subscription {
@@ -21,7 +21,7 @@ export interface Subscription {
   unsubscribe(): void
 }
 const SUBSCRIBE_QUERY: Record<SubscribeName, DocumentNode> = {
-  'onChatCreated': SUBSCRIBE_ON_CHAT_CREATED
+  onChatCreated: SUBSCRIBE_ON_CHAT_CREATED,
 }
 type Subscribes = {
   [key in SubscribeName]: () => void
@@ -49,8 +49,9 @@ const subscribeHandler = <N extends SubscribeName, TData extends SubscribeResult
       handler(nestedObj /* unsubscribe */)
     },
     error(err) {
+      // eslint-disable-next-line no-console
       console.error(err)
-    }
+    },
   })
 }
 
@@ -64,7 +65,7 @@ export function createSubscribe<N extends SubscribeName>(
   }
 
   subscriptions[name] = () => {
-    const sub = subscribeHandler(name, (data) => {
+    const sub = subscribeHandler(name, data => {
       const global = getGlobalState()
       const actions = getActions()
       handler(global, actions, data)

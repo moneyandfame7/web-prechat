@@ -28,6 +28,10 @@
   transition-property: background-color, color, $properties;
 }
 
+@mixin defaultTransition($propertie) {
+  transition: $propertie 0.2s ease;
+}
+
 @mixin withAnimations() {
   html:not(.animation-none) & {
     @content;

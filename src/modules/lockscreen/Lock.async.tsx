@@ -1,5 +1,4 @@
-import type {FC} from 'preact/compat'
-import {Suspense, lazy, memo} from 'preact/compat'
+import {type FC, Suspense, lazy, memo} from 'preact/compat'
 
 // function timeout<T>(time: number) {
 //   return (value: T) =>
@@ -10,7 +9,7 @@ import {Suspense, lazy, memo} from 'preact/compat'
 // const Lock = lazy(() =>
 //   import('./Lock').then((module) => module.default).then(timeout(5000))
 // )
-const LockAsync: FC = (props) => {
+const LockAsync: FC = props => {
   const Lock = lazy(() => import('./Lock'))
 
   return (

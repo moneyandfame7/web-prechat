@@ -1,8 +1,9 @@
-import {type FC, useRef, type RefObject, useEffect, memo, useState} from 'preact/compat'
+import {type FC, type RefObject, memo, useEffect, useRef, useState} from 'preact/compat'
 
 import {LottiePlayer, type LottieRefCurrentProps} from 'lib/lottie'
 
 import type {Size} from 'types/ui'
+
 import {usePrevious} from 'hooks'
 
 import {MONKEY_TRACK_FRAMES, MONKEY_TRACK_LAST_SEGMENT_ON_INPUT} from './helpers'
@@ -21,7 +22,7 @@ export const MonkeyTrack: FC<MonkeyTrackProps> = memo(
     const monkeyRef = useRef<LottieRefCurrentProps>(null)
     const monkeyRefIdle = useRef<LottieRefCurrentProps>(null)
     const segmentsRef = useRef<AnimationSegments>({
-      speed: 2
+      speed: 2,
     })
     const previousLength = usePrevious(currentLength)
     const [isIdle, setIsIdle] = useState(true)
@@ -93,7 +94,6 @@ export const MonkeyTrack: FC<MonkeyTrackProps> = memo(
 
       if (currentLength === 0) {
         setIsIdle(true)
-        return
       } else {
         setIsIdle(false)
       }

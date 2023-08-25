@@ -1,19 +1,18 @@
 import type {ApiChat} from 'api/types'
 
 import {selectChat} from 'state/selectors/chats'
+import {storages} from 'state/storages'
+
+import {DEBUG} from 'common/config'
+import {updateByKey} from 'utilities/object/updateByKey'
+
 import type {SignalGlobalState} from 'types/state'
 
-import {updateByKey} from 'utilities/object/updateByKey'
-import {storageManager} from 'lib/idb/manager'
-import {DEBUG} from 'common/config'
-
-export function updateChats(
-  global: SignalGlobalState,
-  chatsById: Record<string, ApiChat>
-) {
+export function updateChats(global: SignalGlobalState, chatsById: Record<string, ApiChat>) {
   updateByKey(global.chats.byId, chatsById)
 
-  storageManager.chats.set(chatsById)
+  // storageManager.chats.set(chatsById)
+  storages.chats.put(chatsById)
 }
 
 export function updateChat(
@@ -32,17 +31,12 @@ export function updateChat(
   }
 
   updateByKey(chat, chatToUpd)
-  storageManager.chats.set({
+
+  storages.chats.put({
+    // just put chat? we already update him...
     [chatId]: {
       ...chat,
-      ...chatToUpd
-    }
+      ...chatToUpd,
+    },
   })
-
-  // storageManager.chats.set({
-  //   [chatId]: {
-  //     ...chat,
-  //     ...chatToUpd
-  //   }
-  // })
 }

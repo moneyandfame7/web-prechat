@@ -1,5 +1,4 @@
-import type {/* Key, */ VNode} from 'preact'
-import {createContext} from 'preact'
+import {type VNode, createContext} from 'preact'
 import {useContext} from 'preact/hooks'
 
 import type {LeftColumnStore} from 'types/ui'

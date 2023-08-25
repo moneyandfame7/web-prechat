@@ -2,9 +2,9 @@
 import {batch} from '@preact/signals'
 import type {DeepSignal} from 'deepsignal'
 import {FirebaseError} from 'firebase/app'
-import type {AuthState} from 'store/auth.store'
 
 import type {ApiLangCode} from 'types/lib'
+import type {AuthState} from 'types/state'
 
 export type FirebaseErrors = Record<ApiLangCode, Record<string, string>>
 export type FirebaseErrorCodes = keyof FirebaseErrors['en']

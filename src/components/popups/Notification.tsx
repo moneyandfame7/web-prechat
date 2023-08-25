@@ -1,4 +1,4 @@
-import {useCallback, type FC, memo, useEffect} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
@@ -6,10 +6,10 @@ import {getGlobalState} from 'state/signal'
 import {NOTIFICATION_TRANSITION} from 'common/config'
 
 import {TransitionTest} from 'components/transitions'
+import {Icon} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
 
 import './Notification.scss'
-import {Icon} from 'components/ui'
 
 export interface NotificationProps {
   isOpen: boolean

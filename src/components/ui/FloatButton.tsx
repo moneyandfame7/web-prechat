@@ -1,5 +1,6 @@
 import {type VNode} from 'preact'
 import {type FC} from 'preact/compat'
+
 import clsx from 'clsx'
 
 import type {SignalOrString} from 'types/ui'
@@ -21,7 +22,7 @@ export const FloatButton: FC<FloatButtonProps> = ({
   ...props
 }) => {
   const buildedClass = clsx('FloatButton', className, {
-    'shown': shown
+    shown,
   })
 
   return (

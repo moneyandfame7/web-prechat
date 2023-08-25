@@ -1,22 +1,23 @@
-import type {VNode, RefObject} from 'preact'
+import {useSignal} from '@preact/signals'
+import type {RefObject, VNode} from 'preact'
 import {
   type FC,
   type TargetedEvent,
-  useLayoutEffect,
+  useCallback,
   useEffect,
-  useCallback
+  useLayoutEffect,
 } from 'preact/compat'
-import {useSignal} from '@preact/signals'
 
 import clsx from 'clsx'
 
-import type {InputHandler, SignalOr} from 'types/ui'
-import type {AnyObject} from 'types/common'
-
-import {isAnimationDisabled} from 'utilities/isAnimationEnabled'
 import {getLengthMaybeSignal} from 'utilities/getLengthMaybeSignal'
-import {Spinner} from './Spinner'
+import {isAnimationDisabled} from 'utilities/isAnimationEnabled'
+
+import type {AnyObject} from 'types/common'
+import type {InputHandler, SignalOr} from 'types/ui'
+
 import {Icon, type IconName} from './Icon'
+import {Spinner} from './Spinner'
 
 import './Input.scss'
 
@@ -61,7 +62,7 @@ export const InputText: FC<InputProps> = ({
   placeholder,
   maxLength,
   pattern,
-  withIndicator = maxLength ? true : false,
+  withIndicator = !!maxLength,
   autoFocus = false,
   onInput,
   onBlur,
@@ -78,7 +79,7 @@ export const InputText: FC<InputProps> = ({
   type = 'text',
   inputMode,
   fixedLabel,
-  variant = 'outlined'
+  variant = 'outlined',
 }) => {
   const valueLength = useSignal(maxLength)
   const labelText = error || label
@@ -104,12 +105,12 @@ export const InputText: FC<InputProps> = ({
   }
 
   const buildedClassname = clsx(className, 'input-container', `input-${variant}`, {
-    'error': Boolean(error),
+    error: Boolean(error),
     'not-empty': Boolean(getLengthMaybeSignal(value)),
     'start-icon': Boolean(startIcon),
-    'loading': loading,
+    loading,
     'end-icon': Boolean(endIcon) || typeof loading !== 'undefined',
-    'fixed-label': fixedLabel || isAnimationDisabled() // if animation off
+    'fixed-label': fixedLabel || isAnimationDisabled(), // if animation off
   })
 
   useLayoutEffect(() => {

@@ -25,7 +25,7 @@ export const SETTINGS_SECTION = [
   'General Settings',
   'Chat Folders',
   'Devices',
-  'Language'
+  'Language',
 ] as const
 
 export type SettingsSection = (typeof SETTINGS_SECTION)[number]

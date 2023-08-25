@@ -1,7 +1,8 @@
 import type {FC, RefObject, TargetedEvent} from 'preact/compat'
-import type {SignalOr} from 'types/ui'
 
 import {t} from 'lib/i18n'
+
+import type {SignalOr} from 'types/ui'
 
 import {InputText} from './Input'
 
@@ -25,7 +26,7 @@ export const CodeInput: FC<CodeInputProps> = ({
   autoFocus,
   value,
   onInput,
-  cb
+  cb,
 }) => {
   const handleOnInput = (e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()

@@ -1,5 +1,6 @@
 import type {RefObject, VNode} from 'preact'
 import type {CSSProperties, TargetedEvent} from 'preact/compat'
+
 import type {ObjectOrValue} from 'types/common'
 import type {VNodeWithKey} from 'types/ui'
 

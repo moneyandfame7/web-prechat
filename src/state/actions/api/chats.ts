@@ -13,7 +13,7 @@ createAction('createChannel', async (state, _, payload) => {
   }
 
   updateChats(state, {
-    [createdChannel.id]: createdChannel
+    [createdChannel.id]: createdChannel,
   })
   /**
    * update chats by id
@@ -28,7 +28,7 @@ createAction('createGroup', async (state, _, payload) => {
   }
 
   updateChats(state, {
-    [createdGroup.id]: createdGroup
+    [createdGroup.id]: createdGroup,
   })
   /**
    * update chats by id
@@ -36,6 +36,7 @@ createAction('createGroup', async (state, _, payload) => {
 })
 
 createAction('getChats', async (state) => {
+  state.chats.isLoading = true
   const chats = await Api.chats.getChats()
 
   if (!chats) {
@@ -43,4 +44,8 @@ createAction('getChats', async (state) => {
   }
   const record = buildRecord(chats, 'id')
   updateChats(state, record)
+
+  setTimeout(() => {
+    state.chats.isLoading = false
+  }, 1000)
 })

@@ -1,5 +1,4 @@
-import type {FC, TargetedEvent} from 'preact/compat'
-import {memo, useCallback, useState} from 'preact/compat'
+import {type FC, type TargetedEvent, memo, useCallback, useState} from 'preact/compat'
 
 import {getActions} from 'state/action'
 
@@ -26,17 +25,14 @@ const SignUp: FC = () => {
 
     setFirstName(e.currentTarget.value)
   }, [])
-  const handleChangeLastName = useCallback(
-    (e: TargetedEvent<HTMLInputElement, Event>) => {
-      e.preventDefault()
+  const handleChangeLastName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    e.preventDefault()
 
-      setLastName(e.currentTarget.value)
-    },
-    []
-  )
+    setLastName(e.currentTarget.value)
+  }, [])
 
   const handleChangeSilentSignUp = useCallback(() => {
-    setSilentSignUp((prev) => !prev)
+    setSilentSignUp(prev => !prev)
   }, [])
 
   const handleSubmit = useCallback(
@@ -46,7 +42,7 @@ const SignUp: FC = () => {
         firstName,
         lastName: lastName.length === 0 ? undefined : lastName,
         // photo,
-        silent: silentSignUp
+        silent: silentSignUp,
       })
     },
     [silentSignUp, lastName]

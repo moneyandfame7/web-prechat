@@ -1,12 +1,11 @@
 import type {ComponentChildren, RefObject} from 'preact'
-import type {FC, TargetedEvent} from 'preact/compat'
-import {memo, useCallback, useRef} from 'preact/compat'
+import {type FC, type TargetedEvent, memo, useCallback, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/config'
 import {logDebugWarn} from 'lib/logger'
 
+import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/config'
 import {useClickAway} from 'hooks/useClickAway'
 
 import {TransitionTest} from 'components/transitions'
@@ -50,18 +49,15 @@ export const Menu: FC<MenuProps> = memo(
     autoClose = true,
     withBackdrop = true,
     placement = 'default',
-    containerRef
+    containerRef,
   }) => {
     const buildedClass = clsx('Menu', className, 'scrollable')
 
-    const handleClickBackdrop = useCallback(
-      (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
-        e.preventDefault()
-        onClose()
-        logDebugWarn('[UI]: Menu backdrop click')
-      },
-      []
-    )
+    const handleClickBackdrop = useCallback((e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
+      e.preventDefault()
+      onClose()
+      logDebugWarn('[UI]: Menu backdrop click')
+    }, [])
     const menuRef = useRef<HTMLDivElement>(null)
 
     useClickAway(containerRef || menuRef, (e, clicked) => {
@@ -77,7 +73,7 @@ export const Menu: FC<MenuProps> = memo(
         props={{
           onClose,
           isOpen,
-          autoClose
+          autoClose,
         }}
       >
         <TransitionTest
@@ -92,8 +88,7 @@ export const Menu: FC<MenuProps> = memo(
         >
           <>{children}</>
         </TransitionTest>
-        {/* 
-        <Transition
+        {/* <Transition
           elRef={menuRef}
           className={buildedClass}
           styles={{
@@ -107,9 +102,7 @@ export const Menu: FC<MenuProps> = memo(
         >
           {children}
         </TransitionTest> */}
-        {isOpen && withBackdrop && (
-          <div class="backdrop" onMouseDown={handleClickBackdrop} />
-        )}
+        {isOpen && withBackdrop && <div class="backdrop" onMouseDown={handleClickBackdrop} />}
       </MenuProvider>
     )
   }
@@ -146,13 +139,13 @@ export const MenuItem: FC<MenuItemProps> = memo(
     )
 
     const buildedClass = clsx('Menu_item', className, {
-      'hidden': hidden,
-      'selected': selected
+      hidden,
+      selected,
     })
     const itemProps = {
       onClick: IS_SENSOR ? handleClick : undefined,
       onMouseDown: !IS_SENSOR ? handleMouseDown : undefined,
-      class: buildedClass
+      class: buildedClass,
     }
     return (
       <>

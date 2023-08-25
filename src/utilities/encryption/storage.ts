@@ -1,15 +1,7 @@
-import * as idb from 'idb-keyval'
+/* eslint-disable no-console */
 interface Algorithm {
   name: 'AES-GCM'
   iv: ArrayBuffer
-}
-
-interface EncryptedPasscodeData {
-  password: {
-    hash: ArrayBuffer
-    salt: Uint8Array
-  }
-  data: ArrayBufferLike
 }
 
 const salt = crypto.getRandomValues(new Uint8Array(16))
@@ -28,7 +20,7 @@ export async function saveEncryptSession(dataToEncrypt: object, password: string
     'CREDENTIALS',
     JSON.stringify({
       hash: Array.from(new Uint8Array(hash)),
-      salt: Array.from(new Uint8Array(salt))
+      salt: Array.from(new Uint8Array(salt)),
     })
   )
   /* without array.from, just idb.set('passcode', ...) */
@@ -39,30 +31,27 @@ export async function saveEncryptSession(dataToEncrypt: object, password: string
 
   const encryptedPasscodeData = {
     password: {
-      hash,
-      salt
+      hash: Array.from(new Uint8Array(hash)),
+      salt: Array.from(new Uint8Array(salt)),
     },
-    data: encrypted
+    data: Array.from(new Uint8Array(encrypted)),
   }
 
-  idb.set('PASSCODE-ENCRYPTED', encryptedPasscodeData).then(() => {
-    console.log('WAS SETTED IDB KEYVAL VALUE', {encryptedPasscodeData})
-  })
-
+  localStorage.setItem('PASSCODE-ENCRYPTED', JSON.stringify(encryptedPasscodeData))
   console.timeEnd('ENCRYPT_SESSION')
 }
 
 export async function decryptSession(inputPassword: string) {
   console.time('DECRYPT_SESSION')
   const stored = JSON.parse(localStorage.getItem('CREDENTIALS') || '{}')
-  const stored2 = await idb.get('PASSCODE-ENCRYPTED')
+  const stored2 = localStorage.getItem('PASSCODE-ENCRYPTED')
   console.log({stored2})
   if (!stored) {
     return false
   }
 
   console.log({stored})
-  const inputPasswordHash = await sha256(inputPassword, stored.salt)
+  const inputPasswordHash = await sha256(inputPassword, new Uint8Array(stored.salt))
 
   // if (areArraysEqual(stored.hash, Array.from(new Uint8Array(inputPasswordHash)))) {
 

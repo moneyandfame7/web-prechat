@@ -7,3 +7,7 @@ export function selectChat(global: SignalGlobalState, chatId: string) {
 export function selectChatsIds(global: SignalGlobalState) {
   return Object.keys(global.chats.byId)
 }
+
+export function selectIsChatsFetching(global: SignalGlobalState) {
+  return global.chats.isLoading && selectChatsIds(global).length === 0
+}

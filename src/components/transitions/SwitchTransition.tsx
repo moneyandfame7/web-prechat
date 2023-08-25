@@ -1,13 +1,15 @@
-import {useState, useEffect, useCallback, memo, useRef, useMemo} from 'preact/compat'
-import type {VNodeWithKey} from 'types/ui'
+import {memo, useCallback, useEffect, useMemo, useRef, useState} from 'preact/compat'
 
-import {cloneElementWithKey} from 'utilities/cloneElementWithKey'
+import clsx from 'clsx'
 import {usePrevious} from 'hooks'
 
+import {cloneElementWithKey} from 'utilities/cloneElementWithKey'
+
+import type {VNodeWithKey} from 'types/ui'
+
 import {TransitionTest} from './Transition'
+import {getCleanupElements, getTransitionProperty} from './helpers'
 import type {SwitchTransitionProps, TransitionCases} from './types'
-import {getTransitionProperty, getCleanupElements} from './helpers'
-import clsx from 'clsx'
 
 const SwitchTransition = <TKey extends string | number>({
   activeKey,
@@ -19,7 +21,7 @@ const SwitchTransition = <TKey extends string | number>({
   durations,
   cleanupException,
   permanentClassname,
-  getTransitionByCase
+  getTransitionByCase,
 }: SwitchTransitionProps<TKey>) => {
   const newEl: VNodeWithKey<TKey> = useMemo(
     () => cloneElementWithKey(children, activeKey),
@@ -59,6 +61,7 @@ const SwitchTransition = <TKey extends string | number>({
       })
     }
   }, [newEl])
+
   const renderElements = () => {
     return elements.map((el) => {
       const isMounted = el.key === activeKey
@@ -72,6 +75,7 @@ const SwitchTransition = <TKey extends string | number>({
 
       return (
         <TransitionTest
+          key={el.key} // ????
           isMounted={isMounted}
           name={transitionPropertiesByCase?.name || name}
           /**

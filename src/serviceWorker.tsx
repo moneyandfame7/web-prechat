@@ -1,20 +1,21 @@
 /* eslint-disable no-console */
-import {logDebugInfo} from 'lib/logger'
 import {type FC, memo} from 'preact/compat'
 import {useCallback, useEffect} from 'preact/hooks'
 
 import {useRegisterSW} from 'virtual:pwa-register/react'
 
+import {logDebugInfo} from 'lib/logger'
+
 const ServiceWorker: FC = memo(() => {
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker
+    updateServiceWorker,
   } = useRegisterSW({
     onRegisteredSW(_, registration) {
       logDebugInfo('[🇺🇦 APP] - Service Worker at', registration?.scope)
     },
-    immediate: true
+    immediate: true,
   })
   const close = useCallback(() => {
     setOfflineReady(false)
@@ -23,9 +24,7 @@ const ServiceWorker: FC = memo(() => {
 
   useEffect(() => {
     if (offlineReady) {
-      logDebugInfo(
-        '[🇺🇦 APP] - Your app has been installed, it now works offline!'
-      )
+      logDebugInfo('[🇺🇦 APP] - Your app has been installed, it now works offline!')
     } else if (needRefresh) {
       logDebugInfo('[🇺🇦 APP] - A new update is available!')
     }
@@ -41,12 +40,10 @@ const ServiceWorker: FC = memo(() => {
             backgroundColor: 'pink',
             width: '100%',
             height: '100%',
-            zIndex: 1
+            zIndex: 1,
           }}
         >
-          <button onClick={() => updateServiceWorker(false)}>
-            Update Prechat
-          </button>
+          <button onClick={() => updateServiceWorker(false)}>Update Prechat</button>
         </div>
       )}
     </>

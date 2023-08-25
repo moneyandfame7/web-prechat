@@ -1,12 +1,14 @@
 import {type FC} from 'preact/compat'
+
 import clsx from 'clsx'
 
 import {CSSTransition} from 'lib/css-transition'
 
-import type {TransitionProps} from './types'
 import {buildCustomTransitionProperties, getTransitionDuration} from './helpers'
+import type {TransitionProps} from './types'
 
 import './Transition.scss'
+
 export const TransitionTest: FC<TransitionProps> = ({
   isMounted,
   name,
@@ -20,7 +22,7 @@ export const TransitionTest: FC<TransitionProps> = ({
   onClick,
   onEndTransition,
   onStartTransition,
-  onExitTransition
+  onExitTransition,
 }) => {
   const buildedStyles = buildCustomTransitionProperties({name, duration})
 
@@ -48,7 +50,7 @@ export const TransitionTest: FC<TransitionProps> = ({
         ref={elRef}
         style={{
           ...buildedStyles,
-          ...styles
+          ...styles,
         }}
         onClick={onClick}
         class={buildedClassname}

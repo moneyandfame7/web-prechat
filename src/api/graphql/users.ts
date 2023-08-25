@@ -1,4 +1,5 @@
-import {gql, type DocumentNode, type TypedDocumentNode} from '@apollo/client'
+import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
+
 import type {ApiInputGetUsers, ApiInputUser, ApiUser, ApiUserFull} from 'api/types/users'
 
 export const FRAGMENT_USER: DocumentNode = gql`

@@ -1,2 +1,2 @@
 export * from './provider'
-export {parseStringToJSX} from './helpers'
+// export {parseStringToJSX} from './helpers'

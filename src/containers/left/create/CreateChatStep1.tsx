@@ -23,11 +23,7 @@ export interface CreateChatStep1Props {
   handleSelect: (id: string) => void
 }
 
-const CreateChatStep1: FC<CreateChatStep1Props> = ({
-  isGroup,
-  selectedIds,
-  handleSelect
-}) => {
+const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handleSelect}) => {
   const {setScreen} = useLeftColumn()
   const global = getGlobalState()
   const [filteredList, setFilteredList] = useState(fromRecord(selectContacts(global)))
@@ -36,22 +32,22 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
   }, [isGroup])
 
   const {value, handleInput} = useInputValue({
-    cb: (e) => {
+    cb: e => {
       const {value} = e.currentTarget
 
       if (value.length === 0) {
         setFilteredList(fromRecord(selectContacts(global)))
       } else {
-        setFilteredList((prev) => prev.filter((u) => u.username?.includes(value)))
+        setFilteredList(prev => prev.filter(u => u.username?.includes(value)))
       }
-    }
+    },
   })
   const render = useRef(0)
   render.current += 1
   function renderList() {
     return (
       <>
-        {filteredList.map((user) => {
+        {filteredList.map(user => {
           return (
             <ListItem
               userId={user.id}
@@ -85,8 +81,8 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
       />
       <Divider />
       <div class="picker-list scrollable">{renderList()}</div>
-      {selectedIds.map((id) => (
-        <p>{global.users.byId[id].firstName}</p>
+      {selectedIds.map(id => (
+        <p key={id}>{global.users.byId[id].firstName}</p>
       ))}
       <FloatButton
         shown

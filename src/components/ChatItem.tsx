@@ -1,17 +1,18 @@
-import {useEffect, type FC /* TargetedEvent */} from 'preact/compat'
 import type {Signal} from '@preact/signals'
+import {type FC, useEffect} from 'preact/compat'
+
 import clsx from 'clsx'
 
-import {Checkbox} from './ui/Checkbox'
+import type {ApiUser} from 'api/types/users'
+
+import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
 
 import {Ripple} from './Ripple'
-import {getActions} from 'state/action'
+import {AvatarTest} from './ui/AvatarTest'
+import {Checkbox} from './ui/Checkbox'
 
 import './ChatItem.scss'
-import {getGlobalState} from 'state/signal'
-import type {ApiUser} from 'api/types/users'
-import {AvatarTest} from './ui/AvatarTest'
-// import {ApiUser} from 'types/api'
 
 interface ContextAction {
   icon: string
@@ -39,7 +40,7 @@ export const ListItem: FC<ChatItemProps> = ({
   checked,
   title,
   subtitle,
-  userId
+  userId,
 }) => {
   const {getUser} = getActions()
   const {users} = getGlobalState()
@@ -50,7 +51,7 @@ export const ListItem: FC<ChatItemProps> = ({
   }, [])
 
   const buildedClass = clsx('ChatItem', {
-    'non-clickable': !Boolean(onClick)
+    'non-clickable': !onClick,
   })
 
   const handleClick = (e: MouseEvent) => {

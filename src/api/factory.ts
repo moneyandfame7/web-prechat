@@ -1,14 +1,14 @@
-import {ApiAccount} from './methods/account'
-import {ApiSettings} from './methods/settings'
-import {ApiAuth} from './methods/auth'
-import {ApiContacts} from './methods/contacts'
-import {ApiUsers} from './methods/users'
-import {ApiLangPack} from './methods/langPack'
-
 import type {ApolloClientWrapper} from './apollo'
+import {ApiAccount} from './methods/account'
+import {ApiAuth} from './methods/auth'
 import {ApiChats} from './methods/chats'
+import {ApiContacts} from './methods/contacts'
+import {ApiLangPack} from './methods/langPack'
+import {ApiSettings} from './methods/settings'
+import {ApiUsers} from './methods/users'
 
 export class ServiceFactory {
+  // eslint-disable-next-line no-useless-constructor
   public constructor(public readonly apolloClient: ApolloClientWrapper) {}
 
   public createAuth() {

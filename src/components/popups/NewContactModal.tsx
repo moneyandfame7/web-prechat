@@ -1,31 +1,31 @@
+import {useComputed, useSignal} from '@preact/signals'
 import {
   type FC,
-  memo,
-  useRef,
   type TargetedEvent,
-  useEffect,
+  memo,
   useCallback,
-  useMemo
+  useEffect,
+  useMemo,
+  useRef,
 } from 'preact/compat'
-import {useComputed, useSignal} from '@preact/signals'
-
-import {Button, InputText} from 'components/ui'
-
-import {validatePhone} from 'utilities/phone/validatePhone'
-
-import {getActions} from 'state/action'
 
 import {PhoneNumberInput} from 'modules/auth/PhoneNumberInput'
 
-import {unformatStr} from 'utilities/string/stringRemoveSpacing'
+import type {ApiUser} from 'api/types/users'
+
+import {getActions} from 'state/action'
+
 import {getRandomAvatarVariant} from 'utilities/avatar'
+import {validatePhone} from 'utilities/phone/validatePhone'
+import {unformatStr} from 'utilities/string/stringRemoveSpacing'
+
+import {Button, InputText} from 'components/ui'
+import {AvatarTest} from 'components/ui/AvatarTest'
 import {useEventListener} from 'hooks/useEventListener'
 
 import {Modal, ModalActions, ModalContent, ModalTitle} from './modal'
 
 import './NewContactModal.scss'
-import {AvatarTest} from 'components/ui/AvatarTest'
-import type {ApiUser} from 'api/types/users'
 
 export interface NewContactModalProps {
   isOpen: boolean
@@ -41,6 +41,7 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
   const contactPhone = useSignal('')
   const userToAdding = {} as ApiUser | undefined
 
+  // eslint-disable-next-line prefer-template
   const fullName = useComputed(() => firstName.value.trim() + ' ' + lastName.value.trim())
 
   const isDisabledBtn = useComputed(
@@ -57,19 +58,13 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
     }
   }, [isOpen])
 
-  const handleChangeFirstName = useCallback(
-    (e: TargetedEvent<HTMLInputElement, Event>) => {
-      firstName.value = e.currentTarget.value
-    },
-    []
-  )
+  const handleChangeFirstName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    firstName.value = e.currentTarget.value
+  }, [])
 
-  const handleChangeLastName = useCallback(
-    (e: TargetedEvent<HTMLInputElement, Event>) => {
-      lastName.value = e.currentTarget.value
-    },
-    []
-  )
+  const handleChangeLastName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    lastName.value = e.currentTarget.value
+  }, [])
 
   const handleClose = useCallback(() => {
     actions.closeAddContactModal()
@@ -90,7 +85,7 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
     actions.addContact({
       firstName: firstName.value,
       lastName: lastName.value,
-      phone: contactPhone.value
+      phone: contactPhone.value,
     })
   }, [])
 
@@ -111,7 +106,7 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
       <ModalTitle>New Contact {render.current}</ModalTitle>
       <ModalContent>
         <form class="form-row">
-          <AvatarTest size="xl" fullName={fullName.value} variant={randomAvatarVariant} />
+          <AvatarTest size="xl" fullName={fullName} variant={randomAvatarVariant} />
           <div class="form-fields">
             <InputText
               autoFocus
@@ -140,35 +135,6 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
         </Button>
       </ModalActions>
     </Modal>
-    // <Portal>
-    //   <TransitionTest
-    //     className="Modal NewContactModal"
-    //     appear
-    //     name="fade"
-    //     isMounted={isOpen}
-    //     alwaysMounted={false}
-    //     duration={300}
-    //     // onClick={handleClose}
-    //   >
-    //     {/* <div class="Modal NewContactModal"> */}
-    //     <div class="Modal-content" ref={modalRef}>
-    //       <div class="Modal-header">
-    //         {render.current}
-    //         {userId}
-    //         <IconButton withFastClick onClick={handleClose} icon="close" />
-    //         <h5 class="title">New contact</h5>
-    //         <Button isDisabled={isDisabledBtn}>Add</Button>
-    //       </div>
-
-    //       <div class="Modal-body">
-    //
-    //       </div>
-
-    //       <div class="Modal-footer">{}</div>
-    //     </div>
-    //     {/* </div> */}
-    //   </TransitionTest>
-    // </Portal>
   )
 }
 

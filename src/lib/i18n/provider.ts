@@ -1,22 +1,28 @@
-// import {deepClone} from 'utilities/deepClone'
 /* eslint-disable no-console */
 import {type Signal, useSignal} from '@preact/signals'
 import {useEffect} from 'preact/hooks'
 
-import * as cache from 'lib/cache'
 import {Api} from 'api/manager'
-
-import type {LanguagePackKeys, ApiLangCode} from 'types/lib'
+import type {ApiLangPack} from 'api/types/langPack'
 
 import {getGlobalState} from 'state/signal'
+import {storages} from 'state/storages'
+import {updateSettingsState} from 'state/updates'
+
+import * as cache from 'lib/cache'
+
 import {DEBUG} from 'common/config'
-import type {ApiLanguagePack} from 'api/types/langPack'
-import {updateI18nState} from 'state/updates'
+
+import type {ApiLangCode, LanguagePackKeys} from 'types/lib'
 
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
   // Using signals, we avoid rerenders
-  const translate = i18n.pack[`$${key}`] as unknown as Signal<string>
+  /**
+   * https://github.com/luisherranz/deepsignal#typescript - why i'm use !
+   */
+  const translate = i18n.pack[`$${key}`]!
+
   // if (!translate?.value) {
   //   logDebugError(`[UI]: Translation for «${key}» not found`)
   //   // throw new Error('[UI]: Translation not found')
@@ -29,24 +35,25 @@ export function t(key: LanguagePackKeys): Signal<string> {
 export async function changeLanguage(language: ApiLangCode) {
   console.time('PROVIDER_LANGUAGE')
   const global = getGlobalState()
-  let data
-
+  let data: ApiLangPack | undefined
+  // rewrite
   if (!DEBUG) {
-    data = (await cache.get('prechat-i18n-pack', language)) as ApiLanguagePack
+    data = await storages.i18n.getOne(language)
+  } else {
+    console.error('IN DEBUG DOESNT TAKE PACK STORAGE')
   }
   if (!data) {
     data = await Api.langPack.getLangPack(language)
-    cache.add({
-      name: 'prechat-i18n-pack',
-      key: language,
-      value: data
+
+    storages.i18n.put({
+      [language]: data,
     })
   }
 
-  updateI18nState(global, {
-    pack: data,
-    lang_code: language
-  })
+  // updateI18nState(global, {
+  //   pack: data,
+  //   lang_code: language,
+  // })
   // Object.assign(global, {
   //   settings: {
   //     i18n: {
@@ -55,7 +62,12 @@ export async function changeLanguage(language: ApiLangCode) {
   //     }
   //   }
   // })
-  global.settings.language = language
+  updateSettingsState(global, {
+    i18n: {
+      pack: data.strings,
+      lang_code: data.langCode,
+    },
+  })
 
   console.timeEnd('PROVIDER_LANGUAGE')
 }
@@ -74,7 +86,7 @@ export async function translateByString(code: ApiLangCode, key: LanguagePackKeys
     await cache.add({
       name: 'prechat-i18n-string',
       key,
-      value: langString
+      value: langString,
     })
   }
 
@@ -84,6 +96,9 @@ export async function translateByString(code: ApiLangCode, key: LanguagePackKeys
 export function useTranslateString(str: LanguagePackKeys, language?: ApiLangCode) {
   const translate = useSignal<string | undefined>(undefined)
 
+  /**
+   * @todo test it
+   */
   useEffect(() => {
     if (language) {
       translateByString(language, str).then(

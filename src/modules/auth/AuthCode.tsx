@@ -1,18 +1,16 @@
-import type {FC} from 'preact/compat'
-import {memo, useCallback, useRef} from 'preact/compat'
 import {useSignal} from '@preact/signals'
+import {type FC, memo, useCallback, useRef} from 'preact/compat'
+
+import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
+
+import {generateRecaptcha} from 'lib/firebase'
+import {t} from 'lib/i18n'
 
 import {AuthScreens} from 'types/screens'
 
-import {getGlobalState} from 'state/signal'
-import {getActions} from 'state/action'
-
-import {t} from 'lib/i18n'
-import {generateRecaptcha} from 'lib/firebase'
-
-import {Icon} from 'components/ui'
 import {MonkeyTrack} from 'components/monkeys'
-import {CodeInput} from 'components/ui/CodeInput'
+import {CodeInput, Icon} from 'components/ui'
 
 import './AuthCode.scss'
 

@@ -11,9 +11,10 @@ export interface PersistStorage {
 export interface PersistIdbStorage<T extends AnyObject> extends PersistStorage {
   put: (obj: Partial<T>) => Promise<void>
   get: () => Promise<T | undefined>
+  getOne: <K extends keyof T>(key: K) => Promise<T[K] | undefined>
   remove: (key: keyof T) => Promise<any>
 }
-export type StoragesName = 'auth' | 'users' | 'chats' | 'settings'
+export type StoragesName = 'auth' | 'users' | 'chats' | 'settings' | 'i18n'
 export interface PersistDbConfig {
   databaseName: string
   version: number
