@@ -139,12 +139,17 @@ createAction('verifyCode', async (state, actions, payload) => {
       firebase_token,
     })
   } else {
-    state.auth = {
-      ...state.auth,
+    updateAuthState(state, {
       firebase_token,
       screen: AuthScreens.SignUp,
       isLoading: false,
-    }
+    })
+    // state.auth = {
+    //   ...state.auth,
+    //   firebase_token,
+    //   screen: AuthScreens.SignUp,
+    //   isLoading: false,
+    // }
   }
 })
 
@@ -185,10 +190,10 @@ createAction('signIn', async (state, _, payload) => {
   //   isLoading: false,
   // })
   state.auth.isLoading = false
+  updateAuthState(state, {
+    session: response.sessionHash,
+  })
   if (state.auth.rememberMe) {
-    updateAuthState(state, {
-      session: response.sessionHash,
-    })
     await startPersist()
   }
 })
@@ -229,12 +234,10 @@ createAction('signUp', async (state, _, payload) => {
 
   updateAuthState(state, {
     isLoading: false,
+    session: response.sessionHash,
   })
 
   if (state.auth.rememberMe) {
-    updateAuthState(state, {
-      session: response.sessionHash,
-    })
     await startPersist()
   }
 })

@@ -158,9 +158,13 @@ export class ApolloClientWrapper {
  * @returns instanceof {@link ApolloClientWrapper}
  */
 export function createApolloClientWrapper(): ApolloClientWrapper {
+  const httpUrl = import.meta.env.VITE_API_URL
+  // eslint-disable-next-line prefer-template
+  const wsUrl = httpUrl.replace('https://', 'ws://') + '/subscriptions'
+
   const client = new ApolloClientWrapper({
-    httpUrl: import.meta.env.VITE_API_URL,
-    wsUrl: 'ws://localhost:8001/graphql/subscriptions',
+    httpUrl,
+    wsUrl,
   })
 
   return client
