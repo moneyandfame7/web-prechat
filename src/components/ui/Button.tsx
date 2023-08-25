@@ -1,12 +1,13 @@
 import type {FC, TargetedEvent} from 'preact/compat'
+
 import clsx from 'clsx'
 
 import {IS_SENSOR} from 'common/config'
 
 import type {SignalOr, SignalOrString} from 'types/ui'
 
-import {Spinner} from './Spinner'
 import {Ripple} from '../Ripple'
+import {Spinner} from './Spinner'
 
 import './Button.scss'
 
@@ -36,14 +37,14 @@ export const Button: FC<ButtonProps> = ({
   fullWidth = true,
   onClick,
   className,
-  'aria-label': ariaLabel
+  'aria-label': ariaLabel,
 }) => {
   const buildClass = clsx(
     'Button',
     `Button-${variant}`,
     {
       'Button-loading': isLoading,
-      'Button-fullwidth': fullWidth
+      'Button-fullwidth': fullWidth,
     },
     className
   )
@@ -56,6 +57,7 @@ export const Button: FC<ButtonProps> = ({
       onClick?.()
     }
   }
+
   return (
     <button
       aria-label={ariaLabel}

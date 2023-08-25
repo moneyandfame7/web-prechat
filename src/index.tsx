@@ -1,10 +1,14 @@
 import {render} from 'preact'
+
 import {ApolloProvider} from '@apollo/client'
+
 import {Application} from 'modules/App'
 
 import {ApolloClient} from 'api/manager'
 
 import {getActions} from 'state/action'
+
+import {DEBUG} from 'common/config'
 
 import './css/index.scss'
 
@@ -27,7 +31,11 @@ async function init() {
   //   .catch((err) => {
   //     console.warn({err})
   //   })
+  if (DEBUG) {
+    import('preact/debug')
+  }
 }
+
 init()
 render(
   <ApolloProvider client={ApolloClient.getClient()}>

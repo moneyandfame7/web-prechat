@@ -1,12 +1,13 @@
 import type {Signal} from '@preact/signals'
-import {type IDBPDatabase, openDB} from 'idb'
+
 import {deepSignal} from 'deepsignal'
+import {type IDBPDatabase, openDB} from 'idb'
 
 import {logDebugWarn} from 'lib/logger'
 
-import type {AnyObject} from 'types/common'
-
 import {deepCopy} from 'utilities/object/deepCopy'
+
+import type {AnyObject} from 'types/common'
 
 import type {PersistDbConfig, PersistIdbStorage, StoragesName} from './types'
 
@@ -20,7 +21,7 @@ export function createPersistStore<
   }
   const store = deepSignal({
     initialized: false,
-    enabled: false
+    enabled: false,
   })
 
   const dbPromise = openDB(databaseName, version, {
@@ -28,12 +29,13 @@ export function createPersistStore<
       if (!storages) {
         return
       }
+      // eslint-disable-next-line array-callback-return
       storages.map((storage) => {
         if (!upgradeDb.objectStoreNames.contains(storage.name)) {
           upgradeDb.createObjectStore(storage.name, storage.optionalParameters)
         }
       })
-    }
+    },
   })
 
   /**
@@ -58,7 +60,7 @@ export function createPersistStore<
       dbPromise,
       storeName: storageWithName.name,
       optionalParameters: storageWithName?.optionalParameters,
-      enabled: store.$enabled!
+      enabled: store.$enabled!,
     })
 
     return idbStorage
@@ -77,7 +79,10 @@ export function createPersistStore<
     injectStorage,
     disable,
     enable,
-    isEnabled: store.$enabled!
+    /**
+     * @todo спробувати без сигналу
+     */
+    isEnabled: store.$enabled!,
   }
 }
 
@@ -98,7 +103,7 @@ export function idbMethods<T extends AnyObject>(
   return {
     /* Put. */
     async put(obj) {
-      logDebugWarn(enabled.value, 'enabled')
+      logDebugWarn(enabled.value, storeName, 'enabled')
 
       if (!enabled.value) {
         return
@@ -109,6 +114,7 @@ export function idbMethods<T extends AnyObject>(
       const store = tx.objectStore(storeName)
 
       for (const key in obj) {
+        // eslint-disable-next-line no-prototype-builtins
         if (obj.hasOwnProperty(key)) {
           const value = deepCopy(obj[key])
           await store.put(value, optionalParameters?.keyPath ? undefined : key)
@@ -149,6 +155,10 @@ export function idbMethods<T extends AnyObject>(
       const db = await dbPromise
 
       await db.clear(storeName)
-    }
+    },
+    async getOne(key) {
+      const db = await dbPromise
+      return db.get(storeName, key as IDBValidKey)
+    },
   }
 }

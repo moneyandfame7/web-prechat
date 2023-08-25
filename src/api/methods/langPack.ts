@@ -9,8 +9,8 @@ export class ApiLangPack extends ApiBaseMethod {
       query: LangPack.QUERY_LANG_GET_PACK,
       fetchPolicy: 'cache-first',
       variables: {
-        code
-      }
+        code,
+      },
     })
     if (!data.getLangPack) {
       throw new Error('MMMMM')
@@ -24,8 +24,8 @@ export class ApiLangPack extends ApiBaseMethod {
       query: LangPack.QUERY_LANG_GET_STRING,
       fetchPolicy: 'cache-first',
       variables: {
-        input
-      }
+        input,
+      },
     })
     if (!data.getLangString) {
       throw new Error('ALLALALALALA')
@@ -39,8 +39,8 @@ export class ApiLangPack extends ApiBaseMethod {
       query: LangPack.QUERY_GET_COUNTRIES_LIST,
       fetchPolicy: 'cache-first',
       variables: {
-        code
-      }
+        code,
+      },
     })
 
     if (!data.getCountriesList) {
@@ -55,8 +55,8 @@ export class ApiLangPack extends ApiBaseMethod {
       query: LangPack.QUERY_LANG_GET,
       fetchPolicy: 'cache-first',
       variables: {
-        code
-      }
+        code,
+      },
     })
     if (!data.getLanguage) {
       return undefined
@@ -68,7 +68,7 @@ export class ApiLangPack extends ApiBaseMethod {
   public async getLanguages() {
     const {data} = await this.client.query({
       query: LangPack.QUERY_LANG_GET_ALL,
-      fetchPolicy: 'cache-first'
+      fetchPolicy: 'cache-first',
     })
 
     if (!data.getLanguages || data.getLanguages.length === 0) {

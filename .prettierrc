@@ -1,9 +1,25 @@
 {
-  "printWidth": 90,
-  "jsxSingleQuote": false,
+  "useTabs": false,
+  "arrowParens": "always",
+  "printWidth": 95,
   "singleQuote": true,
-  "trailingComma": "none",
-  "quoteProps": "preserve",
+  "bracketSpacing": false,
   "semi": false,
-  "bracketSpacing": false
+  "importOrder": [
+    "^preact|^(preact|@preact)/(.*)$",
+    "^(@apollo)/(.*)$",
+    "<THIRD_PARTY_MODULES>",
+    "^api/(.*)$",
+    "^state/(.*)$",
+    "^lib/(.*)$",
+    "^(common|utilities)/(.*)$",
+    "^types/(.*)$",
+
+    "^containers/(.*)$",
+    "^(hooks|components)/(.*)$",
+    "^[./].*(?<!\\.(c|le|sc)ss)$",
+    "\\.(c|le|sc)ss$"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }

@@ -17,6 +17,7 @@ export function deepUpdate<T extends AnyObject>(target: T, source: DeepPartial<T
       isObject(sourceValue) &&
       Object.keys(sourceValue).length > 0 // ??
     ) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       deepUpdate(targetValue, sourceValue as any)
     } else {
       // @ts-expect-error /////

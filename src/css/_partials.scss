@@ -1,0 +1,8 @@
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.primary-font {
+  color: var(--c-font-primary) !important;
+}

@@ -1,23 +1,25 @@
 import {deepSignal} from 'deepsignal'
+
 import {deepClone} from 'utilities/object/deepClone'
 
 import type {GlobalState, SignalGlobalState} from 'types/state'
+
+import {INITIAL_STATE} from './initState'
 import {
   updateAuthState,
+  updateChats,
   updateRootState,
   updateSettingsState,
-  updateNewContactState,
-  updateUsers
+  updateUsers,
 } from './updates'
-import {INITIAL_STATE} from './persist'
-import {updateChats} from './updates/chats'
 
+/**
+ * @todo check without deepClone
+ */
 const globalState = deepSignal(deepClone(INITIAL_STATE))
 
 export function getGlobalState(): SignalGlobalState
-export function getGlobalState<State>(
-  selector: (state: SignalGlobalState) => State
-): State
+export function getGlobalState<State>(selector: (state: SignalGlobalState) => State): State
 export function getGlobalState<State>(selector?: (state: SignalGlobalState) => State) {
   if (typeof selector === 'function') {
     return selector(globalState)

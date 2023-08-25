@@ -1,48 +1,58 @@
 import type {DeepSignal} from 'deepsignal'
-
 import type {ConfirmationResult, RecaptchaVerifier} from 'firebase/auth'
 
-import type {ApiUser, ApiChat, ApiCountry, ApiLanguage} from 'api/types'
+import type {ApiChat, ApiCountry, ApiLanguage, ApiUser} from 'api/types'
 
-import type {LanguagePack, ApiLangCode} from 'types/lib'
+import type {ApiLangCode, LanguagePack} from 'types/lib'
 import type {UserConnection} from 'types/request'
 
 import type {AuthScreens, SettingsScreens} from './screens'
 
 export type Theme = 'light' | 'dark'
-
+export type DistanceUnit = 'kilometers' | 'miles'
+export type TimeFormat = '12h' | '24h'
 export interface SettingsState {
   theme: Theme
   i18n: {
     lang_code: ApiLangCode
     pack: LanguagePack
   }
-  language: ApiLangCode
   suggestedLanguage?: ApiLangCode
   showTranslate: boolean
-  isCacheSupported: boolean
   animationLevel: 0 | 1 | 2
   passcode: {
     hasPasscode: boolean
     isScreenLocked: boolean
     isLoading: boolean
   }
+  general: {
+    theme: Theme
+    distanceUnit: DistanceUnit
+    messageSendByKey: 'enter' | 'ctrl-enter'
+    timeFormat: TimeFormat
+    messageTextSize: number
+  }
+  transitions: {
+    blur: boolean
+    pageTransitions: boolean
+  }
+  languages?: ApiLanguage[]
 }
 
 export interface AuthState {
   rememberMe: boolean
-  connection?: UserConnection
-  phoneNumber?: string
-  captcha?: RecaptchaVerifier
-  confirmResult?: ConfirmationResult
-  error?: string
+  connection: UserConnection | undefined
+  phoneNumber: string | undefined
+  captcha: RecaptchaVerifier | undefined
+  confirmResult: ConfirmationResult | undefined
+  error: string | undefined
   isLoading: boolean
-  userId?: string
+  userId: string | undefined
   screen: AuthScreens
-  firebase_token?: string
-  passwordHint?: string
-  email?: string
-  session?: string
+  firebase_token: string | undefined
+  passwordHint: string | undefined
+  email: string | undefined
+  session: string | undefined
 }
 export interface GlobalSearchState {
   known?: {
@@ -68,6 +78,7 @@ export interface GlobalState {
 
   chats: {
     byId: Record<string, ApiChat>
+    isLoading: boolean
   }
 
   countryList: ApiCountry[]

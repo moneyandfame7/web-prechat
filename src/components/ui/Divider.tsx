@@ -1,7 +1,9 @@
 import type {FC} from 'preact/compat'
 
-import './Divider.scss'
 import clsx from 'clsx'
+
+import './Divider.scss'
+
 interface DividerProps {
   textAlign?: 'left' | 'center' | 'right'
 }

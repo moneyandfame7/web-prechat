@@ -1,5 +1,4 @@
-import type { StateUpdater} from 'preact/hooks';
-import { useCallback, useState } from 'preact/hooks'
+import {type StateUpdater, useCallback, useState} from 'preact/hooks'
 
 interface UseBooleanOutput {
   value: boolean
@@ -19,7 +18,7 @@ const useBoolean: UseBoolean = (initial = false) => {
     setValue(false)
   }, [])
   const toggle = useCallback(() => {
-    setValue((prev) => !prev)
+    setValue(prev => !prev)
   }, [])
 
   return {
@@ -27,8 +26,8 @@ const useBoolean: UseBoolean = (initial = false) => {
     setValue,
     setFalse,
     setTrue,
-    toggle
+    toggle,
   }
 }
 
-export { useBoolean }
+export {useBoolean}

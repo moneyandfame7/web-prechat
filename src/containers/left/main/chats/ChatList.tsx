@@ -1,12 +1,13 @@
 import {type FC} from 'preact/compat'
 
-import {skeleton} from 'containers/middle/MiddleColumn'
-
-import {SwitchTransition} from 'components/transitions'
+import {selectChatsIds, selectIsChatsFetching} from 'state/selectors/chats'
 import {getGlobalState} from 'state/signal'
 
+import {SwitchTransition} from 'components/transitions'
+
+import {ChatItem} from './ChatItem'
+
 import './ChatList.scss'
-import {Chat} from './Chat'
 
 const Skeleton = () => {
   return (
@@ -30,23 +31,27 @@ const Skeleton = () => {
 }
 
 const List = () => {
-  const {chats} = getGlobalState()
-  const ids = Object.keys(chats.byId)
+  const global = getGlobalState()
+  const chatIds = selectChatsIds(global)
+
   return (
     <>
-      {ids.map((id) => (
-        <Chat chatId={id} key={id} />
+      {chatIds.map((id) => (
+        <ChatItem chatId={id} key={id} />
       ))}
     </>
   )
 }
 enum TestKey {
   Skeleton,
-  List
+  List,
 }
 export const Chats: FC = () => {
+  const global = getGlobalState()
+  const isChatsFetching = selectIsChatsFetching(global)
+
   let activeScreen: TestKey = TestKey.Skeleton
-  activeScreen = skeleton.isLoading ? TestKey.Skeleton : TestKey.List
+  activeScreen = isChatsFetching ? TestKey.Skeleton : TestKey.List
   const render = () => {
     switch (activeScreen) {
       case TestKey.List:
@@ -59,28 +64,12 @@ export const Chats: FC = () => {
     <>
       <SwitchTransition
         name="fade"
-        shouldCleanup
+        shouldCleanup={false}
         activeKey={activeScreen}
         durations={250}
       >
         {render()}
       </SwitchTransition>
-      {/* <p>
-        lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem
-        ipsum dorem lorem ipsum doremlorem ipsum doremlorem ipsum doremlorem ipsum dorem
-        lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem
-        ipsum dorem lorem ipsum doremlorem ipsum doremlorem ipsum doremlorem ipsum
-        doremlorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem
-        ipsum dorem lorem ipsum doremlorem ipsum doremlorem ipsum doremlorem ipsum dorem
-      </p>
-      <p>
-        lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem
-        ipsum dorem lorem ipsum doremlorem ipsum doremlorem ipsum doremlorem ipsum dorem
-        lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem
-        ipsum dorem lorem ipsum doremlorem ipsum doremlorem ipsum doremlorem ipsum
-        doremlorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem ipsum dorem lorem
-        ipsum dorem lorem ipsum doremlorem ipsum doremlorem ipsum doremlorem ipsum dorem
-      </p> */}
     </>
   )
 }

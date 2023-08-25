@@ -6,7 +6,7 @@ export class ApiAccount extends ApiBaseMethod {
   public async getPassword() {
     const {data} = await this.client.query({
       query: QUERY_ACCOUNT_GET_PASSWORD,
-      fetchPolicy: 'cache-first'
+      fetchPolicy: 'cache-first',
     })
     if (!data.getPassword) {
       return undefined

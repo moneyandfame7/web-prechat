@@ -1,14 +1,12 @@
+import {type ApolloClientWrapper, createApolloClientWrapper} from './apollo'
 import {ServiceFactory} from './factory'
-
+import type {ApiAccount} from './methods/account'
 import type {ApiAuth} from './methods/auth'
+import type {ApiChats} from './methods/chats'
+import type {ApiContacts} from './methods/contacts'
 import type {ApiLangPack} from './methods/langPack'
 import type {ApiSettings} from './methods/settings'
-import type {ApiContacts} from './methods/contacts'
 import type {ApiUsers} from './methods/users'
-import type {ApiAccount} from './methods/account'
-import type {ApiChats} from './methods/chats'
-
-import {type ApolloClientWrapper, createApolloClientWrapper} from './apollo'
 
 export interface ApiMethods {
   auth: ApiAuth
@@ -27,6 +25,7 @@ class ApiManager implements ApiMethods {
   /**
    * Constructor accepts all  instances with api methods
    */
+  // eslint-disable-next-line no-useless-constructor
   public constructor(
     public readonly auth: ApiAuth,
     public readonly langPack: ApiLangPack,
@@ -48,15 +47,7 @@ function createApiManager(apolloWrapper: ApolloClientWrapper): ApiMethods {
   const contacts = factory.createContacts()
   const users = factory.createUsers()
   const chats = factory.createChats()
-  const apiClient = new ApiManager(
-    auth,
-    langPack,
-    account,
-    settings,
-    contacts,
-    users,
-    chats
-  )
+  const apiClient = new ApiManager(auth, langPack, account, settings, contacts, users, chats)
 
   return apiClient
 }

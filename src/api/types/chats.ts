@@ -9,7 +9,7 @@ export interface ApiChat {
   isNotJoined?: boolean
   isForbidden?: boolean
   isSupport?: boolean
-  lastMessage?: any
+  // lastMessage?: any
   createdAt?: Date
 }
 

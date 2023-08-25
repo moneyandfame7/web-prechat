@@ -1,23 +1,26 @@
-import {updateSettingsState} from 'state/updates/settings'
-/* eslint-disable no-console */
-import * as firebase from 'lib/firebase'
+import {ApolloError} from '@apollo/client'
+
+import {Api} from 'api/manager'
+import type {AuthSignInResponse, AuthSignUpInput} from 'api/types/auth'
 
 import {createAction} from 'state/action'
 import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
+import {startPersist} from 'state/storages'
+import {updateAuthState} from 'state/updates/auth'
+import {updateSettingsState} from 'state/updates/settings'
+
+/* eslint-disable no-console */
+import * as firebase from 'lib/firebase'
+import {logDebugWarn} from 'lib/logger'
+
+import {USER_BROWSER, USER_PLATFORM} from 'common/config'
+import {logger} from 'utilities/logger'
+import {makeRequest} from 'utilities/makeRequest'
+import {removeSession} from 'utilities/session'
+import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
 import type {ApiLangCode} from 'types/lib'
 import {AuthScreens} from 'types/screens'
-
-import {USER_BROWSER, USER_PLATFORM} from 'common/config'
-import {logDebugWarn} from 'lib/logger'
-import {unformatStr} from 'utilities/string/stringRemoveSpacing'
-import {Api} from 'api/manager'
-import {makeRequest} from 'utilities/makeRequest'
-import {logger} from 'utilities/logger'
-import {ApolloError} from '@apollo/client'
-import type {AuthSignInResponse, AuthSignUpInput} from 'api/types/auth'
-import {removeSession, saveSession} from 'utilities/session'
-import {updateAuthState} from 'state/updates/auth'
 
 /**
  * Get user connection info, country ( dial code, etc )
@@ -29,10 +32,10 @@ createAction('getConnection', async (state) => {
   const existLanguage = LANGUAGES_CODE_ARRAY.find((code) => code === suggestedLanguage)
 
   updateAuthState(state, {
-    connection
+    connection,
   })
   updateSettingsState(state, {
-    suggestedLanguage: existLanguage ? suggestedLanguage : 'en'
+    suggestedLanguage: existLanguage ? suggestedLanguage : 'en',
   })
 })
 
@@ -93,7 +96,7 @@ createAction('sendPhone', async (state, _, payload) => {
     screen: AuthScreens.Code,
     userId: response.userId,
     phoneNumber: payload,
-    isLoading: false
+    isLoading: false,
   })
 })
 
@@ -133,15 +136,20 @@ createAction('verifyCode', async (state, actions, payload) => {
   } else */ if (state.auth.userId) {
     // firebase.resetCaptcha(state.auth)
     actions.signIn({
-      firebase_token
+      firebase_token,
     })
   } else {
-    state.auth = {
-      ...state.auth,
+    updateAuthState(state, {
       firebase_token,
       screen: AuthScreens.SignUp,
-      isLoading: false
-    }
+      isLoading: false,
+    })
+    // state.auth = {
+    //   ...state.auth,
+    //   firebase_token,
+    //   screen: AuthScreens.SignUp,
+    //   isLoading: false,
+    // }
   }
 })
 
@@ -160,8 +168,8 @@ createAction('signIn', async (state, _, payload) => {
       connection: {
         ...state.auth.connection!,
         browser: USER_BROWSER,
-        platform: USER_PLATFORM
-      }
+        platform: USER_PLATFORM,
+      },
     })
     if (!response) {
       return
@@ -177,18 +185,17 @@ createAction('signIn', async (state, _, payload) => {
     console.error('[AUTH]: «Sign in error»')
     return
   }
-  logDebugWarn(`[AUTH]: Session: ${response.sessionHash}`)
 
-  /* FORCE UPDATE, for update all state ( i18n settings, auth and other)
-    IF REMEMBER ME - TRUE */
-  // saveSession(response.sessionHash)
-
+  // updateAuthState(state, {
+  //   isLoading: false,
+  // })
+  state.auth.isLoading = false
   updateAuthState(state, {
     session: response.sessionHash,
-    isLoading: false
   })
-  saveSession(response.sessionHash)
-  await forcePersist()
+  if (state.auth.rememberMe) {
+    await startPersist()
+  }
 })
 
 /**
@@ -214,9 +221,9 @@ createAction('signUp', async (state, _, payload) => {
     connection: {
       ...state.auth.connection!,
       browser: USER_BROWSER || 'Unknown',
-      platform: USER_PLATFORM || 'Unknown'
+      platform: USER_PLATFORM || 'Unknown',
     },
-    firebase_token: state.auth.firebase_token
+    firebase_token: state.auth.firebase_token,
   }
   const response = await Api.auth.signUp({input, photo})
 
@@ -226,15 +233,17 @@ createAction('signUp', async (state, _, payload) => {
   }
 
   updateAuthState(state, {
+    isLoading: false,
     session: response.sessionHash,
-    isLoading: false
   })
-  saveSession(response.sessionHash)
-  await forcePersist()
+
+  if (state.auth.rememberMe) {
+    await startPersist()
+  }
 })
 
 createAction('signOut', async (_, actions) => {
   removeSession()
 
-  actions.reset()
+  await actions.reset()
 })

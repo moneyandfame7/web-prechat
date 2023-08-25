@@ -1,11 +1,13 @@
-import type {FC, JSX, TargetedEvent} from 'preact/compat'
-import {memo, useCallback} from 'preact/compat'
+import {type FC, type JSX, type TargetedEvent, memo, useCallback} from 'preact/compat'
 
 import * as icons from 'assets/icons/all'
+
 import {logDebugWarn} from 'lib/logger'
+
 import {IS_SENSOR} from 'common/config'
 
 import './Icon.scss'
+
 type SVGIconProps = JSX.SVGAttributes<SVGSVGElement>
 
 export type IconName = keyof typeof icons
@@ -27,15 +29,7 @@ interface IconProps {
   width?: number
 }
 export const Icon: FC<IconProps> = memo(
-  ({
-    name,
-    className,
-    color = 'default',
-    onClick,
-    withFastClick = false,
-    title,
-    ...props
-  }) => {
+  ({name, className, color = 'default', onClick, withFastClick = false, title, ...props}) => {
     const ComputedIcon = icons[name] as FC<SVGIconProps>
 
     const buildedClass = `Icon Icon-${name} Icon-${color} ${className || ''}`.trim()

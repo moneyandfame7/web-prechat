@@ -1,11 +1,12 @@
-import type {SignalGlobalState, Theme} from 'types/state'
-import type {ApiLangCode} from 'types/lib'
-import type {SignInPayload, SignUpPayload} from 'types/action'
+import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
+import type {ApiLangKey} from 'api/types/langPack'
+
 import {DEBUG} from 'common/config'
 
-import type {ApiLangKey, ApiLanguage} from 'api/types/langPack'
-import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
+import type {SignInPayload, SignUpPayload} from 'types/action'
+import type {ApiLangCode} from 'types/lib'
 import type {SettingsScreens} from 'types/screens'
+import type {SignalGlobalState, Theme} from 'types/state'
 
 import {getGlobalState} from './signal'
 
@@ -65,7 +66,7 @@ interface ActionPayloads {
   // Localization
   getLangPack: ApiLangCode
   getLanguageString: {code: ApiLangCode; key: ApiLangKey}
-  getLanguages: ApiLanguage[]
+  getLanguages: void
 
   getConnection: void
   sendPhone: string

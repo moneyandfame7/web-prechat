@@ -1,7 +1,6 @@
-import type { FC} from 'preact/compat';
-import { Suspense, lazy, memo } from 'preact/compat'
+import {type FC, Suspense, lazy, memo} from 'preact/compat'
 
-const MainAsync: FC = (props) => {
+const MainAsync: FC = props => {
   const Main = lazy(() => import('./Main'))
 
   return (

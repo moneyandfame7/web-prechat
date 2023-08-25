@@ -1,5 +1,4 @@
-import type {FC} from 'preact/compat'
-import {memo, useCallback} from 'preact/compat'
+import {type FC, memo, useCallback} from 'preact/compat'
 import {useSignal} from '@preact/signals'
 
 import {getGlobalState} from 'state/signal'

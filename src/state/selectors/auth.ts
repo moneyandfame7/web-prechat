@@ -9,11 +9,10 @@ export const selectSuggestedCountry = (state: SignalGlobalState) => {
 export const selectCountryByPhone = (state: SignalGlobalState) => {
   const {
     auth: {phoneNumber},
-    countryList
+    countryList,
   } = state
 
-  if (!phoneNumber) {
-    return
-  }
+  if (!phoneNumber) return
+
   return countryList.find((country) => phoneNumber.includes(country.dial_code))
 }

@@ -1,4 +1,4 @@
-import {type TypedDocumentNode, gql, type DocumentNode} from '@apollo/client'
+import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
 import type {ApiChat, CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiUser} from 'api/types/users'

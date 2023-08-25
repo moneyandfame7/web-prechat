@@ -1,15 +1,16 @@
 import {type FC} from 'preact/compat'
 
-import {ClientError} from 'lib/error/error'
+import Auth from 'modules/auth'
+import Lock from 'modules/lockscreen'
+import Main from 'modules/main'
+
 import {getGlobalState} from 'state/signal'
+
+import {ClientError} from 'lib/error/error'
 
 import {ErrorCatcher} from 'components/ErrorCatcher'
 import {ScreenLoader} from 'components/ScreenLoader'
 import {SwitchTransition} from 'components/transitions'
-
-import Auth from 'modules/auth'
-import Lock from 'modules/lockscreen'
-import Main from 'modules/main'
 
 import {ServiceWorker} from '../serviceWorker'
 
@@ -20,7 +21,7 @@ enum AppScreens {
   Lock = 'Lock',
   Main = 'Main',
   Loading = 'Loading',
-  Error = 'Error'
+  Error = 'Error',
 }
 
 const Application: FC = () => {
@@ -56,6 +57,7 @@ const Application: FC = () => {
       <>
         <ServiceWorker />
         <SwitchTransition
+          // initial
           name="fade"
           shouldCleanup
           durations={500}

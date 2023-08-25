@@ -1,15 +1,15 @@
 import {
-  useRef,
   type FC,
-  useCallback,
-  type TargetedEvent,
   type PropsWithChildren,
-  useEffect
+  type TargetedEvent,
+  useCallback,
+  useEffect,
+  useRef,
 } from 'preact/compat'
 
 import {TransitionTest} from 'components/transitions'
-import {Portal} from 'components/ui/Portal'
 import {IconButton} from 'components/ui'
+import {Portal} from 'components/ui/Portal'
 
 import {ModalProvider, useModalContext} from '../modal'
 
@@ -29,7 +29,7 @@ export const Modal: FC<ModalProps> = ({
   shouldCloseOnBackdrop,
   hasCloseButton = false,
   children,
-  onExitTransition
+  onExitTransition,
 }) => {
   useEffect(() => {
     if (isOpen) {

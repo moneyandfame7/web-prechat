@@ -5,7 +5,7 @@ import type {
   AuthSignInInput,
   AuthSignInResponse,
   AuthSignUpInput,
-  AuthSignUpResponse
+  AuthSignUpResponse,
 } from '../types/auth'
 
 /**

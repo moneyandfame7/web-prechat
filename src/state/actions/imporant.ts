@@ -1,4 +1,5 @@
 import './api/auth'
-import './api/help'
-import './ui/settings'
+import './api/langPack'
 import './ui/init'
+
+// import './ui/settings'

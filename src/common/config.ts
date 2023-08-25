@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {DatabaseOptions, StorageName, StorageOptions} from 'lib/idb/database'
 import type {Platform} from 'types/api'
 
 /*
  * API
  */
-export const API_AUTH_STATE = ['signUpRequired', 'passwordRequired', 'authDone'] as const
 
 export const API_AVATAR_VARIANTS = [
   'GREEN',
@@ -19,10 +17,6 @@ export const API_AVATAR_VARIANTS = [
 /* UI  */
 const {userAgent, platform} = window.navigator
 
-/**
- *
- * Taken from {@link https://github.com/Ajaxy/telegram-tt/blob/2f21b34689c65a1def46823d4b1d52182b60b550/src/util/windowEnvironment.ts#L12 here}
- */
 function detectPlatform(): Platform | undefined {
   const macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K']
   const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE']
@@ -30,7 +24,6 @@ function detectPlatform(): Platform | undefined {
 
   if (
     iosPlatforms.indexOf(platform) !== -1 ||
-    // For new IPads with M1 chip and IPadOS platform returns "MacIntel"
     (platform === 'MacIntel' &&
       'maxTouchPoints' in navigator &&
       navigator.maxTouchPoints > 2)

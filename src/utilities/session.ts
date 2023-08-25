@@ -1,7 +1,5 @@
-import ls from 'localstorage-slim'
-
 export function removeSession() {
-  const result = ls.remove('prechat-session')
+  const result = localStorage.removeItem('prechat-session')
 
   if (typeof result !== 'undefined') {
     /* ERRoR */
@@ -9,7 +7,7 @@ export function removeSession() {
 }
 
 export function saveSession(session: string) {
-  const result = ls.set('prechat-session', session)
+  const result = localStorage.setItem('prechat-session', session)
 
   if (typeof result !== 'undefined') {
     /* ERROR */
@@ -20,7 +18,7 @@ export function saveSession(session: string) {
 }
 
 export function hasActiveSession() {
-  const stored = ls.get('prechat-session') as string
+  const stored = localStorage.getItem('prechat-session') as string
 
   return Boolean(stored)
 }

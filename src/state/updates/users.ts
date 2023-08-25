@@ -1,8 +1,9 @@
 import type {ApiUser} from 'api/types/users'
+import {selectUser} from 'state/selectors/users'
+import {storages} from 'state/storages'
 import type {GlobalState, SignalGlobalState} from 'types/state'
 
 import {updateByKey} from 'utilities/object/updateByKey'
-import {storageManager} from 'lib/idb/manager'
 
 const initialNewContact: GlobalState['newContact'] = {
   userId: undefined,
@@ -29,17 +30,22 @@ export function updateUser(
   id: string,
   updUser: Partial<ApiUser>
 ) {
-  const user = global.users.byId[id]
+  const user = selectUser(global, id)
   if (!user) {
     return
   }
 
   updateByKey(user, updUser)
-  storageManager.users.set({
-    [id]: {
-      ...user,
-      ...updUser
-    }
+
+  /* OR JUST TAKE UPDATED USER BY ID?? */
+  storages.users.put({
+    [id]: user // ???
+    /**
+     * {
+     * ...user,
+     * ...updUser
+     * }
+     */
   })
 
   updateContactList(global, [user])
@@ -51,7 +57,8 @@ export function updateUsers(
 ) {
   updateByKey(global.users.byId, usersById)
 
-  storageManager.users.set(usersById)
+  // storageManager.users.set(usersById)
+  storages.users.put(usersById)
 
   updateContactList(global, Object.values(usersById))
 }

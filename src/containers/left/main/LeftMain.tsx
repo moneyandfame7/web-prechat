@@ -1,29 +1,27 @@
-import {type FC, memo, Fragment} from 'preact/compat'
-import {useCallback, useState, useRef, useEffect} from 'preact/hooks'
-
-import {SearchInput} from 'components/ui'
-import {SwitchTransition} from 'components/transitions'
+import {type FC, Fragment, memo} from 'preact/compat'
+import {useCallback, useEffect, useRef, useState} from 'preact/hooks'
 
 import {LeftColumnScreen} from 'types/ui'
 
-import {Chats} from './chats/ChatList'
-import Search from './search/Search.async'
+import {SwitchTransition} from 'components/transitions'
+import {SearchInput} from 'components/ui'
 
 import {LeftGoBack} from '../LeftGoBack'
-import {LeftMainMenu} from './MainMenu'
-import {CreateChatButton} from './CreateChatButton'
-
 import {useLeftColumn} from '../context'
+import {CreateChatButton} from './CreateChatButton'
+import {LeftMainMenu} from './MainMenu'
+import {Chats} from './chats/ChatList'
+import Search from './search/Search.async'
 
 import './LeftMain.scss'
 
 enum LeftMainGroup {
   Chats = 'Chats',
-  Search = 'Search'
+  Search = 'Search',
 }
 const classNames: Record<LeftMainGroup, string> = {
   [LeftMainGroup.Chats]: 'LeftColumn-Chats scrollable',
-  [LeftMainGroup.Search]: 'LeftColumn-Search'
+  [LeftMainGroup.Search]: 'LeftColumn-Search',
 }
 
 const LeftMain: FC = (props) => {
@@ -87,6 +85,7 @@ const LeftMain: FC = (props) => {
           activeKey={activeGroup}
           durations={350}
           // shouldCleanup={[LeftMainGroup.Search]}
+          cleanupException={[LeftMainGroup.Chats]}
           initial={false}
         >
           {renderScreen()}

@@ -1,10 +1,11 @@
-import {type TypedDocumentNode, type DocumentNode, gql} from '@apollo/client'
+import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
+
 import type {
-  ApiLangCode,
   ApiCountry,
+  ApiLangCode,
+  ApiLangPack,
   ApiLanguage,
-  ApiLanguagePack,
-  GetLangStringInput
+  GetLangStringInput,
 } from '../types/langPack'
 
 export const FRAGMENT_LANGUAGE: DocumentNode = gql`
@@ -12,13 +13,11 @@ export const FRAGMENT_LANGUAGE: DocumentNode = gql`
     name
     nativeName
     langCode
+    stringsCount
   }
 `
 
-export const QUERY_LANG_GET_ALL: TypedDocumentNode<
-  {getLanguages: ApiLanguage[]},
-  void
-> = gql`
+export const QUERY_LANG_GET_ALL: TypedDocumentNode<{getLanguages: ApiLanguage[]}, void> = gql`
   query GetLanguages {
     getLanguages {
       ...AllLangFields
@@ -40,11 +39,14 @@ export const QUERY_LANG_GET: TypedDocumentNode<
 `
 
 export const QUERY_LANG_GET_PACK: TypedDocumentNode<
-  {getLangPack: ApiLanguagePack},
+  {getLangPack: ApiLangPack},
   {code: ApiLangCode}
 > = gql`
   query GetLangPack($code: String!) {
-    getLangPack(code: $code)
+    getLangPack(code: $code) {
+      strings
+      langCode
+    }
   }
 `
 

@@ -1,5 +1,4 @@
-import type {FC} from 'preact/compat'
-import {memo, useMemo} from 'preact/compat'
+import {type FC, memo, useMemo} from 'preact/compat'
 
 import {LeftColumnScreen} from 'types/ui'
 import {useBoolean} from 'hooks/useFlag'
@@ -16,7 +15,7 @@ import {getGlobalState} from 'state/signal'
 export const LeftMainMenu: FC = memo(() => {
   const {setTrue, value, setFalse} = useBoolean(false)
   const {setScreen} = useLeftColumn()
-  const lang = getGlobalState((state) => state.settings.i18n.lang_code)
+  const lang = getGlobalState(state => state.settings.i18n.lang_code)
 
   const items = useMemo(
     () => (

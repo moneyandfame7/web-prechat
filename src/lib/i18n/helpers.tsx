@@ -7,10 +7,10 @@ export const parseStringToJSX = (input: string) => {
         if (index % 2 === 0) {
           return part
         }
-        return <i>{part}</i>
+        return <i key={index}>{part}</i>
       })
     }
 
-    return <b>{part}</b>
+    return <b key={index}>{part}</b>
   })
 }

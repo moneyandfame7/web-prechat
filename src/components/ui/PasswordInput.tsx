@@ -1,10 +1,10 @@
-import {useCallback, type FC, type TargetedEvent} from 'preact/compat'
 import {type Signal} from '@preact/signals'
+import {type FC, type TargetedEvent, useCallback} from 'preact/compat'
 
 import type {InputHandlerValue, SignalOr} from 'types/ui'
 
-import {InputText} from './Input'
 import {Icon} from './Icon'
+import {InputText} from './Input'
 
 import './PasswordInput.scss'
 
@@ -20,7 +20,7 @@ export const PasswordInput: FC<PasswordInputProps> = ({
   value,
   label,
   showPassword,
-  disabled
+  disabled,
 }) => {
   const iconName = showPassword.value ? 'eyeOpen' : 'eyeClose'
   const changeInputType = () => {

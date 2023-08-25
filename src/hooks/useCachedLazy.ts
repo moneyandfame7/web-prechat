@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 import {useEffect} from 'preact/hooks'
 import {DEBUG} from 'common/config'
 

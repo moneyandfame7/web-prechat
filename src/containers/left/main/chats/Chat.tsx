@@ -1,7 +1,9 @@
-import {ListItem} from 'components/ui/ListItem'
 import type {FC} from 'preact/compat'
+
 import {selectChat} from 'state/selectors/chats'
 import {getGlobalState} from 'state/signal'
+
+import {ListItem} from 'components/ui/ListItem'
 
 interface ChatProps {
   chatId: string

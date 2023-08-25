@@ -1,5 +1,4 @@
-import type { FC} from 'preact/compat';
-import { memo } from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
 import './RightColumn.scss'
 const RightColumn: FC = () => {

@@ -1,9 +1,4 @@
-import {
-  QUERY_AUTH_SEND_PHONE,
-  MUTATION_AUTH_SIGN_IN,
-  MUTATION_AUTH_SIGN_UP
-} from 'api/graphql'
-
+import {MUTATION_AUTH_SIGN_IN, MUTATION_AUTH_SIGN_UP, QUERY_AUTH_SEND_PHONE} from 'api/graphql'
 import type {AuthSignInInput, AuthSignUpInput} from 'api/types'
 
 import {ApiBaseMethod} from '../base'
@@ -17,7 +12,7 @@ export class ApiAuth extends ApiBaseMethod {
     const {data} = await this.client.query({
       query: QUERY_AUTH_SEND_PHONE,
       variables: {phone},
-      fetchPolicy: 'cache-first'
+      fetchPolicy: 'cache-first',
     })
 
     if (!data.sendPhone) {
@@ -35,8 +30,8 @@ export class ApiAuth extends ApiBaseMethod {
     const {data} = await this.client.mutate({
       mutation: MUTATION_AUTH_SIGN_IN,
       variables: {
-        input
-      }
+        input,
+      },
     })
 
     if (!data?.signIn) {
@@ -55,8 +50,8 @@ export class ApiAuth extends ApiBaseMethod {
       mutation: MUTATION_AUTH_SIGN_UP,
       variables: {
         input,
-        photo
-      }
+        photo,
+      },
     })
     if (!data?.signUp) {
       return undefined

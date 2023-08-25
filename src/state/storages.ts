@@ -1,20 +1,17 @@
+import type {ApiLangCode, ApiLangPack} from 'api/types'
 import type {ApiChat} from 'api/types/chats'
 import type {ApiUser} from 'api/types/users'
-import type {AuthState, SettingsState, GlobalState} from 'types/state'
 
-import {createPersistStore} from 'lib/store/persist'
-import type {PersistIdbStorage, StoragesName} from 'lib/store/persist/types'
-import {pick} from 'utilities/object/pick'
+import {createPersistStore} from 'state/persist'
+import type {PersistIdbStorage, StoragesName} from 'state/persist/types'
+
 import {DEBUG} from 'common/config'
+import {pick} from 'utilities/object/pick'
+
+import type {AuthState, GlobalState, SettingsState} from 'types/state'
 
 import {getGlobalState} from './signal'
-import {
-  updateAuthState,
-  updateI18nState,
-  updatePasscodeState,
-  updateSettingsState,
-  updateUsers
-} from './updates'
+import {updateAuthState, updateSettingsState, updateUsers} from './updates'
 import {updateChats} from './updates/chats'
 
 const persistStore = createPersistStore({
@@ -22,58 +19,64 @@ const persistStore = createPersistStore({
   version: 1,
   storages: [
     {
-      name: 'auth'
+      name: 'auth',
     },
     {
-      name: 'settings'
+      name: 'settings',
     },
     {
       name: 'chats',
       optionalParameters: {
-        keyPath: 'id'
-      }
+        keyPath: 'id',
+      },
     },
     {
       name: 'users',
       optionalParameters: {
-        keyPath: 'id'
-      }
-    }
-  ]
+        keyPath: 'id',
+      },
+    },
+    {
+      name: 'i18n',
+    },
+  ],
 })
 
 export const storages = {
   auth: persistStore.injectStorage<AuthState>({storageName: 'auth'}),
   settings: persistStore.injectStorage<SettingsState>({storageName: 'settings'}),
   users: persistStore.injectStorage<Record<string, ApiUser>>({storageName: 'users'}),
-  chats: persistStore.injectStorage<Record<string, ApiChat>>({storageName: 'chats'})
+  chats: persistStore.injectStorage<Record<string, ApiChat>>({storageName: 'chats'}),
+  i18n: persistStore.injectStorage<Record<ApiLangCode, ApiLangPack>>({
+    storageName: 'i18n',
+  }),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } satisfies Record<StoragesName, PersistIdbStorage<any>>
 
 const PERSIST_DISABLED = false
 
-export function pickPersisted(state: GlobalState) {
+function pickPersisted(state: GlobalState) {
   return {
     auth: pick(state.auth, ['userId', 'session', 'phoneNumber', 'rememberMe']),
     users: state.users.byId,
     chats: state.chats.byId,
-    settings: state.settings
+    settings: state.settings,
+    // i18n: state.settings.i18n,
   }
 }
 
-export async function clearStorage() {
+async function clearStorage() {
   await Promise.all(
-    Object.keys(storages).map((storage) =>
-      storages[storage as keyof typeof storages].clear()
-    )
+    Object.keys(storages).map((storage) => storages[storage as keyof typeof storages].clear())
   )
 }
 
-export async function readStorage() {
+async function readStorage() {
   const [auth, settings, users, chats] = await Promise.all([
     storages.auth.get(),
     storages.settings.get(),
     storages.users.get(),
-    storages.chats.get()
+    storages.chats.get(),
   ])
 
   return {auth, settings, users, chats}
@@ -98,17 +101,12 @@ export async function hydrateStore() {
 
   const global = getGlobalState()
   if (auth?.session || settings?.passcode.hasPasscode) {
-    persistStore.enable()
-
     // MOVE TO "setGlobalState"
     if (auth) {
       updateAuthState(global, auth)
     }
     if (settings) {
-      const {i18n, passcode, ...justSettingsForUpd} = settings
-      updateSettingsState(global, justSettingsForUpd)
-      updateI18nState(global, i18n)
-      updatePasscodeState(global, passcode)
+      updateSettingsState(global, settings)
     }
     if (users) {
       updateUsers(global, users)
@@ -116,6 +114,11 @@ export async function hydrateStore() {
     if (chats) {
       updateChats(global, chats)
     }
+
+    persistStore.enable()
+
+    // for sync storage??
+    // /* await */ forcePersist(global as GlobalState)
   } else {
     // combinedStore.resetState() ??
     await stopPersist()
@@ -124,15 +127,20 @@ export async function hydrateStore() {
 
 export async function startPersist() {
   persistStore.enable()
-
   const global = getGlobalState()
 
-  const pickedState = pickPersisted(global as GlobalState)
+  await forcePersist(global as GlobalState)
+}
+
+export async function forcePersist(global: GlobalState) {
+  const pickedForPersist = pickPersisted(global)
+
   await Promise.all([
-    storages.auth.put(pickedState.auth),
-    storages.settings.put(pickedState.settings),
-    storages.users.put(pickedState.users),
-    storages.chats.put(pickedState.chats)
+    storages.auth.put(pickedForPersist.auth),
+    storages.settings.put(pickedForPersist.settings),
+    storages.users.put(pickedForPersist.users),
+    storages.chats.put(pickedForPersist.chats),
+    // storages.i18n.put(pickedForPersist.i1n),
     /* i18nStorage?? */
   ])
 }

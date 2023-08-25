@@ -1,19 +1,25 @@
-import * as cache from 'lib/cache'
 import {createAction} from 'state/action'
+import {INITIAL_STATE} from 'state/initState'
+import {setGlobalState} from 'state/signal'
+import {hydrateStore, stopPersist} from 'state/storages'
+
+import * as cache from 'lib/cache'
 
 import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/config'
-import {hydrateStore} from 'state/storages'
+import {deepCopy} from 'utilities/object/deepCopy'
 
-createAction('reset', async (_state, actions) => {
-  resetPersist()
+createAction('reset', async (_state) => {
+  await stopPersist()
+
   // resetAuthState(state)
-
   cache.clear('prechat-avatars')
   cache.clear('prechat-i18n-pack')
   cache.clear('prechat-i18n-string')
   cache.clear('prechat-assets')
 
-  actions.init()
+  setGlobalState(deepCopy(INITIAL_STATE))
+  // _state.auth.session = undefined
+  // await actions.init() // ????
 })
 
 createAction('init', async (state): Promise<void> => {
@@ -40,7 +46,9 @@ createAction('init', async (state): Promise<void> => {
   // }
 
   // setGlobalState(persisted)
-  // setTimeout(() => {
-  state.initialization = false
-  // }, 400)
+
+  /* for avoid flickering loading screen */
+  setTimeout(() => {
+    state.initialization = false
+  }, 400)
 })

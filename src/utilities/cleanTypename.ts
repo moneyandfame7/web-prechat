@@ -6,9 +6,8 @@ export function cleanTypename<T>(response: T): T {
     JSON.stringify(response, (name, val) => {
       if (name === '__typename') {
         return undefined
-      } else {
-        return val
       }
+      return val
     })
   )
 }

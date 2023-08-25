@@ -1,84 +1,86 @@
 import type {ObjectOrValue} from 'types/common'
+
 import type {TransitionCases, TransitionProperties} from './types'
+
 export const FADE_IN_OUT: TransitionCases = {
   enter: {
     name: 'fade',
-    duration: 350
+    duration: 350,
   },
   exit: {
     name: 'fade',
-    duration: 350
-  }
+    duration: 350,
+  },
 }
 export const ZOOM_FADE_IN_OUT: TransitionCases = {
   enter: {
     name: 'zoomFade',
-    duration: 350
+    duration: 350,
   },
   exit: {
     name: 'zoomFade',
-    duration: 350
-  }
+    duration: 350,
+  },
 }
 export const SLIDE_FADE_IN: TransitionCases = {
   enter: {
     name: 'slide',
-    duration: 300
+    duration: 300,
   },
   exit: {
     name: 'slideFade',
-    duration: 300
-  }
+    duration: 300,
+  },
 }
 export const SLIDE_FADE_OUT: TransitionCases = {
   enter: {
     name: 'slideFade',
-    duration: 300
+    duration: 300,
   },
   exit: {
     name: 'slide',
-    duration: 400
-  }
+    duration: 400,
+  },
 }
 export const ZOOM_SLIDE_IN: TransitionCases = {
   enter: {
     name: 'slide',
-    duration: 250
+    duration: 250,
   },
   exit: {
     name: 'zoomFade',
-    duration: 250
-  }
+    duration: 250,
+  },
 }
 export const ZOOM_SLIDE_OUT: TransitionCases = {
   enter: {
     name: 'zoomFade',
-    duration: 250
+    duration: 250,
   },
   exit: {
     name: 'slide',
-    duration: 250
-  }
+    duration: 250,
+  },
 }
 export const SLIDE_IN: TransitionCases = {
   enter: {
     name: 'slide-200',
-    duration: 400
+    duration: 400,
   },
   exit: {
     name: 'slide-200-backward',
-    duration: 400
-  }
+    duration: 400,
+  },
 }
 export const SLIDE_OUT: TransitionCases = {
   enter: {
     name: 'slide-200-backward',
-    duration: 400
+    duration: 400,
   },
   exit: {
     name: 'slide-200',
-    duration: 400
-  }
+    duration: 400,
+  },
 }
 /* Switch Transition */
 export function getTransitionProperty<TKey extends string | number>(
@@ -97,7 +99,7 @@ export function getCleanupElements<TKey>(
   exception?: TKey[],
   shldCleanup?: boolean
 ) {
-  const cleanupElements = exception?.find((el) => el === key)
+  const cleanupElements = exception?.find(el => el === key)
 
   return typeof cleanupElements !== 'undefined' ? Boolean(cleanupElements) : !shldCleanup
 }
@@ -107,7 +109,8 @@ export function buildCustomTransitionProperties(properties: TransitionProperties
   const {duration, name} = properties
 
   return {
-    ...(duration ? {[`--transition-${name}-duration`]: duration + 'ms'} : {})
+    // eslint-disable-next-line prefer-template
+    ...(duration ? {[`--transition-${name}-duration`]: duration + 'ms'} : {}),
   }
 }
 

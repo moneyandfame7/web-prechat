@@ -1,5 +1,4 @@
-import type {FC} from 'preact/compat'
-import {memo, useCallback, useEffect, useState} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useState} from 'preact/compat'
 
 import CreateChatStep1 from './CreateChatStep1'
 import CreateChatStep2 from './CreateChatStep2'
@@ -10,7 +9,7 @@ import {
   type TransitionCases,
   SwitchTransition,
   SLIDE_FADE_OUT,
-  SLIDE_FADE_IN
+  SLIDE_FADE_IN,
 } from 'components/transitions'
 
 export interface CreateChatProps {
@@ -19,11 +18,11 @@ export interface CreateChatProps {
 
 enum CreateChatGroup {
   Step1 = 'Step1',
-  Step2 = 'Step2'
+  Step2 = 'Step2',
 }
 const screenClassnames = {
   [CreateChatGroup.Step1]: 'LeftColumn-CreateChatStep1',
-  [CreateChatGroup.Step2]: 'LeftColumn-CreateChatStep2'
+  [CreateChatGroup.Step2]: 'LeftColumn-CreateChatStep2',
 }
 function getTransitionByCase(
   activeScreen: CreateChatGroup
@@ -43,12 +42,11 @@ const CreateChat: FC<CreateChatProps> = ({isGroup}) => {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const onSelectMember = (id: string) => {
-    setSelectedIds((prev) => {
+    setSelectedIds(prev => {
       if (prev.includes(id)) {
-        return prev.filter((existingId) => existingId !== id)
-      } else {
-        return [...prev, id]
+        return prev.filter(existingId => existingId !== id)
       }
+      return [...prev, id]
     })
   }
 

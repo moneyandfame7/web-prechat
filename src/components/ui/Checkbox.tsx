@@ -1,13 +1,13 @@
-import type {FC, TargetedEvent} from 'preact/compat'
-import {useCallback} from 'preact/compat'
 import type {Signal} from '@preact/signals'
+import {type FC, type TargetedEvent, useCallback} from 'preact/compat'
+
 import clsx from 'clsx'
+
+import type {SignalOr} from 'types/ui'
 
 import {Icon} from 'components/ui'
 
 import {Ripple} from '../Ripple'
-
-import type {SignalOr} from 'types/ui'
 
 import './Checkbox.scss'
 
@@ -26,15 +26,15 @@ export const Checkbox: FC<CheckboxProps> = ({
   checked,
   withRipple = true,
   disabled,
-  id
+  id,
 }) => {
   const handleChange = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
     onToggle?.(e.currentTarget.checked)
   }, [])
 
   const buildedClass = clsx('Checkbox', {
-    'disabled': disabled,
-    'ripple': withRipple
+    disabled,
+    ripple: withRipple,
   })
   /* подумати потім, як переробити щоб працювали signals */
   // https://codepen.io/bradyhullopeter/pen/bGrjzJy
