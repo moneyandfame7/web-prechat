@@ -18,6 +18,7 @@ export const INITIAL_STATE: GlobalState = {
     phoneNumber: undefined,
     session: undefined,
     userId: undefined,
+    sessionLastActivity: undefined,
   },
   settings: {
     theme: 'light',
@@ -51,6 +52,7 @@ export const INITIAL_STATE: GlobalState = {
   users: {
     byId: {},
     contactIds: [],
+    statusesByUserId: {},
   },
 
   // chatCreation: {
@@ -61,6 +63,7 @@ export const INITIAL_STATE: GlobalState = {
   chats: {
     byId: {},
     isLoading: true,
+    ids: [],
   },
 
   globalSearch: {
@@ -68,12 +71,22 @@ export const INITIAL_STATE: GlobalState = {
     global: {},
     isLoading: false,
   },
+  activeSessions: {
+    byId: {},
+    ids: [],
+  },
 
   countryList: [],
 
   newContact: {
     userId: undefined,
     isByPhoneNumber: false,
+  },
+
+  commonModal: {
+    title: undefined,
+    body: undefined,
+    isOpen: false,
   },
 
   notification: {

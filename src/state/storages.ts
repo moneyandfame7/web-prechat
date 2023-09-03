@@ -1,4 +1,4 @@
-import type {ApiLangCode, ApiLangPack} from 'api/types'
+import type {ApiLangCode, ApiLangPack, ApiSession} from 'api/types'
 import type {ApiChat} from 'api/types/chats'
 import type {ApiUser} from 'api/types/users'
 
@@ -11,7 +11,7 @@ import {pick} from 'utilities/object/pick'
 import type {AuthState, GlobalState, SettingsState} from 'types/state'
 
 import {getGlobalState} from './signal'
-import {updateAuthState, updateSettingsState, updateUsers} from './updates'
+import {updateAuthState, updateSessions, updateSettingsState, updateUsers} from './updates'
 import {updateChats} from './updates/chats'
 
 const persistStore = createPersistStore({
@@ -39,9 +39,16 @@ const persistStore = createPersistStore({
     {
       name: 'i18n',
     },
+    {
+      name: 'sessions',
+      optionalParameters: {
+        keyPath: 'id',
+      },
+    },
   ],
 })
 
+/* ADD PERSIST PICK!!! */
 export const storages = {
   auth: persistStore.injectStorage<AuthState>({storageName: 'auth'}),
   settings: persistStore.injectStorage<SettingsState>({storageName: 'settings'}),
@@ -50,6 +57,7 @@ export const storages = {
   i18n: persistStore.injectStorage<Record<ApiLangCode, ApiLangPack>>({
     storageName: 'i18n',
   }),
+  sessions: persistStore.injectStorage<Record<string, ApiSession>>({storageName: 'sessions'}),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } satisfies Record<StoragesName, PersistIdbStorage<any>>
 
@@ -57,10 +65,17 @@ const PERSIST_DISABLED = false
 
 function pickPersisted(state: GlobalState) {
   return {
-    auth: pick(state.auth, ['userId', 'session', 'phoneNumber', 'rememberMe']),
+    auth: pick(state.auth, [
+      'userId',
+      'session',
+      'phoneNumber',
+      'rememberMe',
+      'sessionLastActivity',
+    ]),
     users: state.users.byId,
     chats: state.chats.byId,
     settings: state.settings,
+    sessions: state.activeSessions.byId,
     // i18n: state.settings.i18n,
   }
 }
@@ -72,14 +87,15 @@ async function clearStorage() {
 }
 
 async function readStorage() {
-  const [auth, settings, users, chats] = await Promise.all([
+  const [auth, settings, users, chats, sessions] = await Promise.all([
     storages.auth.get(),
     storages.settings.get(),
     storages.users.get(),
     storages.chats.get(),
+    storages.sessions.get(),
   ])
 
-  return {auth, settings, users, chats}
+  return {auth, settings, users, chats, sessions}
 }
 
 export async function stopPersist() {
@@ -97,7 +113,7 @@ export async function hydrateStore() {
 
     return
   }
-  const {auth, settings, chats, users} = await readStorage()
+  const {auth, settings, chats, users, sessions} = await readStorage()
 
   const global = getGlobalState()
   if (auth?.session || settings?.passcode.hasPasscode) {
@@ -113,6 +129,9 @@ export async function hydrateStore() {
     }
     if (chats) {
       updateChats(global, chats)
+    }
+    if (sessions) {
+      updateSessions(global, sessions)
     }
 
     persistStore.enable()
@@ -140,6 +159,7 @@ export async function forcePersist(global: GlobalState) {
     storages.settings.put(pickedForPersist.settings),
     storages.users.put(pickedForPersist.users),
     storages.chats.put(pickedForPersist.chats),
+    storages.sessions.put(pickedForPersist.sessions),
     // storages.i18n.put(pickedForPersist.i1n),
     /* i18nStorage?? */
   ])

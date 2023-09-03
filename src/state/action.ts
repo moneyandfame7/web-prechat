@@ -32,6 +32,9 @@ interface ActionPayloads {
   authInit: void
 
   // Differents
+  openCommonModal: {title: string; body: string}
+  closeCommonModal: void
+
   openAddContactModal: {userId: string}
   closeAddContactModal: void
 
@@ -52,16 +55,26 @@ interface ActionPayloads {
 
   /* Api */
   getCountries: ApiLangCode | undefined
-  getContactList: void
-  getUser: string
 
   /* Contacts */
   addContact: {firstName: string; phone: string; lastName?: string; userId?: string}
+  getContactList: void
+
+  /* Users */
+  getSelf: void
+  getUser: string
 
   /* Chats */
   createChannel: CreateChannelInput
   createGroup: CreateGroupInput
   getChats: void
+
+  /* Account */
+  getAuthorizations: void
+  updateAuthorizationActivity: void
+  terminateAuthorization: {sessionId: string}
+  terminateAllAuthorizations: void
+  updateUserStatus: {isOnline: boolean; isFirst?: boolean; noDebounce?: boolean}
 
   // Localization
   getLangPack: ApiLangCode

@@ -1,11 +1,15 @@
 import type {FC} from 'preact/compat'
 
-import type {ApiAvatarVariant} from 'api/types'
+import clsx from 'clsx'
+
+import type {ApiChat, ApiColorVariant, ApiUser} from 'api/types'
 
 import {getSignalOr} from 'utilities/getSignalOr'
 import {getInitials} from 'utilities/string/getInitials'
 
 import type {SignalOr} from 'types/ui'
+
+import {Icon} from '.'
 
 import './AvatarTest.scss'
 
@@ -15,17 +19,29 @@ export type AvatarShape = 'rounded' | 'circular'
 interface AvatarTestProps {
   fullName?: SignalOr<string>
   size?: AvatarSize
-  variant?: ApiAvatarVariant
+  variant?: ApiColorVariant
   shape?: AvatarShape
+  peer?: ApiChat | ApiUser
+  isSavedMessages?: boolean
 }
+
+// передавати просто тут одразу peer.
 export const AvatarTest: FC<AvatarTestProps> = ({
   fullName,
   variant = 'BLUE',
   size = 'm',
   shape = 'circular',
+  isSavedMessages,
 }) => {
-  const initials = fullName ? getInitials(getSignalOr(fullName)) : undefined
+  const renderContent = () => {
+    if (isSavedMessages) {
+      return <Icon name="savedMessages" />
+    }
 
-  const buildedClassname = `Avatar Avatar-${size} Avatar-${shape} Avatar-c-${variant}`
-  return <div class={buildedClassname}>{initials}</div>
+    return fullName ? getInitials(getSignalOr(fullName)) : undefined
+  }
+  const buildedClassname = clsx(`Avatar Avatar-${size} Avatar-${shape} Avatar-c-${variant}`, {
+    'saved-messages': isSavedMessages,
+  })
+  return <div class={buildedClassname}>{renderContent()}</div>
 }

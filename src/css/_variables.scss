@@ -49,12 +49,20 @@ $c-surface-transparent: rgba($c-surface, 85%);
 $c-border: #dfe1e5;
 $c-border-hover: darken($c-border, 10%);
 
-$c-primary: #3290ec; // #50A2E9 - more lighter
-$c-primary-rgb: 50, 144, 236; // rgb(80,162,233)
-$c-primary-transparent: color.scale($c-primary, $alpha: 10%);
-$c-primary-hover: darken($c-primary, 8%);
-$c-icon: #707579;
+$c-primary: #3290ec; // #50A2E9 - lighten
+$c-primary-light: #3390ec;
 
+$c-primary-rgb: 50, 144, 236; // rgb(80,162,233)
+$c-primary-hover: darken($c-primary, 2%);
+$c-primary-transparent: rgba($c-primary, 0.1);
+$c-icon: #707579;
+$c-green: #35c759;
+$c-blue: #007aff;
+$c-red: #d33430;
+$c-white: #fff;
+$c-red-hover: darken($c-red, 2%);
+$c-red-transparent: rgba($c-red, 0.1);
+$c-orange: #ff9500;
 $c-ripple: rgba($c-icon, 8%);
 $c-icon-2: darken($c-icon, 10%);
 $c-scrollbar: lighten($c-icon, 40%);
@@ -83,12 +91,10 @@ $c-avatar-green: linear-gradient(
 $c-avatar-pink: linear-gradient(90deg, #ff9a8b 0%, #ff6a88 55%, #ff99ac 100%);
 $c-avatar-orange: linear-gradient(147deg, #ffe53b 0%, #ff2525 74%);
 $c-avatar-purple: linear-gradient(
-  62deg,
-  #4966a9 0%,
-  #e0c3fc 33%,
-  #ba4cfd 66%,
-  #641779 100%
-);
+  to right,
+  #cc2b5e,
+  #753a88
+); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 $fs-messages: 16px;
 
@@ -137,10 +143,21 @@ $fs-messages: 16px;
 
   --c-primary: #{$c-primary};
   --c-primary-hover: #{$c-primary-hover};
+  --c-primary-light: #{$c-primary-light};
+
   --c-icon: #{$c-icon};
   --c-icon-2: #{$c-icon-2};
+
   --c-ripple: #{$c-ripple};
   --c-error: #{$c-font-red};
+
+  --c-green: #{$c-green};
+  --c-red: #{$c-red};
+  --c-red-hover: #{$c-red-hover};
+  --c-red-transparent: #{$c-red-transparent};
+  --c-blue: #{$c-blue};
+  --c-orange: #{$c-orange};
+  --c-white: #{$c-white};
 
   --c-font-primary: #{$c-font-primary};
   --c-font-secondary: #{$c-font-secondary};
@@ -157,6 +174,7 @@ $fs-messages: 16px;
   // html.night & {}
   &.night {
     $c-primary: #888afd;
+    $c-primary-light: #b2a6eb;
     $c-bg-surface: #212121;
     $c-bg: #212121;
     $c-bg-rgb: 33 33 33;
@@ -179,6 +197,8 @@ $fs-messages: 16px;
     --c-border-hover: #{lighten($c-border, 3%)};
 
     --c-primary: #{$c-primary};
+    --c-primary-light: #{$c-primary-light};
+
     --c-primary-hover: #{darken($c-primary, 3%)};
     --c-primary-transparent: #{rgba($c-primary, 0.1)};
 

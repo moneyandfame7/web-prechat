@@ -19,6 +19,8 @@ import {getGlobalState} from 'state/signal'
 
 import {logDebugWarn} from 'lib/logger'
 
+import {DEBUG} from 'common/config'
+
 export type GqlDoc = {
   __typename: string
 }
@@ -97,9 +99,9 @@ export class ApolloClientWrapper {
       }
 
       if (graphQLErrors) {
-        graphQLErrors.forEach(({message}) =>
+        graphQLErrors.forEach(({message, path}) =>
           // eslint-disable-next-line no-console
-          console.error(`[GraphQL error]: Message: ${message}`)
+          console.error(`[GraphQL error]: Message: ${message}`, path)
         )
       }
     })
@@ -119,6 +121,11 @@ export class ApolloClientWrapper {
             'prechat-session': auth.session || '',
           },
         }),
+        shouldRetry: (err) => {
+          console.log(err, '00000000000[[[[[[[[]]]]]]]]')
+
+          return false
+        },
       })
     )
   }
@@ -160,13 +167,13 @@ export class ApolloClientWrapper {
 export function createApolloClientWrapper(): ApolloClientWrapper {
   const httpUrl = import.meta.env.VITE_API_URL
   // eslint-disable-next-line prefer-template
-  const wsUrl = httpUrl.replace('https://', 'ws://') + '/subscriptions'
+  const wsUrl = httpUrl.replace(DEBUG ? 'http://' : 'https://', 'ws://') + '/subscriptions'
 
   const client = new ApolloClientWrapper({
     httpUrl,
     wsUrl,
   })
-
+  // client.client.
   return client
 }
 

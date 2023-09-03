@@ -1,4 +1,5 @@
 const lang = {
+  LANG_NATIVE_NAME: 'English',
   Next: 'Next',
   Country: 'Country',
   Code: 'Code',
@@ -30,7 +31,16 @@ const lang = {
   'Auth.EnterPassword': 'Enter a Password',
   'Auth.SignUp': 'Enter your name and add a profile picture',
   'Auth.SilentAuth': 'Silent (without contacts notification)',
-  'Auth.StartMessaging': 'Start Messaging'
-}
+  'Auth.StartMessaging': 'Start Messaging',
+  HelloInterpolate: 'Hello, {{name}}',
+  HelloPluralize: {
+    one: 'Hello, 1 item',
+    other: 'Hello, {{count}} items',
+  },
+  CombinedPlurAndInter: {
+    one: 'Hello, {{name}}, you have 1 item',
+    other: 'Hello, {{name}}, you have {{count}} items',
+  },
+} as const
 
 export default lang

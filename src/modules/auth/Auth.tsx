@@ -5,6 +5,8 @@ import {getGlobalState} from 'state/signal'
 import {startPersist} from 'state/storages'
 import {cleanupUnusedAuthState} from 'state/updates'
 
+import {preloadImage} from 'utilities/preloadImage'
+
 import {AuthScreens} from 'types/screens'
 
 import {SwitchTransition} from 'components/transitions'
@@ -52,6 +54,7 @@ const Auth: FC = () => {
   }, [global.auth.screen])
 
   useEffect(() => {
+    // preloadImage(monkeySvg)
     return () => {
       // console.log('AUTH REMOVED')
       cleanupUnusedAuthState(global)
@@ -67,6 +70,16 @@ const Auth: FC = () => {
           }}
         >
           Mock auth
+        </Button>
+        <Button
+          onClick={() => {
+            global.auth.screen =
+              global.auth.screen === AuthScreens.PhoneNumber
+                ? AuthScreens.Code
+                : AuthScreens.PhoneNumber
+          }}
+        >
+          TOGGLE_SCREEN
         </Button>
         <div class="Auth_inner">
           <SwitchTransition

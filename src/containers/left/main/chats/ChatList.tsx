@@ -63,6 +63,7 @@ export const Chats: FC = () => {
   return (
     <>
       <SwitchTransition
+        permanentClassname="chats-list scrollable"
         name="fade"
         shouldCleanup={false}
         activeKey={activeScreen}

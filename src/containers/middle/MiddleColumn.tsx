@@ -1,21 +1,29 @@
-import {type FC, useRef} from 'preact/compat'
+import {useSignal} from '@preact/signals'
+import {type FC, useEffect, useRef} from 'preact/compat'
 
 import {deepSignal} from 'deepsignal'
 
 import {getActions} from 'state/action'
+import {getUserStatus} from 'state/helpers/users'
+import {selectUser, selectUserStatus} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
+import {destroySubscribeAll} from 'state/subscribe'
 
 import {t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n/types'
 
+import {USER_BROWSER, USER_PLATFORM} from 'common/config'
 import {decryptSession, saveEncryptSession} from 'utilities/encryption/storage'
 
 import {SettingsScreens} from 'types/screens'
 
 import {ChatItem} from 'containers/left/main/chats/ChatItem'
 
+import {ConfirmButton} from 'components/ConfirmButton'
 import {ImageUpload} from 'components/UploadPhoto'
 import {SwitchLanguageTest} from 'components/test'
-import {Button} from 'components/ui'
+import {TEST_ChangeLanguage} from 'components/test/ChangeLanguage'
+import {Button, Icon, IconButton} from 'components/ui'
 import {ListItem} from 'components/ui/ListItem'
 
 import './MiddleColumn.scss'
@@ -28,7 +36,6 @@ export const MiddleColumn: FC = () => {
   const global = getGlobalState()
   const actions = getActions()
   render.current += 1
-
   const signOut = () => {
     actions.signOut()
   }
@@ -640,7 +647,7 @@ export const MiddleColumn: FC = () => {
 
   return (
     <div class="MiddleColumn">
-      <div class="MiddleColumn-inner">
+      <div class="MiddleColumn-inner scrollable">
         <h1>{render.current}</h1>
         <ListItem
           icon="arrowLeft"
@@ -649,9 +656,19 @@ export const MiddleColumn: FC = () => {
           subtitle="Its just my subtitle"
           additional="asdm"
         />
+        {global.users.contactIds.map((id) => {
+          const user = selectUser(global, id)
+          return (
+            <div key={id}>
+              <h5>{user?.firstName}</h5> |<p>{user && getUserStatus(user)!}</p>
+              {JSON.stringify(user?.status)}
+            </div>
+          )
+        })}
         <div style={{border: '1px solid red', width: '400px'}}>
           <ChatItem chatId="TEST" />
         </div>
+        <Button onClick={toggleTheme}>TOGGLE_THEME</Button>
         <SwitchLanguageTest />
         <Button
           onClick={() => {
@@ -660,7 +677,6 @@ export const MiddleColumn: FC = () => {
         >
           SETTING SCREEN
         </Button>
-        <Button onClick={() => storeData()}>SAVE</Button>
         <Button
           onClick={() => {
             getData('3025102307')
@@ -668,15 +684,15 @@ export const MiddleColumn: FC = () => {
         >
           READ
         </Button>
-
-        <Button onClick={toggleTheme}>Toggle theme</Button>
+        <Button onClick={() => console.log(global)}>LOG_STATE</Button>
+        {USER_BROWSER}
+        {USER_PLATFORM}
+        <TEST_ChangeLanguage />
         <ImageUpload />
         <h1>{global.auth.$phoneNumber}</h1>
-        <p>{t('Auth.CodeSendOnPhone')}</p>
-        <p>{t('RememberMe')}</p>
-        <Button onClick={toggleLoading}>TOGGLE_SKELETON</Button>
+        <p>{TEST_translate('Auth.CodeSendOnPhone')}</p>
+        <p>{TEST_translate('RememberMe')}</p>
         <Button onClick={signOut}>Sign Out</Button>
-        <Button onClick={openModal}>Open modal</Button>
       </div>
     </div>
   )

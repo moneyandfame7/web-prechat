@@ -17,12 +17,14 @@ export interface ButtonProps {
   isDisabled?: SignalOr<boolean | undefined>
   type?: 'button' | 'submit'
   variant?: 'contained' | 'transparent'
+  color?: 'primary' | 'red' | 'green'
   withFastClick?: boolean
   ripple?: boolean
   onClick?: () => void
   className?: string
   fullWidth?: boolean
   'aria-label'?: SignalOrString
+  uppercase?: boolean
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -32,19 +34,23 @@ export const Button: FC<ButtonProps> = ({
   isDisabled = false,
   variant = 'contained',
   children,
-  withFastClick = true,
   ripple = true,
   fullWidth = true,
   onClick,
   className,
+  color = 'primary',
+  withFastClick = color !== 'red',
+  uppercase = true,
   'aria-label': ariaLabel,
 }) => {
   const buildClass = clsx(
     'Button',
     `Button-${variant}`,
+    `Button-${color}`,
     {
       'Button-loading': isLoading,
       'Button-fullwidth': fullWidth,
+      'Button-noTransform': !uppercase,
     },
     className
   )

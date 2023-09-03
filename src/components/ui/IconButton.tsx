@@ -10,7 +10,7 @@ import {Icon, type IconName} from './Icon'
 
 import './IconButton.scss'
 
-interface IconButtonProps
+export interface IconButtonProps
   extends Pick<ButtonProps, 'className' | 'onClick' | 'ripple' | 'withFastClick'> {
   icon: IconName
 }
@@ -18,7 +18,7 @@ export const IconButton: FC<IconButtonProps> = ({
   icon,
   className,
   onClick,
-  withFastClick,
+  withFastClick = true,
   ripple = true,
   ...props
 }) => {

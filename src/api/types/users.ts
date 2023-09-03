@@ -1,5 +1,7 @@
 import type {API_AVATAR_VARIANTS} from 'common/config'
 
+import type {ApiPhoto} from './diff'
+
 export interface ApiInputUser {
   userId: string
 }
@@ -13,35 +15,37 @@ export interface ApiUser {
   username?: string
   phoneNumber: string
   status?: ApiUserStatus
+  color: ApiColorVariant
   isSelf?: boolean
   isContact?: boolean
   isMutualContact?: boolean
-  fullInfo?: {
-    bio?: string
-    avatar: ApiAvatar
-  }
+  photo?: ApiPhoto
 }
 
 export interface ApiUserFull {
   avatar: ApiAvatar
   bio?: string
 }
-export type ApiAvatarVariant = (typeof API_AVATAR_VARIANTS)[number]
+export type ApiColorVariant = (typeof API_AVATAR_VARIANTS)[number]
 
 export interface ApiAvatar {
-  avatarVariant: ApiAvatarVariant
+  avatarVariant: ApiColorVariant
   url: string
   hash: string
 }
 
+export type UserStatusType =
+  | 'userStatusOnline'
+  | 'userStatusRecently'
+  | 'userStatusLastMonth'
+  | 'userStatusLastWeek'
+  | 'userStatusLongTimeAgo'
+export type UserStatusOffline = 'userStatusoffline'
 export type ApiUserStatus =
   | {
-      _: 'online'
+      type: UserStatusType
     }
   | {
-      _: 'offline'
-      wasOffline: number
-    }
-  | {
-      _: 'recently'
+      type: 'userStatusOffline'
+      wasOnline: number
     }

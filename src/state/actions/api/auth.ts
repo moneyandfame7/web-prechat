@@ -1,11 +1,12 @@
 import {ApolloError} from '@apollo/client'
 
 import {Api} from 'api/manager'
-import type {AuthSignInResponse, AuthSignUpInput} from 'api/types/auth'
+import type {ApiSession, AuthSignUpInput} from 'api/types/auth'
 
 import {createAction} from 'state/action'
 import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
 import {startPersist} from 'state/storages'
+import {destroySubscribe, getActiveSubscriptions} from 'state/subscribe'
 import {updateAuthState} from 'state/updates/auth'
 import {updateSettingsState} from 'state/updates/settings'
 
@@ -160,7 +161,7 @@ createAction('signIn', async (state, _, payload) => {
   state.auth.isLoading = true
 
   const {firebase_token} = payload
-  let response: AuthSignInResponse | undefined
+  let response: ApiSession | undefined
   try {
     response = await Api.auth.signIn({
       phoneNumber: unformatStr(state.auth.phoneNumber!),
@@ -191,7 +192,7 @@ createAction('signIn', async (state, _, payload) => {
   // })
   state.auth.isLoading = false
   updateAuthState(state, {
-    session: response.sessionHash,
+    session: response.id,
   })
   if (state.auth.rememberMe) {
     await startPersist()
@@ -204,7 +205,7 @@ createAction('signIn', async (state, _, payload) => {
 createAction('signUp', async (state, _, payload) => {
   state.auth.isLoading = true
 
-  const {silent, firstName, lastName, photo} = payload
+  const {silent, firstName, lastName} = payload
   if (!state.auth.firebase_token || !state.auth.phoneNumber) {
     state.auth.error = 'Phone verification failed'
     console.error('[AUTH]: SIGN UP ERROR')
@@ -213,7 +214,7 @@ createAction('signUp', async (state, _, payload) => {
   }
 
   const unformatted = unformatStr(state.auth.phoneNumber)
-  const input: AuthSignUpInput['input'] = {
+  const input: AuthSignUpInput = {
     silent,
     firstName,
     lastName,
@@ -225,7 +226,7 @@ createAction('signUp', async (state, _, payload) => {
     },
     firebase_token: state.auth.firebase_token,
   }
-  const response = await Api.auth.signUp({input, photo})
+  const response = await Api.auth.signUp(input)
 
   if (!response) {
     console.warn('[AUTH]: Sign Up error')
@@ -234,7 +235,8 @@ createAction('signUp', async (state, _, payload) => {
 
   updateAuthState(state, {
     isLoading: false,
-    session: response.sessionHash,
+    session: response.id,
+    userId: response.userId,
   })
 
   if (state.auth.rememberMe) {
@@ -244,6 +246,8 @@ createAction('signUp', async (state, _, payload) => {
 
 createAction('signOut', async (_, actions) => {
   removeSession()
-
+  actions.updateUserStatus({isOnline: false, noDebounce: true})
+  console.log(getActiveSubscriptions(), 'ACTIVE SUBSCRIBPTIONS')
+  /* unsubscribe from subscribers if exist??? */
   await actions.reset()
 })

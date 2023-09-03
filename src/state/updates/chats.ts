@@ -11,6 +11,11 @@ import type {SignalGlobalState} from 'types/state'
 export function updateChats(global: SignalGlobalState, chatsById: Record<string, ApiChat>) {
   updateByKey(global.chats.byId, chatsById)
 
+  const orderedIds = Object.values(global.chats.byId as Record<string, ApiChat>)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .map((s) => s.id)
+
+  global.chats.ids = [...orderedIds]
   // storageManager.chats.set(chatsById)
   storages.chats.put(chatsById)
 }

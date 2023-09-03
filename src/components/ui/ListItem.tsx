@@ -70,17 +70,3 @@ export const ListItem: FC<ListItemProps> = ({
     </div>
   )
 }
-;<div class="list-item__info">
-  <div class="row row-title">
-    <p class="list-item__title">Username</p>
-    <p class="list-item__additional">12:35</p>
-  </div>
-  <div class="row row-subtitle">
-    <p class="list-item__subtitle">
-      <span class="primary-font">aboba: </span>
-      Lorem ipsum dorem Lorem ipsum dorem Lorem ipsum dorem Lorem ipsum dorem Lorem ipsum dorem
-      Lorem ipsum dorem Lorem ipsum dorem
-    </p>
-    <p class="badge">15</p>
-  </div>
-</div>

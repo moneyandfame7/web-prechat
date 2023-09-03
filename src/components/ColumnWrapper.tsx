@@ -47,7 +47,7 @@ const ColumnWrapper: FC<ColumnWrapperProps> = memo(
           {/* {actions && <div class="column-header__actions">{actions}</div>} */}
         </div>
 
-        <div class="column-content" ref={contentColumnRef}>
+        <div class="column-content scrollable" ref={contentColumnRef}>
           {children}
         </div>
       </>

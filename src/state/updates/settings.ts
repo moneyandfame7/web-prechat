@@ -52,8 +52,7 @@ export function updateSettingsState(
   updateByKey(global.settings, justToUpdate)
 
   if (i18n) {
-    updateByKey(global.settings.i18n.pack, i18n.pack)
-    global.settings.i18n.lang_code = i18n.lang_code
+    updateByKey(global.settings.i18n, i18n)
   }
   if (passcode) {
     updateByKey(global.settings.passcode, passcode)

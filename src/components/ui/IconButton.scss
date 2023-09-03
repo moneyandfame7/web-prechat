@@ -8,6 +8,7 @@
   padding: 8px;
   overflow: hidden;
   transition: background-color 0.3s ease;
+  flex-shrink: 0;
   // background-color: rgb(from var(--c-icon) / 0.5);
   cursor: pointer;
   display: flex;

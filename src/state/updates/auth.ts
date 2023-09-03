@@ -19,6 +19,7 @@ const INIT_AUTH_STATE: AuthState = {
   rememberMe: true,
   screen: AuthScreens.PhoneNumber,
   userId: undefined,
+  sessionLastActivity: undefined,
 }
 
 //  We use for loop for update properties without change ref to auth/settings and other objects

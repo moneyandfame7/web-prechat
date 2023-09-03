@@ -3,6 +3,7 @@ import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 import type {ApiChat, CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiUser} from 'api/types/users'
 
+import {FRAGMENT_MESSAGE, FRAGMENT_PHOTO} from './messages'
 import {FRAGMENT_USER} from './users'
 
 export const FRAGMENT_CHAT: DocumentNode = gql`
@@ -15,10 +16,19 @@ export const FRAGMENT_CHAT: DocumentNode = gql`
     isNotJoined
     isForbidden
     isSupport
-    lastMessage
-
+    lastMessage {
+      ...AllMessageFields
+    }
+    isOwner
+    isPinned
     createdAt
+    photo {
+      ...AllPhotoFields
+    }
+    color
   }
+  ${FRAGMENT_MESSAGE}
+  ${FRAGMENT_PHOTO}
 `
 
 export const QUERY_GET_CHATS: TypedDocumentNode<{getChats: ApiChat[]}, void> = gql`

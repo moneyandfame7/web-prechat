@@ -11,12 +11,13 @@
     "<THIRD_PARTY_MODULES>",
     "^api/(.*)$",
     "^state/(.*)$",
+    "^hooks/(.*)$",
     "^lib/(.*)$",
     "^(common|utilities)/(.*)$",
     "^types/(.*)$",
 
     "^containers/(.*)$",
-    "^(hooks|components)/(.*)$",
+    "^components/(.*)$",
     "^[./].*(?<!\\.(c|le|sc)ss)$",
     "\\.(c|le|sc)ss$"
   ],

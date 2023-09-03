@@ -1,11 +1,11 @@
 import {type TypedDocumentNode, gql} from '@apollo/client'
 
+import {FRAGMENT_SESSION} from '.'
 import type {
+  ApiSession,
   AuthSendPhoneResponse,
   AuthSignInInput,
-  AuthSignInResponse,
   AuthSignUpInput,
-  AuthSignUpResponse,
 } from '../types/auth'
 
 /**
@@ -18,31 +18,33 @@ export const QUERY_AUTH_SEND_PHONE: TypedDocumentNode<
   query SendPhone($phone: String!) {
     sendPhone(phone: $phone) {
       userId
+      hasActiveSession
     }
   }
 `
 
 export const MUTATION_AUTH_SIGN_UP: TypedDocumentNode<
-  {signUp: AuthSignUpResponse},
+  {signUp: ApiSession},
   {
-    input: AuthSignUpInput['input']
-    photo: AuthSignUpInput['photo']
+    input: AuthSignUpInput
   }
 > = gql`
-  mutation SignUp($input: SignUpInput!, $photo: Upload) {
-    signUp(input: $input, photo: $photo) {
-      sessionHash
+  mutation SignUp($input: SignUpInput!) {
+    signUp(input: $input) {
+      ...AllSessionFields
     }
   }
+  ${FRAGMENT_SESSION}
 `
 
 export const MUTATION_AUTH_SIGN_IN: TypedDocumentNode<
-  {signIn: AuthSignInResponse},
+  {signIn: ApiSession},
   {input: AuthSignInInput}
 > = gql`
   mutation SignIn($input: SignInInput!) {
     signIn(input: $input) {
-      sessionHash
+      ...AllSessionFields
     }
   }
+  ${FRAGMENT_SESSION}
 `

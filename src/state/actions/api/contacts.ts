@@ -15,6 +15,8 @@ createAction('getContactList', async (state) => {
 
   updateUsers(state, buildRecord(users, 'id'))
 
+  console.log(users[0])
+  // updateUserStatuses(state,buildRecord)
   // contactIds.map((id) => {
   //   actions.getUser(id)
   // })
@@ -30,7 +32,7 @@ createAction('addContact', async (state, actions, payload) => {
     firstName: payload.firstName,
     lastName: payload.lastName,
     phoneNumber: unformatStr(payload.phone),
-    userId: payload.userId
+    userId: payload.userId,
   })
 
   if (!result) {
@@ -39,7 +41,7 @@ createAction('addContact', async (state, actions, payload) => {
   }
 
   updateUsers(state, {
-    [result.id]: result
+    [result.id]: result,
   })
   actions.closeAddContactModal()
 

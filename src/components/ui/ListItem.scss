@@ -16,6 +16,7 @@
   }
 
   .Icon {
+    /* REWRITE IT */
     margin: 0px 30px 0px 10px;
   }
   &__info {
@@ -33,11 +34,18 @@
     color: var(--c-font-secondary);
   }
 
-  &__subtitle {
+  &__subtitle,
+  &__title {
     width: 85%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  &__title {
+    width: 70%;
+  }
+  &__subtitle {
+    font-size: 14px;
   }
 
   &__additional {
@@ -48,10 +56,18 @@
   // }
 
   .badge {
-    background-color: var(--c-icon-2);
-    border-radius: 10px;
-    padding-inline: 3px;
-    padding-block: 3px;
+    // background-color: var(--c-green);
+    background-color: var(--c-primary);
+    border-radius: 50%;
+    padding-inline: 5px;
+    padding-block: 5px;
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+    // font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #fff;
   }
 

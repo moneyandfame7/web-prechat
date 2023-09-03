@@ -1,15 +1,21 @@
-import {type FC, memo, useCallback} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useMemo} from 'preact/compat'
 
 import {SettingsContext} from 'context/settings'
 
 import {getActions} from 'state/action'
+import {selectSelf} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
+
+import {TEST_translate} from 'lib/i18n/types'
+
+import {getInitials} from 'utilities/string/getInitials'
 
 import {SettingsScreens} from 'types/screens'
 
 import {useLeftColumn} from 'containers/left/context'
 
 import {ColumnWrapper} from 'components/ColumnWrapper'
+import {ProfileAvatar} from 'components/ProfileAvatar'
 import {Icon, IconButton, type IconName} from 'components/ui'
 import {ListItem} from 'components/ui/ListItem'
 
@@ -20,6 +26,7 @@ interface SettingsItem {
   /* name - keyof i18n pack???? */
   name: string
   screen: SettingsScreens
+  withRight?: true
 }
 
 const SETTINGS_ITEMS: SettingsItem[] = [
@@ -57,17 +64,21 @@ const SETTINGS_ITEMS: SettingsItem[] = [
     icon: 'devices',
     name: 'Devices',
     screen: SettingsScreens.Devices,
+    withRight: true,
   },
   {
     icon: 'language',
     name: 'Language',
     screen: SettingsScreens.Language,
+    withRight: true,
   },
 ]
+
 const SettingsMain: FC = () => {
   const {resetScreen} = useLeftColumn()
-  const {copyToClipboard} = getActions()
-  const auth = getGlobalState((state) => state.auth)
+  const {copyToClipboard, getAuthorizations} = getActions()
+  const global = getGlobalState()
+  const currentUser = selectSelf(global)
 
   const {setScreen} = SettingsContext.useScreenContext()
   const handleEditProfile = useCallback(() => {
@@ -80,10 +91,12 @@ const SettingsMain: FC = () => {
 
   const handleClickPhone = useCallback(() => {
     copyToClipboard({
-      toCopy: auth.phoneNumber!,
+      toCopy: global.auth.phoneNumber!,
       title: 'Phone copied to clipboard.',
     })
   }, [])
+
+  const activeSessionsCount = global.activeSessions.ids.length.toString()
 
   const handleClickBio = useCallback(() => {
     copyToClipboard({
@@ -99,6 +112,35 @@ const SettingsMain: FC = () => {
     })
   }, [])
 
+  useEffect(() => {
+    getAuthorizations()
+  }, [])
+
+  const renderSettingsItems = useCallback(() => {
+    return SETTINGS_ITEMS.map((item) => (
+      <ListItem
+        key={item.name}
+        withRipple
+        onClick={() => {
+          setScreen(item.screen)
+        }}
+        icon={item.icon}
+        title={item.name}
+        right={
+          item.screen === SettingsScreens.Devices
+            ? activeSessionsCount
+            : item.screen === SettingsScreens.Language
+            ? TEST_translate('LANG_NATIVE_NAME')
+            : undefined
+        }
+      >
+        {/* <div class="settings-item"> */}
+        {/* <Icon name={item.icon} /> */}
+        {/* <p>{item.name}</p> */}
+        {/* </div> */}
+      </ListItem>
+    ))
+  }, [global.activeSessions.ids])
   return (
     <ColumnWrapper
       title="Settings"
@@ -110,13 +152,16 @@ const SettingsMain: FC = () => {
         </>
       }
     >
-      <div class="settings-image">{/*  */}</div>
+      <div class="settings-image">
+        {/*  */}
+        <ProfileAvatar peer={currentUser!} />
+      </div>
       <div class="settings-section">
         <ListItem withRipple onClick={handleClickPhone}>
           <div class="settings-item">
             <Icon name="phone" />
             <div class="info">
-              <p>{auth.phoneNumber}</p>
+              <p>{global.auth.phoneNumber}</p>
               <p class="subtitle">Phone Number</p>
             </div>
           </div>
@@ -141,22 +186,7 @@ const SettingsMain: FC = () => {
         </ListItem>
       </div>
 
-      <div class="settings-section">
-        {SETTINGS_ITEMS.map((item) => (
-          <ListItem
-            key={item.name}
-            withRipple
-            onClick={() => {
-              setScreen(item.screen)
-            }}
-          >
-            <div class="settings-item">
-              <Icon name={item.icon} />
-              <p>{item.name}</p>
-            </div>
-          </ListItem>
-        ))}
-      </div>
+      <div class="settings-section">{renderSettingsItems()}</div>
     </ColumnWrapper>
   )
 }

@@ -2,6 +2,14 @@ import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
 import type {ApiInputGetUsers, ApiInputUser, ApiUser, ApiUserFull} from 'api/types/users'
 
+import {FRAGMENT_PHOTO} from './messages'
+
+export const FRAGMENT_USER_STATUS: DocumentNode = gql`
+  fragment AllUserStatusFields on UserStatus {
+    type
+    wasOnline
+  }
+`
 export const FRAGMENT_USER: DocumentNode = gql`
   fragment AllUserFields on User {
     id
@@ -12,13 +20,16 @@ export const FRAGMENT_USER: DocumentNode = gql`
     isSelf
     isContact
     isMutualContact
-    fullInfo {
-      avatar {
-        avatarVariant
-      }
-      bio
+    status {
+      ...AllUserStatusFields
+    }
+    color
+    photo {
+      ...AllPhotoFields
     }
   }
+  ${FRAGMENT_USER_STATUS}
+  ${FRAGMENT_PHOTO}
 `
 export const QUERY_GET_USERS: TypedDocumentNode<
   {getUsers: ApiUser[]},

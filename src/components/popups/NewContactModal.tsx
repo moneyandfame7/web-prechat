@@ -24,6 +24,7 @@ import {AvatarTest} from 'components/ui/AvatarTest'
 import {useEventListener} from 'hooks/useEventListener'
 
 import {Modal, ModalActions, ModalContent, ModalTitle} from './modal'
+import {ModalHeader} from './modal/Modal'
 
 import './NewContactModal.scss'
 
@@ -75,6 +76,7 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
       e.preventDefault()
       handleSubmit()
     }
+    /* if e.key==='Escape' close */
   }, [])
   const clearForm = useCallback(() => {
     firstName.value = ''
@@ -98,12 +100,13 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
   return (
     <Modal
       onExitTransition={clearForm}
-      hasCloseButton
       onClose={handleClose}
       isOpen={isOpen}
       shouldCloseOnBackdrop
     >
-      <ModalTitle>New Contact {render.current}</ModalTitle>
+      <ModalHeader hasCloseButton>
+        <ModalTitle>New Contact</ModalTitle>
+      </ModalHeader>
       <ModalContent>
         <form class="form-row">
           <AvatarTest size="xl" fullName={fullName} variant={randomAvatarVariant} />

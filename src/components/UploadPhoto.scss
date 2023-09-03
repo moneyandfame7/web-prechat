@@ -3,6 +3,7 @@
   height: 110px;
   border-radius: 50%;
   background-color: var(--c-primary);
+  flex-shrink: 0;
   display: flex;
   margin: 0px auto;
   justify-content: center;

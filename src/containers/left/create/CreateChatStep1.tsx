@@ -1,21 +1,22 @@
 import {type FC, memo} from 'preact/compat'
 import {useCallback, useRef, useState} from 'preact/hooks'
-import {getGlobalState} from 'state/signal'
-import {FloatButton, Icon, InputText, Divider} from 'components/ui'
-import {LeftColumnScreen} from 'types/ui'
 
 import {useInputValue} from 'hooks'
 
-import {ListItem} from 'components/ChatItem'
-
 import {getDisplayedUserName} from 'state/helpers/users'
+import {selectContacts} from 'state/selectors/users'
+import {getGlobalState} from 'state/signal'
+
+import {fromRecord} from 'utilities/array/fromRecord'
+
+import {LeftColumnScreen} from 'types/ui'
+
+import {Divider, FloatButton, Icon, InputText} from 'components/ui'
 
 import {LeftGoBack} from '../LeftGoBack'
 import {useLeftColumn} from '../context'
 
 import './CreateChatStep1.scss'
-import {fromRecord} from 'utilities/array/fromRecord'
-import {selectContacts} from 'state/selectors/users'
 
 export interface CreateChatStep1Props {
   isGroup: boolean
@@ -32,13 +33,13 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
   }, [isGroup])
 
   const {value, handleInput} = useInputValue({
-    cb: e => {
+    cb: (e) => {
       const {value} = e.currentTarget
 
       if (value.length === 0) {
         setFilteredList(fromRecord(selectContacts(global)))
       } else {
-        setFilteredList(prev => prev.filter(u => u.username?.includes(value)))
+        setFilteredList((prev) => prev.filter((u) => u.username?.includes(value)))
       }
     },
   })
@@ -47,9 +48,10 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
   function renderList() {
     return (
       <>
-        {filteredList.map(user => {
+        {filteredList.map((user) => {
           return (
-            <ListItem
+            <p key={user.id}>{getDisplayedUserName(user)}</p>
+            /*    <ListItem
               userId={user.id}
               user={user}
               key={user.id}
@@ -60,7 +62,7 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
               }}
               withCheckbox
               checked={selectedIds.includes(user.id)}
-            />
+            /> */
           )
         })}
       </>
@@ -81,7 +83,7 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
       />
       <Divider />
       <div class="picker-list scrollable">{renderList()}</div>
-      {selectedIds.map(id => (
+      {selectedIds.map((id) => (
         <p key={id}>{global.users.byId[id].firstName}</p>
       ))}
       <FloatButton

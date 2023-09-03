@@ -45,12 +45,11 @@ export class ApiAuth extends ApiBaseMethod {
    * @param input - Sign up input ( include input and user photo).
    * @returns Encoded session.
    */
-  public async signUp({input, photo}: AuthSignUpInput) {
+  public async signUp(input: AuthSignUpInput) {
     const {data} = await this.client.mutate({
       mutation: MUTATION_AUTH_SIGN_UP,
       variables: {
         input,
-        photo,
       },
     })
     if (!data?.signUp) {

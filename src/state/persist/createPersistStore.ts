@@ -3,8 +3,6 @@ import type {Signal} from '@preact/signals'
 import {deepSignal} from 'deepsignal'
 import {type IDBPDatabase, openDB} from 'idb'
 
-import {logDebugWarn} from 'lib/logger'
-
 import {deepCopy} from 'utilities/object/deepCopy'
 
 import type {AnyObject} from 'types/common'
@@ -103,7 +101,7 @@ export function idbMethods<T extends AnyObject>(
   return {
     /* Put. */
     async put(obj) {
-      logDebugWarn(enabled.value, storeName, 'enabled')
+      // logDebugWarn(enabled.value, storeName, 'enabled')
 
       if (!enabled.value) {
         return

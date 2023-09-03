@@ -1,4 +1,6 @@
+import '../subscribers/account'
 import '../subscribers/chats'
+import './api/account'
 import './api/auth'
 import './api/chats'
 import './api/contacts'

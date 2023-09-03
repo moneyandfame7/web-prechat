@@ -40,6 +40,9 @@ createAction('getChats', async (state) => {
   const chats = await Api.chats.getChats()
 
   if (!chats) {
+    setTimeout(() => {
+      state.chats.isLoading = false
+    }, 1000)
     return
   }
   const record = buildRecord(chats, 'id')

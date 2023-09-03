@@ -1,7 +1,14 @@
 import type {DeepSignal} from 'deepsignal'
 import type {ConfirmationResult, RecaptchaVerifier} from 'firebase/auth'
 
-import type {ApiChat, ApiCountry, ApiLanguage, ApiUser} from 'api/types'
+import type {
+  ApiChat,
+  ApiCountry,
+  ApiLanguage,
+  ApiSession,
+  ApiUser,
+  ApiUserStatus,
+} from 'api/types'
 
 import type {ApiLangCode, LanguagePack} from 'types/lib'
 import type {UserConnection} from 'types/request'
@@ -53,6 +60,7 @@ export interface AuthState {
   passwordHint: string | undefined
   email: string | undefined
   session: string | undefined
+  sessionLastActivity: number | undefined
 }
 export interface GlobalSearchState {
   known?: {
@@ -73,15 +81,20 @@ export interface GlobalState {
 
   users: {
     contactIds: string[]
+    statusesByUserId: Record<string, ApiUserStatus>
     byId: Record<string, ApiUser>
   }
 
   chats: {
     byId: Record<string, ApiChat>
     isLoading: boolean
+    ids: string[]
   }
 
-  countryList: ApiCountry[]
+  activeSessions: {
+    byId: Record<string, ApiSession>
+    ids: string[]
+  }
 
   newContact: {
     userId?: string
@@ -93,7 +106,14 @@ export interface GlobalState {
     isOpen: boolean
   }
 
+  commonModal: {
+    title?: string
+    body?: string
+    isOpen: boolean
+  }
+
   globalSettingsScreen?: SettingsScreens
+  countryList: ApiCountry[]
 }
 
 export type SignalGlobalState = DeepSignal<GlobalState>

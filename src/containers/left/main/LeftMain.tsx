@@ -20,7 +20,7 @@ enum LeftMainGroup {
   Search = 'Search',
 }
 const classNames: Record<LeftMainGroup, string> = {
-  [LeftMainGroup.Chats]: 'LeftColumn-Chats scrollable',
+  [LeftMainGroup.Chats]: 'LeftColumn-Chats',
   [LeftMainGroup.Search]: 'LeftColumn-Search',
 }
 

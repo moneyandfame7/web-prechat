@@ -15,6 +15,7 @@ import {DEBUG} from 'common/config'
 
 import type {ApiLangCode, LanguagePackKeys} from 'types/lib'
 
+// pluralUk.select()
 export function t(key: LanguagePackKeys): Signal<string> {
   const i18n = getGlobalState((state) => state.settings.i18n)
   // Using signals, we avoid rerenders

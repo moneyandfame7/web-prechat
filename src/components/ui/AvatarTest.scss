@@ -66,4 +66,19 @@
       background-image: var(--c-avatar-purple);
     }
   }
+
+  &.saved-messages {
+    background: linear-gradient(var(--c-white) -125%, var(--c-primary-light));
+
+    @include whenNight {
+      background: linear-gradient(var(--c-primary-light), var(--c-primary));
+    }
+
+    .Icon path {
+      fill: var(--c-white);
+    }
+    .Icon {
+      margin: 0;
+    }
+  }
 }

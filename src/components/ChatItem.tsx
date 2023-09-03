@@ -68,7 +68,7 @@ export const ListItem: FC<ChatItemProps> = ({
       <AvatarTest
         fullName={title}
         size="m"
-        variant={users.byId[userId].fullInfo?.avatar.avatarVariant}
+        // variant={users.byId[userId].fullInfo?.avatar.avatarVariant}
       />
       {/* {<Avatar user={user || users.byId[userId]} />} */}
       <div class="info">

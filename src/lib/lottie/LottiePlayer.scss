@@ -1,6 +1,7 @@
 @mixin lottie-sizes {
   &_small {
-    height: 100px;
+    height: 80px;
+    width: 80px;
   }
   &_medium {
     height: 170px;
@@ -25,6 +26,22 @@
     }
 
     @include lottie-sizes();
+
+    &_Device {
+      &-chrome {
+        background-color: var(--c-green);
+        border-radius: 24px;
+      }
+      &-safari,
+      &-edge {
+        border-radius: 24px;
+        background-color: var(--c-blue);
+      }
+      &-firefox {
+        border-radius: 24px;
+        background-color: var(--c-orange);
+      }
+    }
   }
   &-fallback {
     width: max-content;
@@ -32,5 +49,9 @@
     justify-content: center;
 
     @include lottie-sizes();
+    img {
+      height: inherit;
+      width: inherit;
+    }
   }
 }

@@ -12,6 +12,11 @@ createAction('getUser', async (state, _, payload) => {
   const user = result[0]
 
   updateUsers(state, {
-    [user.id]: user
+    [user.id]: user,
   })
+})
+
+createAction('getSelf', async (state, actions, payload) => {
+  console.log('GET SELF <<<<<<<')
+  await actions.getUser(state.auth.userId!)
 })

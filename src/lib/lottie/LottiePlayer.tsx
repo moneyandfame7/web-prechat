@@ -1,13 +1,14 @@
-import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
 import type {FC, TargetedEvent} from 'preact/compat'
+import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
 
-import Lottie from 'lottie-react'
 import clsx from 'clsx'
-
 import {useInactivePage} from 'hooks'
+import Lottie from 'lottie-react'
 
-import type {LottiePlayerProps} from './types'
+import {timeout} from 'utilities/schedulers/timeout'
+
 import {getFallback} from './helpers'
+import type {LottiePlayerProps} from './types'
 
 import './LottiePlayer.scss'
 
@@ -21,16 +22,17 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
   className,
   size = 'medium',
   hidden,
-  isPausable
+  isPausable,
 }) => {
   const [animationData, setAnimationData] = useState<unknown>()
   const [isPaused, setIsPaused] = useState(lottieRef.current?.animationItem?.isPaused)
   const playerHidden = loading || !animationData /* || !lottieRef.current */
 
   useLayoutEffect(() => {
-    import(`../../assets/animations/${name}.json`).then((module) =>
-      setAnimationData(module.default)
-    )
+    // import(`../../assets/animations/${name}.json`).then((module) =>
+    //   setAnimationData(module.default)
+    // )
+    import(`../../assets/animations/${name}.json`).then((m) => setAnimationData(m.default))
   }, [])
 
   const stopAnimationOnBlur = useCallback(() => {
@@ -65,7 +67,7 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
     `Lottie-player_${name}`,
     {
       'Lottie-player_hidden': playerHidden || hidden,
-      'Lottie-player_pausable': isPausable
+      'Lottie-player_pausable': isPausable,
     },
     className
   )
@@ -84,7 +86,11 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
 
   return (
     <>
-      {playerHidden && !hidden && <div class={fallbackClass}>{getFallback(name)}</div>}
+      {playerHidden && !hidden && (
+        <div class={fallbackClass}>
+          <img src={getFallback(name)} alt="Fallback player" />
+        </div>
+      )}
 
       <Lottie
         // ref={elRef}

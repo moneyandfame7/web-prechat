@@ -1,7 +1,7 @@
-.LeftColumn-Chats {
-  overflow-y: scroll;
+.chats-list {
+  padding-block: 10px 20px;
+  padding-inline: 5px 2px;
 }
-
 .skeleton {
   animation: skeleton-loading 1.2s linear infinite alternate;
   // background-color: var(--c-surface-2);

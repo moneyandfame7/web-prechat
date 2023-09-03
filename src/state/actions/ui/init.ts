@@ -51,4 +51,6 @@ createAction('init', async (state): Promise<void> => {
   setTimeout(() => {
     state.initialization = false
   }, 400)
+
+  console.log({global: state})
 })

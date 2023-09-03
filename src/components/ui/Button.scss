@@ -1,4 +1,18 @@
+@mixin transparentBtn($color, $transparent) {
+  // --color-ripple: $transparent;
+  background-color: transparent;
+  color: $color;
+  &:hover {
+    background-color: $transparent !important;
+  }
+  &:disabled {
+    opacity: 0.8;
+    background-color: $transparent !important;
+  }
+}
+
 .Button {
+  flex-shrink: 0;
   position: relative;
   overflow: hidden;
   background-color: var(--c-primary);
@@ -24,18 +38,23 @@
   &-fullwidth {
     width: 100%;
   }
+  &-noTransform {
+    text-transform: initial;
+  }
   &-transparent {
-    --color-ripple: var(--c-primary-transparent);
-    background-color: transparent;
-    color: var(--c-primary);
-    &:hover {
-      background-color: var(--c-primary-transparent);
-    }
-    font-weight: 400;
+    background-color: transparent !important;
 
-    &:disabled {
-      opacity: 0.8;
-      background-color: var(--c-primary-transparent);
+    // font-weight: 400;
+
+    &.Button-red {
+      --color-ripple: var(--c-red-transparent);
+      @include transparentBtn(var(--c-red), var(--c-red-transparent));
+    }
+
+    &.Button-primary {
+      --color-ripple: var(--c-primary-transparent);
+
+      @include transparentBtn(var(--c-primary), var(--c-primary-transparent));
     }
   }
 
@@ -56,5 +75,17 @@
     pointer-events: none;
 
     opacity: 0.5;
+  }
+
+  &-red {
+    background-color: var(--c-red);
+
+    &:hover {
+      background-color: var(--c-red-hover);
+    }
+
+    .Icon path {
+      fill: var(--c-red);
+    }
   }
 }

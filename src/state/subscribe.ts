@@ -1,19 +1,29 @@
 import type {DocumentNode} from '@apollo/client'
 
-import type {ApiChatSub} from 'api/types/subscriptions'
+import {
+  SUBSCRIBE_ON_AUTHORIZATION_CREATED,
+  SUBSCRIBE_ON_AUTHORIZATION_TERMINATED,
+  SUBSCRIBE_ON_AUTHORIZATION_UPDATED,
+  SUBSCRIBE_ON_CHAT_CREATED,
+  SUBSCRIBE_ON_USER_STATUS_UPDATED,
+} from 'api/graphql'
 import {ApolloClient} from 'api/manager'
-import {SUBSCRIBE_ON_CHAT_CREATED} from 'api/graphql/chats'
+import type {ApiChatSub, ApiSession, ApiUserStatusSub} from 'api/types'
+
+import {cleanTypename} from 'utilities/cleanTypename'
+import {logger} from 'utilities/logger'
 
 import type {SignalGlobalState} from 'types/state'
 
-import {logger} from 'utilities/logger'
-import {cleanTypename} from 'utilities/cleanTypename'
-
+import {type Actions, getActions} from './action'
 import {getGlobalState} from './signal'
-import {getActions, type Actions} from './action'
 
 interface SubscribeResult {
   onChatCreated: ApiChatSub
+  onAuthorizationCreated: ApiSession
+  onAuthorizationUpdated: ApiSession
+  onAuthorizationTerminated: ApiSession[]
+  onUserStatusUpdated: ApiUserStatusSub
 }
 type SubscribeName = keyof SubscribeResult
 export interface Subscription {
@@ -22,8 +32,12 @@ export interface Subscription {
 }
 const SUBSCRIBE_QUERY: Record<SubscribeName, DocumentNode> = {
   onChatCreated: SUBSCRIBE_ON_CHAT_CREATED,
+  onAuthorizationCreated: SUBSCRIBE_ON_AUTHORIZATION_CREATED,
+  onAuthorizationTerminated: SUBSCRIBE_ON_AUTHORIZATION_TERMINATED,
+  onAuthorizationUpdated: SUBSCRIBE_ON_AUTHORIZATION_UPDATED,
+  onUserStatusUpdated: SUBSCRIBE_ON_USER_STATUS_UPDATED,
 }
-type Subscribes = {
+export type Subscribes = {
   [key in SubscribeName]: () => void
 }
 
@@ -65,7 +79,7 @@ export function createSubscribe<N extends SubscribeName>(
   }
 
   subscriptions[name] = () => {
-    const sub = subscribeHandler(name, data => {
+    const sub = subscribeHandler(name, (data) => {
       const global = getGlobalState()
       const actions = getActions()
       handler(global, actions, data)
@@ -84,4 +98,24 @@ export function destroySubscribe<N extends SubscribeName>(name: N) {
 
 export function getSubscriptions() {
   return subscriptions
+}
+
+export function getActiveSubscriptions() {
+  return unsubscribers
+}
+
+export function subscribeToAll() {
+  for (const cb in subscriptions) {
+    if (cb in subscriptions) {
+      subscriptions[cb as keyof Subscribes]()
+    }
+  }
+}
+
+export function destroySubscribeAll() {
+  for (const cb in subscriptions) {
+    if (cb in subscriptions) {
+      destroySubscribe(cb as keyof Subscribes)
+    }
+  }
 }

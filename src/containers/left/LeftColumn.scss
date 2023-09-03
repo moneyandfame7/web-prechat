@@ -14,4 +14,6 @@
 }
 .Screen-container {
   background-color: var(--c-surface);
+  display: flex;
+  flex-direction: column;
 }
