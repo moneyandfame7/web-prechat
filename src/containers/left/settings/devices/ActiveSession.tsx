@@ -1,48 +1,42 @@
-import {useSignal} from '@preact/signals'
-import {type FC, memo, useEffect, useMemo} from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
-import {getSessionIcon, getSessionLocation, getSessionStatus} from 'state/helpers/account'
-import {selectSession} from 'state/selectors/diff'
-import {getGlobalState} from 'state/signal'
+import type {ApiSession} from 'api/types'
 
-import {milliseconds} from 'utilities/date/ms'
+import {getSessionIcon, getSessionLocation} from 'state/helpers/account'
+
+import {useBoolean} from 'hooks/useFlag'
+import {useSessionStatus} from 'hooks/useSessionStatus'
 
 import ActiveSessionModal from 'components/popups/ActiveSessionModal.async'
 import {ListItem} from 'components/ui/ListItem'
-import {useBoolean} from 'hooks/useFlag'
-import {useInterval} from 'hooks/useInterval'
-import {useSessionStatus} from 'hooks/useSessionStatus'
 
 import styles from './ActiveSession.module.scss'
 
 interface ActiveSessionProps {
-  sessionId: string
+  session: ApiSession
 }
 
-export const ActiveSession: FC<ActiveSessionProps> = memo(({sessionId}) => {
-  const global = getGlobalState()
-  const activeSession = selectSession(global, sessionId)
-
+export const ActiveSession: FC<ActiveSessionProps> = memo(({session}) => {
   const {setTrue: openModal, setFalse: closeModal, value: isModalOpen} = useBoolean()
 
-  const status = useSessionStatus(activeSession)
+  const status = useSessionStatus(session)
 
   return (
     <>
       <ListItem
         className={styles.activeSession}
-        title={activeSession.platform}
+        title={session.platform}
         additional={status}
-        subtitle={getSessionLocation(activeSession)}
+        subtitle={getSessionLocation(session)}
         onClick={openModal}
       >
         <img
           class={styles.icon}
-          src={`devices/${getSessionIcon(activeSession)}.svg`}
+          src={`devices/${getSessionIcon(session)}.svg`}
           alt="Device icon"
         />
       </ListItem>
-      <ActiveSessionModal session={activeSession} isOpen={isModalOpen} onClose={closeModal} />
+      <ActiveSessionModal session={session} isOpen={isModalOpen} onClose={closeModal} />
     </>
   )
 })

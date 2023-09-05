@@ -8,6 +8,8 @@ import {getGlobalState} from 'state/signal'
 
 import {ClientError} from 'lib/error/error'
 
+import {hasActiveSession} from 'utilities/session'
+
 import {ErrorCatcher} from 'components/ErrorCatcher'
 import {ScreenLoader} from 'components/ScreenLoader'
 import {SwitchTransition} from 'components/transitions'
@@ -32,7 +34,7 @@ const Application: FC = () => {
     initialScreen = AppScreens.Error
   } else if (global.initialization) {
     initialScreen = AppScreens.Loading
-  } else if (global.auth.session) {
+  } else if (global.auth.session /* && hasActiveSession() */) {
     initialScreen = AppScreens.Main
   } else {
     initialScreen = AppScreens.Auth

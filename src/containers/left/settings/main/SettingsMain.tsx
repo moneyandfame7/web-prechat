@@ -6,6 +6,8 @@ import {getActions} from 'state/action'
 import {selectSelf} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
 
+import {useBoolean} from 'hooks/useFlag'
+
 import {TEST_translate} from 'lib/i18n/types'
 
 import {getInitials} from 'utilities/string/getInitials'
@@ -15,8 +17,11 @@ import {SettingsScreens} from 'types/screens'
 import {useLeftColumn} from 'containers/left/context'
 
 import {ColumnWrapper} from 'components/ColumnWrapper'
+import {ConfirmButton} from 'components/ConfirmButton'
 import {ProfileAvatar} from 'components/ProfileAvatar'
+import {Menu, MenuItem} from 'components/popups/menu'
 import {Icon, IconButton, type IconName} from 'components/ui'
+import {DropdownMenu} from 'components/ui/DropdownMenu'
 import {ListItem} from 'components/ui/ListItem'
 
 import './SettingsMain.scss'
@@ -76,17 +81,13 @@ const SETTINGS_ITEMS: SettingsItem[] = [
 
 const SettingsMain: FC = () => {
   const {resetScreen} = useLeftColumn()
-  const {copyToClipboard, getAuthorizations} = getActions()
+  const {copyToClipboard, getAuthorizations, signOut} = getActions()
   const global = getGlobalState()
   const currentUser = selectSelf(global)
 
   const {setScreen} = SettingsContext.useScreenContext()
   const handleEditProfile = useCallback(() => {
     setScreen(SettingsScreens.EditProfile)
-  }, [])
-
-  const handleShowMenu = useCallback(() => {
-    /* Not implemented */
   }, [])
 
   const handleClickPhone = useCallback(() => {
@@ -148,7 +149,19 @@ const SettingsMain: FC = () => {
       headerContent={
         <>
           <IconButton icon="edit" onClick={handleEditProfile} />
-          <IconButton icon="more" onClick={handleShowMenu} />
+
+          <DropdownMenu button={<IconButton icon="more" />}>
+            <ConfirmButton
+              title="Are you sure you want to log out?"
+              action="Log Out"
+              callback={signOut}
+            >
+              <MenuItem>
+                <Icon name="logout" />
+                Log out
+              </MenuItem>
+            </ConfirmButton>
+          </DropdownMenu>
         </>
       }
     >

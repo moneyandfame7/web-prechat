@@ -9,7 +9,7 @@ export enum Phase {
   ENTER_DONE = 'enterDone',
   EXIT = 'exit',
   EXIT_ACTIVE = 'exitActive',
-  EXIT_DONE = 'exitDone'
+  EXIT_DONE = 'exitDone',
 }
 
 export enum PhaseEvent {
@@ -18,7 +18,7 @@ export enum PhaseEvent {
   ENTERED = 'onEntered',
   EXIT = 'onExit',
   EXITING = 'onExiting',
-  EXITED = 'onExited'
+  EXITED = 'onExited',
 }
 
 export type TransitionState = {
@@ -29,7 +29,7 @@ export type TransitionProps = {
   [key in PhaseEvent]?: (node?: Element) => void
 } & {
   children: (transitionState: TransitionState, activePhase: Phase) => VNode
-  in: boolean
+  in?: boolean
   appear?: boolean
   enter?: boolean
   exit?: boolean

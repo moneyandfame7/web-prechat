@@ -9,6 +9,10 @@
     opacity: 0.8;
     background-color: $transparent !important;
   }
+
+  .Icon path {
+    fill: $color;
+  }
 }
 
 .Button {
@@ -56,6 +60,18 @@
 
       @include transparentBtn(var(--c-primary), var(--c-primary-transparent));
     }
+
+    &.Button-gray {
+      --color-ripple: var(--c-ripple);
+
+      @include transparentBtn(var(--c-icon), var(--c-ripple));
+    }
+
+    &.Button-green {
+      --color-ripple: var(--c-green-transparent);
+
+      @include transparentBtn(var(--c-green), var(--c-green-transparent));
+    }
   }
 
   &-loading {
@@ -86,6 +102,33 @@
 
     .Icon path {
       fill: var(--c-red);
+    }
+  }
+
+  &-gray {
+    background-color: transparent;
+
+    &:hover {
+      // &:hover,
+      // :focus {
+      background-color: var(--c-surface-3);
+    }
+
+    .Icon path {
+      fill: var(--c-icon);
+    }
+    color: var(--c-icon);
+  }
+
+  &-primary {
+    background-color: var(--c-primary);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--c-primary-hover);
+    }
+    .Icon path {
+      fill: var(--c-white);
     }
   }
 }

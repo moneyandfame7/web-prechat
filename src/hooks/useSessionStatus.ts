@@ -8,19 +8,18 @@ import {milliseconds} from 'utilities/date/ms'
 
 import {useInterval} from './useInterval'
 
-export const useSessionStatus = (session: ApiSession, isFull = false) => {
-  console.log({session})
+export const useSessionStatus = (session: ApiSession | undefined, isFull = false) => {
   const [status, setStatus] = useState<string | undefined>(undefined)
   useInterval(
     () => {
-      setStatus(getSessionStatus(session, isFull))
+      setStatus(session ? getSessionStatus(session, isFull) : undefined)
     },
-    session.isCurrent ? null : milliseconds({minutes: 1}),
+    session?.isCurrent ? null : milliseconds({minutes: 1}),
     true
   )
 
   useEffect(() => {
-    setStatus(getSessionStatus(session, isFull))
+    setStatus(session ? getSessionStatus(session, isFull) : undefined)
   }, [session])
 
   return status

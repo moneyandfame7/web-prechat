@@ -1,15 +1,13 @@
 import {useSignal} from '@preact/signals'
-import {type FC, useEffect, useRef} from 'preact/compat'
+import {type FC, useRef} from 'preact/compat'
 
 import {deepSignal} from 'deepsignal'
 
 import {getActions} from 'state/action'
 import {getUserStatus} from 'state/helpers/users'
-import {selectUser, selectUserStatus} from 'state/selectors/users'
+import {selectUser} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
-import {destroySubscribeAll} from 'state/subscribe'
 
-import {t} from 'lib/i18n'
 import {TEST_translate} from 'lib/i18n/types'
 
 import {USER_BROWSER, USER_PLATFORM} from 'common/config'
@@ -19,11 +17,11 @@ import {SettingsScreens} from 'types/screens'
 
 import {ChatItem} from 'containers/left/main/chats/ChatItem'
 
-import {ConfirmButton} from 'components/ConfirmButton'
 import {ImageUpload} from 'components/UploadPhoto'
+import CalendarModal from 'components/popups/CalendarModal.async'
 import {SwitchLanguageTest} from 'components/test'
 import {TEST_ChangeLanguage} from 'components/test/ChangeLanguage'
-import {Button, Icon, IconButton} from 'components/ui'
+import {Button} from 'components/ui'
 import {ListItem} from 'components/ui/ListItem'
 
 import './MiddleColumn.scss'
@@ -38,14 +36,6 @@ export const MiddleColumn: FC = () => {
   render.current += 1
   const signOut = () => {
     actions.signOut()
-  }
-
-  const toggleLoading = () => {
-    skeleton.isLoading = !skeleton.isLoading
-  }
-
-  const openModal = () => {
-    actions.openAddContactModal({userId: '18234812834'})
   }
 
   const toggleTheme = () => {
@@ -645,6 +635,7 @@ export const MiddleColumn: FC = () => {
     decryptSession(password)
   }
 
+  const isCalendarOpen = useSignal(false)
   return (
     <div class="MiddleColumn">
       <div class="MiddleColumn-inner scrollable">
@@ -686,7 +677,24 @@ export const MiddleColumn: FC = () => {
         </Button>
         <Button onClick={() => console.log(global)}>LOG_STATE</Button>
         {USER_BROWSER}
+
         {USER_PLATFORM}
+        <Button
+          onClick={() => {
+            isCalendarOpen.value = true
+          }}
+        >
+          CALENDAR
+        </Button>
+        {/* <SLIDE /> */}
+        <CalendarModal
+          isOpen={isCalendarOpen.value}
+          onSubmit={(d) => console.log('SELECTED DATE', d)}
+          onClose={() => {
+            isCalendarOpen.value = false
+          }}
+          onlyFuture
+        />
         <TEST_ChangeLanguage />
         <ImageUpload />
         <h1>{global.auth.$phoneNumber}</h1>

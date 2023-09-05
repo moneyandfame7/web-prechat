@@ -120,7 +120,7 @@ createAction('updateUserStatus', async (state, actions, payload) => {
         case 'AUTH_SESSION_INVALID':
         case 'AUTH_SESSION_EXPIRED':
           // just put it on client apollo?
-          actions.signOut()
+          // actions.signOut()
           break
         default:
           break

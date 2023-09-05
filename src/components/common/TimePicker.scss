@@ -1,0 +1,21 @@
+.time-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &__divider {
+    // font-size: 16px;
+    // font-weight: 300;
+    margin-inline: 10px;
+  }
+  .input-container {
+    // flex-shrink: 0;
+    max-width: 80px;
+    box-sizing: border-box;
+    input {
+      padding: 0;
+      text-align: center;
+      // width: 70px;
+      // box-sizing: border-box;
+    }
+  }
+}

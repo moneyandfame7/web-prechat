@@ -3,12 +3,7 @@ import {type FC, memo, useCallback, useRef} from 'preact/compat'
 import type {ApiSession} from 'api/types'
 
 import {getActions} from 'state/action'
-import {
-  getSessionIcon,
-  getSessionLocation,
-  getSessionStatus,
-  isAnimatedSessionIcon,
-} from 'state/helpers/account'
+import {getSessionIcon, getSessionLocation, isAnimatedSessionIcon} from 'state/helpers/account'
 
 import {useSessionStatus} from 'hooks/useSessionStatus'
 

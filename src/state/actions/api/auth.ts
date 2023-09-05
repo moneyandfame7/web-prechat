@@ -17,7 +17,7 @@ import {logDebugWarn} from 'lib/logger'
 import {USER_BROWSER, USER_PLATFORM} from 'common/config'
 import {logger} from 'utilities/logger'
 import {makeRequest} from 'utilities/makeRequest'
-import {removeSession} from 'utilities/session'
+import {removeSession, saveSession} from 'utilities/session'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
 import type {ApiLangCode} from 'types/lib'
@@ -187,15 +187,14 @@ createAction('signIn', async (state, _, payload) => {
     return
   }
 
-  // updateAuthState(state, {
-  //   isLoading: false,
-  // })
-  state.auth.isLoading = false
   updateAuthState(state, {
     session: response.id,
+    isLoading: false,
   })
+
   if (state.auth.rememberMe) {
     await startPersist()
+    saveSession(response.id)
   }
 })
 
@@ -241,10 +240,12 @@ createAction('signUp', async (state, _, payload) => {
 
   if (state.auth.rememberMe) {
     await startPersist()
+    saveSession(response.id)
   }
 })
 
 createAction('signOut', async (_, actions) => {
+  /** @todo прибирати СЕСІЮ В САМУ ОСТАННЮ ЧЕРГУ, ЩОБ НЕ ЛОМАТИ ЮАЙКУ. ( тобто спочатку якось просто викинути на початковий екран....) */
   removeSession()
   actions.updateUserStatus({isOnline: false, noDebounce: true})
   console.log(getActiveSubscriptions(), 'ACTIVE SUBSCRIBPTIONS')

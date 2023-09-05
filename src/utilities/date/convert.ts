@@ -48,3 +48,25 @@ export function formatDate(date: Date, is24Hour: boolean, isFull = false): strin
   }
   return date.toLocaleDateString('en')
 }
+
+export function formatTime(hour: string, minute: string, is12HourFormat: boolean) {
+  let formattedHour = hour
+  let amPm = ''
+
+  if (is12HourFormat) {
+    const intHour = parseInt(hour)
+    if (intHour >= 12) {
+      amPm = ' PM'
+      if (intHour > 12) {
+        formattedHour = (intHour - 12).toString().padStart(2, '0')
+      }
+    } else {
+      amPm = ' AM'
+      if (intHour === 0) {
+        formattedHour = '12'
+      }
+    }
+  }
+
+  return `${formattedHour}:${minute}${amPm}`
+}

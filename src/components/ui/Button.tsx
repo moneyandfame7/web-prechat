@@ -7,6 +7,7 @@ import {IS_SENSOR} from 'common/config'
 import type {SignalOr, SignalOrString} from 'types/ui'
 
 import {Ripple} from '../Ripple'
+import {Icon, type IconName} from './Icon'
 import {Spinner} from './Spinner'
 
 import './Button.scss'
@@ -17,7 +18,7 @@ export interface ButtonProps {
   isDisabled?: SignalOr<boolean | undefined>
   type?: 'button' | 'submit'
   variant?: 'contained' | 'transparent'
-  color?: 'primary' | 'red' | 'green'
+  color?: 'primary' | 'red' | 'green' | 'gray'
   withFastClick?: boolean
   ripple?: boolean
   onClick?: () => void
@@ -25,12 +26,15 @@ export interface ButtonProps {
   fullWidth?: boolean
   'aria-label'?: SignalOrString
   uppercase?: boolean
+  icon?: IconName
+  rounded?: boolean
 }
 
 export const Button: FC<ButtonProps> = ({
   isLoading = false,
   loadingText = 'Please wait...',
   type = 'button',
+  icon,
   isDisabled = false,
   variant = 'contained',
   children,
@@ -74,6 +78,7 @@ export const Button: FC<ButtonProps> = ({
       onClick={IS_SENSOR || !withFastClick ? onClick : undefined}
     >
       {!isLoading && children}
+      {!isLoading && icon && <Icon name={icon} />}
       {isLoading && (
         <>
           {loadingText}

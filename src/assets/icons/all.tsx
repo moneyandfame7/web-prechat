@@ -25,8 +25,10 @@ import {ReactComponent as lock} from './lock.svg'
 import {ReactComponent as logout} from './logout.svg'
 import {ReactComponent as menu} from './menu.svg'
 import {ReactComponent as more} from './more.svg'
+import {ReactComponent as next} from './next.svg'
 import {ReactComponent as phone} from './phone.svg'
 import {ReactComponent as plus} from './plus.svg'
+import {ReactComponent as previous} from './previous.svg'
 import {ReactComponent as savedMessages} from './saved-messages.svg'
 import {ReactComponent as search} from './search.svg'
 import {ReactComponent as settings} from './settings.svg'
@@ -82,4 +84,6 @@ export {
   phone,
   stop,
   logout,
+  next,
+  previous,
 }

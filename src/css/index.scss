@@ -10,6 +10,12 @@
   overflow: hidden;
 }
 
+.root {
+  &.night {
+    @include spread-map($theme-map-dark);
+  }
+}
+
 html,
 body {
   font-family: var(--font-family);

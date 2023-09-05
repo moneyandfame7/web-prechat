@@ -5,8 +5,9 @@ import {getGlobalState} from 'state/signal'
 import {startPersist} from 'state/storages'
 import {cleanupUnusedAuthState} from 'state/updates'
 
-import {preloadImage} from 'utilities/preloadImage'
+import {saveSession} from 'utilities/session'
 
+// import {preloadImage} from 'utilities/preloadImage'
 import {AuthScreens} from 'types/screens'
 
 import {SwitchTransition} from 'components/transitions'
@@ -66,6 +67,7 @@ const Auth: FC = () => {
         <Button
           onClick={() => {
             global.auth.session = '12348123848128348128348143'
+            saveSession(global.auth.session)
             startPersist()
           }}
         >
