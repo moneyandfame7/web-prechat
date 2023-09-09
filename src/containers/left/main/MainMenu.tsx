@@ -1,21 +1,24 @@
 import {type FC, memo, useMemo} from 'preact/compat'
 
-import {LeftColumnScreen} from 'types/ui'
-import {useBoolean} from 'hooks/useFlag'
+import {getGlobalState} from 'state/signal'
 
-import {Menu, MenuItem} from 'components/popups/menu'
+import {t} from 'lib/i18n'
+
+import {GITHUB_SOURCE} from 'common/config'
+
+import {LeftColumnScreen} from 'types/ui'
+
+import {MenuItem} from 'components/popups/menu'
 import {Icon, IconButton} from 'components/ui'
+import {DropdownMenu} from 'components/ui/DropdownMenu'
 
 import {useLeftColumn} from '../context'
 
 import './MainMenu.scss'
-import {GITHUB_SOURCE} from 'common/config'
-import {t} from 'lib/i18n'
-import {getGlobalState} from 'state/signal'
+
 export const LeftMainMenu: FC = memo(() => {
-  const {setTrue, value, setFalse} = useBoolean(false)
   const {setScreen} = useLeftColumn()
-  const lang = getGlobalState(state => state.settings.i18n.lang_code)
+  const lang = getGlobalState((state) => state.settings.i18n.lang_code)
 
   const items = useMemo(
     () => (
@@ -63,11 +66,19 @@ export const LeftMainMenu: FC = memo(() => {
   )
   return (
     <div class="LeftColumn-Main_Menu">
-      <IconButton onClick={setTrue} icon="menu" />
-
-      <Menu placement="top left" isOpen={value} withMount={false} onClose={setFalse}>
+      <DropdownMenu
+        placement={{
+          top: true,
+          left: true,
+        }}
+        transform="top left"
+        button={<IconButton ripple={false} icon="menu" />}
+      >
         {items}
-      </Menu>
+      </DropdownMenu>
+      {/* <Menu placement="top left" isOpen={value} withMount={false} onClose={setFalse}>
+        {items}
+      </Menu> */}
     </div>
   )
 })

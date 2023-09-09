@@ -1,6 +1,9 @@
 .chats-list {
-  padding-block: 10px 20px;
-  padding-inline: 5px 2px;
+  > .transition-item {
+    background-color: transparent;
+    padding-block: 10px 20px;
+    padding-inline: 5px;
+  }
 }
 .skeleton {
   animation: skeleton-loading 1.2s linear infinite alternate;

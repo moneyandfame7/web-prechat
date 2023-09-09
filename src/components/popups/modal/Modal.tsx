@@ -7,10 +7,11 @@ import {
   useRef,
 } from 'preact/compat'
 
-import {TransitionTest} from 'components/transitions'
+import {addEscapeListener} from 'utilities/keyboardListener'
+
+import {SingleTransition} from 'components/transitions'
 import {IconButton} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
-import {useEventListener} from 'hooks/useEventListener'
 
 import {ModalProvider, useModalContext} from '../modal'
 
@@ -53,29 +54,32 @@ export const Modal: FC<ModalProps> = ({
     },
     [shouldCloseOnBackdrop]
   )
-  useEventListener('keydown', (e) => {
-    if (closeOnEsc && e.key === 'Escape') {
-      onClose()
-    }
-  })
+
+  useEffect(() => {
+    return isOpen
+      ? addEscapeListener(() => {
+          onClose()
+        })
+      : undefined
+  }, [isOpen])
   const buildedClass = ['Modal-paper', className].filter(Boolean).join(' ')
   return (
     <ModalProvider value={{isOpen, hasCloseButton, onClose}}>
       <Portal>
-        <TransitionTest
+        <SingleTransition
           className="Modal"
           appear
           name="fade"
-          isMounted={isOpen}
-          alwaysMounted={false}
-          duration={300}
-          onExitTransition={onExitTransition}
+          in={isOpen}
+          unmount={true}
+          timeout={250}
+          onExited={onExitTransition}
           onClick={handleBackdropClick}
         >
           <div class={buildedClass} ref={modalRef}>
             {children}
           </div>
-        </TransitionTest>
+        </SingleTransition>
       </Portal>
     </ModalProvider>
   )

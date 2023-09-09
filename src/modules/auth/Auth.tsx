@@ -2,16 +2,11 @@ import {type FC, useCallback, useEffect} from 'preact/compat'
 
 import 'state/actions/imporant'
 import {getGlobalState} from 'state/signal'
-import {startPersist} from 'state/storages'
 import {cleanupUnusedAuthState} from 'state/updates'
 
-import {saveSession} from 'utilities/session'
-
-// import {preloadImage} from 'utilities/preloadImage'
 import {AuthScreens} from 'types/screens'
 
-import {SwitchTransition} from 'components/transitions'
-import {Button} from 'components/ui'
+import {Transition} from 'components/transitions'
 
 import AuthCode from './AuthCode.async'
 import AuthPassword from './AuthPassword.async'
@@ -24,19 +19,6 @@ const classNames = {
   [AuthScreens.PhoneNumber]: 'Auth_phone',
   [AuthScreens.SignUp]: 'Auth_signup',
 }
-
-// прелоад манкі??
-// не знаю як пофіксити кейс, коли з асинхронними компонентами flickering mount компонента, тому використовую fade, там це непомітно
-// const getTransitionByCase = (
-//   _: AuthScreens,
-//   previousScreen?: AuthScreens
-// ): TransitionCases => {
-//   if (previousScreen === AuthScreens.PhoneNumber) {
-//     return SLIDE_IN
-//   }
-
-//   return SLIDE_OUT
-// }
 
 const Auth: FC = () => {
   const global = getGlobalState()
@@ -55,16 +37,14 @@ const Auth: FC = () => {
   }, [global.auth.screen])
 
   useEffect(() => {
-    // preloadImage(monkeySvg)
     return () => {
-      // console.log('AUTH REMOVED')
       cleanupUnusedAuthState(global)
     }
   }, [])
   return (
-    <div class="scrollable scrollable-hidden" id="auth-scroll">
-      <div class="Auth">
-        <Button
+    <div class="scrollable scrollable-y scrollable-hidden" id="auth-scroll">
+      <div class="auth-page">
+        {/* <Button
           onClick={() => {
             global.auth.session = '12348123848128348128348143'
             saveSession(global.auth.session)
@@ -82,20 +62,15 @@ const Auth: FC = () => {
           }}
         >
           TOGGLE_SCREEN
-        </Button>
-        <div class="Auth_inner">
-          <SwitchTransition
-            shouldCleanup={false}
-            name="zoomFade"
-            activeKey={global.auth.screen}
-            // permanentClassname="Screen-container"
-            classNames={classNames}
-            durations={300}
-            // getTransitionByCase={getTransitionByCase}
-          >
-            {renderScreen()}
-          </SwitchTransition>
-        </div>
+        </Button> */}
+        <Transition
+          innerClassnames={classNames}
+          name="fade"
+          activeKey={global.auth.screen}
+          shouldCleanup={false}
+        >
+          {renderScreen()}
+        </Transition>
       </div>
     </div>
   )

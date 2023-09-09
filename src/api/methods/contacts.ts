@@ -1,7 +1,6 @@
 import {MUTATION_ADD_CONTACT, QUERY_GET_CONTACTS} from 'api/graphql'
+import {cleanTypename} from 'api/helpers/cleanupTypename'
 import type {AddContactInput, ApiUser} from 'api/types'
-
-import {cleanTypename} from 'utilities/cleanTypename'
 
 import {ApiBaseMethod} from '../base'
 

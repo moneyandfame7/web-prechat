@@ -1,7 +1,7 @@
 import {Api} from 'api/manager'
 
 import {createAction} from 'state/action'
-import {updateUsers} from 'state/updates'
+import {updateChats, updateUsers} from 'state/updates'
 
 import {logger} from 'utilities/logger'
 import {buildRecord} from 'utilities/object/buildRecord'
@@ -34,14 +34,19 @@ createAction('addContact', async (state, actions, payload) => {
     phoneNumber: unformatStr(payload.phone),
     userId: payload.userId,
   })
-
+  /**
+   * @todo rewrite for result<data, error>
+   */
   if (!result) {
     actions.showNotification({title: 'The provided phone not registered.'})
     return
   }
-
+  const {chat, user} = result
   updateUsers(state, {
-    [result.id]: result,
+    [user.id]: user,
+  })
+  updateChats(state, {
+    [chat.id]: chat,
   })
   actions.closeAddContactModal()
 

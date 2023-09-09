@@ -53,6 +53,7 @@ export const INITIAL_STATE: GlobalState = {
     byId: {},
     contactIds: [],
     statusesByUserId: {},
+    usernames: {},
   },
 
   // chatCreation: {

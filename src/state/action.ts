@@ -63,15 +63,16 @@ interface ActionPayloads {
   /* Users */
   getSelf: void
   getUser: string
+  resolveUsername: {username: string}
 
   /* Chats */
   createChannel: CreateChannelInput
   createGroup: CreateGroupInput
   getChats: void
+  openChat: {id: string}
 
   /* Account */
   getAuthorizations: void
-  updateAuthorizationActivity: void
   terminateAuthorization: {sessionId: string}
   terminateAllAuthorizations: void
   updateUserStatus: {isOnline: boolean; isFirst?: boolean; noDebounce?: boolean}

@@ -1,8 +1,8 @@
-import type {FC, TargetedEvent} from 'preact/compat'
+import type {FC} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import {IS_SENSOR} from 'common/config'
+import {useFastClick} from 'hooks/useFastClick'
 
 import type {SignalOr, SignalOrString} from 'types/ui'
 
@@ -59,14 +59,7 @@ export const Button: FC<ButtonProps> = ({
     className
   )
 
-  const handleMouseDown = (e: TargetedEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault()
-    if (e.button === 0) {
-      // logDebugWarn('[UI]: Button click')
-
-      onClick?.()
-    }
-  }
+  const clickHandlers = useFastClick({fast: withFastClick, handler: onClick})
 
   return (
     <button
@@ -74,8 +67,7 @@ export const Button: FC<ButtonProps> = ({
       type={type}
       disabled={isLoading || isDisabled}
       class={buildClass}
-      onMouseDown={withFastClick && !IS_SENSOR ? handleMouseDown : undefined}
-      onClick={IS_SENSOR || !withFastClick ? onClick : undefined}
+      {...clickHandlers}
     >
       {!isLoading && children}
       {!isLoading && icon && <Icon name={icon} />}

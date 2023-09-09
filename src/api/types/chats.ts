@@ -1,13 +1,15 @@
-import type {ApiColorVariant} from '.'
+import type {ApiColorVariant, ApiUser} from '.'
 import type {ApiPhoto} from './diff'
 
 export type ApiChatType = 'chatTypePrivate' | 'chatTypeGroup' | 'chatTypeChannel'
 
 export interface ApiChat {
   id: string
+  userId?: string
   type: ApiChatType
   title: string
   color: ApiColorVariant
+  inviteLink?: string
   membersCount?: number
   unreadCount?: number
   isNotJoined?: boolean
@@ -19,7 +21,10 @@ export interface ApiChat {
   // color:
   // lastMessage?: any
   createdAt: Date
+  _id: string
 }
+
+export type ApiPeer = ApiChat | ApiUser
 
 export interface ApiChatFullInfo {
   members?: ApiChatMember[]

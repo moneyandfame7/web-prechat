@@ -82,7 +82,7 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
         placeholder="Add People..."
       />
       <Divider />
-      <div class="picker-list scrollable">{renderList()}</div>
+      <div class="picker-list scrollable scrollable-y">{renderList()}</div>
       {selectedIds.map((id) => (
         <p key={id}>{global.users.byId[id].firstName}</p>
       ))}

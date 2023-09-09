@@ -36,7 +36,6 @@ const Main: FC = () => {
     getChats()
     getContactList()
     // add to persist state that auth was updated less than 1 hour ago ?? or 20minutes, or 10 minutes ......
-    // updateAuthorizationActivity() // обʼєднати з updateUserStatus???? без await оновлювати сесію
 
     // subscriptions.onChatCreated()
     // subscriptions.onAuthorizationCreated()

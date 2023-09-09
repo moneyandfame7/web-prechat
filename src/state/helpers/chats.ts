@@ -1,11 +1,13 @@
 import type {ApiChat, ApiUser} from 'api/types'
 
-import {selectIsChatWithSelf} from 'state/selectors/chats'
+import {isPrivateChat, isSavedMessages} from 'state/selectors/chats'
 import {selectUser} from 'state/selectors/users'
 
 import type {SignalGlobalState} from 'types/state'
 
 import {getUserName} from './users'
+
+const USERNAME_PATTERN = /^[a-zA-Z0-9_]{5,}$/
 
 export function getPeerName(peer: ApiUser | ApiChat) {
   if ('title' in peer) {
@@ -16,15 +18,19 @@ export function getPeerName(peer: ApiUser | ApiChat) {
 }
 
 export function getChatName(global: SignalGlobalState, chat: ApiChat) {
-  if (selectIsChatWithSelf(global, chat.id)) {
+  if (isSavedMessages(global, chat.id)) {
     return 'Saved Messages'
   }
 
-  if (chat.type === 'chatTypePrivate') {
+  if (isPrivateChat(global, chat.id)) {
     const user = selectUser(global, chat.id)
 
-    return getUserName(user!)
+    return user ? getUserName(user) : 'NOT DEFINED USER'
   }
 
   return chat.title
+}
+
+export function isValidUsername(username: string) {
+  return USERNAME_PATTERN.test(username)
 }

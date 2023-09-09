@@ -3,7 +3,7 @@ import {useCallback, useEffect, useRef, useState} from 'preact/hooks'
 
 import {LeftColumnScreen} from 'types/ui'
 
-import {SwitchTransition} from 'components/transitions'
+import {Transition} from 'components/transitions'
 import {SearchInput} from 'components/ui'
 
 import {LeftGoBack} from '../LeftGoBack'
@@ -16,12 +16,8 @@ import Search from './search/Search.async'
 import './LeftMain.scss'
 
 enum LeftMainGroup {
-  Chats = 'Chats',
-  Search = 'Search',
-}
-const classNames: Record<LeftMainGroup, string> = {
-  [LeftMainGroup.Chats]: 'LeftColumn-Chats',
-  [LeftMainGroup.Search]: 'LeftColumn-Search',
+  Chats,
+  Search,
 }
 
 const LeftMain: FC = (props) => {
@@ -66,20 +62,37 @@ const LeftMain: FC = (props) => {
     }
   }, [activeGroup])
 
+  const isSearchInputFocused = activeGroup === LeftMainGroup.Search
+
   return (
     <Fragment {...props}>
       <div class="LeftColumn-Header">
-        {renderButton()}
+        <Transition
+          name="rotate"
+          activeKey={activeGroup}
+          shouldCleanup={false}
+          containerClassname="left-column-header__btn-container"
+        >
+          {renderButton()}
+        </Transition>
         {/* <InputText onFocus={handleFocusInput} elRef={inputRef} value={search} onInput={()=>)}/> */}
         <SearchInput
-          elRef={inputRef}
+          // elRef={inputRef}
+          isFocused={isSearchInputFocused}
           value={search}
           onInput={handleSearch}
           onFocus={handleFocusInput}
         />
+        {/* <InputText
+          value={search}
+          onInput={(v) => {
+            console.log(v)
+          }}
+          onFocus={handleFocusInput}
+        /> */}
       </div>
-      <div class="LeftColumn-Main_inner">
-        <SwitchTransition
+      <div class="LeftColumn-Main_inner scrollable">
+        {/* <SwitchTransition
           classNames={classNames}
           name="fade"
           activeKey={activeGroup}
@@ -89,7 +102,10 @@ const LeftMain: FC = (props) => {
           initial={false}
         >
           {renderScreen()}
-        </SwitchTransition>
+        </SwitchTransition> */}
+        <Transition activeKey={activeGroup} name="fade" cleanupException={LeftMainGroup.Chats}>
+          {renderScreen()}
+        </Transition>
         <CreateChatButton />
       </div>
     </Fragment>

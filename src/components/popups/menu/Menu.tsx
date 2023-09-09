@@ -1,20 +1,22 @@
 import type {ComponentChildren, RefObject} from 'preact'
-import {type FC, type TargetedEvent, memo, useCallback, useRef} from 'preact/compat'
+import {type FC, type TargetedEvent, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
+
+import {useClickAway} from 'hooks/useClickAway'
 
 import {logDebugWarn} from 'lib/logger'
 
 import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/config'
-import {useClickAway} from 'hooks/useClickAway'
+import {addEscapeListener} from 'utilities/keyboardListener'
 
-import {TransitionTest} from 'components/transitions'
+import {SingleTransition} from 'components/transitions'
 
 import {MenuProvider, useMenuContext} from './context'
 
 import './Menu.scss'
 
-type MenuPlacement =
+export type MenuTransform =
   | 'bottom left'
   | 'bottom right'
   | 'default'
@@ -24,6 +26,12 @@ type MenuPlacement =
   | 'top'
   | 'center'
   | 'bottom'
+export type MenuPlacement = {
+  left?: boolean
+  right?: boolean
+  bottom?: boolean
+  top?: boolean
+}
 interface MenuProps {
   className?: string
   children: ComponentChildren
@@ -35,6 +43,7 @@ interface MenuProps {
   autoClose?: boolean
   onClose: () => void
   withBackdrop?: boolean
+  transform?: MenuTransform
   placement?: MenuPlacement
   containerRef?: RefObject<HTMLElement>
 }
@@ -48,10 +57,16 @@ export const Menu: FC<MenuProps> = memo(
     onClose,
     autoClose = true,
     withBackdrop = true,
-    placement = 'default',
+    transform = 'default',
+    placement,
     containerRef,
   }) => {
-    const buildedClass = clsx('Menu', className, 'scrollable')
+    const buildedClass = clsx('Menu', className, 'scrollable', 'scrollable-y', {
+      'Menu--bottom': placement?.bottom,
+      'Menu--left': placement?.left,
+      'Menu--right': placement?.right,
+      'Menu--top': placement?.top,
+    })
 
     const handleClickBackdrop = useCallback((e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
       e.preventDefault()
@@ -68,6 +83,14 @@ export const Menu: FC<MenuProps> = memo(
         logDebugWarn('[UI]: Menu away click')
       }
     })
+
+    useEffect(() => {
+      return isOpen
+        ? addEscapeListener(() => {
+            onClose()
+          })
+        : undefined
+    }, [isOpen])
     return (
       <MenuProvider
         props={{
@@ -76,32 +99,18 @@ export const Menu: FC<MenuProps> = memo(
           autoClose,
         }}
       >
-        <TransitionTest
+        <SingleTransition
           elRef={menuRef}
           className={buildedClass}
-          styles={{transformOrigin: placement}}
-          isMounted={isOpen}
-          alwaysMounted={!withMount}
-          appear={false}
-          duration={TRANSITION_DURATION_MENU}
+          styles={{transformOrigin: transform}}
+          in={isOpen}
           name="zoomFade"
+          unmount={!withMount}
+          appear
+          timeout={TRANSITION_DURATION_MENU}
         >
           <>{children}</>
-        </TransitionTest>
-        {/* <Transition
-          elRef={menuRef}
-          className={buildedClass}
-          styles={{
-            transformOrigin: placement
-          }}
-          isVisible={isOpen}
-          withMount={withMount}
-          appear={false}
-          duration={TRANSITION_DURATION_MENU}
-          type="zoomFade"
-        >
-          {children}
-        </TransitionTest> */}
+        </SingleTransition>
         {isOpen && withBackdrop && <div class="backdrop" onMouseDown={handleClickBackdrop} />}
       </MenuProvider>
     )

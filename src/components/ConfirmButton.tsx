@@ -27,7 +27,6 @@ export const ConfirmButton: FC<ConfirmButtonProps> = ({
       openModal()
     },
   })
-
   const handleOnCancel = useCallback(() => {
     onCancel?.()
     closeModal()

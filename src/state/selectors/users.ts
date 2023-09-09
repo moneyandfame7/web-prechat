@@ -20,6 +20,16 @@ export function selectUserStatus(global: SignalGlobalState, userId: string) {
   return global.users.statusesByUserId[userId]
 }
 
+export function selectIsOnline(user: ApiUser) {
+  const status = user.status
+
+  if (status && status.type === 'userStatusOnline') {
+    return true
+  }
+
+  return false
+}
+
 export function selectSelf(global: SignalGlobalState): ApiUser | undefined {
   return global.users.byId[global.auth.userId!]
 }

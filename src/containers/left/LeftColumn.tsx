@@ -1,33 +1,28 @@
-import {type FC, memo, useState, useEffect} from 'preact/compat'
+import {type FC, memo, useEffect, useState} from 'preact/compat'
 
+import {getGlobalState} from 'state/signal'
+
+import {addEscapeListener} from 'utilities/keyboardListener'
+
+import {SettingsScreens} from 'types/screens'
 import {LeftColumnGroup, LeftColumnScreen} from 'types/ui'
 
-import SwitchTransition from 'components/transitions/SwitchTransition'
-import type {TransitionCases} from 'components/transitions/types'
-import {
-  ZOOM_SLIDE_IN,
-  ZOOM_SLIDE_OUT
-  // ZOOM_SLIDE_IN,
-  // ZOOM_SLIDE_OUT
-} from 'components/transitions/helpers'
+import {Transition} from 'components/transitions'
 
-import LeftMain from './main/LeftMain'
-import CreateChat from './create/CreateChat.async'
-import Settings from './settings/Settings.async'
 import Contacts from './contacts/Contacts.async'
-
 import {LeftColumnProvider} from './context'
+import CreateChat from './create/CreateChat.async'
+import LeftMain from './main/LeftMain'
+import Settings from './settings/Settings.async'
 
 import './LeftColumn.scss'
-import {SettingsScreens} from 'types/screens'
-import {getGlobalState} from 'state/signal'
 
 const classNames: Record<LeftColumnGroup, string> = {
   [LeftColumnGroup.Main]: 'LeftColumn-Main',
   [LeftColumnGroup.Contacts]: 'LeftColumn-Contacts',
   [LeftColumnGroup.Settings]: 'LeftColumn-Settings',
   [LeftColumnGroup.NewChannel]: 'LeftColumn-NewChannel',
-  [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup'
+  [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup',
 }
 
 // const TRANSITION_CASES: TransitionScreenConfig<LeftColumnGroup> = {
@@ -50,17 +45,10 @@ const classNames: Record<LeftColumnGroup, string> = {
 //     [LeftColumnGroup.Main]: SLIDE_OUT
 //   }
 // }
-const getTransitionByCase = (
-  _: LeftColumnGroup,
-  previousScreen?: LeftColumnGroup
-): TransitionCases => {
-  if (previousScreen === LeftColumnGroup.Main) {
-    return ZOOM_SLIDE_IN
-  }
 
-  return ZOOM_SLIDE_OUT
-}
 const LeftColumn: FC = () => {
+  const {globalSettingsScreen} = getGlobalState()
+
   const [activeScreen, setActiveScreen] = useState(LeftColumnScreen.Chats)
   const [settingsScreen, setSettingsScreen] = useState(SettingsScreens.Main)
   let activeGroup: LeftColumnGroup = LeftColumnGroup.Main
@@ -90,10 +78,18 @@ const LeftColumn: FC = () => {
       break
   }
   const handleReset = (force?: boolean) => {
-    if (force) {
+    console.log(LeftColumnScreen[activeScreen])
+
+    if (force || activeScreen === LeftColumnScreen.Search) {
       setActiveScreen(LeftColumnScreen.Chats)
       return
     }
+
+    if (activeScreen === LeftColumnScreen.Chats) {
+      setActiveScreen(LeftColumnScreen.Search)
+      return
+    }
+
     if (activeScreen === LeftColumnScreen.NewChannelStep2) {
       setActiveScreen(LeftColumnScreen.NewChannelStep1)
       return
@@ -102,16 +98,15 @@ const LeftColumn: FC = () => {
       setActiveScreen(LeftColumnScreen.NewGroupStep1)
       return
     }
-    if (activeScreen === LeftColumnScreen.Search) {
-      setActiveScreen(LeftColumnScreen.Chats)
-
-      return
-    }
 
     setActiveScreen(LeftColumnScreen.Chats)
   }
-  const {globalSettingsScreen} = getGlobalState()
 
+  useEffect(() => {
+    return addEscapeListener(() => {
+      handleReset()
+    })
+  }, [activeScreen])
   useEffect(() => {
     /* використовую глобальну змінну для того, щоб відкривати налаштування з інших екранів  */
     if (globalSettingsScreen !== undefined) {
@@ -120,8 +115,8 @@ const LeftColumn: FC = () => {
     }
   }, [globalSettingsScreen])
 
-  const renderScreen = (activeKey: LeftColumnGroup) => {
-    switch (activeKey) {
+  const renderScreen = () => {
+    switch (activeGroup) {
       case LeftColumnGroup.Contacts:
         return <Contacts />
       case LeftColumnGroup.Main:
@@ -140,20 +135,28 @@ const LeftColumn: FC = () => {
       store={{
         resetScreen: handleReset,
         setScreen: setActiveScreen,
-        activeScreen
+        activeScreen,
       }}
     >
       <div class="LeftColumn">
-        <SwitchTransition
+        <Transition
+          cleanupException={LeftColumnGroup.Main}
           activeKey={activeGroup}
-          classNames={classNames}
+          name="zoomSlide"
+          // containerClassname="Screen-container"
+        >
+          {renderScreen()}
+        </Transition>
+        {/* <SwitchTransition
+          activeKey={activeGroup}
+          // classNames={classNames}
           cleanupException={[LeftColumnGroup.Main]}
           name="fade"
           permanentClassname="Screen-container"
           getTransitionByCase={getTransitionByCase}
         >
           {renderScreen(activeGroup)}
-        </SwitchTransition>
+        </SwitchTransition> */}
       </div>
     </LeftColumnProvider>
   )

@@ -1,9 +1,5 @@
-// export interface AddContactInput {
-//   firstName: string
-//   lastName?: string
-//   phoneNumber?: string
-//   userId?: string
-// }
+import type {ApiChat, ApiUser} from '.'
+
 export type AddContactInput = {
   firstName: string
   lastName?: string
@@ -15,3 +11,8 @@ export type AddContactInput = {
       phoneNumber: string
     }
 )
+
+export interface AddContactResponse {
+  user: ApiUser
+  chat: ApiChat
+}

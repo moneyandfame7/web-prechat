@@ -1,12 +1,12 @@
-import {ComponentChildren, type VNode, cloneElement} from 'preact'
+import {type ComponentChildren, type VNode, cloneElement} from 'preact'
 import type {FC} from 'preact/compat'
 
 import {useBoolean} from 'hooks/useFlag'
 
-import {ConfirmButton} from 'components/ConfirmButton'
-import {Menu, MenuItem} from 'components/popups/menu'
+import {Menu} from 'components/popups/menu'
+import type {MenuPlacement, MenuTransform} from 'components/popups/menu/Menu'
 
-import {Icon, type IconName} from '.'
+import {type IconName} from '.'
 
 import './DropdownMenu.scss'
 
@@ -21,9 +21,18 @@ interface MenuItems {
 interface DropdownMenuProps {
   children: ComponentChildren
   button: VNode
+  mount?: boolean
+  transform?: MenuTransform
+  placement?: MenuPlacement
   /* якщо в нас є компонент з модалкою - то потрібно не робити unmount  */
 }
-export const DropdownMenu: FC<DropdownMenuProps> = ({children, button}) => {
+export const DropdownMenu: FC<DropdownMenuProps> = ({
+  children,
+  button,
+  transform,
+  placement,
+  mount = false,
+}) => {
   const {value: isMenuOpen, setTrue: openMenu, setFalse: closeMenu} = useBoolean(false)
 
   const cloned = cloneElement(button, {
@@ -36,9 +45,9 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({children, button}) => {
       <Menu
         isOpen={isMenuOpen}
         onClose={closeMenu}
-        // autoClose={false}
-        placement="top right"
-        withMount={false}
+        transform={transform}
+        withMount={mount}
+        placement={placement}
       >
         {children}
       </Menu>

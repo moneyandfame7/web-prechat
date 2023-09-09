@@ -1,4 +1,5 @@
 import * as LangPack from 'api/graphql/langPack'
+import {cleanTypename} from 'api/helpers/cleanupTypename'
 import type {ApiLangCode, GetLangStringInput} from 'api/types/langPack'
 
 import {ApiBaseMethod} from '../base'
@@ -16,7 +17,7 @@ export class ApiLangPack extends ApiBaseMethod {
       throw new Error('MMMMM')
     }
 
-    return data.getLangPack
+    return cleanTypename(data.getLangPack)
   }
 
   public async getLangString(input: GetLangStringInput) {
@@ -31,7 +32,7 @@ export class ApiLangPack extends ApiBaseMethod {
       throw new Error('ALLALALALALA')
     }
 
-    return data.getLangString
+    return cleanTypename(data.getLangString)
   }
 
   public async getCountriesList(code: ApiLangCode) {

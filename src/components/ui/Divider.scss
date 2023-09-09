@@ -3,12 +3,14 @@
   display: flex;
   white-space: nowrap;
   align-items: center;
+
   &::after,
   &::before {
     content: '';
     display: block;
     width: 100%;
     border-top: thin solid var(--c-border);
+    @include defaultTransition(border-color);
   }
 
   &-left {

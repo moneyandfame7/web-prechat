@@ -29,6 +29,9 @@
   // box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
   &:not(&:nth-last-child(1)) {
     // background-color: red;
-    border-bottom: 15px solid var(--c-surface-3);
+    box-shadow: 0 1px 3px 0 var(--c-box-shadow-section);
+
+    border-bottom: 15px solid var(--c-bg-2);
+    @include bgAndColorTransition(border-color);
   }
 }

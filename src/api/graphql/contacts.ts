@@ -1,7 +1,7 @@
 import {type TypedDocumentNode, gql} from '@apollo/client'
 
-import {FRAGMENT_USER} from 'api/graphql'
-import type {AddContactInput, ApiUser} from 'api/types'
+import {FRAGMENT_CHAT, FRAGMENT_USER} from 'api/graphql'
+import type {AddContactInput, AddContactResponse, ApiUser} from 'api/types'
 
 export const QUERY_GET_CONTACTS: TypedDocumentNode<{getContacts: ApiUser[]}, void> = gql`
   query GetContacts {
@@ -13,13 +13,19 @@ export const QUERY_GET_CONTACTS: TypedDocumentNode<{getContacts: ApiUser[]}, voi
 `
 
 export const MUTATION_ADD_CONTACT: TypedDocumentNode<
-  {addContact: ApiUser},
+  {addContact: AddContactResponse},
   {input: AddContactInput}
 > = gql`
   mutation AddContact($input: AddContactInput!) {
     addContact(input: $input) {
-      ...AllUserFields
+      user {
+        ...AllUserFields
+      }
+      chat {
+        ...AllChatFields
+      }
     }
   }
   ${FRAGMENT_USER}
+  ${FRAGMENT_CHAT}
 `

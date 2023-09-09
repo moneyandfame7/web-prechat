@@ -1,6 +1,7 @@
 import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
-import type {ApiChat, CreateChannelInput, CreateGroupInput} from 'api/types/chats'
+import type {ApiChat, ApiPeer, CreateChannelInput, CreateGroupInput} from 'api/types/chats'
+import {ResolvedPeer} from 'api/types/diff'
 import type {ApiUser} from 'api/types/users'
 
 import {FRAGMENT_MESSAGE, FRAGMENT_PHOTO} from './messages'
@@ -9,6 +10,8 @@ import {FRAGMENT_USER} from './users'
 export const FRAGMENT_CHAT: DocumentNode = gql`
   fragment AllChatFields on Chat {
     id
+    _id
+    userId
     type
     title
     membersCount
@@ -38,6 +41,20 @@ export const QUERY_GET_CHATS: TypedDocumentNode<{getChats: ApiChat[]}, void> = g
     }
   }
   ${FRAGMENT_CHAT}
+`
+
+export const QUERY_RESOLVE_USERNAME: TypedDocumentNode<
+  {resolveUsername: ApiPeer},
+  {username: string}
+> = gql`
+  query ResolveUsername($username: String!) {
+    resolveUsername(username: $username) {
+      ...AllChatFields
+      ...AllUserFields
+    }
+  }
+  ${FRAGMENT_CHAT}
+  ${FRAGMENT_USER}
 `
 
 export const MUTATION_CREATE_CHANNEL: TypedDocumentNode<

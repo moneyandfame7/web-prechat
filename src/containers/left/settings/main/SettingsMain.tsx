@@ -19,7 +19,8 @@ import {useLeftColumn} from 'containers/left/context'
 import {ColumnWrapper} from 'components/ColumnWrapper'
 import {ConfirmButton} from 'components/ConfirmButton'
 import {ProfileAvatar} from 'components/ProfileAvatar'
-import {Menu, MenuItem} from 'components/popups/menu'
+import ConfirmModal from 'components/popups/ConfirmModal.async'
+import {MenuItem} from 'components/popups/menu'
 import {Icon, IconButton, type IconName} from 'components/ui'
 import {DropdownMenu} from 'components/ui/DropdownMenu'
 import {ListItem} from 'components/ui/ListItem'
@@ -142,6 +143,11 @@ const SettingsMain: FC = () => {
       </ListItem>
     ))
   }, [global.activeSessions.ids])
+  const {
+    value: isLogoutOpen,
+    setFalse: onCloseLogout,
+    setTrue: openLogoutConfirm,
+  } = useBoolean()
   return (
     <ColumnWrapper
       title="Settings"
@@ -149,19 +155,27 @@ const SettingsMain: FC = () => {
       headerContent={
         <>
           <IconButton icon="edit" onClick={handleEditProfile} />
-
-          <DropdownMenu button={<IconButton icon="more" />}>
-            <ConfirmButton
-              title="Are you sure you want to log out?"
-              action="Log Out"
-              callback={signOut}
-            >
-              <MenuItem>
-                <Icon name="logout" />
-                Log out
-              </MenuItem>
-            </ConfirmButton>
+          <DropdownMenu
+            placement={{
+              right: true,
+              top: true,
+            }}
+            transform="top right"
+            button={<IconButton icon="more" />}
+            mount={false}
+          >
+            <MenuItem onClick={openLogoutConfirm}>
+              <Icon name="logout" />
+              Log out
+            </MenuItem>
           </DropdownMenu>
+          <ConfirmModal
+            isOpen={isLogoutOpen}
+            onClose={onCloseLogout}
+            title="Are you sure you want to log out?"
+            action="Log Out"
+            callback={signOut}
+          />
         </>
       }
     >

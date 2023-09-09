@@ -1,8 +1,11 @@
-import {MUTATION_CREATE_CHANNEL, MUTATION_CREATE_GROUP, QUERY_GET_CHATS} from 'api/graphql'
-import {removeNull} from 'api/helpers/removeNull'
+import {
+  MUTATION_CREATE_CHANNEL,
+  MUTATION_CREATE_GROUP,
+  QUERY_GET_CHATS,
+  QUERY_RESOLVE_USERNAME,
+} from 'api/graphql'
+import {cleanTypename} from 'api/helpers/cleanupTypename'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types'
-
-import {cleanTypename} from 'utilities/cleanTypename'
 
 import {ApiBaseMethod} from '../base'
 
@@ -19,7 +22,7 @@ export class ApiChats extends ApiBaseMethod {
       return undefined
     }
 
-    return cleanTypename(removeNull(data.createChannel))
+    return cleanTypename(data.createChannel)
   }
 
   public async createGroup(input: CreateGroupInput) {
@@ -34,7 +37,7 @@ export class ApiChats extends ApiBaseMethod {
       return undefined
     }
 
-    return removeNull(data.createGroup)
+    return cleanTypename(data.createGroup)
   }
 
   public async getChats() {
@@ -47,6 +50,22 @@ export class ApiChats extends ApiBaseMethod {
       return undefined
     }
 
-    return data.getChats.map(c => removeNull({...c}))
+    return cleanTypename(data.getChats)
+  }
+
+  public async resolveUsername(username: string) {
+    const {data} = await this.client.query({
+      query: QUERY_RESOLVE_USERNAME,
+      fetchPolicy: 'cache-first',
+      variables: {
+        username,
+      },
+    })
+
+    if (!data.resolveUsername) {
+      return undefined
+    }
+
+    return cleanTypename(data.resolveUsername)
   }
 }

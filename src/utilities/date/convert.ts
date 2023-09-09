@@ -1,6 +1,6 @@
 export function formatDate(date: Date, is24Hour: boolean, isFull = false): string {
   const now = new Date() // Поточна дата
-
+  console.log('ALLALALALLALFORMAT')
   // Опції для форматування дня тижня
   const weekdayOptions: Intl.DateTimeFormatOptions = {
     weekday: 'short', // Скорочена назва дня

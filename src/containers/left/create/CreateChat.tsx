@@ -1,40 +1,20 @@
 import {type FC, memo, useCallback, useEffect, useState} from 'preact/compat'
 
-import CreateChatStep1 from './CreateChatStep1'
-import CreateChatStep2 from './CreateChatStep2'
+import {LeftColumnScreen} from 'types/ui'
+
+import {Transition} from 'components/transitions'
 
 import {useLeftColumn} from '../context'
-import {LeftColumnScreen} from 'types/ui'
-import {
-  type TransitionCases,
-  SwitchTransition,
-  SLIDE_FADE_OUT,
-  SLIDE_FADE_IN,
-} from 'components/transitions'
+import CreateChatStep1 from './CreateChatStep1'
+import CreateChatStep2 from './CreateChatStep2'
 
 export interface CreateChatProps {
   isGroup: boolean
 }
 
 enum CreateChatGroup {
-  Step1 = 'Step1',
-  Step2 = 'Step2',
-}
-const screenClassnames = {
-  [CreateChatGroup.Step1]: 'LeftColumn-CreateChatStep1',
-  [CreateChatGroup.Step2]: 'LeftColumn-CreateChatStep2',
-}
-function getTransitionByCase(
-  activeScreen: CreateChatGroup
-  // previousScreen?: CreateChatGroup
-): TransitionCases {
-  switch (activeScreen) {
-    case CreateChatGroup.Step2:
-      return SLIDE_FADE_IN
-
-    default:
-      return SLIDE_FADE_OUT
-  }
+  Step1,
+  Step2,
 }
 
 const CreateChat: FC<CreateChatProps> = ({isGroup}) => {
@@ -42,9 +22,9 @@ const CreateChat: FC<CreateChatProps> = ({isGroup}) => {
 
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const onSelectMember = (id: string) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       if (prev.includes(id)) {
-        return prev.filter(existingId => existingId !== id)
+        return prev.filter((existingId) => existingId !== id)
       }
       return [...prev, id]
     })
@@ -63,41 +43,37 @@ const CreateChat: FC<CreateChatProps> = ({isGroup}) => {
     }
   }, [activeScreen])
 
-  const renderScreen = useCallback(
-    (activeGroup: CreateChatGroup) => {
-      switch (activeGroup) {
-        case CreateChatGroup.Step1:
-          return (
-            <CreateChatStep1
-              selectedIds={selectedIds}
-              handleSelect={onSelectMember}
-              isGroup={isGroup}
-              key={CreateChatGroup.Step1}
-            />
-          )
-        case CreateChatGroup.Step2:
-          return (
-            <CreateChatStep2
-              selectedIds={selectedIds}
-              isGroup={isGroup}
-              key={CreateChatGroup.Step2}
-            />
-          )
-      }
-    },
-    [selectedIds]
-  )
+  const renderScreen = useCallback(() => {
+    switch (activeGroup) {
+      case CreateChatGroup.Step1:
+        return (
+          <CreateChatStep1
+            selectedIds={selectedIds}
+            handleSelect={onSelectMember}
+            isGroup={isGroup}
+            key={CreateChatGroup.Step1}
+          />
+        )
+      case CreateChatGroup.Step2:
+        return (
+          <CreateChatStep2
+            selectedIds={selectedIds}
+            isGroup={isGroup}
+            key={CreateChatGroup.Step2}
+          />
+        )
+    }
+  }, [selectedIds, activeGroup, isGroup])
 
   return (
-    <SwitchTransition
-      classNames={screenClassnames}
+    <Transition
+      name="zoomSlide"
       activeKey={activeGroup}
-      name="fade"
-      permanentClassname="Screen-container"
-      getTransitionByCase={getTransitionByCase}
+      shouldCleanup={false}
+      // cleanupException={CreateChatGroup.Step1}
     >
-      {renderScreen(activeGroup)}
-    </SwitchTransition>
+      {renderScreen()}
+    </Transition>
   )
 }
 export default memo(CreateChat)

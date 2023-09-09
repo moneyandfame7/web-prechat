@@ -3,6 +3,7 @@
   width: 100%;
 
   input {
+    @include bgAndColorTransition(border-color);
     white-space: nowrap;
     &:not([type='password']) {
       text-overflow: ellipsis;
@@ -15,7 +16,7 @@
     border: 1px solid var(--c-border-input);
     background-color: transparent;
     // transition: border-color 0.2s ease-out, background-color 0.2s ease-out;
-    @include bgAndColorTransition(border-color);
+    // @include bgAndColorTransition();
 
     &::placeholder {
       // transition: color 0.2s ease-out;
@@ -98,9 +99,9 @@
       border-color: var(--color-error) !important;
     }
   }
-  &.success {
-    /*  */
-  }
+  // &.success {
+  //   /*  */
+  // }
   &.loading {
     & .Icon {
       display: none;

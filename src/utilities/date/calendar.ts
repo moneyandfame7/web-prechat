@@ -49,11 +49,13 @@ const sundayWeekToMondayWeekDayMap: Record<number, number> = {
   6: 5,
 }
 
-export interface DateCellItem {
+export interface DateCellItem extends FullDate {
+  type: 'next' | 'prev' | 'current'
+}
+export interface FullDate {
   date: number
   month: number
   year: number
-  type: 'next' | 'prev' | 'current'
 }
 
 export const getDaysAmountInAMonth = (year: number, month: number) => {
@@ -179,11 +181,11 @@ export const isValidDateString = (value: string) => {
   return true
 }
 
-export function isToday(cell: DateCellItem, todayDate: Date) {
+export function isToday(date: FullDate, todayDate: Date) {
   return (
-    todayDate.getFullYear() === cell.year &&
-    todayDate.getMonth() === cell.month &&
-    todayDate.getDate() === cell.date
+    todayDate.getFullYear() === date.year &&
+    todayDate.getMonth() === date.month &&
+    todayDate.getDate() === date.date
   )
 }
 
@@ -250,7 +252,7 @@ function isSmallerThanDate(value: Date, date: Date) {
 interface IsCellInRangeOptions {
   onlyPast?: boolean
   onlyFuture?: boolean
-  cell: DateCellItem
+  cell: FullDate
   min?: Date
   max?: Date
   initial: Date

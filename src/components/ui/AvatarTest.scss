@@ -6,7 +6,7 @@
   font-size: 28px;
   color: #fff;
   text-transform: uppercase;
-
+  position: relative;
   // Modificators
   &-circular {
     border-radius: 50%;
@@ -80,5 +80,25 @@
     .Icon {
       margin: 0;
     }
+  }
+
+  & .online-badge-transition {
+    width: max-content;
+    height: max-content;
+    background-color: transparent !important;
+    top: auto;
+    left: auto;
+    bottom: 10%;
+    right: 10%;
+    min-width: 10px;
+    min-height: 10px;
+  }
+  & .online-badge {
+    position: absolute;
+    background-color: var(--c-green);
+    box-shadow: 0 0 0 2px var(--c-bg);
+    min-width: 10px;
+    min-height: 10px;
+    border-radius: 50%;
   }
 }

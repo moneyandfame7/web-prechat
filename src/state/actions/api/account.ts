@@ -3,37 +3,15 @@ import {Api} from 'api/manager'
 
 import {createAction} from 'state/action'
 import {selectSelf} from 'state/selectors/users'
-import {updateAuthState, updateSessions, updateUser} from 'state/updates'
+import {updateSessions, updateUser} from 'state/updates'
 
 import {debounce} from 'common/functions'
-import {milliseconds} from 'utilities/date/ms'
 import {buildRecord} from 'utilities/object/buildRecord'
 
-const SESSION_ACTIVITY_UPD = milliseconds({minutes: 30})
 createAction('getAuthorizations', async (state) => {
   const result = await Api.account.getAuthorizations()
 
   updateSessions(state, buildRecord(result, 'id'))
-})
-
-createAction('updateAuthorizationActivity', async (state) => {
-  // maybe return from backend updated session?
-  const now = Date.now()
-  const sessionActivity = state.auth.sessionLastActivity
-  if (sessionActivity && now - sessionActivity <= SESSION_ACTIVITY_UPD) {
-    /* Less then 30 minutes, not update session state? */
-    /**
-     * On close tab - update last active at
-     */
-    return
-  }
-
-  const result = await Api.account.updateAuthorizationActivity()
-
-  updateAuthState(state, {
-    sessionLastActivity: Date.now(),
-  })
-  console.log('UPD_AUTH_ACTIVITY', {result})
 })
 
 createAction('terminateAuthorization', async (state, actions, payload) => {
@@ -84,6 +62,7 @@ const debounceUpdateUserStatus = debounce((cb) => cb(), 3000, true)
 
 createAction('updateUserStatus', async (state, actions, payload) => {
   if (!state.auth.session) {
+    actions.signOut()
     return
   }
   if (payload.noDebounce) {
@@ -120,7 +99,7 @@ createAction('updateUserStatus', async (state, actions, payload) => {
         case 'AUTH_SESSION_INVALID':
         case 'AUTH_SESSION_EXPIRED':
           // just put it on client apollo?
-          // actions.signOut()
+          actions.signOut()
           break
         default:
           break

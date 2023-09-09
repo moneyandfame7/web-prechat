@@ -1,4 +1,4 @@
-import {ApiSession} from 'api/types'
+import type {ApiSession} from 'api/types'
 
 import {createSubscribe} from 'state/subscribe'
 import {updateSession, updateSessions, updateUser} from 'state/updates'

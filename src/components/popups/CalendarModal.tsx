@@ -1,20 +1,12 @@
-import {
-  type FC,
-  cloneElement,
-  memo,
-  useCallback,
-  useLayoutEffect,
-  useMemo,
-  useState,
-} from 'preact/compat'
+import {type FC, memo, useEffect, useLayoutEffect, useMemo, useState} from 'preact/compat'
 
 import clsx from 'clsx'
 import {useRef} from 'react'
-import {CSSTransition, TransitionGroup} from 'react-transition-group'
+
+import {useEventListener} from 'hooks/useEventListener'
 
 import {
-  type DateCellItem,
-  WEEKDAYS_LANG,
+  type FullDate,
   daysOfTheWeek,
   getCurrentMothDays,
   getDaysAmountInAMonth,
@@ -26,21 +18,24 @@ import {
   isToday,
   months,
 } from 'utilities/date/calendar'
+import {formatDate} from 'utilities/date/convert'
 import {getNow} from 'utilities/date/now'
 
 import {TimePicker} from 'components/common/TimePicker'
-import {IconButton} from 'components/ui'
+import {Transition} from 'components/transitions'
+import {Button, IconButton} from 'components/ui'
 
 import {Modal} from './modal'
-import {ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
+import {ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
 
 import './CalendarModal.scss'
 
 /**
  * @todo
- * refactor styles - []
- * add navigation by arrow - if up - -7 day, if left - -1d, if right - +1d, if down - +7d
- * slide transition
+ * refactor styles - [+]
+ * add navigation by arrow - if up - -7 day, if left - -1d, if right - +1d, if down - +7d - [-]
+ * slide transition - [+]
+ * Rewrite to signals
  * check preact css transition, and css transition switch, etc
  */
 export interface CalendarModalProps {
@@ -68,6 +63,63 @@ const CalendarModal: FC<CalendarModalProps> = ({
   onlyFuture,
   onlyPast,
 }) => {
+  useLayoutEffect(() => {
+    if (!initial) {
+      return
+    }
+
+    setPanelMonth(initial.getMonth())
+    setPanelYear(initial.getFullYear())
+  }, [initial])
+  useEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey) {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+
+        handleSelectPrevMonth()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+
+        handleSelectNextMonth()
+      }
+      return
+    }
+    switch (e.key) {
+      case 'ArrowLeft': {
+        /* Handle select prev day */
+        const newDate = selectedDate.getDate() - 1
+
+        handleSelectDate({year, month, date: newDate})
+        break
+      }
+      case 'ArrowRight': {
+        const newDate = selectedDate.getDate() + 1
+
+        handleSelectDate({year, month, date: newDate})
+        /* Handle select next day */
+        break
+      }
+      /**
+       * I don't want to spend time to solving problem
+       */
+      /*       case 'ArrowDown': {
+        const newDate = selectedDate.getDate() + 7
+
+        handleSelectDate({year, month, date: newDate})
+
+        break
+      }
+      case 'ArrowUp': {
+        const newDate = selectedDate.getDate() - 7
+        console.log({newDate})
+        handleSelectDate({year, month, date: newDate})
+        break
+      } */
+    }
+  })
+
+  const isNext = useRef(false)
+
   const now = useMemo(getNow, [])
   const initialDate = useMemo(() => initial || new Date(), [initial])
 
@@ -82,7 +134,7 @@ const CalendarModal: FC<CalendarModalProps> = ({
 
     return [currentYear, currentMonth, currentDay]
   }, [selectedDate])
-  const isNext = useRef(false)
+
   const dateCells = useMemo(() => {
     const daysInAMonth = getDaysAmountInAMonth(panelYear, panelMonth)
 
@@ -93,25 +145,48 @@ const CalendarModal: FC<CalendarModalProps> = ({
     return [...prevMonthDays, ...currentMonthDays, ...nextMonthDays]
   }, [panelYear, panelMonth])
 
-  const onDateSelect = useCallback((item: DateCellItem) => {
+  const handleSelectDate = (cell: FullDate) => {
+    const inRange = isCellInRange({
+      onlyFuture,
+      onlyPast,
+      cell,
+      min,
+      max,
+      initial: initialDate,
+    })
+    if (!inRange) {
+      return
+    }
+    const {year, month, date} = cell
+    if (month > panelMonth) {
+      isNext.current = true
+    } else if (month < panelMonth) {
+      isNext.current = false
+    }
+
     const onSelectNow = getNow()
 
     const newSelectedDate = new Date(
-      item.year,
-      item.month,
-      item.date,
+      year,
+      month,
+      date,
       onSelectNow.getHours(),
       onSelectNow.getMinutes(),
       onSelectNow.getSeconds()
     )
+    // console.log(months[panelMonth], months[newSelectedDate.getMonth()])
+
     onSubmit(newSelectedDate)
-    setPanelMonth(item.month)
-    setPanelYear(item.year)
+    setPanelMonth(month)
+    setPanelYear(year)
 
     setSelectedDate(newSelectedDate)
-  }, [])
+  }
 
   const handleSelectNextMonth = () => {
+    if (!canSelectNextMonth) {
+      return
+    }
     isNext.current = true
 
     if (panelMonth === 11) {
@@ -122,6 +197,9 @@ const CalendarModal: FC<CalendarModalProps> = ({
     }
   }
   const handleSelectPrevMonth = () => {
+    if (!canSelectPrevMonth) {
+      return
+    }
     isNext.current = false
 
     if (panelMonth === 0) {
@@ -132,6 +210,7 @@ const CalendarModal: FC<CalendarModalProps> = ({
     }
   }
 
+  /* винести в хук? */
   const canSelectPrevMonth = onlyFuture
     ? isInRange(new Date(panelYear, panelMonth - 1, initialDate.getDate()), initialDate)
     : isInRange(new Date(panelYear, panelMonth), min, max)
@@ -141,14 +220,10 @@ const CalendarModal: FC<CalendarModalProps> = ({
     ? !isTheSameMonth(new Date(panelYear, panelMonth), max)
     : true
 
-  useLayoutEffect(() => {
-    if (!initial) {
-      return
-    }
-
-    setPanelMonth(initial.getMonth())
-    setPanelYear(initial.getFullYear())
-  }, [initial])
+  const formattedSelectedDate = useMemo(
+    () => formatDate(selectedDate, true, true),
+    [selectedDate]
+  )
   return (
     <Modal
       className="calendar-modal"
@@ -159,13 +234,17 @@ const CalendarModal: FC<CalendarModalProps> = ({
     >
       <ModalHeader hasCloseButton>
         <ModalTitle>
-          {months[panelMonth]} {panelYear}
+          <Transition
+            activeKey={panelMonth}
+            containerClassname="calendar-month"
+            innerClassnames="calendar-month__inner"
+            name="slideFade"
+            direction={isNext.current ? 1 : -1}
+          >
+            {months[panelMonth]} {panelYear}
+          </Transition>
         </ModalTitle>
-
-        <div className="CalendarPanel__buttons-left">
-          {/* <button onClick={handleSelectPrevMonth} disabled={!canSelectPrevMonth}>
-            Prev Month
-          </button> */}
+        <div className="calendar-button calendar-button--left">
           <IconButton
             isDisabled={!canSelectPrevMonth}
             icon="previous"
@@ -173,11 +252,7 @@ const CalendarModal: FC<CalendarModalProps> = ({
             onClick={handleSelectPrevMonth}
           />
         </div>
-        <div className="CalendarPanel__buttons-right">
-          {/* <button onClick={handleSelectNextMonth} disabled={!canSelectNextMonth}>
-            Next Month
-          </button> */}
-          {/* <IconButton icon="next" /> */}
+        <div className="calendar-button calendar-button--right">
           <IconButton
             isDisabled={!canSelectNextMonth}
             icon="next"
@@ -187,77 +262,64 @@ const CalendarModal: FC<CalendarModalProps> = ({
         </div>
       </ModalHeader>
       <ModalContent>
-        <div className="CalendarPanel">
-          <div class="calendar-weekdays">
-            {daysOfTheWeek.map((weekDay) => (
-              <div key={weekDay} className="weekday">
-                {weekDay}
+        <div class="calendar-weekdays">
+          {daysOfTheWeek.map((weekDay) => (
+            <div key={weekDay} className="calendar-weekday">
+              {weekDay}
+            </div>
+          ))}
+        </div>
+        <Transition
+          activeKey={panelMonth}
+          name="slide"
+          direction={isNext.current ? 1 : -1}
+          containerClassname="calendar-wrapper"
+          innerClassnames="calendar-grid"
+        >
+          {dateCells.map((cell) => {
+            const isSelectedDate =
+              cell.year === year && cell.month === month && cell.date === day
+            const isTodayDate = isToday(cell, now)
+            const isNotCurrent = cell.type !== 'current'
+
+            const inRange = isCellInRange({
+              onlyFuture,
+              onlyPast,
+              cell,
+              min,
+              max,
+              initial: initialDate,
+            })
+            return (
+              <div
+                className={clsx(
+                  'calendar-item',
+                  isSelectedDate && 'calendar-item--selected',
+                  isTodayDate && 'calendar-item--today',
+                  isNotCurrent && 'calendar-item--not-current',
+                  !inRange && 'calendar-item--not-in-range',
+                  {}
+                )}
+                key={`${cell.date}-${cell.month}-${cell.year}`}
+                onClick={() => inRange && handleSelectDate(cell)}
+              >
+                <div className="calendar-item__date">{cell.date}</div>
               </div>
-            ))}
-          </div>
-          <TransitionGroup
-            className="container"
-            childFactory={(child) => {
-              return cloneElement(child, {
-                classNames: isNext.current ? 'right-to-left' : 'left-to-right',
-                timeout: 500,
-              })
-            }}
-          >
-            <CSSTransition
-              mountOnEnter
-              // unmountOnExit
-              alwaysMounted={false}
-              duration={500}
-              classNames="right-to-left"
-              key={`${panelYear}-${panelMonth}`}
-
-              // nodeRef={nodeRef}
-            >
-              <div className="CalendarPanel__content step">
-                {dateCells.map((cell) => {
-                  const isSelectedDate =
-                    cell.year === year && cell.month === month && cell.date === day
-                  const isTodayDate = isToday(cell, now)
-                  const isNotCurrent = cell.type !== 'current'
-
-                  const inRange = isCellInRange({
-                    onlyFuture,
-                    onlyPast,
-                    cell,
-                    min,
-                    max,
-                    initial: initialDate,
-                  })
-                  return (
-                    <div
-                      className={clsx(
-                        'CalendarPanelItem',
-                        isSelectedDate && 'CalendarPanelItem--selected',
-                        isTodayDate && 'CalendarPanelItem--today',
-                        isNotCurrent && 'CalendarPanelItem--not-current',
-                        !inRange && 'CalendarPanelItem--not-in-range',
-                        {}
-                      )}
-                      key={`${cell.date}-${cell.month}-${cell.year}`}
-                      onClick={() => inRange && onDateSelect(cell)}
-                    >
-                      <div className="CalendarPanelItem__date">{cell.date}</div>
-                    </div>
-                  )
-                })}
-              </div>
-            </CSSTransition>
-          </TransitionGroup>
-
+            )
+          })}
+        </Transition>
+        {withTime && (
           <TimePicker
             onChange={(t) => {
               setSelectedDate(t)
             }}
             date={selectedDate}
           />
-        </div>
+        )}
       </ModalContent>
+      <ModalActions>
+        <Button>Jump to date - {formattedSelectedDate}</Button>
+      </ModalActions>
     </Modal>
   )
 }

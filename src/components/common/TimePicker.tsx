@@ -1,4 +1,11 @@
-import {type FC, memo, useCallback, useEffect, useState} from 'preact/compat'
+import {
+  type FC,
+  type TargetedEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useState,
+} from 'preact/compat'
 
 import {InputText} from 'components/ui'
 
@@ -21,7 +28,7 @@ export const TimePicker: FC<TimePickerProps> = memo(({onChange, date}) => {
   const [hour, setHour] = useState<string>(() => formatInputTime(date.getHours()))
   const [minute, setMinute] = useState<string>(() => formatInputTime(date.getMinutes()))
   const handleChangeHours = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: TargetedEvent<HTMLInputElement>) => {
       const value = e.currentTarget.value.replace(/[^\d]+/g, '')
       if (!value.length) {
         setHour('00')
@@ -45,7 +52,7 @@ export const TimePicker: FC<TimePickerProps> = memo(({onChange, date}) => {
   )
 
   const handleChangeMinutes = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+    (e: TargetedEvent<HTMLInputElement>) => {
       const value = e.currentTarget.value.replace(/[^\d]+/g, '')
       if (!value.length) {
         setMinute('00')

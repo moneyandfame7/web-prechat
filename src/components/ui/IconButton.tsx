@@ -40,8 +40,6 @@ export const IconButton: FC<IconButtonProps> = ({
   const handleMouseDown = (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault()
     if (e.button === 0) {
-      logDebugWarn('[UI]: IconButton click')
-
       onClick?.()
     }
   }

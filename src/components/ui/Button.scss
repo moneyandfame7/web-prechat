@@ -77,10 +77,10 @@
   &-loading {
     justify-content: center;
     > .loader {
-      position: absolute;
       right: 20px;
-      height: 24px;
     }
+
+    // padding-right: 24px;
   }
   &-loading.Button-transparent {
     // color: #fff;

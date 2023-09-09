@@ -1,5 +1,5 @@
 import {useSignal} from '@preact/signals'
-import {type FC, useRef} from 'preact/compat'
+import {type FC, useEffect, useRef, useState} from 'preact/compat'
 
 import {deepSignal} from 'deepsignal'
 
@@ -12,6 +12,8 @@ import {TEST_translate} from 'lib/i18n/types'
 
 import {USER_BROWSER, USER_PLATFORM} from 'common/config'
 import {decryptSession, saveEncryptSession} from 'utilities/encryption/storage'
+import {handleHashChangeTEST} from 'utilities/routing'
+import {stopEvent} from 'utilities/stopEvent'
 
 import {SettingsScreens} from 'types/screens'
 
@@ -21,6 +23,7 @@ import {ImageUpload} from 'components/UploadPhoto'
 import CalendarModal from 'components/popups/CalendarModal.async'
 import {SwitchLanguageTest} from 'components/test'
 import {TEST_ChangeLanguage} from 'components/test/ChangeLanguage'
+import {Transition} from 'components/transitions'
 import {Button} from 'components/ui'
 import {ListItem} from 'components/ui/ListItem'
 
@@ -29,6 +32,11 @@ import './MiddleColumn.scss'
 export const skeleton = deepSignal({
   isLoading: true,
 })
+enum ActiveKey {
+  Main,
+  Settings,
+  Chats,
+}
 export const MiddleColumn: FC = () => {
   const render = useRef(0)
   const global = getGlobalState()
@@ -38,6 +46,49 @@ export const MiddleColumn: FC = () => {
     actions.signOut()
   }
 
+  const [activeScreen, setActiveScreen] = useState(ActiveKey.Main)
+
+  const renderBtns = () => {
+    return (
+      <div style={{display: 'flex'}}>
+        <Button
+          fullWidth={false}
+          onClick={() => {
+            setActiveScreen(0)
+          }}
+        >
+          Main
+        </Button>
+        <Button
+          fullWidth={false}
+          onClick={() => {
+            setActiveScreen(1)
+          }}
+        >
+          Chats
+        </Button>
+        <Button
+          fullWidth={false}
+          onClick={() => {
+            setActiveScreen(2)
+          }}
+        >
+          Settings
+        </Button>
+      </div>
+    )
+  }
+
+  const renderContent = () => {
+    switch (activeScreen) {
+      case ActiveKey.Chats:
+        return <div style={{backgroundColor: 'red', width: 200, height: 200}} />
+      case ActiveKey.Main:
+        return <div style={{backgroundColor: 'blue', width: 200, height: 200}} />
+      case ActiveKey.Settings:
+        return <div style={{backgroundColor: 'green', width: 200, height: 200}} />
+    }
+  }
   const toggleTheme = () => {
     global.settings.theme = global.settings.theme === 'dark' ? 'light' : 'dark'
     switch (global.settings.theme) {
@@ -634,11 +685,24 @@ export const MiddleColumn: FC = () => {
   async function getData(password: string) {
     decryptSession(password)
   }
+  useEffect(() => {
+    handleHashChangeTEST()
 
+    window.addEventListener('hashchange', handleHashChangeTEST)
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChangeTEST)
+    }
+  }, [])
   const isCalendarOpen = useSignal(false)
   return (
     <div class="MiddleColumn">
-      <div class="MiddleColumn-inner scrollable">
+      <div class="MiddleColumn-inner scrollable scrollable-y">
+        {renderBtns()}
+        {global.auth.userId}
+        <Transition activeKey={activeScreen} name="slideFadeY" timeout={250} direction={1}>
+          {renderContent()}
+        </Transition>
         <h1>{render.current}</h1>
         <ListItem
           icon="arrowLeft"
@@ -647,7 +711,7 @@ export const MiddleColumn: FC = () => {
           subtitle="Its just my subtitle"
           additional="asdm"
         />
-        {global.users.contactIds.map((id) => {
+        {/* {global.users.contactIds.map((id) => {
           const user = selectUser(global, id)
           return (
             <div key={id}>
@@ -655,7 +719,7 @@ export const MiddleColumn: FC = () => {
               {JSON.stringify(user?.status)}
             </div>
           )
-        })}
+        })} */}
         <div style={{border: '1px solid red', width: '400px'}}>
           <ChatItem chatId="TEST" />
         </div>
@@ -675,7 +739,6 @@ export const MiddleColumn: FC = () => {
         >
           READ
         </Button>
-        <Button onClick={() => console.log(global)}>LOG_STATE</Button>
         {USER_BROWSER}
 
         {USER_PLATFORM}
@@ -686,7 +749,7 @@ export const MiddleColumn: FC = () => {
         >
           CALENDAR
         </Button>
-        {/* <SLIDE /> */}
+
         <CalendarModal
           isOpen={isCalendarOpen.value}
           onSubmit={(d) => console.log('SELECTED DATE', d)}

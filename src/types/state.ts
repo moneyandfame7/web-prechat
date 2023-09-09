@@ -89,6 +89,7 @@ export interface GlobalState {
     byId: Record<string, ApiChat>
     isLoading: boolean
     ids: string[]
+    usernames: {[username: string]: string}
   }
 
   activeSessions: {

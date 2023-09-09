@@ -15,11 +15,14 @@ import {getMainDefinition} from '@apollo/client/utilities'
 
 import {createClient} from 'graphql-ws'
 
+import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
 import {logDebugWarn} from 'lib/logger'
 
 import {DEBUG} from 'common/config'
+
+import {ApiError} from './types/diff'
 
 export type GqlDoc = {
   __typename: string
@@ -92,6 +95,7 @@ export class ApolloClientWrapper {
    * {@link https://www.apollographql.com/docs/react/api/link/apollo-link-error/ Apollo Error Link}
    */
   private getErrorLink() {
+    const actions = getActions()
     return onError(({graphQLErrors, networkError}) => {
       if (networkError) {
         // eslint-disable-next-line no-console
@@ -99,10 +103,17 @@ export class ApolloClientWrapper {
       }
 
       if (graphQLErrors) {
-        graphQLErrors.forEach(({message, path}) =>
+        graphQLErrors.forEach((error) => {
+          const apiError = error as unknown as ApiError | undefined
+
+          switch (apiError?.code) {
+            case 'AUTH_SESSION_INVALID':
+            case 'AUTH_SESSION_EXPIRED':
+              actions.reset()
+          }
           // eslint-disable-next-line no-console
-          console.error(`[GraphQL error]: Message: ${message}`, path)
-        )
+          // console.error(`[GraphQL error]: Message: ${message}`, path)
+        })
       }
     })
   }

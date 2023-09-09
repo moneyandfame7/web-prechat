@@ -5,7 +5,6 @@ import type {ApiLangCode} from 'api/types'
 import {LANGUAGES_LIST} from 'state/helpers/settings'
 import {getGlobalState} from 'state/signal'
 
-import {t} from 'lib/i18n'
 import {parseStringToJSX} from 'lib/i18n/helpers'
 import {TEST_changeLanguage, TEST_translate} from 'lib/i18n/types'
 
