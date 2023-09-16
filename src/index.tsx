@@ -13,6 +13,10 @@ import {DEBUG} from 'common/config'
 
 import './css/index.scss'
 
+/**
+ * @todo For lottie components add intersection observer
+ * stop if not in view.
+ */
 async function init() {
   // eslint-disable-next-line no-console
   console.time('>>> INIT <<<')

@@ -1,14 +1,28 @@
 import preact from '@preact/preset-vite'
 
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import autoprefixer from 'autoprefixer'
 import {visualizer} from 'rollup-plugin-visualizer'
 import {defineConfig, loadEnv} from 'vite'
-import {chunkSplitPlugin} from 'vite-plugin-chunk-split'
-import {createHtmlPlugin} from 'vite-plugin-html'
+import checker from 'vite-plugin-checker'
+import handlebars from 'vite-plugin-handlebars'
 import {VitePWA} from 'vite-plugin-pwa'
 import svgr from 'vite-plugin-svgr'
 
 import manifest from './manifest.json'
+
+const handlebarsPlugin = handlebars({
+  context: {
+    title: 'Prechat',
+    description:
+      'Prechat - a web messaging app built with Preact and TypeScript, similar to Telegram. ( Fast 3kB alternative to React with the same modern API )',
+    url: 'https://web-prechat.vercel.app',
+  },
+})
+
+const USE_HTTPS = false
+const NO_MINIFY = false
+const CHECK_CODE = true
 
 // https://vitejs.dev/config/
 // eslint-disable-next-line import/no-anonymous-default-export
@@ -22,44 +36,42 @@ export default ({mode}) => {
     plugins: [
       svgr(),
       preact(),
-      createHtmlPlugin({
-        inject: {
-          data: {
-            appName: VITE_APP_NAME,
-            appImage: VITE_APP_IMAGE,
-            appUrl: VITE_APP_URL,
-          },
-        },
-      }),
       visualizer({
         template: 'treemap',
-        open: true,
         gzipSize: true,
         brotliSize: true,
         filename: 'analyse.html',
-      }) as any,
+      }) as any, // eslint-disable-line
+      CHECK_CODE
+        ? checker({
+            eslint: {
+              lintCommand: 'eslint --ext .tsx,.ts src',
+            },
+          })
+        : undefined,
+      handlebarsPlugin,
+      USE_HTTPS ? basicSsl() : undefined,
+
       VitePWA({
         manifest,
-        includeAssets: ['/icons/preact.svg', '/icons/vite.svg'],
         devOptions: {
           enabled: true,
-          type: 'module',
         },
 
         workbox: {
-          globDirectory: 'dist',
-          globPatterns: ['**/*.{js,ts,css,html}', '**/*.{svg,png,jpg,gif,woff2}'],
+          globPatterns: ['**/*.{js,ts,css,html}', '**/*.{svg,png,jpg,gif,woff2,json}'],
         },
       }),
-      chunkSplitPlugin({
-        // customSplitting: {
-        //   'ui-components': [/[\\/]src[\\/]components[\\/]ui[\\/]/]
-        // }
-      }),
-    ],
+      // chunkSplitPlugin({
+      //   // customSplitting: {
+      //   //   'ui-components': [/[\\/]src[\\/]components[\\/]ui[\\/]/]
+      //   // }
+      // }),
+    ].filter(Boolean),
     build: {
       target: 'es2020',
       sourcemap: false,
+      minify: NO_MINIFY ? false : undefined,
     },
     css: {
       postcss: {
@@ -106,6 +118,7 @@ export default ({mode}) => {
     server: {
       port: 8000,
       open: true,
+      https: USE_HTTPS,
     },
   })
 }

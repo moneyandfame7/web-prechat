@@ -1,13 +1,20 @@
 import {type FC, memo} from 'preact/compat'
 
+import {useFastClick} from 'hooks/useFastClick'
+
 import {Portal} from 'components/ui/Portal'
 
 import styles from './UpdateAppPopup.module.scss'
 
-const UpdateAppPopup: FC = () => {
+export interface UpdateAppPopupProps {
+  onUpdate: VoidFunction
+}
+const UpdateAppPopup: FC<UpdateAppPopupProps> = ({onUpdate}) => {
+  const clickHandlers = useFastClick({fast: false, handler: console.log})
+
   return (
     <Portal>
-      <div class={styles.root}>
+      <div {...clickHandlers} class={styles.root}>
         <div class={styles.container}>
           <h1 class={styles.header}>Prechat has updated...</h1>
           <p class={styles.subtitle}>

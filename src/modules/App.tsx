@@ -1,4 +1,4 @@
-import {type FC} from 'preact/compat'
+import {type FC, useEffect} from 'preact/compat'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
@@ -26,7 +26,7 @@ enum AppScreens {
 
 const Application: FC = () => {
   const global = getGlobalState()
-
+  // useEffect(()=>{},[])
   let initialScreen: AppScreens
   if (ClientError.getError().value.length) {
     initialScreen = AppScreens.Error
@@ -58,6 +58,9 @@ const Application: FC = () => {
       <Transition timeout={350} name="fade" activeKey={initialScreen} shouldCleanup>
         {renderScreen()}
       </Transition>
+      <noscript>
+        <div className="noscript-warning">Please enable JavaScript to use this site.</div>
+      </noscript>
     </ErrorCatcher>
   )
 }

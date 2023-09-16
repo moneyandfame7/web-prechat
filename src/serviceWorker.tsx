@@ -6,6 +6,8 @@ import {useRegisterSW} from 'virtual:pwa-register/react'
 
 import {logDebugInfo} from 'lib/logger'
 
+import UpdateAppPopup from 'components/popups/UpdateAppPopup.async'
+
 const ServiceWorker: FC = memo(() => {
   const {
     offlineReady: [offlineReady, setOfflineReady],
@@ -15,7 +17,7 @@ const ServiceWorker: FC = memo(() => {
     onRegisteredSW(_, registration) {
       logDebugInfo('[🇺🇦 APP] - Service Worker at', registration?.scope)
     },
-    immediate: true,
+    // immediate: true,
   })
   const close = useCallback(() => {
     setOfflineReady(false)
@@ -32,19 +34,12 @@ const ServiceWorker: FC = memo(() => {
   return (
     <>
       {needRefresh && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            backgroundColor: 'pink',
-            width: '100%',
-            height: '100%',
-            zIndex: 99999999,
+        <UpdateAppPopup
+          isOpen
+          onUpdate={() => {
+            updateServiceWorker(false)
           }}
-        >
-          <button onClick={() => updateServiceWorker(false)}>Update Prechat</button>
-        </div>
+        />
       )}
     </>
   )

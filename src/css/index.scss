@@ -16,7 +16,9 @@
     @include spread-map($theme-map-dark);
   }
 }
-
+// .disabled-js-notify {
+//   background-color: red;
+// }
 html,
 body {
   font-family: var(--font-family);

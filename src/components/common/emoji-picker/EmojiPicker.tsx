@@ -10,14 +10,13 @@ import {
 } from 'preact/compat'
 
 import clsx from 'clsx'
-import SmoothScroll from 'smooth-scroll'
 
+// import SmoothScroll from 'smooth-scroll'
 import {type MapState, connect} from 'state/connect'
 
 import {useBoolean} from 'hooks/useFlag'
 import {useIntersectionObserver} from 'hooks/useIntersectionObserver'
 
-import {IS_SAFARI} from 'common/config'
 import {type EmojiData} from 'utilities/emoji'
 import {retryFetch} from 'utilities/fetch'
 import {timeout} from 'utilities/schedulers/timeout'
@@ -30,6 +29,9 @@ import {EmojiCategory} from './EmojiCategory'
 
 import './EmojiPicker.scss'
 
+/**
+ * @todo - EmojiTooltip коли вводимо текст в інпуті, потрібно шукати
+ */
 const categoriesIcons: Record<string, IconName> = {
   recent: 'recent',
   people: 'smile',

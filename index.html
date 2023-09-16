@@ -2,52 +2,83 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title><%- appName %></title>
+    <title>{{title}}</title>
+    <meta name="description" content="{{description}}" />
+    <meta property="title" content="{{title}}" />
 
-    <meta property="title" content="<%- appName%>" />
-    <meta
-      name="description"
-      content="Web chat based on Preact ( Fast 3kB alternative to React with the same modern API )"
-    />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="icon" type="images/svg+xml" href="/icons/preact.svg" />
-    <link rel="manifest" id="the-manifest-placeholder" href="/manifest.json" />
+    <link rel="manifest" id="manifest" />
+
     <meta name="theme-color" content="#ffffff" />
 
     <link rel="apple-touch-icon" sizes="192x192" href="/images/icon-192x192.png" />
-    <lin rel="canonical" href="<%- appUrl%>" />
+    <lin rel="canonical" href="{{url}}" />
 
     <meta name="keywords" content="Preact, react, web chat, spa" />
     <meta name="google" content="notranslate" />
-    <meta name="mobile-web-app-title" content="<%- appName %>" />
-    <meta name="apple-mobile-web-app-title" content="<%- appName%>" />
+    <meta name="mobile-web-app-title" content="{{title}}" />
+    <meta name="apple-mobile-web-app-title" content="{{title}}" />
 
     <!-- open graph -->
-    <meta property="og:title" content="<%- appName%>" />
+    <meta property="og:title" content="{{title}}" />
     <meta
       name="og:description"
       content="Web chat based on Preact ( Fast 3kB alternative to React with the same modern API )"
     />
-    <meta property="og:url" content="<%- appUrl%>" />
+    <meta property="og:url" content="{{title}}" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="/images/banner.jpg" />
-    <meta property="og:site_name" content="<%- appName%>" />
+    <meta property="og:site_name" content="{{title}}" />
 
     <!-- twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="<%- appName%>" />
+    <meta property="twitter:title" content="{{title}}" />
     <meta
       name="twitter:description"
       content="Web chat based on Preact ( Fast 3kB alternative to React with the same modern API )"
     />
-    <meta property="twitter:url" content="<%- appUrl%>" />
+    <meta property="twitter:url" content="{{url}}" />
     <meta property="twitter:type" content="website" />
     <meta property="twitter:image" content="/images/banner.jpg" />
-    <meta name="twitter:image:alt" content="<%- appName%>" />
+    <meta name="twitter:image:alt" content="{{title}}" />
   </head>
   <body>
-    <div id="app"></div>
+    <style>
+      body {
+        margin: 0;
+      }
+      .disabled-js-notify {
+        padding-inline: 10px;
+        height: 100dvh;
+        margin: 0;
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Apple Color Emoji',
+          'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        text-align: center;
+        font-weight: 500;
+        font-size: 1.3rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+      }
+      .empty-duck {
+        width: 300px;
+        user-select: none;
+        pointer-events: none;
+      }
+    </style>
+    <div id="app">
+      <noscript>
+        <div class="disabled-js-notify">
+          Please, enable JavaScript to open the app.
+          <img class="empty-duck" src="/duck_empty.gif" />
+        </div>
+      </noscript>
+    </div>
 
     <div id="portal"></div>
 

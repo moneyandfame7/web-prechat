@@ -91,7 +91,6 @@ const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
       {/* {renderChat()} */}
       <EmojiPicker isOpen={value} />
       <IconButton icon="smile" onClick={toggle} />
-      <UpdateAppPopup />
       {isChatOpen && (
         <>
           <ChatHeader chat={currentChat} onCloseChat={closeChat} />

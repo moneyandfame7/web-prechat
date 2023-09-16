@@ -2,8 +2,6 @@ import {type TargetedEvent, useMemo} from 'preact/compat'
 
 import {IS_SENSOR} from 'common/config'
 
-import type {MouseHandler} from 'types/ui'
-
 export function useFastClick({
   fast = true,
   handler,
