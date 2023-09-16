@@ -54,3 +54,7 @@ export function getUserName(user: ApiUser) {
     ? `${user.firstName}${user.lastName ? ` ${user.lastName}` : ''}`
     : user.lastName || ''
 }
+
+export function isUserId(id: string) {
+  return id.startsWith('u_')
+}

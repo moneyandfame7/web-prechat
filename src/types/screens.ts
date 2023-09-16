@@ -1,58 +1,77 @@
 export enum AuthScreens {
-  PhoneNumber = 'PhoneNumber',
-  Password = 'AuthPassword',
-  Code = 'Code',
-  SignUp = 'SignUp'
+  PhoneNumber,
+  Password,
+  Code,
+  SignUp,
 }
 
 export enum SettingsScreens {
-  Main = 'Main',
-  EditProfile = 'EditProfile',
-  Notifications = 'Notifications',
-  DataAndStorage = 'DataAndStorage',
+  Main,
+  EditProfile,
+  Notifications,
+  DataAndStorage,
   /* DataAndStoragePhoto, Video... */
 
   /* PRIVACY */
-  Privacy = 'Privacy',
-  PrivacyBlockedUsers = 'PrivacyBlockedUsers',
+  Privacy,
+  PrivacyBlockedUsers,
 
   /* PRIVACY--TWO FA */
-  PrivacyTwoFaSetPassword = 'PrivacySetPassword',
+  PrivacyTwoFaSetPassword,
 
-  PrivacyActiveSessions = 'PrivacyActiveSessions',
-  PrivacyPhone = 'PrivacyPhone',
-  PrivacyLastSeen = 'PrivacyLastSeen',
-  PrivacyProfilePhoto = 'PrivacyProfilePhoto',
-  PrivacyAddForwardLink = 'PrivacyAddForwardLink',
-  PrivacyAddByPhone = 'PrivacyAddByPhone',
-  PrivacyChatInvite = 'PrivacyChatInvite',
-  PrivacyRuleSection = 'PrivacyRuleSection',
+  PrivacyActiveSessions,
+  PrivacyPhone,
+  PrivacyLastSeen,
+  PrivacyProfilePhoto,
+  PrivacyAddForwardLink,
+  PrivacyAddByPhone,
+  PrivacyChatInvite,
+  PrivacyRuleSection,
 
-  General = 'General',
-  Appearance = 'Appearance',
-  AppearanceChatBackground = 'AppearanceChatBackground',
+  General,
+  Appearance,
+  AppearanceChatBackground,
 
   /* CHAT FOLDERS */
-  ChatFolders = 'ChatFolders',
-  ChatFoldersNew = 'ChatFoldersNew',
-  ChatFoldersNewIncludes = 'ChatFoldersNewIncludes',
-  ChatFoldersNewExcludes = 'ChatFoldersNewExcludes',
+  ChatFolders,
+  ChatFoldersNew,
+  ChatFoldersNewIncludes,
+  ChatFoldersNewExcludes,
 
-  Devices = 'Devices',
-  Language = 'Language'
+  Devices,
+  Language,
+}
+
+export enum RightColumnScreens {
+  ChatProfile,
+  ChatEdit,
+  Search,
+}
+
+export enum ChatEditScreens {
+  Main,
+  ChatType,
+  InviteLinks,
+  NewLink,
+  Admins,
+  AdminPermissions,
+  UserPermissions,
+  Members,
+  Permissions,
+  RemovedUsers,
 }
 
 export enum SettingsGroup {
-  Main = 'Main',
-  EditProfile = 'EditProfile',
-  Notifications = 'Notifications',
-  DataAndStorage = 'DataAndStorage',
-  Appearance = 'Appearance',
-  Privacy = 'Privacy',
-  General = 'General',
-  ChatFolders = 'ChatFolders',
-  Devices = 'Devices',
-  Language = 'Language'
+  Main,
+  EditProfile,
+  Notifications,
+  DataAndStorage,
+  Appearance,
+  Privacy,
+  General,
+  ChatFolders,
+  Devices,
+  Language,
 }
 
 export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
@@ -69,27 +88,27 @@ export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
     SettingsScreens.PrivacyAddForwardLink,
     SettingsScreens.PrivacyAddByPhone,
     SettingsScreens.PrivacyChatInvite,
-    SettingsScreens.PrivacyRuleSection
+    SettingsScreens.PrivacyRuleSection,
   ],
   [SettingsGroup.General]: [SettingsScreens.General],
   [SettingsGroup.ChatFolders]: [
     SettingsScreens.ChatFolders,
     SettingsScreens.ChatFoldersNew,
     SettingsScreens.ChatFoldersNewExcludes,
-    SettingsScreens.ChatFoldersNewIncludes
+    SettingsScreens.ChatFoldersNewIncludes,
   ],
   [SettingsGroup.Devices]: [SettingsScreens.Devices],
   [SettingsGroup.Appearance]: [
     SettingsScreens.Appearance,
-    SettingsScreens.AppearanceChatBackground
+    SettingsScreens.AppearanceChatBackground,
   ],
-  [SettingsGroup.Language]: [SettingsScreens.Language]
+  [SettingsGroup.Language]: [SettingsScreens.Language],
 }
 
 export const getSettingsActiveGroup = (screen: SettingsScreens): SettingsGroup => {
   for (const [group, screens] of Object.entries(SETTINGS_SCREENS)) {
     if (screens.includes(screen)) {
-      return group as SettingsGroup
+      return Number(group) as SettingsGroup
     }
   }
   return SettingsGroup.Main

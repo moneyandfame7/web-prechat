@@ -42,24 +42,26 @@ const SettingsDevices: FC = () => {
         <div class="settings-section">
           <ColumnSubtitle text="THIS DEVICE" />
           <ActiveSession session={session} />
-        </div>
-        {hasOtherSessions && (
-          <ConfirmButton
-            action="Terminate all other sessions"
-            callback={handleTerminateAllAuthorizations}
-            title="Are you sure about fucking suka that?"
-          >
-            <Button
-              color="red"
-              variant="transparent"
-              uppercase={false}
-              // onClick={handleTerminateAllAuthorizations}
+
+          {hasOtherSessions && (
+            <ConfirmButton
+              action="Terminate all other sessions"
+              callback={handleTerminateAllAuthorizations}
+              title="Are you sure about fucking suka that?"
             >
-              <Icon name="stop" />
-              Terminate all other sessions
-            </Button>
-          </ConfirmButton>
-        )}
+              <Button
+                color="red"
+                variant="transparent"
+                uppercase={false}
+                // onClick={handleTerminateAllAuthorizations}
+              >
+                <Icon name="stop" />
+                Terminate all other sessions
+              </Button>
+            </ConfirmButton>
+          )}
+        </div>
+        <p class="column-caption">Logs out all devices except for this one.</p>
       </>
     )
   }
@@ -75,12 +77,10 @@ const SettingsDevices: FC = () => {
     )
   }
   return (
-    <>
-      <ColumnWrapper title="Active sessions" onGoBack={resetScreen}>
-        {currentSession && renderCurrentSession(currentSession)}
-        {hasOtherSessions && renderOtherSessions(otherSessions)}
-      </ColumnWrapper>
-    </>
+    <ColumnWrapper title="Active sessions" onGoBack={resetScreen}>
+      {currentSession && renderCurrentSession(currentSession)}
+      {hasOtherSessions && renderOtherSessions(otherSessions)}
+    </ColumnWrapper>
   )
 }
 

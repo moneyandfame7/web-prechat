@@ -8,22 +8,20 @@ import {getGlobalState} from 'state/signal'
 
 import {ClientError} from 'lib/error/error'
 
-import {hasActiveSession} from 'utilities/session'
-
 import {ErrorCatcher} from 'components/ErrorCatcher'
 import {ScreenLoader} from 'components/ScreenLoader'
-import {SwitchTransition} from 'components/transitions'
+import {Transition} from 'components/transitions'
 
 import {ServiceWorker} from '../serviceWorker'
 
 import './App.scss'
 
 enum AppScreens {
-  Auth = 'Auth',
-  Lock = 'Lock',
-  Main = 'Main',
-  Loading = 'Loading',
-  Error = 'Error',
+  Auth,
+  Lock,
+  Main,
+  Loading,
+  Error,
 }
 
 const Application: FC = () => {
@@ -56,18 +54,10 @@ const Application: FC = () => {
   }
   return (
     <ErrorCatcher>
-      <>
-        <ServiceWorker />
-        <SwitchTransition
-          // initial
-          name="fade"
-          shouldCleanup
-          durations={500}
-          activeKey={initialScreen}
-        >
-          {renderScreen()}
-        </SwitchTransition>
-      </>
+      <ServiceWorker />
+      <Transition timeout={350} name="fade" activeKey={initialScreen} shouldCleanup>
+        {renderScreen()}
+      </Transition>
     </ErrorCatcher>
   )
 }

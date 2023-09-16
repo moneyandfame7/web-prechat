@@ -1,19 +1,22 @@
-import type {ApiLangCode, ApiLangPack, ApiSession} from 'api/types'
-import type {ApiChat} from 'api/types/chats'
-import type {ApiUser} from 'api/types/users'
+import type {ApiMessage} from 'api/types/messages'
 
 import {createPersistStore} from 'state/persist'
-import type {PersistIdbStorage, StoragesName} from 'state/persist/types'
+import type {PersistIdbStorage, Storages, StoragesName} from 'state/persist/types'
 
 import {DEBUG} from 'common/config'
 import {pick} from 'utilities/object/pick'
+import {updateByKey} from 'utilities/object/updateByKey'
 
-import type {AuthState, GlobalState, SettingsState} from 'types/state'
+import type {GlobalState} from 'types/state'
 
 import {getGlobalState} from './signal'
 import {updateAuthState, updateSessions, updateSettingsState, updateUsers} from './updates'
-import {updateChats} from './updates/chats'
+import {updateChats, updateChatsFull} from './updates/chats'
+import {updateMessages} from './updates/messages'
 
+/**
+ * @todo додати обробку pick state
+ */
 const persistStore = createPersistStore({
   databaseName: 'prechat-state',
   version: 1,
@@ -31,6 +34,15 @@ const persistStore = createPersistStore({
       },
     },
     {
+      name: 'usernames',
+    },
+    {
+      name: 'chatsFull',
+      // optionalParameters: {
+      //   keyPath: 'id',
+      // },
+    },
+    {
       name: 'users',
       optionalParameters: {
         keyPath: 'id',
@@ -45,38 +57,71 @@ const persistStore = createPersistStore({
         keyPath: 'id',
       },
     },
+    {
+      name: 'messages',
+      optionalParameters: {
+        keyPath: 'id',
+      },
+    },
   ],
 })
+export function pickPersistMessages(state: GlobalState) {
+  const messages = {} as Record<string, ApiMessage>
+  Object.values(state.messages.byChatId).forEach((chatMessages) => {
+    Object.values(chatMessages.byId).forEach((message) => {
+      messages[message.id] = message
+    })
+  })
 
-/* ADD PERSIST PICK!!! */
+  return messages
+}
+export function pickFromPersistedMessages(
+  messages: Record<string, ApiMessage>
+): GlobalState['messages']['byChatId'] {
+  const messagesByChatId: Record<string, {byId: Record<string, ApiMessage>}> = {}
+
+  Object.values(messages).forEach((message) => {
+    const chatId = message.chatId
+
+    if (!messagesByChatId[chatId]) {
+      messagesByChatId[chatId] = {
+        byId: {},
+      }
+    }
+    messagesByChatId[chatId].byId[message.id] = message
+  })
+  return messagesByChatId
+}
 export const storages = {
-  auth: persistStore.injectStorage<AuthState>({storageName: 'auth'}),
-  settings: persistStore.injectStorage<SettingsState>({storageName: 'settings'}),
-  users: persistStore.injectStorage<Record<string, ApiUser>>({storageName: 'users'}),
-  chats: persistStore.injectStorage<Record<string, ApiChat>>({storageName: 'chats'}),
-  i18n: persistStore.injectStorage<Record<ApiLangCode, ApiLangPack>>({
-    storageName: 'i18n',
-  }),
-  sessions: persistStore.injectStorage<Record<string, ApiSession>>({storageName: 'sessions'}),
+  auth: persistStore.injectStorage('auth'),
+  settings: persistStore.injectStorage('settings'),
+  users: persistStore.injectStorage('users'),
+  chats: persistStore.injectStorage('chats'),
+  usernames: persistStore.injectStorage('usernames'),
+  i18n: persistStore.injectStorage('i18n'),
+  sessions: persistStore.injectStorage('sessions'),
+  chatsFull: persistStore.injectStorage('chatsFull'),
+  messages: persistStore.injectStorage('messages'),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 } satisfies Record<StoragesName, PersistIdbStorage<any>>
 
 const PERSIST_DISABLED = false
 
-function pickPersisted(state: GlobalState) {
+function pickPersisted(state: GlobalState): Omit<Storages, 'i18n'> {
+  const messages = pickPersistMessages(state)
+
   return {
-    auth: pick(state.auth, [
-      'userId',
-      'session',
-      'phoneNumber',
-      'rememberMe',
-      'sessionLastActivity',
-    ]),
+    auth: pick(state.auth, ['userId', 'session', 'phoneNumber', 'rememberMe']),
     users: state.users.byId,
     chats: state.chats.byId,
+    chatsFull: state.chats.fullById,
+    usernames: state.chats.usernames,
     settings: state.settings,
     sessions: state.activeSessions.byId,
-    // i18n: state.settings.i18n,
+    messages,
+    // i18n: {
+    //   [state.settings.i18n.lang_code]: state.settings.i18n.pack,
+    // },
   }
 }
 
@@ -85,17 +130,21 @@ async function clearStorage() {
     Object.keys(storages).map((storage) => storages[storage as keyof typeof storages].clear())
   )
 }
-
+// Object.keys(storages).map((s) => storages[s as keyof typeof storages].get())
 async function readStorage() {
-  const [auth, settings, users, chats, sessions] = await Promise.all([
-    storages.auth.get(),
-    storages.settings.get(),
-    storages.users.get(),
-    storages.chats.get(),
-    storages.sessions.get(),
-  ])
+  const [auth, settings, users, chats, messages, usernames, chatsFull, sessions] =
+    await Promise.all([
+      storages.auth.get(),
+      storages.settings.get(),
+      storages.users.get(),
+      storages.chats.get(),
+      storages.messages.get(),
+      storages.usernames.get(),
+      storages.chatsFull.get(),
+      storages.sessions.get(),
+    ])
 
-  return {auth, settings, users, chats, sessions}
+  return {auth, settings, users, usernames, chats, messages, chatsFull, sessions}
 }
 
 export async function stopPersist() {
@@ -105,6 +154,8 @@ export async function stopPersist() {
 }
 
 export async function hydrateStore() {
+  console.time('HYDRATE')
+
   if (PERSIST_DISABLED) {
     if (DEBUG) {
       // eslint-disable-next-line no-console
@@ -113,7 +164,8 @@ export async function hydrateStore() {
 
     return
   }
-  const {auth, settings, chats, users, sessions} = await readStorage()
+  const {auth, settings, chats, users, sessions, chatsFull, usernames, messages} =
+    await readStorage()
 
   const global = getGlobalState()
   if (auth?.session || settings?.passcode.hasPasscode) {
@@ -127,8 +179,20 @@ export async function hydrateStore() {
     if (users) {
       updateUsers(global, users)
     }
+    if (usernames) {
+      updateByKey(global.chats.usernames, usernames)
+    }
     if (chats) {
       updateChats(global, chats)
+    }
+    if (messages) {
+      const byChatId = pickFromPersistedMessages(messages)
+      Object.keys(byChatId).forEach((chatId) => {
+        updateMessages(global, chatId, byChatId[chatId].byId)
+      })
+    }
+    if (chatsFull) {
+      updateChatsFull(global, chatsFull)
     }
     if (sessions) {
       updateSessions(global, sessions)
@@ -142,6 +206,8 @@ export async function hydrateStore() {
     // combinedStore.resetState() ??
     await stopPersist()
   }
+
+  console.timeEnd('HYDRATE')
 }
 
 export async function startPersist() {
@@ -160,6 +226,8 @@ export async function forcePersist(global: GlobalState) {
     storages.users.put(pickedForPersist.users),
     storages.chats.put(pickedForPersist.chats),
     storages.sessions.put(pickedForPersist.sessions),
+    storages.usernames.put(pickedForPersist.usernames),
+    storages.messages.put(pickedForPersist.messages),
     // storages.i18n.put(pickedForPersist.i1n),
     /* i18nStorage?? */
   ])

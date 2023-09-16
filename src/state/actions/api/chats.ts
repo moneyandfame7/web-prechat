@@ -1,9 +1,19 @@
+import {apiManager} from 'api/api-manager'
+import {getApiError} from 'api/helpers/getApiError'
 import {Api} from 'api/manager'
 
 import {createAction} from 'state/action'
-import {updateChats} from 'state/updates/chats'
+import {getChatUsername} from 'state/helpers/chats'
+import {isUserId} from 'state/helpers/users'
+import {selectChat, selectChatByUsername, selectChatFull} from 'state/selectors/chats'
+import {selectUser} from 'state/selectors/users'
+import {storages} from 'state/storages'
+import {updateCurrentChat} from 'state/updates'
+import {replacePeer, updateChatFullInfo, updateChats} from 'state/updates/chats'
 
 import {buildRecord} from 'utilities/object/buildRecord'
+import {updateByKey} from 'utilities/object/updateByKey'
+import {changeHash} from 'utilities/routing'
 
 createAction('createChannel', async (state, _, payload) => {
   const createdChannel = await Api.chats.createChannel(payload)
@@ -35,20 +45,132 @@ createAction('createGroup', async (state, _, payload) => {
    */
 })
 
-createAction('getChats', async (state) => {
+createAction('getChats', async (state, actions) => {
   state.chats.isLoading = true
   const chats = await Api.chats.getChats()
-
   if (!chats) {
-    setTimeout(() => {
-      state.chats.isLoading = false
-    }, 1000)
     return
   }
+
   const record = buildRecord(chats, 'id')
   updateChats(state, record)
 
-  setTimeout(() => {
-    state.chats.isLoading = false
-  }, 1000)
+  await Promise.all(
+    chats.map(async (c) => {
+      if (isUserId(c.id)) {
+        const user = selectUser(state, c.id)
+
+        if (!user) {
+          await actions.getUser(c.id)
+        }
+      }
+    })
+  )
+
+  // setTimeout(() => {
+  state.chats.isLoading = false
+  // }, 1000)
+})
+
+createAction('getChat', async (state, _, payload) => {
+  const {id} = payload
+
+  const result = await Api.chats.getChat(id)
+  if (!result) {
+    return
+  }
+
+  updateChats(state, {
+    [id]: result,
+  })
+})
+
+createAction('getChatFull', async (state, _, payload) => {
+  const {id} = payload
+
+  const result = await apiManager.invokeApi({
+    method: 'chats.getChatFull',
+    variables: {
+      chatId: id,
+    },
+  })
+
+  if (!result) {
+    return
+  }
+  updateChatFullInfo(state, id, result)
+})
+
+createAction('openChat', async (state, actions, payload) => {
+  const {id, shouldChangeHash, username} = payload
+  if (!id || (!id && !username)) {
+    changeHash({hash: undefined})
+    document.title = 'Prechat'
+    return updateCurrentChat(state, {
+      chatId: undefined,
+      username: undefined,
+    })
+  }
+  const chat = selectChat(state, id)
+  if (!chat) {
+    actions.getChat({id})
+  }
+
+  document.title = chat?.title || ''
+
+  const isPrivate = isUserId(id)
+
+  if (shouldChangeHash) {
+    changeHash({hash: getChatUsername(state, chat!) || chat?.id, silent: true})
+  }
+  // const isSaved = isSavedMessages(state, id)
+  const needLoadFull = !isPrivate && !selectChatFull(state, id)
+
+  if (needLoadFull) {
+    actions.getChatFull({id})
+  } else if (isPrivate /* && !selectUser(state, id) */) {
+    actions.getUser(id)
+  }
+
+  updateCurrentChat(state, {
+    chatId: id,
+    username,
+  })
+})
+
+createAction('openChatByUsername', async (state, actions, payload) => {
+  const {username} = payload
+
+  const cached = selectChatByUsername(state, username)
+
+  if (cached) {
+    actions.openChat({id: cached.id, username})
+    return
+  }
+
+  try {
+    const result = await Api.chats.resolveUsername(username)
+    if (!result) {
+      return
+    }
+
+    const record = {[username]: result.id}
+    updateByKey(state.chats.usernames, record)
+    replacePeer(state, result)
+
+    storages.usernames.put(record)
+
+    actions.openChat({id: result.id, username})
+  } catch (e) {
+    const error = getApiError(e)
+    switch (error?.code) {
+      case 'USERNAME_INVALID':
+        actions.showNotification({title: "Sory, this user doesn't seem to exist."})
+        changeHash({hash: undefined})
+        break
+      case 'USERNAME_NOT_OCCUPIED':
+        actions.showNotification({title: 'There is no Prechat account with this username.'})
+        changeHash({hash: undefined})
+    }
+  }
 })

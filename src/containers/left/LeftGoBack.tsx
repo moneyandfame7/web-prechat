@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback} from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
 import {IconButton} from 'components/ui'
 
@@ -10,10 +10,18 @@ interface LeftGoBackProps {
   force?: boolean
 }
 export const LeftGoBack: FC<LeftGoBackProps> = memo(({force = true, ...props}) => {
-  const {activeScreen, resetScreen} = useLeftColumn()
+  const {resetScreen} = useLeftColumn()
 
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     resetScreen(force)
-  }, [force, activeScreen])
-  return <IconButton icon="arrowLeft" onClick={handleClick} {...props} />
+  }
+  return (
+    <IconButton
+      ripple={false}
+      className="left-go-back"
+      icon="arrowLeft"
+      onClick={handleClick}
+      {...props}
+    />
+  )
 })

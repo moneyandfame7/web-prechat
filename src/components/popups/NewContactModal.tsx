@@ -7,6 +7,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'preact/compat'
 
 import {PhoneNumberInput} from 'modules/auth/PhoneNumberInput'
@@ -16,12 +17,12 @@ import type {ApiUser} from 'api/types/users'
 import {getActions} from 'state/action'
 
 import {getRandomAvatarVariant} from 'utilities/avatar'
+import {addEscapeListener} from 'utilities/keyboardListener'
 import {validatePhone} from 'utilities/phone/validatePhone'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
 import {Button, InputText} from 'components/ui'
 import {AvatarTest} from 'components/ui/AvatarTest'
-import {useEventListener} from 'hooks/useEventListener'
 
 import {Modal, ModalActions, ModalContent, ModalTitle} from './modal'
 import {ModalHeader} from './modal/Modal'
@@ -31,15 +32,18 @@ import './NewContactModal.scss'
 export interface NewContactModalProps {
   isOpen: boolean
   userId?: string
+  isByPhoneNumber?: boolean
 }
 /**
- * сам компонент Modal робити не асинхроним, і там буде transition і все таке, а інші модалки - асінхронні
+ * сам компонент Modal робити не асинхроним ???, і там буде transition і все таке, а інші модалки - асінхронні
  */
 const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose */}) => {
   const actions = getActions()
   const firstName = useSignal('')
   const lastName = useSignal('')
   const contactPhone = useSignal('')
+  // const {value: isLoading, setValue: setLoading} = useBoolean()
+  const [isLoading, setIsLoading] = useState(false)
   const userToAdding = {} as ApiUser | undefined
 
   // eslint-disable-next-line prefer-template
@@ -78,17 +82,20 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
     }
     /* if e.key==='Escape' close */
   }, [])
+
   const clearForm = useCallback(() => {
     firstName.value = ''
     lastName.value = ''
     contactPhone.value = ''
   }, [])
-  const handleSubmit = useCallback(() => {
-    actions.addContact({
+  const handleSubmit = useCallback(async () => {
+    setIsLoading(true)
+    await actions.addContact({
       firstName: firstName.value,
       lastName: lastName.value,
       phone: contactPhone.value,
     })
+    setIsLoading(false)
   }, [])
 
   const randomAvatarVariant = useMemo(() => getRandomAvatarVariant(), [])
@@ -96,7 +103,10 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
   const render = useRef(0)
   render.current += 1
   const phoneInputRef = useRef<HTMLInputElement>(null)
-  useEventListener('keydown', handleEnter)
+
+  useEffect(() => {
+    return isOpen ? addEscapeListener(handleSubmit) : undefined
+  }, [])
   return (
     <Modal
       onExitTransition={clearForm}
@@ -133,7 +143,7 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
         />
       </ModalContent>
       <ModalActions>
-        <Button onClick={handleSubmit} isDisabled={isDisabledBtn}>
+        <Button onClick={handleSubmit} isDisabled={isDisabledBtn} isLoading={isLoading}>
           Add
         </Button>
       </ModalActions>

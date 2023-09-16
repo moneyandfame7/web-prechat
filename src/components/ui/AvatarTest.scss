@@ -6,7 +6,7 @@
   font-size: 28px;
   color: #fff;
   text-transform: uppercase;
-
+  position: relative;
   // Modificators
   &-circular {
     border-radius: 50%;
@@ -40,6 +40,7 @@
 
     height: 32px;
     font-size: 14px;
+    font-weight: 600;
   }
 
   &-c {

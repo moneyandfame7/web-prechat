@@ -1,4 +1,5 @@
 import type {ApolloClientWrapper} from './apollo'
+import {ApiMessages} from './methods'
 import {ApiAccount} from './methods/account'
 import {ApiAuth} from './methods/auth'
 import {ApiChats} from './methods/chats'
@@ -37,5 +38,9 @@ export class ServiceFactory {
 
   public createChats() {
     return new ApiChats(this.apolloClient.getClient())
+  }
+
+  public createMessages() {
+    return new ApiMessages(this.apolloClient.getClient())
   }
 }

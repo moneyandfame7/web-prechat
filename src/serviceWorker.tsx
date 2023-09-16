@@ -40,7 +40,7 @@ const ServiceWorker: FC = memo(() => {
             backgroundColor: 'pink',
             width: '100%',
             height: '100%',
-            zIndex: 1,
+            zIndex: 99999999,
           }}
         >
           <button onClick={() => updateServiceWorker(false)}>Update Prechat</button>

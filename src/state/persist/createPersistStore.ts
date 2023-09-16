@@ -7,7 +7,7 @@ import {deepCopy} from 'utilities/object/deepCopy'
 
 import type {AnyObject} from 'types/common'
 
-import type {PersistDbConfig, PersistIdbStorage, StoragesName} from './types'
+import type {PersistDbConfig, PersistIdbStorage, Storages, StoragesName} from './types'
 
 export function createPersistStore<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,7 +30,12 @@ export function createPersistStore<
       // eslint-disable-next-line array-callback-return
       storages.map((storage) => {
         if (!upgradeDb.objectStoreNames.contains(storage.name)) {
-          upgradeDb.createObjectStore(storage.name, storage.optionalParameters)
+          /* const store = */ upgradeDb.createObjectStore(
+            storage.name,
+            storage.optionalParameters
+          )
+
+          // store.createIndex(storage.)
         }
       })
     },
@@ -41,12 +46,9 @@ export function createPersistStore<
    * @param config
    * @returns
    */
-  function injectStorage<
-    T extends AnyObject /*  = ReturnType<RootStore["getInitialState"]>[StoreName], */
-    /* StoreName extends keyof Config["storages"] = string, */
-  >(config: {storageName: StoragesName}) {
-    const {storageName} = config
-
+  function injectStorage<N extends StoragesName>(
+    storageName: N
+  ): PersistIdbStorage<Storages[N]> {
     // console.log({storageName}, storages)
     const storageWithName = storages.find((storage) => storage.name === storageName)
 
@@ -54,7 +56,7 @@ export function createPersistStore<
       throw new Error('alsdlasld')
     }
 
-    const idbStorage = idbMethods<T>({
+    const idbStorage = idbMethods<Storages[N]>({
       dbPromise,
       storeName: storageWithName.name,
       optionalParameters: storageWithName?.optionalParameters,
@@ -101,8 +103,6 @@ export function idbMethods<T extends AnyObject>(
   return {
     /* Put. */
     async put(obj) {
-      // logDebugWarn(enabled.value, storeName, 'enabled')
-
       if (!enabled.value) {
         return
       }
@@ -115,6 +115,7 @@ export function idbMethods<T extends AnyObject>(
         // eslint-disable-next-line no-prototype-builtins
         if (obj.hasOwnProperty(key)) {
           const value = deepCopy(obj[key])
+
           await store.put(value, optionalParameters?.keyPath ? undefined : key)
         }
       }

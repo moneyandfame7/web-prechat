@@ -1,3 +1,9 @@
+.settings-wrapper {
+  > .transition-item {
+    background-color: var(--c-bg);
+  }
+}
+
 .settings-item {
   display: flex;
   align-items: center;
@@ -23,12 +29,16 @@
   overflow-y: auto;
   padding-inline: 15px;
   padding-block: 10px;
+  background-color: var(--c-surface);
   // &:last-child {
   //   margin: 15px 0 80px;
   // }
   // box-shadow: rgba(0, 0, 0, 0.04) 0px 3px 5px;
   &:not(&:nth-last-child(1)) {
     // background-color: red;
-    border-bottom: 15px solid var(--c-surface-3);
+    // box-shadow: 0 1px 3px 0 var(--c-box-shadow-section);
+    margin-bottom: 15px;
+    // border-bottom: 15px solid var(--c-bg-2);
+    @include bgAndColorTransition(border-color);
   }
 }

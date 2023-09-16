@@ -1,6 +1,6 @@
 import lang from 'lib/i18n/lang'
 
-import {AuthScreens} from 'types/screens'
+import {AuthScreens, RightColumnScreens} from 'types/screens'
 import type {GlobalState} from 'types/state'
 
 export const INITIAL_STATE: GlobalState = {
@@ -46,6 +46,20 @@ export const INITIAL_STATE: GlobalState = {
       pageTransitions: true,
     },
   },
+  // recentEmojis: ['🇺🇦', '😂', '❤️', '😍', '🙌', '🎉', '🙏', '😊', '🤔', '😎', '👍'],
+  recentEmojis: [
+    'flag-ua',
+    'grinning', // Сміх
+    'heart', // Серце
+    'heart_eyes', // Закоханий
+    'raised_hands', // Піднята рука
+    'tada', // Подяка, святкування
+    'pray', // Молитва, дякую
+    'blush', // Усміхнене обличчя
+    'thinking_face', // Задуманий, здивований
+    'sunglasses', // Круто, класно
+    '+1', // Підтримка, згода
+  ],
 
   initialization: false,
 
@@ -53,8 +67,23 @@ export const INITIAL_STATE: GlobalState = {
     byId: {},
     contactIds: [],
     statusesByUserId: {},
+    fullById: {},
   },
 
+  messages: {
+    byChatId: {},
+  },
+
+  currentChat: {
+    chatId: undefined,
+    username: undefined,
+    isChatInfoShown: undefined,
+  },
+
+  rightColumn: {
+    screen: RightColumnScreens.ChatProfile,
+    isOpen: false,
+  },
   // chatCreation: {
   //   error: undefined,
   //   isLoading: false
@@ -64,6 +93,8 @@ export const INITIAL_STATE: GlobalState = {
     byId: {},
     isLoading: true,
     ids: [],
+    usernames: {},
+    fullById: {},
   },
 
   globalSearch: {

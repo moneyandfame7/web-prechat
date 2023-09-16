@@ -1,11 +1,15 @@
-.Notification {
+.notification {
   // background-color: rgba(0, 0, 0, 0.4);
+  z-index: var(--z-popup);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   // user-select: none;
   pointer-events: none;
   padding-block-start: 15%;
+  @include responsive(mobile) {
+    padding-block-start: 20%;
+  }
   // background-color: red;
   &-container {
     display: flex;

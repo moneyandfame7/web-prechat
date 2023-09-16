@@ -4,7 +4,7 @@
   .LeftColumn-Header {
     justify-content: space-between;
     border-bottom: 1px solid transparent;
-    @include bgAndColorTransition(border-color);
+    // @include bgAndColorTransition(border-color);
     .btn-actions {
       display: flex;
       align-items: center;

@@ -1,20 +1,32 @@
 import type {ComponentChildren, RefObject} from 'preact'
-import {type FC, type TargetedEvent, memo, useCallback, useRef} from 'preact/compat'
+import {
+  CSSProperties,
+  type FC,
+  type TargetedEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'preact/compat'
 
 import clsx from 'clsx'
+
+import {useClickAway} from 'hooks/useClickAway'
 
 import {logDebugWarn} from 'lib/logger'
 
 import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/config'
-import {useClickAway} from 'hooks/useClickAway'
+import {addEscapeListener} from 'utilities/keyboardListener'
+import {stopEvent} from 'utilities/stopEvent'
 
-import {TransitionTest} from 'components/transitions'
+import {SingleTransition} from 'components/transitions'
+import {Portal} from 'components/ui/Portal'
 
 import {MenuProvider, useMenuContext} from './context'
 
 import './Menu.scss'
 
-type MenuPlacement =
+export type MenuTransform =
   | 'bottom left'
   | 'bottom right'
   | 'default'
@@ -24,6 +36,12 @@ type MenuPlacement =
   | 'top'
   | 'center'
   | 'bottom'
+export type MenuPlacement = {
+  left?: boolean
+  right?: boolean
+  bottom?: boolean
+  top?: boolean
+}
 interface MenuProps {
   className?: string
   children: ComponentChildren
@@ -35,8 +53,14 @@ interface MenuProps {
   autoClose?: boolean
   onClose: () => void
   withBackdrop?: boolean
+  transform?: MenuTransform
   placement?: MenuPlacement
   containerRef?: RefObject<HTMLElement>
+  elRef?: RefObject<HTMLDivElement>
+  style?: CSSProperties
+  withPortal?: boolean
+  shouldHandleAwayClick?: boolean
+  withLeave?: boolean
 }
 
 export const Menu: FC<MenuProps> = memo(
@@ -48,27 +72,91 @@ export const Menu: FC<MenuProps> = memo(
     onClose,
     autoClose = true,
     withBackdrop = true,
-    placement = 'default',
+    transform = 'default',
+    placement,
     containerRef,
+    elRef,
+    style,
+    withPortal,
+    shouldHandleAwayClick = true,
+    withLeave,
   }) => {
-    const buildedClass = clsx('Menu', className, 'scrollable')
+    let menuRef = useRef<HTMLDivElement>(null)
+
+    if (elRef) {
+      menuRef = elRef
+    }
+
+    const buildedClass = clsx('Menu', className, 'scrollable', 'scrollable-y', {
+      'Menu--bottom': placement?.bottom,
+      'Menu--left': placement?.left,
+      'Menu--right': placement?.right,
+      'Menu--top': placement?.top,
+    })
 
     const handleClickBackdrop = useCallback((e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
       e.preventDefault()
+      // e.stopImmediatePropagation()
+
+      // stopEvent(e)
       onClose()
       logDebugWarn('[UI]: Menu backdrop click')
     }, [])
-    const menuRef = useRef<HTMLDivElement>(null)
 
-    useClickAway(containerRef || menuRef, (e, clicked) => {
-      if (isOpen && (withBackdrop ? clicked.className !== 'backdrop' : true)) {
-        e.preventDefault()
+    useClickAway(
+      containerRef || menuRef,
+      (e, clicked) => {
+        if (isOpen && (withBackdrop ? clicked.className !== 'backdrop' : true)) {
+          e.preventDefault()
+          // e.stopImmediatePropagation()
+          // stopEvent(e)
+          onClose()
+          logDebugWarn('[UI]: Menu away click')
+        }
+      },
+      !shouldHandleAwayClick || !isOpen
+    )
 
-        onClose()
-        logDebugWarn('[UI]: Menu away click')
-      }
-    })
-    return (
+    useEffect(() => {
+      return isOpen
+        ? addEscapeListener(() => {
+            onClose()
+          })
+        : undefined
+    }, [isOpen])
+    // const isMouseIn = useRef(false)
+    // useEffect(() => {
+    //   console.log(isOpen, 'isMenuOver', isMouseIn.current)
+    // }, [isOpen])
+    // const timeoutRef = useRef<number | null>(null)
+    // const handleMouseLeave = () => {
+    //   // Відміна закриття, якщо воно було заплановано
+    //   console.log('CLOSE MENU')
+
+    //   timeoutRef.current = setTimeout(() => {
+    //     onClose()
+    //     isMouseIn.current = false
+    //   }, 1000)
+
+    //   // setMenuOpen(true);
+    // }
+
+    // const handleMouseEnter = () => {
+    //   if (timeoutRef.current) {
+    //     clearTimeout(timeoutRef.current)
+    //   }
+    //   isMouseIn.current = true
+    //   console.log('OPEN MENU?')
+    // }
+    // useEffect(() => {
+    //   // При розміщенні на елементі, очищаємо таймер (якщо він є)
+    //   return () => {
+    //     if (timeoutRef.current) {
+    //       clearTimeout(timeoutRef.current)
+    //     }
+    //   }
+    // }, [])
+    const menu = (
       <MenuProvider
         props={{
           onClose,
@@ -76,35 +164,28 @@ export const Menu: FC<MenuProps> = memo(
           autoClose,
         }}
       >
-        <TransitionTest
+        {/* <Portal> */}
+        <SingleTransition
           elRef={menuRef}
           className={buildedClass}
-          styles={{transformOrigin: placement}}
-          isMounted={isOpen}
-          alwaysMounted={!withMount}
-          appear={false}
-          duration={TRANSITION_DURATION_MENU}
+          styles={{transformOrigin: transform, ...style}}
+          in={isOpen}
           name="zoomFade"
+          unmount={withMount}
+          // appear
+          timeout={TRANSITION_DURATION_MENU}
         >
           <>{children}</>
-        </TransitionTest>
-        {/* <Transition
-          elRef={menuRef}
-          className={buildedClass}
-          styles={{
-            transformOrigin: placement
-          }}
-          isVisible={isOpen}
-          withMount={withMount}
-          appear={false}
-          duration={TRANSITION_DURATION_MENU}
-          type="zoomFade"
-        >
-          {children}
-        </TransitionTest> */}
+        </SingleTransition>
         {isOpen && withBackdrop && <div class="backdrop" onMouseDown={handleClickBackdrop} />}
+        {/* </Portal> */}
       </MenuProvider>
     )
+    if (withPortal) {
+      return <Portal>{menu}</Portal>
+    }
+
+    return menu
   }
 )
 

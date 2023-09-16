@@ -1,5 +1,5 @@
 import type {FunctionComponent} from 'preact'
-import type {TargetedEvent} from 'preact/compat'
+import type {FC, TargetedEvent} from 'preact/compat'
 import {useRef, useState} from 'preact/hooks'
 
 import Croppie from 'croppie'
@@ -17,7 +17,7 @@ export const UploadPhoto: FunctionComponent = () => {
   )
 }
 
-export const ImageUpload: React.FC = () => {
+export const ImageUpload: FC = () => {
   const croppieRef = useRef<HTMLDivElement | null>(null)
   const [result, setResult] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)

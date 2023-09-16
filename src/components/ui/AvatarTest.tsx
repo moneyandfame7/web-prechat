@@ -2,12 +2,19 @@ import type {FC} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import type {ApiChat, ApiColorVariant, ApiUser} from 'api/types'
+import type {ApiChat, ApiColorVariant, ApiPeer, ApiUser} from 'api/types'
+
+import {getChatName, getChatName_deprecated} from 'state/helpers/chats'
+import {getUserName, isUserId} from 'state/helpers/users'
+import {isUserOnline} from 'state/selectors/users'
+import {getGlobalState} from 'state/signal'
 
 import {getSignalOr} from 'utilities/getSignalOr'
 import {getInitials} from 'utilities/string/getInitials'
 
 import type {SignalOr} from 'types/ui'
+
+import {SingleTransition} from 'components/transitions'
 
 import {Icon} from '.'
 
@@ -21,8 +28,13 @@ interface AvatarTestProps {
   size?: AvatarSize
   variant?: ApiColorVariant
   shape?: AvatarShape
-  peer?: ApiChat | ApiUser
+  chat?: ApiChat
+  userId?: string
   isSavedMessages?: boolean
+  onlineBadge?: boolean
+  text?: string
+  peer?: ApiPeer
+  withOnlineStatus?: boolean
 }
 
 // передавати просто тут одразу peer.
@@ -31,17 +43,49 @@ export const AvatarTest: FC<AvatarTestProps> = ({
   variant = 'BLUE',
   size = 'm',
   shape = 'circular',
+  // chat,
   isSavedMessages,
+  peer,
+  withOnlineStatus,
+  text,
 }) => {
+  const isUser = peer && isUserId(peer.id)
+  const user = isUser ? peer && (peer as ApiUser) : undefined
+  const chat = !isUser && peer ? (peer as ApiChat) : undefined
+  const userStatus = withOnlineStatus && user ? isUserOnline(user) : undefined
+
   const renderContent = () => {
+    let textAvatar: string | undefined = text
     if (isSavedMessages) {
       return <Icon name="savedMessages" />
+    } else if (chat) {
+      textAvatar = getChatName(chat)
+
+      // return getInitials(title)
+    } else if (user) {
+      textAvatar = getUserName(user)
+
+      // return getInitials(fullName)
     }
 
-    return fullName ? getInitials(getSignalOr(fullName)) : undefined
+    return textAvatar ? getInitials(textAvatar) : undefined
   }
-  const buildedClassname = clsx(`Avatar Avatar-${size} Avatar-${shape} Avatar-c-${variant}`, {
-    'saved-messages': isSavedMessages,
-  })
-  return <div class={buildedClassname}>{renderContent()}</div>
+
+  const avatarVariant = user?.color || chat?.color || variant
+  const buildedClassname = clsx(
+    `Avatar Avatar-${size} Avatar-${shape} Avatar-c-${avatarVariant}`,
+    {
+      'saved-messages': isSavedMessages,
+    }
+  )
+  return (
+    <div class={buildedClassname}>
+      {renderContent()}
+      {withOnlineStatus && (
+        <SingleTransition in={userStatus} name="zoomFade" className="online-badge-transition">
+          <span class="online-badge" />
+        </SingleTransition>
+      )}
+    </div>
+  )
 }

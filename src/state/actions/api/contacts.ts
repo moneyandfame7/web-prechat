@@ -1,3 +1,4 @@
+import {getApiError} from 'api/helpers/getApiError'
 import {Api} from 'api/manager'
 
 import {createAction} from 'state/action'
@@ -15,7 +16,6 @@ createAction('getContactList', async (state) => {
 
   updateUsers(state, buildRecord(users, 'id'))
 
-  console.log(users[0])
   // updateUserStatuses(state,buildRecord)
   // contactIds.map((id) => {
   //   actions.getUser(id)
@@ -28,26 +28,37 @@ createAction('addContact', async (state, actions, payload) => {
     return
   }
   // in result ApiUser.
-  const result = await Api.contacts.addContact({
-    firstName: payload.firstName,
-    lastName: payload.lastName,
-    phoneNumber: unformatStr(payload.phone),
-    userId: payload.userId,
-  })
+  try {
+    const result = await Api.contacts.addContact({
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      phoneNumber: unformatStr(payload.phone),
+      userId: payload.userId,
+    })
+    if (!result) {
+      return
+    }
 
-  if (!result) {
-    actions.showNotification({title: 'The provided phone not registered.'})
-    return
+    updateUsers(state, {
+      [result.id]: result,
+    })
+    // updateChats(state, {
+    // [chat.id]: chat,
+    // })
+    actions.closeAddContactModal()
+
+    /**
+     * @todo if added by phone - open chat with him
+     */
+    // if (payload.userId) {
+    //   /* Open chat */
+    //   actions.openChat({id: payload.userId})
+    // }
+  } catch (e) {
+    const error = getApiError(e)
+    switch (error?.code) {
+      case 'PHONE_NUMBER_NOT_FOUND':
+        actions.showNotification({title: 'The provided phone not registered.'})
+    }
   }
-
-  updateUsers(state, {
-    [result.id]: result,
-  })
-  actions.closeAddContactModal()
-
-  if (payload.userId) {
-    /* Open chat */
-  }
-
-  /*  */
 })

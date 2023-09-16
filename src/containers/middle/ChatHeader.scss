@@ -1,0 +1,28 @@
+.chat-header {
+  box-shadow: 0 1px 5px -1px #00000036;
+  width: 100%;
+  // padding-inline: 20px;
+  // padding-block: 5px;
+  justify-content: flex-start;
+  .chat-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1 1 auto;
+    margin-left: 10px;
+    &__container {
+      flex: 1;
+    }
+    &__title {
+      font-weight: 600;
+    }
+    &__subtitle {
+      color: var(--c-font-secondary);
+      font-size: 14px;
+    }
+  }
+  .chat-info-wrapper {
+    cursor: pointer;
+    flex: 1 1 auto;
+  }
+}

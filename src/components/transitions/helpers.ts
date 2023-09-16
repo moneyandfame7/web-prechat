@@ -1,126 +1,57 @@
-import type {ObjectOrValue} from 'types/common'
+import type {CSSProperties} from 'preact/compat'
 
-import type {TransitionCases, TransitionProperties} from './types'
+import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition'
 
-export const FADE_IN_OUT: TransitionCases = {
-  enter: {
-    name: 'fade',
-    duration: 350,
-  },
-  exit: {
-    name: 'fade',
-    duration: 350,
-  },
-}
-export const ZOOM_FADE_IN_OUT: TransitionCases = {
-  enter: {
-    name: 'zoomFade',
-    duration: 350,
-  },
-  exit: {
-    name: 'zoomFade',
-    duration: 350,
-  },
-}
-export const SLIDE_FADE_IN: TransitionCases = {
-  enter: {
-    name: 'slide',
-    duration: 300,
-  },
-  exit: {
-    name: 'slideFade',
-    duration: 300,
-  },
-}
-export const SLIDE_FADE_OUT: TransitionCases = {
-  enter: {
-    name: 'slideFade',
-    duration: 300,
-  },
-  exit: {
-    name: 'slide',
-    duration: 400,
-  },
-}
-export const ZOOM_SLIDE_IN: TransitionCases = {
-  enter: {
-    name: 'slide',
-    duration: 250,
-  },
-  exit: {
-    name: 'zoomFade',
-    duration: 250,
-  },
-}
-export const ZOOM_SLIDE_OUT: TransitionCases = {
-  enter: {
-    name: 'zoomFade',
-    duration: 250,
-  },
-  exit: {
-    name: 'slide',
-    duration: 250,
-  },
-}
-export const SLIDE_IN: TransitionCases = {
-  enter: {
-    name: 'slide-200',
-    duration: 400,
-  },
-  exit: {
-    name: 'slide-200-backward',
-    duration: 400,
-  },
-}
-export const SLIDE_OUT: TransitionCases = {
-  enter: {
-    name: 'slide-200-backward',
-    duration: 400,
-  },
-  exit: {
-    name: 'slide-200',
-    duration: 400,
-  },
-}
-/* Switch Transition */
-export function getTransitionProperty<TKey extends string | number>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: ObjectOrValue<TKey, any>,
-  elementKey: TKey
-) {
-  if (typeof value === 'object') {
-    return value[elementKey]
+import type {TransitionDirection, TransitionName} from './types'
+
+export const TRANSITION_CLASSES = {
+  /* Appear - first mount. */
+  appearActive: 'transition-item_to',
+  appearDone: 'transition-item_active',
+  enterDone: 'transition-item_active',
+  enterActive: 'transition-item_to',
+  exitActive: 'transition-item_from',
+  exitDone: 'transition-item_inactive',
+} as CSSTransitionClassNames
+export const FALLBACK_TIMEOUT = 350
+
+export function getTransitionTimeout(name: TransitionName) {
+  switch (name) {
+    case 'zoomSlide':
+      return 250
+    default:
+      return FALLBACK_TIMEOUT
   }
-
-  return value
 }
-export function getCleanupElements<TKey>(
-  key: TKey,
-  exception?: TKey[],
-  shldCleanup?: boolean
+
+/**
+ *  Single transition helpers.
+ */
+export function buildProperties(
+  name: TransitionName,
+  styles?: CSSProperties,
+  timeout?: number,
+  direction?: TransitionDirection,
+  toggle?: boolean,
+  animateIn?: boolean
 ) {
-  const cleanupElements = exception?.find(el => el === key)
+  const isBackwards = direction === -1 || direction === 'inverse'
+  const shouldToggle = toggle ? (isBackwards ? animateIn : !animateIn) : isBackwards
 
-  return typeof cleanupElements !== 'undefined' ? Boolean(cleanupElements) : !shldCleanup
-}
-
-/* Transition.tsx */
-export function buildCustomTransitionProperties(properties: TransitionProperties) {
-  const {duration, name} = properties
+  const computedName = `${name}${shouldToggle ? 'Backwards' : ''}`
 
   return {
-    // eslint-disable-next-line prefer-template
-    ...(duration ? {[`--transition-${name}-duration`]: duration + 'ms'} : {}),
+    styles: {
+      ...styles,
+      ...(timeout ? {animationDuration: `${timeout}ms`} : {}),
+    } as CSSProperties,
+    classNames: {
+      appearActive: `transition-${computedName}_to`,
+      enterActive: `transition-${computedName}_to`,
+      exitActive: `transition-${computedName}_from`,
+      appearDone: `transition-item_active`,
+      enterDone: `transition-item_active`,
+      exitDone: `transition-item_inactive`,
+    } as CSSTransitionClassNames,
   }
-}
-
-export function getTransitionDuration(duration: number) {
-  const root = document.documentElement
-  if (root?.classList.contains('animation-none')) {
-    return 0
-  } else if (root?.classList.contains('animation-level-2')) {
-    /* робити перевірку, якщо це fade  */
-    return 150
-  }
-  return duration
 }

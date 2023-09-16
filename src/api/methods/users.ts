@@ -14,9 +14,9 @@ export class ApiUsers extends ApiBaseMethod {
     const {data} = await this.client.query({
       query: QUERY_GET_USERS,
       variables: {
-        input
+        input,
       },
-      fetchPolicy: 'cache-first'
+      fetchPolicy: 'cache-first',
     })
     if (!data.getUsers || data.getUsers.length === 0) {
       return undefined
@@ -33,14 +33,14 @@ export class ApiUsers extends ApiBaseMethod {
     const {data} = await this.client.query({
       query: QUERY_GET_USER_FULL,
       variables: {
-        input
-      }
+        input,
+      },
     })
 
     if (!data.getUserFull) {
       return undefined
     }
 
-    return data.getUserFull
+    return cleanTypename(data.getUserFull)
   }
 }

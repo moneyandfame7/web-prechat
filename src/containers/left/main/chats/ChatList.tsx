@@ -1,9 +1,9 @@
 import {type FC} from 'preact/compat'
 
-import {selectChatsIds, selectIsChatsFetching} from 'state/selectors/chats'
+import {selectChat, selectChatsIds, selectIsChatsFetching} from 'state/selectors/chats'
 import {getGlobalState} from 'state/signal'
 
-import {SwitchTransition} from 'components/transitions'
+import {Transition} from 'components/transitions'
 
 import {ChatItem} from './ChatItem'
 
@@ -12,7 +12,7 @@ import './ChatList.scss'
 const Skeleton = () => {
   return (
     <>
-      {Array.from({length: 20}).map((id) => (
+      {Array.from({length: 10}).map((id) => (
         <div class="skeleton-chat-item" key={id}>
           <div class="skeleton skeleton-avatar" />
 
@@ -60,17 +60,16 @@ export const Chats: FC = () => {
         return <Skeleton />
     }
   }
+
   return (
-    <>
-      <SwitchTransition
-        permanentClassname="chats-list scrollable"
-        name="fade"
-        shouldCleanup={false}
-        activeKey={activeScreen}
-        durations={250}
-      >
-        {render()}
-      </SwitchTransition>
-    </>
+    <Transition
+      containerClassname="chats-list scrollable scrollable-y"
+      name="fade"
+      shouldCleanup
+      activeKey={activeScreen}
+      // durations={250}
+    >
+      {render()}
+    </Transition>
   )
 }

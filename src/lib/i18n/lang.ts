@@ -41,6 +41,8 @@ const lang = {
     one: 'Hello, {{name}}, you have 1 item',
     other: 'Hello, {{name}}, you have {{count}} items',
   },
+  'Notification.CreatedChatWithTitle': '**{{name}}** created the group "{{title}}"',
+  'Notification.CreatedChannel': 'Channel created',
 } as const
 
 export default lang

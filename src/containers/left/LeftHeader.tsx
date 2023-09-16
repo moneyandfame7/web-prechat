@@ -1,9 +1,12 @@
-import {useCallback, type FC, type PropsWithChildren} from 'preact/compat'
-import {LeftColumnScreen} from 'types/ui'
-import {LeftMainMenu} from './main/MainMenu'
-import {LeftGoBack} from './LeftGoBack'
+import {type FC, type PropsWithChildren, useCallback} from 'preact/compat'
 
+import {LeftColumnScreen} from 'types/ui'
+
+import {ColumnHeader} from 'components/ColumnHeader'
+
+import {LeftGoBack} from './LeftGoBack'
 import {useLeftColumn} from './context'
+import {LeftMainMenu} from './main/MainMenu'
 
 interface LeftHeaderProps extends PropsWithChildren {}
 export const LeftHeader: FC<LeftHeaderProps> = ({children}) => {
@@ -19,9 +22,9 @@ export const LeftHeader: FC<LeftHeaderProps> = ({children}) => {
   }, [activeScreen])
 
   return (
-    <div class="LeftColumn-Header">
+    <ColumnHeader className="LeftColumn-Header">
       {renderButton()}
       {children}
-    </div>
+    </ColumnHeader>
   )
 }

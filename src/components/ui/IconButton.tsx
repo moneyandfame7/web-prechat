@@ -2,9 +2,11 @@ import type {FC, TargetedEvent} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import {logDebugWarn} from 'lib/logger'
+import {useFastClick} from 'hooks/useFastClick'
 
 import {IS_SENSOR} from 'common/config'
+
+import {SignalOr} from 'types/ui'
 
 import {Ripple} from '../Ripple'
 import type {ButtonProps} from './Button'
@@ -15,14 +17,18 @@ import './IconButton.scss'
 /**
  * використовувати кнопку замість діва?
  */
-export interface IconButtonProps
+interface PickedButtonProps
   extends Pick<
     ButtonProps,
-    'className' | 'onClick' | 'ripple' | 'withFastClick' | 'variant' | 'color' | 'isDisabled'
-  > {
+    'className' | 'ripple' | 'withFastClick' | 'variant' | 'color' | 'isDisabled' | 'id'
+  > {}
+export interface IconButtonProps {
   icon: IconName
+  onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
+  title?: SignalOr<string>
 }
-export const IconButton: FC<IconButtonProps> = ({
+
+export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
   icon,
   className,
   onClick,
@@ -31,29 +37,17 @@ export const IconButton: FC<IconButtonProps> = ({
   color = 'gray',
   variant = 'transparent',
   isDisabled,
+  id,
   ...props
 }) => {
   const buildedClass = clsx(`IconButton Button-${color} Button-${variant}`, className, {
     disabled: isDisabled,
   })
 
-  const handleMouseDown = (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
-    e.preventDefault()
-    if (e.button === 0) {
-      logDebugWarn('[UI]: IconButton click')
-
-      onClick?.()
-    }
-  }
+  const clickHandlers = useFastClick({fast: withFastClick, handler: onClick})
 
   return (
-    <div
-      class={buildedClass}
-      onMouseDown={withFastClick && !IS_SENSOR ? handleMouseDown : undefined}
-      onClick={IS_SENSOR || !withFastClick ? onClick : undefined}
-      disabled={isDisabled}
-      {...props}
-    >
+    <div id={id} class={buildedClass} {...clickHandlers} disabled={isDisabled} {...props}>
       <Icon name={icon} color="secondary" />
       {ripple && <Ripple />}
     </div>

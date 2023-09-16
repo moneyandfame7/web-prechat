@@ -6,8 +6,7 @@ import {
   QUERY_ACCOUNT_GET_AUTHORIZATIONS,
   QUERY_ACCOUNT_GET_PASSWORD,
 } from 'api/graphql'
-
-import {cleanTypename} from 'utilities/cleanTypename'
+import {cleanTypename} from 'api/helpers/cleanupTypename'
 
 import {ApiBaseMethod} from '../base'
 
@@ -21,7 +20,7 @@ export class ApiAccount extends ApiBaseMethod {
       return undefined
     }
 
-    return data.getPassword
+    return cleanTypename(data.getPassword)
   }
 
   /* Authorizations  */
@@ -72,7 +71,7 @@ export class ApiAccount extends ApiBaseMethod {
       },
     })
 
-    return data?.updateUserStatus
+    return cleanTypename(data?.updateUserStatus)
   }
 
   public async updatePassword() {

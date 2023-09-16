@@ -115,14 +115,6 @@ const AuthPhoneNumber: FC = () => {
   return (
     <>
       <Logo />
-      <Button
-        // isLoading={translateLoading}
-        onClick={() => {
-          setTranslateLoading((prev) => !prev)
-        }}
-      >
-        Toggle
-      </Button>
       <h1 class="title">{t('Auth.Signin')}</h1>
       <p class="subtitle">{t('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>

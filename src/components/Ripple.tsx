@@ -19,7 +19,7 @@ export const Ripple: FC = memo(() => {
   }, [])
   const handleMouseDown = useCallback(
     (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
-      if (e.button !== 0) {
+      if (e.button !== 0 && e.button !== 2) {
         return
       }
 
@@ -27,7 +27,7 @@ export const Ripple: FC = memo(() => {
       const position = container.getBoundingClientRect()
       const rippleSize = container.offsetWidth / 2
 
-      setRipples([
+      setRipples((ripples) => [
         ...ripples,
         {
           x: e.clientX - position.x - rippleSize / 2,
@@ -35,6 +35,8 @@ export const Ripple: FC = memo(() => {
           size: rippleSize,
         },
       ])
+
+      // setLastRippleIdx(ripples.length) // оновити індекс
 
       cleanUpDebounced()
     },

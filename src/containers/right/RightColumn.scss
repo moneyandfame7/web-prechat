@@ -1,4 +1,44 @@
-.RightColumn {
-  background-color: green;
-  display: none;
+.right-column {
+  height: 100dvh;
+  width: var(--right-column-width);
+  animation-timing-function: var(--slide-dark-transition);
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: auto;
+  z-index: var(--z-right-column);
+  display: flex;
+  flex-direction: column;
+  transform-style: preserve-3d;
+  transition: border-color 250ms ease, color 250ms ease;
+
+  @include responsive(tablet) {
+    // position: absolute;
+    // right: 0;
+    // width: 100dvw;
+    // z-index: 1;
+
+    --right-column-width: 100dvw;
+    background-color: blue;
+  }
+  @include responsive(laptop) {
+    box-shadow: 0 0.25rem 0.5rem 0.1rem #0003;
+  }
+  @include responsive(desktop) {
+    border-left: 1px solid var(--c-border);
+  }
+
+  &-inner {
+    position: relative;
+    overflow: hidden;
+
+    > .transition-item {
+      @include bgAndColorTransition();
+      background-color: var(--c-surface);
+    }
+  }
+
+  .column-content {
+    position: relative;
+  }
 }

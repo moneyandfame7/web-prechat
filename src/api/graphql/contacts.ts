@@ -1,7 +1,7 @@
 import {type TypedDocumentNode, gql} from '@apollo/client'
 
-import {FRAGMENT_USER} from 'api/graphql'
-import type {AddContactInput, ApiUser} from 'api/types'
+import {FRAGMENT_CHAT, FRAGMENT_USER} from 'api/graphql'
+import type {AddContactInput, AddContactResponse, ApiUser} from 'api/types'
 
 export const QUERY_GET_CONTACTS: TypedDocumentNode<{getContacts: ApiUser[]}, void> = gql`
   query GetContacts {

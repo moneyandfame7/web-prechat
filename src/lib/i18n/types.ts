@@ -34,7 +34,6 @@ export function TEST_translate<K extends keyof MyKeyset>(key: K, ...rest: Transl
     settings: {i18n},
   } = getGlobalState()
   const translation = i18n.pack[key]
-
   const params: Record<string, string | number> = rest[0] || {}
   let pluralizedFn = pluralizeFns.get(i18n.lang_code)
 
@@ -62,6 +61,8 @@ export function TEST_translate<K extends keyof MyKeyset>(key: K, ...rest: Transl
   }
   return interpolate(pluralizedTranslation, params)
 }
+
+// TEST_translate('CombinedPlurAndInter',{})
 
 export async function TEST_changeLanguage(lang: ApiLangCode) {
   const global = getGlobalState()

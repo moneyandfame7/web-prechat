@@ -8,9 +8,13 @@ export type DeepPartial<T> = {
  * type Something = ObjectOrValue<string, unknown>
  * // unknown | {[key: string]: unknown}
  */
-export type ObjectOrValue<TKey extends string | number, TValue> =
-  | Record<TKey, TValue>
-  | TValue
+export type ObjectOrValue<TKey extends string | number, TValue> = Record<TKey, TValue> | TValue
 
 export type AnyFunction = (...args: any[]) => void
 export type AnyObject = Record<string, any>
+export type Split<S extends string> = S extends `${string}.${infer U}` ? U : S
+// type Split2<S extends string> = S extends `${string}{{${infer U}}}` ? U : S
+
+// type FOR_SPLIT = 'Привіт, {{name}}'
+
+// type S=Split2<FOR_SPLIT>

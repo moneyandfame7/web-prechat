@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type {Platform} from 'types/api'
+import type {TransitionName} from 'components/transitions'
 
 /*
  * API
@@ -13,6 +13,8 @@ export const API_AVATAR_VARIANTS = [
   'PURPLE',
   'ORANGE',
 ] as const
+
+export const USE_USERNAMES = true
 
 /* UI  */
 const {userAgent, platform} = window.navigator
@@ -75,17 +77,23 @@ function detectBrowser(): string | undefined {
 export const USER_PLATFORM = detectPlatform() || 'Unknown'
 export const USER_BROWSER: string = detectBrowser() || 'Unknown'
 export const IS_APPLE = USER_PLATFORM === 'iOS' || USER_PLATFORM === 'macOS'
+export const IS_SAFARI = USER_BROWSER.startsWith('Safari')
 export const SUGGESTED_LANGUAGE = window.navigator.language
 export const IS_SENSOR = window.matchMedia('(pointer: coarse)').matches
-
+export const IS_MOBILE = window.matchMedia('(max-width: 768px)').matches
 export const AUTH_CAPTCHA_EL = 'auth_captcha_el'
 export const AUTH_CAPTCHA_CONTAINER = 'auth_captcha_container'
 export const DEBUG = import.meta.env.DEV /* || ?debug=1 */
 
 export const GITHUB_SOURCE = 'https://github.com/moneyandfame7/web-prechat#readme'
 
+export const APP_TRANSITION_NAME = (
+  IS_MOBILE ? 'slideDark' : 'zoomSlide'
+) satisfies TransitionName
 export const TRANSITION_DURATION_ZOOM_FADE = 200
 export const TRANSITION_DURATION_MENU = 250 /* 150 */
 
 export const NOTIFICATION_TRANSITION = 300
 export const MODAL_TRANSITION_MS = 300
+
+export const FONT_PX = 16

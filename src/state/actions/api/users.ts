@@ -16,7 +16,9 @@ createAction('getUser', async (state, _, payload) => {
   })
 })
 
-createAction('getSelf', async (state, actions, payload) => {
-  console.log('GET SELF <<<<<<<')
-  await actions.getUser(state.auth.userId!)
+createAction('getSelf', async (state, actions) => {
+  if (!state.auth.userId) {
+    return
+  }
+  await actions.getUser(state.auth.userId)
 })

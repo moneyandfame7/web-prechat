@@ -1,0 +1,137 @@
+.chat-input-wrapper {
+  // margin-block-end: 20px;
+  @media only screen and (min-width: 1280px) {
+    body.right-column-shown & {
+      transform: translate3d(calc(var(--right-column-width) / -2), 0, 0);
+    }
+    transition: transform var(--slide-dark-transition);
+
+    // .messages-container {
+    // 30px - for paddings around ( arrow and for comfortable )
+    max-width: calc(100% - var(--right-column-width) - 30px);
+    // }
+  }
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90%;
+  // margin: 0 auto;
+  margin-inline: auto;
+  margin-block-end: 10px;
+  gap: 10px;
+  // height: 60px;
+  .send-button {
+    border-radius: 50%;
+    width: max-content;
+    height: 56px;
+    width: 56px;
+  }
+}
+
+.chat-input {
+  width: 100%;
+  background-color: var(--c-surface);
+  position: relative;
+  padding-inline: 10px;
+  border-radius: 12px;
+  height: 50px;
+  // margin-inline: auto;
+  // margin-block-end: 10px;
+
+  /* ARROW:  */
+  &::before,
+  &::after {
+    @include bgAndColorTransition();
+
+    position: absolute;
+    content: '';
+    bottom: -0.1rem;
+    height: 1rem;
+    // border: 1px solid #e9e9ea;
+  }
+  &::before {
+    background-color: var(--c-surface);
+    // border-bottom-left-radius: 0.8rem 0.7rem; // or use it, just as u wish
+
+    border-right: var(--bubble-arrow-width) solid var(--c-surface);
+    // width: 1rem;
+    right: -0.35rem;
+    transform: translate(0, -0.1rem);
+    // box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
+  }
+  &::after {
+    background: var(--c-message-container-bg);
+    border-bottom-left-radius: 0.5rem;
+    // border-left: 1rem solid var(--c-message-bg);
+    right: -40px;
+    transform: translate(-30px, -2px);
+    width: 10px;
+  }
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  .chat-input-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    .input-field {
+      // border: 1px solid red;
+      width: 100%;
+      height: 40px;
+      background-color: var(--c-surface);
+      font-size: 16px;
+      // color-pa
+      caret-color: var(--c-primary);
+      // &:placeholder-shown {
+      //   background-color: blue;
+      // }
+      &::placeholder {
+        visibility: hidden;
+      }
+    }
+
+    // .input-field::placeholder-shown + .input-field-fake {
+    //   width: 10px;
+    // }
+
+    &:not(.is-empty) {
+      // background-color: green;
+
+      .input-field-fake {
+        // background-color: purple;
+
+        &::after {
+          transform: translateX(2rem);
+          opacity: 0;
+          transition: all 0.35s ease;
+        }
+      }
+    }
+    .input-field-fake {
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      &::after {
+        content: attr(data-placeholder);
+        color: var(--color-placeholder);
+        // position: absolute;
+        transform: translateX(0);
+        opacity: 1;
+        transition: all 0.15s ease;
+      }
+      // padding-left: 5px;
+    }
+  }
+
+  // .FloatButton {
+  //   position: relative;
+  // }
+}

@@ -1,66 +1,37 @@
-import {type FC, memo, useState, useEffect} from 'preact/compat'
+import {type FC, memo, useEffect, useState} from 'preact/compat'
 
+import {connect} from 'state/connect'
+import {getGlobalState} from 'state/signal'
+
+import {APP_TRANSITION_NAME} from 'common/config'
+import {addEscapeListener} from 'utilities/keyboardListener'
+
+import {SettingsScreens} from 'types/screens'
 import {LeftColumnGroup, LeftColumnScreen} from 'types/ui'
 
-import SwitchTransition from 'components/transitions/SwitchTransition'
-import type {TransitionCases} from 'components/transitions/types'
-import {
-  ZOOM_SLIDE_IN,
-  ZOOM_SLIDE_OUT
-  // ZOOM_SLIDE_IN,
-  // ZOOM_SLIDE_OUT
-} from 'components/transitions/helpers'
+import {Transition} from 'components/transitions'
 
-import LeftMain from './main/LeftMain'
-import CreateChat from './create/CreateChat.async'
-import Settings from './settings/Settings.async'
 import Contacts from './contacts/Contacts.async'
-
 import {LeftColumnProvider} from './context'
+import CreateChat from './create/CreateChat.async'
+import LeftMain from './main/LeftMain'
+import Settings from './settings/Settings.async'
 
 import './LeftColumn.scss'
-import {SettingsScreens} from 'types/screens'
-import {getGlobalState} from 'state/signal'
 
 const classNames: Record<LeftColumnGroup, string> = {
   [LeftColumnGroup.Main]: 'LeftColumn-Main',
   [LeftColumnGroup.Contacts]: 'LeftColumn-Contacts',
   [LeftColumnGroup.Settings]: 'LeftColumn-Settings',
   [LeftColumnGroup.NewChannel]: 'LeftColumn-NewChannel',
-  [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup'
+  [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup',
 }
-
-// const TRANSITION_CASES: TransitionScreenConfig<LeftColumnGroup> = {
-//   [LeftColumnGroup.Main]: {
-//     [LeftColumnGroup.Contacts]: SLIDE_IN,
-//     [LeftColumnGroup.NewChannel]: SLIDE_IN,
-//     [LeftColumnGroup.NewGroup]: SLIDE_IN,
-//     [LeftColumnGroup.Settings]: SLIDE_IN
-//   },
-//   [LeftColumnGroup.Contacts]: {
-//     [LeftColumnGroup.Main]: SLIDE_OUT
-//   },
-//   [LeftColumnGroup.NewChannel]: {
-//     [LeftColumnGroup.Main]: SLIDE_OUT
-//   },
-//   [LeftColumnGroup.NewGroup]: {
-//     [LeftColumnGroup.Main]: SLIDE_OUT
-//   },
-//   [LeftColumnGroup.Settings]: {
-//     [LeftColumnGroup.Main]: SLIDE_OUT
-//   }
-// }
-const getTransitionByCase = (
-  _: LeftColumnGroup,
-  previousScreen?: LeftColumnGroup
-): TransitionCases => {
-  if (previousScreen === LeftColumnGroup.Main) {
-    return ZOOM_SLIDE_IN
-  }
-
-  return ZOOM_SLIDE_OUT
+type StateProps = {
+  isChatOpen: boolean
 }
-const LeftColumn: FC = () => {
+const LeftColumn: FC<StateProps> = ({isChatOpen}) => {
+  const {globalSettingsScreen} = getGlobalState()
+
   const [activeScreen, setActiveScreen] = useState(LeftColumnScreen.Chats)
   const [settingsScreen, setSettingsScreen] = useState(SettingsScreens.Main)
   let activeGroup: LeftColumnGroup = LeftColumnGroup.Main
@@ -90,10 +61,16 @@ const LeftColumn: FC = () => {
       break
   }
   const handleReset = (force?: boolean) => {
-    if (force) {
+    if (force || activeScreen === LeftColumnScreen.Search) {
       setActiveScreen(LeftColumnScreen.Chats)
       return
     }
+
+    if (activeScreen === LeftColumnScreen.Chats) {
+      setActiveScreen(LeftColumnScreen.Search)
+      return
+    }
+
     if (activeScreen === LeftColumnScreen.NewChannelStep2) {
       setActiveScreen(LeftColumnScreen.NewChannelStep1)
       return
@@ -102,16 +79,19 @@ const LeftColumn: FC = () => {
       setActiveScreen(LeftColumnScreen.NewGroupStep1)
       return
     }
-    if (activeScreen === LeftColumnScreen.Search) {
-      setActiveScreen(LeftColumnScreen.Chats)
 
-      return
+    if (activeScreen === LeftColumnScreen.Settings) {
+      console.log(SettingsScreens[settingsScreen])
     }
 
     setActiveScreen(LeftColumnScreen.Chats)
   }
-  const {globalSettingsScreen} = getGlobalState()
 
+  useEffect(() => {
+    return addEscapeListener(() => {
+      handleReset(false)
+    })
+  }, [activeScreen])
   useEffect(() => {
     /* використовую глобальну змінну для того, щоб відкривати налаштування з інших екранів  */
     if (globalSettingsScreen !== undefined) {
@@ -120,8 +100,8 @@ const LeftColumn: FC = () => {
     }
   }, [globalSettingsScreen])
 
-  const renderScreen = (activeKey: LeftColumnGroup) => {
-    switch (activeKey) {
+  const renderScreen = () => {
+    switch (activeGroup) {
       case LeftColumnGroup.Contacts:
         return <Contacts />
       case LeftColumnGroup.Main:
@@ -140,23 +120,34 @@ const LeftColumn: FC = () => {
       store={{
         resetScreen: handleReset,
         setScreen: setActiveScreen,
-        activeScreen
+        activeScreen,
       }}
     >
       <div class="LeftColumn">
-        <SwitchTransition
+        {/* <SingleTransition
+          unmount={false}
+          in={isChatOpen}
+          shouldSkip={isMobile}
+          name="slideDark"
+          direction={isChatOpen ? -1 : 1}
+        > */}
+        <Transition
+          cleanupException={LeftColumnGroup.Main}
           activeKey={activeGroup}
-          classNames={classNames}
-          cleanupException={[LeftColumnGroup.Main]}
-          name="fade"
-          permanentClassname="Screen-container"
-          getTransitionByCase={getTransitionByCase}
+          name={APP_TRANSITION_NAME}
         >
-          {renderScreen(activeGroup)}
-        </SwitchTransition>
+          {renderScreen()}
+        </Transition>
+        {/* </SingleTransition> */}
       </div>
     </LeftColumnProvider>
   )
 }
 
-export default memo(LeftColumn)
+export default memo(
+  connect(({currentChat}): StateProps => {
+    return {
+      isChatOpen: Boolean(currentChat.chatId),
+    }
+  })(LeftColumn)
+)

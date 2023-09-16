@@ -7,10 +7,11 @@ import * as cache from 'lib/cache'
 
 import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/config'
 import {deepCopy} from 'utilities/object/deepCopy'
+import {changeHash} from 'utilities/routing'
 
 createAction('reset', async (_state) => {
   await stopPersist()
-
+  changeHash({hash: undefined})
   // resetAuthState(state)
   cache.clear('prechat-avatars')
   cache.clear('prechat-i18n-pack')
@@ -36,7 +37,7 @@ createAction('init', async (state): Promise<void> => {
     document.documentElement.classList.add('is-safari')
   }
 
-  if (state.settings.theme === 'dark') {
+  if (state.settings.general.theme === 'dark') {
     document.documentElement.classList.add('night')
   }
 

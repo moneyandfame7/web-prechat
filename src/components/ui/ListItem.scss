@@ -15,7 +15,17 @@
     }
   }
 
-  .Icon {
+  &.focused {
+    background-color: var(--c-ripple);
+  }
+  &.selectable {
+    .Avatar {
+      margin-left: 30px;
+    }
+    padding-inline: 40px;
+  }
+
+  > .Icon {
     /* REWRITE IT */
     margin: 0px 30px 0px 10px;
   }
@@ -43,6 +53,7 @@
   }
   &__title {
     width: 70%;
+    font-weight: 500;
   }
   &__subtitle {
     font-size: 14px;
@@ -73,5 +84,8 @@
 
   &__right {
     margin-inline: 10px;
+  }
+
+  &__context-menu {
   }
 }

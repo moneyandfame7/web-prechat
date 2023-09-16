@@ -11,7 +11,7 @@
     "<THIRD_PARTY_MODULES>",
     "^api/(.*)$",
     "^state/(.*)$",
-    "^hooks/(.*)$",
+    "^hooks|^hooks/(.*)$",
     "^lib/(.*)$",
     "^(common|utilities)/(.*)$",
     "^types/(.*)$",

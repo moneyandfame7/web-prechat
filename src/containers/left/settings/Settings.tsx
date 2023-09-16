@@ -1,53 +1,25 @@
 import {type FC, memo, useCallback, useMemo, useState} from 'preact/compat'
 
-import {
-  SwitchTransition,
-  type TransitionCases,
-  // ZOOM_SLIDE_IN,
-  // ZOOM_SLIDE_OUT,
-  ZOOM_SLIDE_IN,
-  ZOOM_SLIDE_OUT,
-} from 'components/transitions'
 import {SettingsContext} from 'context/settings'
+
+import {APP_TRANSITION_NAME} from 'common/config'
 
 import {SettingsGroup, SettingsScreens, getSettingsActiveGroup} from 'types/screens'
 
+import {Transition} from 'components/transitions'
+
+import SettingsAppearance from './appearance/SettingsAppearance.async'
 import SettingsChatFolders from './chat-folders/SettingsChatFolders.async'
 import SettingsDataAndStorage from './data-and-storage/SettingsDataAndStorage.async'
 import SettingsDevices from './devices/SettingsDevices.async'
+import SettingsEditProfile from './edit-profile/SettingsEditProfile.async'
 import SettingsGeneral from './general/SettingsGeneral.async'
 import SettingsLanguage from './language/SettingsLanguage.async'
 import SettingsMain from './main/SettingsMain.async'
 import SettingsNotifications from './notifications/SettingsNotifications.async'
 import SettingsPrivacy from './privacy/SettingsPrivacy.async'
-import SettingsEditProfile from './edit-profile/SettingsEditProfile.async'
-import SettingsAppearance from './appearance/SettingsAppearance.async'
 
 import './Settings.scss'
-
-const getTransitionByCase = (
-  _: SettingsGroup,
-  previousScreen?: SettingsGroup
-): TransitionCases => {
-  if (previousScreen === SettingsGroup.Main) {
-    return ZOOM_SLIDE_IN
-  }
-
-  return ZOOM_SLIDE_OUT
-}
-
-const classNames: Record<SettingsGroup, string> = {
-  [SettingsGroup.EditProfile]: 'Settings-EditProfile',
-  [SettingsGroup.Main]: 'Settings-Main',
-  [SettingsGroup.ChatFolders]: 'Settings-ChatFolders',
-  [SettingsGroup.Devices]: 'Settings-Devices',
-  [SettingsGroup.DataAndStorage]: 'Settings-DataAndStorage',
-  [SettingsGroup.General]: 'Settings-General',
-  [SettingsGroup.Language]: 'Settings-Language',
-  [SettingsGroup.Notifications]: 'Settings-Notifications',
-  [SettingsGroup.Privacy]: 'Settings-Privacy',
-  [SettingsGroup.Appearance]: 'Settings-Appearance',
-}
 
 export interface SettingsProps {
   currentScreen: SettingsScreens
@@ -108,19 +80,16 @@ const Settings: FC<SettingsProps> = ({currentScreen}) => {
         setScreen: setActiveScreen,
       }}
     >
-      {/* <div class="LeftColumn-Header">Settings</div> */}
-      <SwitchTransition
-        getTransitionByCase={getTransitionByCase}
+      <Transition
+        containerClassname="settings-wrapper"
+        name={APP_TRANSITION_NAME} // is mobile? slideDark : zoomSlide
         activeKey={activeGroup}
-        name="fade"
-        // durations={250}
-        classNames={classNames}
         shouldCleanup
-        cleanupException={[SettingsGroup.Main]}
-        permanentClassname="Screen-container"
+        cleanupException={SettingsGroup.Main}
+        shouldLockUI
       >
         {renderScreen()}
-      </SwitchTransition>
+      </Transition>
     </SettingsContext.Provider>
   )
 }

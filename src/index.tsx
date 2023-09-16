@@ -7,6 +7,7 @@ import {Application} from 'modules/App'
 import {ApolloClient} from 'api/manager'
 
 import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
 
 import {DEBUG} from 'common/config'
 
@@ -33,6 +34,11 @@ async function init() {
   //   })
   if (DEBUG) {
     import('preact/debug')
+    const global = getGlobalState()
+
+    window.addEventListener('dblclick', (ev) => {
+      console.log(global)
+    })
   }
 }
 

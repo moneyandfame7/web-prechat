@@ -1,5 +1,9 @@
+import type {ApiChat, ApiUser} from '.'
+
 export type ApiErrorCode =
   | 'UNAUTHORIZED'
+  | 'USERNAME_NOT_OCCUPIED'
+  | 'USERNAME_INVALID'
   | 'FORBIDDEN'
   | 'AUTH_VERIFY_CODE'
   | 'AUTH_SESSION_TOO_FRESH'
@@ -32,3 +36,17 @@ export interface ApiPhoto {
   blurHash: string
   url: string
 }
+
+export type ResolvedPeer =
+  | {
+      type: 'chat'
+      resolved: ApiChat
+    }
+  | {
+      type: 'user'
+      resolved: ApiUser
+    }
+
+export type ApiChatId = string
+export type ApiUserId = string
+export type ApiPeerId = ApiChatId | ApiUserId

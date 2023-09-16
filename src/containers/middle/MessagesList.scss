@@ -1,0 +1,25 @@
+.messages-list {
+  // @include responsive()
+  padding-inline-start: 8px;
+  @media only screen and (min-width: 1280px) {
+    body.right-column-shown & {
+      transform: translate3d(calc(var(--right-column-width) / -2), 0, 0);
+    }
+    transition: transform var(--slide-dark-transition);
+
+    .messages-container {
+      max-width: calc(100% - var(--right-column-width));
+    }
+  }
+
+  transform: translate3d(0, 0, 0);
+
+  .messages-container {
+    // body.right-column-shown & {
+    // }
+    padding-block: 10px;
+    margin: 0 auto;
+    width: 100%;
+    // max-width: calc(100% - var(--right-column-width));
+  }
+}

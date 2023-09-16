@@ -12,6 +12,11 @@
   }
 }
 .ripple-container {
+  --dolbaeb: var(--c-ripple);
+  &:active {
+    // background-color: var(--color-ripple);
+    // backgrou;
+  }
   position: absolute;
   top: 0;
   left: 0;
@@ -20,7 +25,7 @@
   span {
     position: absolute;
     display: block;
-    background-color: var(--color-ripple);
+    background-color: var(--dolbaeb);
     border-radius: 50%;
     transform: scale(0);
     /* maybe change to scale (2) 1000ms */

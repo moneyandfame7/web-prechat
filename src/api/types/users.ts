@@ -21,11 +21,11 @@ export interface ApiUser {
   isMutualContact?: boolean
   photo?: ApiPhoto
 }
-
-export interface ApiUserFull {
-  avatar: ApiAvatar
-  bio?: string
+export interface ApiUsername {
+  username: string
+  isActive: boolean
 }
+
 export type ApiColorVariant = (typeof API_AVATAR_VARIANTS)[number]
 
 export interface ApiAvatar {
@@ -40,7 +40,6 @@ export type UserStatusType =
   | 'userStatusLastMonth'
   | 'userStatusLastWeek'
   | 'userStatusLongTimeAgo'
-export type UserStatusOffline = 'userStatusoffline'
 export type ApiUserStatus =
   | {
       type: UserStatusType
