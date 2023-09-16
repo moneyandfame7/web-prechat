@@ -9,9 +9,9 @@ import styles from './UpdateAppPopup.module.scss'
 export interface UpdateAppPopupProps {
   onUpdate: VoidFunction
 }
-const UpdateAppPopup: FC<UpdateAppPopupProps> = (/* {onUpdate} */) => {
+const UpdateAppPopup: FC<UpdateAppPopupProps> = ({onUpdate}) => {
   // eslint-disable-next-line no-console
-  const clickHandlers = useFastClick(console.log, false)
+  const clickHandlers = useFastClick(onUpdate, false)
 
   return (
     <Portal>
