@@ -174,7 +174,7 @@ export class ApolloClientWrapper {
 export function createApolloClientWrapper(): ApolloClientWrapper {
   const httpUrl = import.meta.env.VITE_API_URL
   // eslint-disable-next-line prefer-template
-  const wsUrl = httpUrl.replace(DEBUG ? 'http://' : 'https://', 'ws://') + '/subscriptions'
+  const wsUrl = httpUrl.replace(DEBUG ? 'http://' : 'https://', 'wss://') + '/subscriptions'
 
   const client = new ApolloClientWrapper({
     httpUrl,
