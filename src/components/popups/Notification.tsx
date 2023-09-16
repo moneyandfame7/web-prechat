@@ -36,7 +36,7 @@ const Notification: FC<NotificationProps> = ({isOpen}) => {
         className="notification"
         name="fade"
         in={isOpen}
-        unmount={false}
+        unmount
         timeout={NOTIFICATION_TRANSITION}
       >
         <div class="notification-container" onMouseDown={handleBackdropClick}>

@@ -3,6 +3,7 @@ import {useCallback, useEffect, useRef, useState} from 'preact/hooks'
 
 import {LeftColumnScreen} from 'types/ui'
 
+import {ColumnHeader} from 'components/ColumnHeader'
 import {Transition} from 'components/transitions'
 import {SearchInput} from 'components/ui'
 
@@ -66,7 +67,7 @@ const LeftMain: FC = (props) => {
 
   return (
     <Fragment {...props}>
-      <div class="LeftColumn-Header">
+      <ColumnHeader className="LeftColumn-Header">
         <Transition
           name="rotate"
           activeKey={activeGroup}
@@ -77,7 +78,6 @@ const LeftMain: FC = (props) => {
         </Transition>
         {/* <InputText onFocus={handleFocusInput} elRef={inputRef} value={search} onInput={()=>)}/> */}
         <SearchInput
-          // elRef={inputRef}
           isFocused={isSearchInputFocused}
           value={search}
           onInput={handleSearch}
@@ -90,7 +90,7 @@ const LeftMain: FC = (props) => {
           }}
           onFocus={handleFocusInput}
         /> */}
-      </div>
+      </ColumnHeader>
       <div class="LeftColumn-Main_inner scrollable">
         {/* <SwitchTransition
           classNames={classNames}

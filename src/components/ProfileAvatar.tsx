@@ -26,9 +26,6 @@ export const ProfileAvatar: FC<ProfileAvatarProps> = memo(({peer}) => {
         {peer && getInitials(getPeerName(peer))}
       </div>
     )
-    {
-      /* <AvatarTest variant={peer.color} size="xl" fullName={getPeerName(peer)} /> */
-    }
   }
   return <>{renderPhoto()}</>
 })

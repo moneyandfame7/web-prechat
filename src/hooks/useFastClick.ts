@@ -1,12 +1,20 @@
-import {type TargetedEvent, useCallback, useMemo} from 'preact/compat'
+import {type TargetedEvent, useMemo} from 'preact/compat'
 
 import {IS_SENSOR} from 'common/config'
 
-export function useFastClick({fast, handler}: {fast?: boolean; handler?: VoidFunction}) {
-  const handleMouseDown = (e: TargetedEvent<HTMLElement, MouseEvent>) => {
+import type {MouseHandler} from 'types/ui'
+
+export function useFastClick({
+  fast = true,
+  handler,
+}: {
+  fast?: boolean
+  handler?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
+}) {
+  const handleMouseDown = (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault()
     if (e.button === 0) {
-      handler?.()
+      handler?.(e)
     }
   }
   const onMouseDown = useMemo(() => {

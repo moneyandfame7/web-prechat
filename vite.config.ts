@@ -68,7 +68,9 @@ export default ({mode}) => {
       modules: {
         localsConvention: 'camelCase',
         // generateScopedName: /* DEV ? */ '[name]__[local]___[hash:base64:5]',
-        generateScopedName: '[local]__[hash:base64:10]',
+        // generateScopedName: '[local]__[hash:base64:10]',
+        generateScopedName: '[name]__[local]___[hash:base64:5]',
+
         // hashPrefix: 'prefix',
       },
       preprocessorOptions: {

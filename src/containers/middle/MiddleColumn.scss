@@ -1,13 +1,53 @@
 .MiddleColumn {
+  overflow: hidden;
   flex: 1 1 0%;
+  transform-style: preserve-3d;
+  // width: calc(100% + 400px);
+
+  // transition: width 0.3s ease;
+  // body.right-column-shown & {
+  //   transform: translate3d(calc(400px * -1), 0, 0);
+  // }
+  // body.has-chat & {
+  // }
   height: 100dvh;
-  &-inner {
-    position: relative;
-    // overflow: hidden;
-    height: 100%;
-  }
+  transition: transform var(--slide-dark-transition), filter var(--slide-dark-transition),
+    background-color 200ms ease;
+  display: flex;
+  flex-direction: column;
+  // background-color: var(--c-bg);
+
+  // background: rgb(159, 196, 131);
+  // background: linear-gradient(225deg, rgba(159, 196, 131, 1) 35%, rgba(122, 156, 97, 1) 100%);
+  background: var(--c-message-container-bg);
+  // background: rgb(40, 40, 40);
+  // background: linear-gradient(225deg, rgba(40, 40, 40, 1) 50%, rgba(0, 0, 0, 1) 100%);
+  // background-color: #0f0f0f;
 
   @include responsive(tablet) {
-    display: none;
+    z-index: var(--z-middle-column);
+
+    body.right-column-shown & {
+      transform: translate3d(-20%, 0, 0);
+      filter: brightness(0.7);
+    }
+    body:not(.left-column-shown):not(.right-column-shown) & {
+      transform: translate3d(0, 0, 0);
+    }
+    body.left-column-shown & {
+      transform: translate3d(100%, 0, 0);
+    }
+  }
+  @include responsive(laptop) {
+    // position: absolute;
+    // left: var(--left-column-width);
+    // width: calc(100% - var(--left-column-width));
+    // body.chat-collapsed & {
+    //   transform: translate3d(0, 0, 0);
+    // }
+  }
+
+  @media only screen and (min-width: 768.1px) and (max-width: 1280px) {
+    // background-color: red;
   }
 }

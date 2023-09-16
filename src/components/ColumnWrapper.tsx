@@ -3,18 +3,19 @@ import {type FC, memo, useEffect, useRef, useState} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import {IconButton} from './ui'
+import {IconButton, type IconName} from './ui'
 
 import './ColumnWrapper.scss'
 
 interface ColumnWrapperProps {
   title?: string
   onGoBack: VoidFunction
+  goBackIcon?: IconName
   children: ComponentChildren
   headerContent?: VNode
 }
 const ColumnWrapper: FC<ColumnWrapperProps> = memo(
-  ({title, children, onGoBack, headerContent}) => {
+  ({title, children, onGoBack, headerContent, goBackIcon: icon}) => {
     const contentColumnRef = useRef<HTMLDivElement>(null)
     const [isScrolled, setIsScrolled] = useState(false)
 
@@ -40,7 +41,7 @@ const ColumnWrapper: FC<ColumnWrapperProps> = memo(
     return (
       <>
         <div class={headerClass}>
-          <IconButton icon="arrowLeft" onClick={onGoBack} />
+          <IconButton icon={icon || 'arrowLeft'} onClick={onGoBack} />
           {title && <p class="column-header__title">{title}</p>}
           {headerContent}
 

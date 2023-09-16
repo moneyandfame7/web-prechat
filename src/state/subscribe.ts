@@ -43,7 +43,7 @@ export type Subscribes = {
 
 const subscriptions = {} as Subscribes
 
-const unsubscribers = {} as Partial<Record<SubscribeName, Subscription>>
+const destroyers = {} as Partial<Record<SubscribeName, Subscription>>
 
 const subscribeHandler = <N extends SubscribeName, TData extends SubscribeResult[N]>(
   name: N,
@@ -84,13 +84,13 @@ export function createSubscribe<N extends SubscribeName>(
       const actions = getActions()
       handler(global, actions, data)
     })
-    unsubscribers[name] = sub
+    destroyers[name] = sub
   }
 }
 
 export function destroySubscribe<N extends SubscribeName>(name: N) {
-  if (unsubscribers[name]) {
-    unsubscribers[name]?.unsubscribe()
+  if (destroyers[name]) {
+    destroyers[name]?.unsubscribe()
   } else {
     logger.error('UNSUBSCRIBE NOT FOUNDED')
   }
@@ -101,21 +101,22 @@ export function getSubscriptions() {
 }
 
 export function getActiveSubscriptions() {
-  return unsubscribers
+  return destroyers
 }
 
 export function subscribeToAll() {
-  for (const cb in subscriptions) {
-    if (cb in subscriptions) {
-      subscriptions[cb as keyof Subscribes]()
-    }
-  }
+  Object.values(subscriptions).forEach((cb) => {
+    cb()
+  })
 }
 
 export function destroySubscribeAll() {
-  for (const cb in subscriptions) {
-    if (cb in subscriptions) {
-      destroySubscribe(cb as keyof Subscribes)
-    }
-  }
+  Object.values(destroyers).forEach((d) => {
+    d.unsubscribe()
+  })
+  // for (const cb in subscriptions) {
+  //   if (cb in subscriptions) {
+  //     destroySubscribe(cb as keyof Subscribes)
+  //   }
+  // }
 }

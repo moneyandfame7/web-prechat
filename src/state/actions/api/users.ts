@@ -16,7 +16,7 @@ createAction('getUser', async (state, _, payload) => {
   })
 })
 
-createAction('getSelf', async (state, actions, payload) => {
+createAction('getSelf', async (state, actions) => {
   if (!state.auth.userId) {
     return
   }

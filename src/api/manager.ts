@@ -1,5 +1,6 @@
 import {type ApolloClientWrapper, createApolloClientWrapper} from './apollo'
 import {ServiceFactory} from './factory'
+import type {ApiMessages} from './methods'
 import type {ApiAccount} from './methods/account'
 import type {ApiAuth} from './methods/auth'
 import type {ApiChats} from './methods/chats'
@@ -16,6 +17,7 @@ export interface ApiMethods {
   contacts: ApiContacts
   users: ApiUsers
   chats: ApiChats
+  messages: ApiMessages
 }
 
 /**
@@ -33,7 +35,8 @@ class ApiManager implements ApiMethods {
     public readonly settings: ApiSettings,
     public readonly contacts: ApiContacts,
     public readonly users: ApiUsers,
-    public readonly chats: ApiChats
+    public readonly chats: ApiChats,
+    public readonly messages: ApiMessages
   ) {}
 }
 
@@ -47,7 +50,17 @@ function createApiManager(apolloWrapper: ApolloClientWrapper): ApiMethods {
   const contacts = factory.createContacts()
   const users = factory.createUsers()
   const chats = factory.createChats()
-  const apiClient = new ApiManager(auth, langPack, account, settings, contacts, users, chats)
+  const messages = factory.createMessages()
+  const apiClient = new ApiManager(
+    auth,
+    langPack,
+    account,
+    settings,
+    contacts,
+    users,
+    chats,
+    messages
+  )
 
   return apiClient
 }

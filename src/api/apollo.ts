@@ -1,6 +1,5 @@
 import {
   ApolloClient,
-  ApolloError,
   ApolloLink,
   InMemoryCache,
   type NormalizedCacheObject,
@@ -18,11 +17,9 @@ import {createClient} from 'graphql-ws'
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
-import {logDebugWarn} from 'lib/logger'
-
 import {DEBUG} from 'common/config'
 
-import {ApiError} from './types/diff'
+import type {ApiError} from './types/diff'
 
 export type GqlDoc = {
   __typename: string
@@ -72,6 +69,7 @@ export class ApolloClientWrapper {
       /* headers?? */
     })
   }
+
   /**
    * {@link https://www.apollographql.com/docs/react/networking/authentication/#header Apollo Header link}
    */
@@ -186,21 +184,4 @@ export function createApolloClientWrapper(): ApolloClientWrapper {
   })
   // client.client.
   return client
-}
-
-/**
- * Just format if it's instance of ApolloError and log error, otherwise just log error
- */
-export function handleApolloError(e: unknown) {
-  if (e instanceof ApolloError) {
-    const error = {
-      message: e.message,
-      stack: e.stack,
-      name: e.name,
-    }
-
-    logDebugWarn(error)
-  } else {
-    logDebugWarn(e)
-  }
 }

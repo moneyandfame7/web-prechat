@@ -272,6 +272,7 @@ const CalendarModal: FC<CalendarModalProps> = ({
         <Transition
           activeKey={panelMonth}
           name="slide"
+          shouldLockUI
           direction={isNext.current ? 1 : -1}
           containerClassname="calendar-wrapper"
           innerClassnames="calendar-grid"

@@ -1,7 +1,9 @@
 import {
   MUTATION_CREATE_CHANNEL,
   MUTATION_CREATE_GROUP,
+  QUERY_GET_CHAT,
   QUERY_GET_CHATS,
+  QUERY_GET_CHAT_FULL,
   QUERY_RESOLVE_USERNAME,
 } from 'api/graphql'
 import {cleanTypename} from 'api/helpers/cleanupTypename'
@@ -46,11 +48,35 @@ export class ApiChats extends ApiBaseMethod {
       fetchPolicy: 'cache-first',
     })
 
-    if (!data.getChats || data.getChats.length === 0) {
+    return cleanTypename(data.getChats)
+  }
+
+  public async getChat(chatId: string) {
+    const {data} = await this.client.query({
+      query: QUERY_GET_CHAT,
+      fetchPolicy: 'cache-first',
+      variables: {
+        chatId,
+      },
+    })
+
+    if (!data.getChat) {
       return undefined
     }
 
-    return cleanTypename(data.getChats)
+    return cleanTypename(data.getChat)
+  }
+
+  public async getChatFull(chatId: string) {
+    const {data} = await this.client.query({
+      query: QUERY_GET_CHAT_FULL,
+      fetchPolicy: 'cache-first',
+      variables: {
+        chatId,
+      },
+    })
+    console.log({data})
+    return data.getChatFull
   }
 
   public async resolveUsername(username: string) {

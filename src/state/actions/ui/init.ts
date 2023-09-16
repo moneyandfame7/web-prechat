@@ -11,7 +11,7 @@ import {changeHash} from 'utilities/routing'
 
 createAction('reset', async (_state) => {
   await stopPersist()
-  changeHash()
+  changeHash({hash: undefined})
   // resetAuthState(state)
   cache.clear('prechat-avatars')
   cache.clear('prechat-i18n-pack')
@@ -37,7 +37,7 @@ createAction('init', async (state): Promise<void> => {
     document.documentElement.classList.add('is-safari')
   }
 
-  if (state.settings.theme === 'dark') {
+  if (state.settings.general.theme === 'dark') {
     document.documentElement.classList.add('night')
   }
 

@@ -42,6 +42,25 @@ export enum SettingsScreens {
   Language,
 }
 
+export enum RightColumnScreens {
+  ChatProfile,
+  ChatEdit,
+  Search,
+}
+
+export enum ChatEditScreens {
+  Main,
+  ChatType,
+  InviteLinks,
+  NewLink,
+  Admins,
+  AdminPermissions,
+  UserPermissions,
+  Members,
+  Permissions,
+  RemovedUsers,
+}
+
 export enum SettingsGroup {
   Main,
   EditProfile,

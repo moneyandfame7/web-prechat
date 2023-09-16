@@ -1,13 +1,25 @@
 import {type FC, memo} from 'preact/compat'
 
+import clsx from 'clsx'
+
+import type {Size} from 'types/ui'
+
 import {Spinner} from './ui'
 
 import './ScreenLoader.scss'
 
-export const ScreenLoader: FC = memo(() => {
+interface ScreenLoaderProps {
+  withBg?: boolean
+  size?: Size
+}
+export const ScreenLoader: FC<ScreenLoaderProps> = memo(({withBg = true, size = 'large'}) => {
   return (
-    <div class="ScreenLoader">
-      <Spinner size="large" color="primary" />
+    <div
+      class={clsx('screen-loader', {
+        'with-bg': withBg,
+      })}
+    >
+      <Spinner size={size} color="primary" />
     </div>
   )
 })

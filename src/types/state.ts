@@ -3,19 +3,23 @@ import type {ConfirmationResult, RecaptchaVerifier} from 'firebase/auth'
 
 import type {
   ApiChat,
+  ApiChatFull,
   ApiCountry,
   ApiLanguage,
   ApiSession,
   ApiUser,
   ApiUserStatus,
 } from 'api/types'
+import type {ApiChatId} from 'api/types/diff'
+import type {ApiMessage} from 'api/types/messages'
 
 import type {ApiLangCode, LanguagePack} from 'types/lib'
 import type {UserConnection} from 'types/request'
 
-import type {AuthScreens, SettingsScreens} from './screens'
+import type {ApiUserFull} from './api'
+import type {AuthScreens, RightColumnScreens, SettingsScreens} from './screens'
 
-export type Theme = 'light' | 'dark'
+export type Theme = 'light' | 'dark' | 'system'
 export type DistanceUnit = 'kilometers' | 'miles'
 export type TimeFormat = '12h' | '24h'
 export interface SettingsState {
@@ -78,18 +82,28 @@ export interface GlobalState {
   auth: AuthState
   initialization: boolean
   globalSearch: GlobalSearchState
-
+  recentEmojis: string[]
+  rightColumn: {
+    screen: RightColumnScreens
+    isOpen: boolean
+  }
   users: {
     contactIds: string[]
     statusesByUserId: Record<string, ApiUserStatus>
     byId: Record<string, ApiUser>
+    fullById: {[userId: string]: ApiUserFull}
   }
 
   chats: {
     byId: Record<string, ApiChat>
     isLoading: boolean
     ids: string[]
-    usernames: {[username: string]: string}
+    usernames: {[username: string]: ApiChatId}
+    fullById: {[chatId: string]: ApiChatFull}
+  }
+
+  messages: {
+    byChatId: Record<string, {byId: Record<string, ApiMessage>}>
   }
 
   activeSessions: {
@@ -111,6 +125,13 @@ export interface GlobalState {
     title?: string
     body?: string
     isOpen: boolean
+  }
+
+  currentChat: {
+    // messages: ApiMessage[]
+    chatId?: string
+    username?: string
+    isChatInfoShown?: boolean
   }
 
   globalSettingsScreen?: SettingsScreens

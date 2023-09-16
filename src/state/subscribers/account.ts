@@ -14,13 +14,12 @@ createSubscribe('onAuthorizationCreated', (global, actions, data) => {
   updateSessions(global, withAdded)
 })
 
-createSubscribe('onAuthorizationTerminated', (state, actions, data) => {
-  console.log('DELETED SESSION - ', data)
+createSubscribe('onAuthorizationTerminated', async (state, actions, data) => {
   if (data.some((s) => s.isCurrent)) {
-    actions.signOut()
+    await actions.signOut()
     return
   }
-
+  // const {}=state.activeSessions.byId
   const updatedById = Object.fromEntries(
     Object.entries(state.activeSessions.byId!).filter(([key]) =>
       data.every((session) => session.id !== key)

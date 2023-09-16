@@ -4,8 +4,6 @@
   display: flex;
   align-items: center;
   gap: 30px;
-  position: relative;
-  overflow: hidden;
   border-radius: var(--input-border-radius);
   &-wrapper {
     position: relative;
@@ -20,6 +18,10 @@
   &.disabled {
     pointer-events: none;
   }
+  &.ripple {
+    overflow: hidden;
+    position: relative;
+  }
 
   .Icon-check {
     position: absolute;
@@ -28,8 +30,8 @@
       fill: #fff;
     }
     display: none;
-    // width: 15px;
-    // height: 15px;
+    width: 18px;
+    height: 18px;
   }
   &.ripple {
     &:hover {

@@ -2,6 +2,8 @@ import {type FC, memo, useCallback, useMemo, useState} from 'preact/compat'
 
 import {SettingsContext} from 'context/settings'
 
+import {APP_TRANSITION_NAME} from 'common/config'
+
 import {SettingsGroup, SettingsScreens, getSettingsActiveGroup} from 'types/screens'
 
 import {Transition} from 'components/transitions'
@@ -80,10 +82,11 @@ const Settings: FC<SettingsProps> = ({currentScreen}) => {
     >
       <Transition
         containerClassname="settings-wrapper"
-        name="zoomSlide" // is mobile? slideDark : zoomSlide
+        name={APP_TRANSITION_NAME} // is mobile? slideDark : zoomSlide
         activeKey={activeGroup}
         shouldCleanup
         cleanupException={SettingsGroup.Main}
+        shouldLockUI
       >
         {renderScreen()}
       </Transition>

@@ -7,7 +7,7 @@ import {updateByKey} from 'utilities/object/updateByKey'
 
 import type {GlobalState, SignalGlobalState} from 'types/state'
 
-import {updateUsernames} from './chats'
+import {updateUsernamesFromPeers} from './chats'
 
 const initialNewContact: GlobalState['newContact'] = {
   userId: undefined,
@@ -38,6 +38,8 @@ export function updateUser(global: SignalGlobalState, id: string, updUser: Parti
     [id]: user, // ???
   })
 
+  // storages.users.
+
   updateContactList(global, [user])
 }
 
@@ -50,7 +52,7 @@ export function updateUsers(global: SignalGlobalState, usersById: Record<string,
   const usersList = Object.values(usersById)
 
   updateContactList(global, usersList)
-  updateUsernames(global, usersList)
+  updateUsernamesFromPeers(global, usersList)
 }
 
 export function updateContactList(global: SignalGlobalState, users: ApiUser[]) {

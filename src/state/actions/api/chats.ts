@@ -1,16 +1,15 @@
+import {apiManager} from 'api/api-manager'
 import {getApiError} from 'api/helpers/getApiError'
 import {Api} from 'api/manager'
 
 import {createAction} from 'state/action'
-import {getResolvedUsername, isValidUsername} from 'state/helpers/chats'
-import {
-  isPrivateChat,
-  isSavedMessages,
-  selectChat,
-  selectResolvedUsername,
-} from 'state/selectors/chats'
+import {getChatUsername} from 'state/helpers/chats'
+import {isUserId} from 'state/helpers/users'
+import {selectChat, selectChatByUsername, selectChatFull} from 'state/selectors/chats'
 import {selectUser} from 'state/selectors/users'
-import {updateChats, updateUsernames} from 'state/updates/chats'
+import {storages} from 'state/storages'
+import {updateCurrentChat} from 'state/updates'
+import {replacePeer, updateChatFullInfo, updateChats} from 'state/updates/chats'
 
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
@@ -49,71 +48,129 @@ createAction('createGroup', async (state, _, payload) => {
 createAction('getChats', async (state, actions) => {
   state.chats.isLoading = true
   const chats = await Api.chats.getChats()
-
   if (!chats) {
-    setTimeout(() => {
-      state.chats.isLoading = false
-    }, 1000)
     return
   }
+
   const record = buildRecord(chats, 'id')
   updateChats(state, record)
 
   await Promise.all(
     chats.map(async (c) => {
-      if (c.userId) {
-        const user = selectUser(state, c.userId)
+      if (isUserId(c.id)) {
+        const user = selectUser(state, c.id)
 
         if (!user) {
-          await actions.getUser(c.userId)
+          await actions.getUser(c.id)
         }
       }
     })
   )
 
-  setTimeout(() => {
-    state.chats.isLoading = false
-  }, 1000)
+  // setTimeout(() => {
+  state.chats.isLoading = false
+  // }, 1000)
+})
+
+createAction('getChat', async (state, _, payload) => {
+  const {id} = payload
+
+  const result = await Api.chats.getChat(id)
+  if (!result) {
+    return
+  }
+
+  updateChats(state, {
+    [id]: result,
+  })
+})
+
+createAction('getChatFull', async (state, _, payload) => {
+  const {id} = payload
+
+  const result = await apiManager.invokeApi({
+    method: 'chats.getChatFull',
+    variables: {
+      chatId: id,
+    },
+  })
+
+  if (!result) {
+    return
+  }
+  updateChatFullInfo(state, id, result)
 })
 
 createAction('openChat', async (state, actions, payload) => {
-  const {id} = payload
-  // const chat = selectChat(state, id)
-  const isPrivate = isPrivateChat(state, id)
-  const isSaved = isSavedMessages(state, id)
-  console.log({isPrivate, isSaved})
+  const {id, shouldChangeHash, username} = payload
+  if (!id || (!id && !username)) {
+    changeHash({hash: undefined})
+    document.title = 'Prechat'
+    return updateCurrentChat(state, {
+      chatId: undefined,
+      username: undefined,
+    })
+  }
+  const chat = selectChat(state, id)
+  if (!chat) {
+    actions.getChat({id})
+  }
+
+  document.title = chat?.title || ''
+
+  const isPrivate = isUserId(id)
+
+  if (shouldChangeHash) {
+    changeHash({hash: getChatUsername(state, chat!) || chat?.id, silent: true})
+  }
+  // const isSaved = isSavedMessages(state, id)
+  const needLoadFull = !isPrivate && !selectChatFull(state, id)
+
+  if (needLoadFull) {
+    actions.getChatFull({id})
+  } else if (isPrivate /* && !selectUser(state, id) */) {
+    actions.getUser(id)
+  }
+
+  updateCurrentChat(state, {
+    chatId: id,
+    username,
+  })
 })
 
-createAction('resolveUsername', async (state, actions, payload) => {
+createAction('openChatByUsername', async (state, actions, payload) => {
   const {username} = payload
 
-  const exist = selectResolvedUsername(state, username)
-  const exist2 = state.chats.usernames[username]
-  if (exist || exist2) {
-    console.log({exist, exist2})
+  const cached = selectChatByUsername(state, username)
+
+  if (cached) {
+    actions.openChat({id: cached.id, username})
     return
   }
-  // Sory this user doesn't seem to exist.
-  // There is no telegram account with this username.
+
   try {
     const result = await Api.chats.resolveUsername(username)
     if (!result) {
       return
     }
 
-    updateByKey(state.chats.usernames, {
-      [result.id]: username,
-    })
+    const record = {[username]: result.id}
+    updateByKey(state.chats.usernames, record)
+    replacePeer(state, result)
+
+    storages.usernames.put(record)
+
+    actions.openChat({id: result.id, username})
   } catch (e) {
     const error = getApiError(e)
     switch (error?.code) {
       case 'USERNAME_INVALID':
         actions.showNotification({title: "Sory, this user doesn't seem to exist."})
-        changeHash()
+        changeHash({hash: undefined})
         break
       case 'USERNAME_NOT_OCCUPIED':
         actions.showNotification({title: 'There is no Prechat account with this username.'})
-        changeHash()
+        changeHash({hash: undefined})
     }
   }
 })

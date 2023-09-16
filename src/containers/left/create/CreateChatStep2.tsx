@@ -2,11 +2,12 @@ import {useSignal} from '@preact/signals'
 import {type FC, type TargetedEvent, memo, useCallback} from 'preact/compat'
 
 import {getActions} from 'state/action'
-import {getDisplayedUserName} from 'state/helpers/users'
+import {getUserName} from 'state/helpers/users'
 import {getGlobalState} from 'state/signal'
 
 import {useBoolean} from 'hooks/useFlag'
 
+import {ColumnHeader} from 'components/ColumnHeader'
 import {UploadPhoto} from 'components/UploadPhoto'
 import {FloatButton, Icon, InputText} from 'components/ui'
 
@@ -58,10 +59,11 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
 
   return (
     <>
-      <div class="LeftColumn-Header">
+      <ColumnHeader>
         <LeftGoBack force={false} />
-        <p class="LeftColumn-Header_title">New {isGroup ? 'Group' : 'Channel'}</p>
-      </div>
+
+        <p class="column-header__title">New {isGroup ? 'Group' : 'Channel'}</p>
+      </ColumnHeader>
       <UploadPhoto />
       <div class={styles['chat-info']}>
         <InputText
@@ -89,7 +91,7 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
               {selectedIds.map((member) => {
                 const user = globalState.users.byId?.[member] || undefined
                 return (
-                  <p key={member}>{user ? getDisplayedUserName(user) : 'NOT SELECT USER'}</p>
+                  <p key={member}>{user ? getUserName(user) : 'NOT SELECT USER'}</p>
                   /*      <ListItem
                     userId={member}
                     key={member}

@@ -5,6 +5,7 @@ import {storages} from 'state/storages'
 
 import {updateByKey} from 'utilities/object/updateByKey'
 
+import {RightColumnScreens} from 'types/screens'
 import type {GlobalState, SignalGlobalState} from 'types/state'
 
 export function updateNotificationState(

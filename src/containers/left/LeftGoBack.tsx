@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback} from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
 import {IconButton} from 'components/ui'
 

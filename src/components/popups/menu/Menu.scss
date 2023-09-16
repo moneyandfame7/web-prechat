@@ -7,7 +7,7 @@
   min-width: 200px;
   width: max-content !important;
   padding: 5px;
-  background-color: var(--c-surface-transparent);
+  background-color: var(--c-surface-transparent) !important;
   backdrop-filter: blur(10px);
   border-radius: 12px;
   max-height: inherit;
@@ -24,10 +24,10 @@
     transition: transform 0.15s ease-in-out;
     cursor: pointer;
     &:focus-within {
-      background-color: var(--c-surface-3);
+      background-color: var(--c-surface-3-transparent);
     }
     &:hover {
-      background-color: var(--c-surface-3);
+      background-color: var(--c-surface-3-transparent);
     }
     &:active {
       transform: scale(0.97);

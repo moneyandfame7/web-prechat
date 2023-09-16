@@ -16,6 +16,7 @@
 }
 
 .Button {
+  --c-ripple: var(--c-primary-transparent);
   flex-shrink: 0;
   position: relative;
   overflow: hidden;
@@ -32,7 +33,7 @@
   align-items: center;
   gap: 15px;
   // transition: background-color 0.3s ease;
-  @include bgAndColorTransition();
+  @include bgAndColorTransition(opacity);
   body.animation-none {
     transition: none !important;
   }
@@ -51,18 +52,18 @@
     // font-weight: 400;
 
     &.Button-red {
-      --color-ripple: var(--c-red-transparent);
+      --c-ripple: var(--c-red-transparent);
       @include transparentBtn(var(--c-red), var(--c-red-transparent));
     }
 
     &.Button-primary {
-      --color-ripple: var(--c-primary-transparent);
+      --c-ripple: var(--c-primary-transparent);
 
       @include transparentBtn(var(--c-primary), var(--c-primary-transparent));
     }
 
     &.Button-gray {
-      --color-ripple: var(--c-ripple);
+      // --c-ripple: var(--c-ripple); // IDK WHAT TO DO, NOT WORK HOVER
 
       @include transparentBtn(var(--c-icon), var(--c-ripple));
     }
@@ -111,7 +112,7 @@
     &:hover {
       // &:hover,
       // :focus {
-      background-color: var(--c-surface-3);
+      background-color: red;
     }
 
     .Icon path {

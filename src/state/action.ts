@@ -5,7 +5,7 @@ import {DEBUG} from 'common/config'
 
 import type {SignInPayload, SignUpPayload} from 'types/action'
 import type {ApiLangCode} from 'types/lib'
-import type {SettingsScreens} from 'types/screens'
+import type {RightColumnScreens, SettingsScreens} from 'types/screens'
 import type {SignalGlobalState, Theme} from 'types/state'
 
 import {getGlobalState} from './signal'
@@ -30,6 +30,8 @@ interface ActionPayloads {
   reset: void
   init: void
   authInit: void
+  openRightColumn: {screen?: RightColumnScreens}
+  closeRightColumn: void
 
   // Differents
   openCommonModal: {title: string; body: string}
@@ -69,7 +71,14 @@ interface ActionPayloads {
   createChannel: CreateChannelInput
   createGroup: CreateGroupInput
   getChats: void
-  openChat: {id: string}
+  getChat: {id: string}
+  openChat: {id: string | undefined; username?: string; shouldChangeHash?: boolean}
+  openChatByUsername: {username: string}
+  getChatFull: {id: string}
+
+  /* Messages */
+  sendMessage: {text: string}
+  getMessages: {chatId: string; limit: number; offset: number; offsetDate?: Date}
 
   /* Account */
   getAuthorizations: void

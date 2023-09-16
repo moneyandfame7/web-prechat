@@ -1,6 +1,7 @@
 import {type ComponentChildren, type VNode, cloneElement} from 'preact'
 import {type FC, memo, useCallback, useRef} from 'preact/compat'
 
+import clsx from 'clsx'
 import {TransitionGroup} from 'react-transition-group'
 import CSSTransition from 'react-transition-group/CSSTransition'
 
@@ -8,12 +9,15 @@ import {usePrevious} from 'hooks'
 
 import {joinStrings} from 'utilities/string/joinStrings'
 
-import {FALLBACK_TIMEOUT, TRANSITION_CLASSES, buildProperties} from './helpers'
+import {TRANSITION_CLASSES, buildProperties, getTransitionTimeout} from './helpers'
 import type {SingleTransitionProps, TransitionProps} from './types'
 
 import './Transition.scss'
 
-const Transition = <TKey extends number>({
+/**
+ * АБО ТРЕБА ДИВИТИСЬ ПЕРЕРОБЛЮВАТИ З НУЛЯ, АБО ЧЕКНУТИ АНІМАЦІЇ, АБО ХЗ ЩО ЩЕ СУКА РОБИТИ
+ */
+const Transition = <TKey extends number | string>({
   name,
   children,
   activeKey,
@@ -23,16 +27,23 @@ const Transition = <TKey extends number>({
   containerClassname,
   timeout,
   innerClassnames,
+  shouldLockUI = name === 'zoomSlide' || name === 'slideDark',
+  isLayout = name === 'zoomSlide' || name === 'slideDark',
 }: TransitionProps<TKey>) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const prevActiveKey = usePrevious<any>(activeKey)
   // const forceUpdate = useForceUpdate()
-  const elementsRef = useRef<Record<number, ComponentChildren>>({})
+  const elementsRef = useRef<Record<string | number, ComponentChildren>>({})
+  const containerRef = useRef<{base: HTMLDivElement}>(null)
+  // const container = containerRef.current?.base
+  // const childs = Array.from(container?.childNodes || [])
+  const isAnimated = useRef(false)
+
+  // console.log({container, childs})
   const cleanup = useCallback(() => {
     if (!shouldCleanup) {
       return
     }
-
     const preservedRender =
       cleanupException !== undefined ? elementsRef.current[cleanupException] : undefined
     elementsRef.current = preservedRender ? {[cleanupException!]: preservedRender} : {}
@@ -41,7 +52,9 @@ const Transition = <TKey extends number>({
   }, [activeKey, shouldCleanup, cleanupException])
 
   elementsRef.current[activeKey] = children
-  const elementsKeys = Object.keys(elementsRef.current).map(Number)
+  const elementsKeys = Object.keys(elementsRef.current).map((k) =>
+    typeof activeKey === 'string' ? String(k) : Number(k)
+  )
   const isBackwards =
     direction === -1 ||
     (direction === 'auto' && prevActiveKey > activeKey) ||
@@ -71,18 +84,33 @@ const Transition = <TKey extends number>({
   const buildedContainerClass = joinStrings(
     containerClassname,
     'transition',
+    `transition_${isLayout ? 'layout' : ''}`,
     `transition-${name}${isBackwards ? 'Backwards' : ''}`
   )
+
+  // console.log(isAnimated.current, 'IS_ANIMATED?')
+  // console.log({prevActiveKey, activeKey})
   return (
     // @ts-expect-error Preact types are confused
     <TransitionGroup
-      onAnimationEnd={cleanup}
+      ref={containerRef}
       className={buildedContainerClass}
       childFactory={(c: VNode) => {
         /* react add to child component key prefix ".$" */
         return cloneElement(c, {
           in: c.key === activeKey,
           unmount: cleanupException !== undefined ? c.key !== cleanupException : shouldCleanup,
+          onExited: () => {
+            cleanup()
+            // isAnimated.current = false
+            isAnimated.current = false
+          },
+          onEnter: () => {
+            isAnimated.current = true
+
+            console.log('ANIMATED: ', isAnimated.current)
+          },
+          shouldLockUI,
         } as Partial<SingleTransitionProps>)
       }}
     >
@@ -105,29 +133,53 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
     onClick,
     onEntered,
     onExited,
+    onEnter,
     transitionClassnames,
     elRef,
+    direction,
     key,
     styles,
+    shouldSkip,
+    shouldLockUI,
+    toggle,
+    onMouseLeave,
+    onMouseEnter,
   }) => {
-    const {classNames, styles: buildedStyles} = buildProperties(name, styles, timeout)
+    const {classNames, styles: buildedStyles} = buildProperties(
+      name,
+      styles,
+      timeout,
+      direction,
+      toggle,
+      animateIn
+    )
 
-    const buildedClassname = joinStrings(className, 'transition-item')
+    const buildedClassname = clsx(className, 'transition-item', {
+      'transition-item_ui-lock': shouldLockUI,
+    })
     return (
       // @ts-expect-error Preact types are confused
       <CSSTransition
         key={key}
-        in={animateIn}
+        in={shouldSkip || animateIn}
         appear={appear}
         unmountOnExit={unmount}
         mountOnEnter={true}
-        timeout={timeout || FALLBACK_TIMEOUT}
+        timeout={timeout || getTransitionTimeout(name)}
         classNames={transitionClassnames || classNames}
         onExited={onExited}
         onEntered={onEntered}
+        onEnter={onEnter}
       >
         {/*  @ts-expect-error Preact types are confused */}
-        <div ref={elRef} className={buildedClassname} style={buildedStyles} onClick={onClick}>
+        <div
+          onMouseEnter={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          ref={elRef}
+          className={buildedClassname}
+          style={buildedStyles}
+          onClick={onClick}
+        >
           {children}
         </div>
       </CSSTransition>

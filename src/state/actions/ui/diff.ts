@@ -4,6 +4,8 @@ import {updateCommonModalState, updateNotificationState} from 'state/updates/dif
 import {MODAL_TRANSITION_MS, NOTIFICATION_TRANSITION} from 'common/config'
 import {updateByKey} from 'utilities/object/updateByKey'
 
+import {RightColumnScreens} from 'types/screens'
+
 createAction('showNotification', (state, actions, payload) => {
   const {title} = payload
   if (state.notification.title) {
@@ -53,4 +55,16 @@ createAction('copyToClipboard', (_, actions, payload) => {
   actions.showNotification({
     title,
   })
+})
+
+createAction('openRightColumn', (state, actions, payload) => {
+  const {screen} = payload
+  state.rightColumn = {
+    isOpen: true,
+    screen: screen || RightColumnScreens.ChatProfile,
+  }
+})
+
+createAction('closeRightColumn', (state) => {
+  state.rightColumn.isOpen = false
 })

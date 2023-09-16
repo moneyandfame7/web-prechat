@@ -1,7 +1,9 @@
 import {type FC, memo, useEffect, useState} from 'preact/compat'
 
+import {connect} from 'state/connect'
 import {getGlobalState} from 'state/signal'
 
+import {APP_TRANSITION_NAME} from 'common/config'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
 import {SettingsScreens} from 'types/screens'
@@ -24,29 +26,10 @@ const classNames: Record<LeftColumnGroup, string> = {
   [LeftColumnGroup.NewChannel]: 'LeftColumn-NewChannel',
   [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup',
 }
-
-// const TRANSITION_CASES: TransitionScreenConfig<LeftColumnGroup> = {
-//   [LeftColumnGroup.Main]: {
-//     [LeftColumnGroup.Contacts]: SLIDE_IN,
-//     [LeftColumnGroup.NewChannel]: SLIDE_IN,
-//     [LeftColumnGroup.NewGroup]: SLIDE_IN,
-//     [LeftColumnGroup.Settings]: SLIDE_IN
-//   },
-//   [LeftColumnGroup.Contacts]: {
-//     [LeftColumnGroup.Main]: SLIDE_OUT
-//   },
-//   [LeftColumnGroup.NewChannel]: {
-//     [LeftColumnGroup.Main]: SLIDE_OUT
-//   },
-//   [LeftColumnGroup.NewGroup]: {
-//     [LeftColumnGroup.Main]: SLIDE_OUT
-//   },
-//   [LeftColumnGroup.Settings]: {
-//     [LeftColumnGroup.Main]: SLIDE_OUT
-//   }
-// }
-
-const LeftColumn: FC = () => {
+type StateProps = {
+  isChatOpen: boolean
+}
+const LeftColumn: FC<StateProps> = ({isChatOpen}) => {
   const {globalSettingsScreen} = getGlobalState()
 
   const [activeScreen, setActiveScreen] = useState(LeftColumnScreen.Chats)
@@ -78,8 +61,6 @@ const LeftColumn: FC = () => {
       break
   }
   const handleReset = (force?: boolean) => {
-    console.log(LeftColumnScreen[activeScreen])
-
     if (force || activeScreen === LeftColumnScreen.Search) {
       setActiveScreen(LeftColumnScreen.Chats)
       return
@@ -99,12 +80,16 @@ const LeftColumn: FC = () => {
       return
     }
 
+    if (activeScreen === LeftColumnScreen.Settings) {
+      console.log(SettingsScreens[settingsScreen])
+    }
+
     setActiveScreen(LeftColumnScreen.Chats)
   }
 
   useEffect(() => {
     return addEscapeListener(() => {
-      handleReset()
+      handleReset(false)
     })
   }, [activeScreen])
   useEffect(() => {
@@ -139,27 +124,30 @@ const LeftColumn: FC = () => {
       }}
     >
       <div class="LeftColumn">
+        {/* <SingleTransition
+          unmount={false}
+          in={isChatOpen}
+          shouldSkip={isMobile}
+          name="slideDark"
+          direction={isChatOpen ? -1 : 1}
+        > */}
         <Transition
           cleanupException={LeftColumnGroup.Main}
           activeKey={activeGroup}
-          name="zoomSlide"
-          // containerClassname="Screen-container"
+          name={APP_TRANSITION_NAME}
         >
           {renderScreen()}
         </Transition>
-        {/* <SwitchTransition
-          activeKey={activeGroup}
-          // classNames={classNames}
-          cleanupException={[LeftColumnGroup.Main]}
-          name="fade"
-          permanentClassname="Screen-container"
-          getTransitionByCase={getTransitionByCase}
-        >
-          {renderScreen(activeGroup)}
-        </SwitchTransition> */}
+        {/* </SingleTransition> */}
       </div>
     </LeftColumnProvider>
   )
 }
 
-export default memo(LeftColumn)
+export default memo(
+  connect(({currentChat}): StateProps => {
+    return {
+      isChatOpen: Boolean(currentChat.chatId),
+    }
+  })(LeftColumn)
+)

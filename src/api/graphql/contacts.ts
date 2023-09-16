@@ -13,19 +13,13 @@ export const QUERY_GET_CONTACTS: TypedDocumentNode<{getContacts: ApiUser[]}, voi
 `
 
 export const MUTATION_ADD_CONTACT: TypedDocumentNode<
-  {addContact: AddContactResponse},
+  {addContact: ApiUser},
   {input: AddContactInput}
 > = gql`
   mutation AddContact($input: AddContactInput!) {
     addContact(input: $input) {
-      user {
-        ...AllUserFields
-      }
-      chat {
-        ...AllChatFields
-      }
+      ...AllUserFields
     }
   }
   ${FRAGMENT_USER}
-  ${FRAGMENT_CHAT}
 `

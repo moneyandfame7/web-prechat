@@ -1,21 +1,6 @@
-import {type DocumentNode, gql} from '@apollo/client'
+import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
-export const FRAGMENT_MESSAGE: DocumentNode = gql`
-  fragment AllMessageFields on Message {
-    id
-    senderId
-    chatId
-    media {
-      __typename
-    }
-    text
-    createdAt
-    updatedAt
-    isPost
-    postAuthor
-    views
-  }
-`
+import type {ApiMessage, SendMessageInput} from 'api/types/messages'
 
 export const FRAGMENT_PHOTO: DocumentNode = gql`
   fragment AllPhotoFields on Photo {
@@ -24,4 +9,50 @@ export const FRAGMENT_PHOTO: DocumentNode = gql`
     blurHash
     url
   }
+`
+export const FRAGMENT_MESSAGE_ACTION: DocumentNode = gql`
+  fragment AllMessageActionFields on MessageAction {
+    text
+    type
+    users
+    photo {
+      ...AllPhotoFields
+    }
+    values
+  }
+  ${FRAGMENT_PHOTO}
+`
+export const FRAGMENT_MESSAGE: DocumentNode = gql`
+  fragment AllMessageFields on Message {
+    id
+    senderId
+    chatId
+    isOutgoing
+    isPost
+    media {
+      __typename
+    }
+    action {
+      ...AllMessageActionFields
+    }
+    text
+    createdAt
+    updatedAt
+    postAuthor
+    views
+  }
+  ${FRAGMENT_MESSAGE_ACTION}
+`
+
+export const MUTATION_SEND_MESSAGE: TypedDocumentNode<{
+  sendMessage: ApiMessage
+  input: SendMessageInput
+}> = gql`
+  mutation SendMessage($input: SendMessageInput!) {
+    sendMessage(input: $input) {
+      ...AllMessageFields
+    }
+  }
+
+  ${FRAGMENT_MESSAGE}
 `

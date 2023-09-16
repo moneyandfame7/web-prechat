@@ -22,6 +22,7 @@ export interface ButtonProps {
   withFastClick?: boolean
   ripple?: boolean
   onClick?: () => void
+  id?: SignalOr<string>
   className?: string
   fullWidth?: boolean
   'aria-label'?: SignalOrString

@@ -1,19 +1,21 @@
-import {type FC, memo} from 'preact/compat'
+import {type FC, Fragment, memo} from 'preact/compat'
 import {useCallback, useRef, useState} from 'preact/hooks'
 
-import {useInputValue} from 'hooks'
-
-import {getDisplayedUserName} from 'state/helpers/users'
+import {getUserName, getUserStatus} from 'state/helpers/users'
 import {selectContacts} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
+
+import {useInputValue} from 'hooks'
 
 import {fromRecord} from 'utilities/array/fromRecord'
 
 import {LeftColumnScreen} from 'types/ui'
 
-import {Divider, FloatButton, Icon, InputText} from 'components/ui'
+import {ColumnHeader} from 'components/ColumnHeader'
+import {Divider, FloatButton, Icon, IconButton, InputText} from 'components/ui'
+import {AvatarTest} from 'components/ui/AvatarTest'
+import {ListItem} from 'components/ui/ListItem'
 
-import {LeftGoBack} from '../LeftGoBack'
 import {useLeftColumn} from '../context'
 
 import './CreateChatStep1.scss'
@@ -50,19 +52,20 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
       <>
         {filteredList.map((user) => {
           return (
-            <p key={user.id}>{getDisplayedUserName(user)}</p>
-            /*    <ListItem
-              userId={user.id}
-              user={user}
-              key={user.id}
-              title={getDisplayedUserName(user)}
-              subtitle={user.username ? `@${user.username}` : undefined}
-              onClick={() => {
-                handleSelect(user.id)
-              }}
-              withCheckbox
-              checked={selectedIds.includes(user.id)}
-            /> */
+            <Fragment key={user.id}>
+              <ListItem
+                withCheckbox
+                isChecked={selectedIds.includes(user.id)}
+                onClick={() => {
+                  handleSelect(user.id)
+                }}
+                // withRipple={false}
+                title={getUserName(user)}
+                subtitle={getUserStatus(user)}
+              >
+                <AvatarTest size="s" />
+              </ListItem>
+            </Fragment>
           )
         })}
       </>
@@ -71,10 +74,15 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
 
   return (
     <>
-      <div class="LeftColumn-Header">
-        <LeftGoBack />
-        <p class="LeftColumn-Header_title">Add Members {render.current}</p>
-      </div>
+      <ColumnHeader>
+        <IconButton
+          icon="arrowLeft"
+          onClick={() => {
+            setScreen(LeftColumnScreen.Chats)
+          }}
+        />
+        <p class="column-header__title">Add Members</p>
+      </ColumnHeader>
       <InputText
         value={value}
         onInput={handleInput}

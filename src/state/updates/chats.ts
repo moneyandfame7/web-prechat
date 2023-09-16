@@ -1,25 +1,49 @@
-import type {ApiChat, ApiPeer} from 'api/types'
+import {RevertDeepSignal} from 'deepsignal'
 
+import type {ApiChat, ApiChatFull, ApiPeer} from 'api/types'
+
+import {getChatUsername_deprecated, isPeerChat} from 'state/helpers/chats'
 import {selectChat} from 'state/selectors/chats'
 import {storages} from 'state/storages'
 
 import {DEBUG} from 'common/config'
+import {deepClone} from 'utilities/object/deepClone'
+import {deepCopy} from 'utilities/object/deepCopy'
+import {isDeepEqual} from 'utilities/object/isDeepEqual'
 import {updateByKey} from 'utilities/object/updateByKey'
 
-import type {SignalGlobalState} from 'types/state'
+import type {GlobalState, SignalGlobalState} from 'types/state'
+
+import {updateUsers} from '.'
 
 export function updateChats(global: SignalGlobalState, chatsById: Record<string, ApiChat>) {
   updateByKey(global.chats.byId, chatsById)
 
+  // Object.values(chatsById)
   const list = Object.values(global.chats.byId as Record<string, ApiChat>)
+
   const orderedIds = list
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .map((s) => s.id)
 
   global.chats.ids = [...orderedIds]
 
-  updateUsernames(global, list)
+  updateUsernamesFromPeers(global, list)
+
   storages.chats.put(chatsById)
+}
+
+export function replacePeer(global: SignalGlobalState, peer: ApiPeer) {
+  const isChat = isPeerChat(peer)
+  if (isChat) {
+    updateChats(global, {
+      [peer.id]: peer,
+    })
+  } else {
+    updateUsers(global, {
+      [peer.id]: peer,
+    })
+  }
 }
 
 export function updateChat(
@@ -48,15 +72,50 @@ export function updateChat(
   })
 }
 
-export function updateUsernames(global: SignalGlobalState, peers: ApiPeer[]) {
+export function updateChatsFull(
+  global: SignalGlobalState,
+  fullById: Record<string, ApiChatFull>
+) {
+  updateByKey(global.chats.fullById, fullById)
+
+  storages.chatsFull.put(fullById)
+}
+
+export function updateChatFullInfo(
+  global: SignalGlobalState,
+  chatId: string,
+  fullInfo: ApiChatFull
+) {
+  const existFull = global.chats.fullById[chatId]
+
+  if (isDeepEqual(existFull, fullInfo)) {
+    return
+  }
+
+  const newObj = deepCopy({...existFull, ...fullInfo})
+
+  global.chats.fullById[chatId] = newObj
+  storages.chatsFull.put({
+    [chatId]: newObj,
+  })
+}
+
+export function updateCurrentChat(
+  global: SignalGlobalState,
+  toUpd: Partial<GlobalState['currentChat']>
+) {
+  updateByKey(global.currentChat, toUpd)
+}
+
+export function updateUsernamesFromPeers(global: SignalGlobalState, peers: ApiPeer[]) {
   const usernames = global.chats.usernames
   const usernamePredicate = (p: ApiPeer) => {
-    const username = getPeerUsername(p)
+    const username = getChatUsername_deprecated(p)
 
-    return typeof username !== 'undefined' && !usernames?.[username]
+    return username !== undefined && !usernames?.[username]
   }
   const filteredAndUpdated = peers.filter(usernamePredicate).reduce((acc, p) => {
-    const username = getPeerUsername(p)
+    const username = getChatUsername_deprecated(p)
 
     if (username) {
       acc[username] = p.id
@@ -64,9 +123,8 @@ export function updateUsernames(global: SignalGlobalState, peers: ApiPeer[]) {
     return acc
   }, {} as Record<string, string>)
 
-  global.chats.usernames = {...filteredAndUpdated} as SignalGlobalState['chats']['usernames']
-}
-
-export function getPeerUsername(p: ApiPeer) {
-  return 'username' in p ? p.username : 'title' in p ? p.title : undefined
+  global.chats.usernames = {
+    ...usernames,
+    ...filteredAndUpdated,
+  } as SignalGlobalState['chats']['usernames']
 }

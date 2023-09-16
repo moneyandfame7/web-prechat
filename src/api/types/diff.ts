@@ -46,3 +46,7 @@ export type ResolvedPeer =
       type: 'user'
       resolved: ApiUser
     }
+
+export type ApiChatId = string
+export type ApiUserId = string
+export type ApiPeerId = ApiChatId | ApiUserId

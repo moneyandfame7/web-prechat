@@ -5,9 +5,18 @@
   width: 100%;
   height: 100%;
   animation-fill-mode: forwards !important;
-
+  // animation-
   &_inactive {
     display: none !important;
+  }
+
+  &_ui-lock {
+    &.transition_item-from,
+    &.transition-item_to {
+      pointer-events: none !important;
+      user-select: none !important;
+      // cursor: unset !important;
+    }
   }
 }
 // Classnames taked from web telegram :)
@@ -24,6 +33,10 @@
   position: relative;
   width: 100%;
   height: 100%;
+
+  &_layout {
+    transform-style: preserve-3d;
+  }
 
   // overflow: hidden;
 
@@ -106,11 +119,13 @@
     }
   }
   &-slideBackwards {
-    > .transition-item_from {
+    > .transition-item_from,
+    &_from {
       animation: slide-in-backwards var(--slide-transition);
     }
 
-    > .transition-item_to {
+    > .transition-item_to,
+    &_to {
       transform: translateX(-100%);
       animation: slide-out-backwards var(--slide-transition);
     }

@@ -12,22 +12,30 @@ export type TransitionName =
   | 'fade'
   | 'slideDark'
   | 'rotate'
-
-export interface TransitionProps<TKey extends number> {
+export type TransitionDirection = 'auto' | 'inverse' | 1 | -1
+export interface TransitionProps<TKey extends number | string> {
   activeKey: TKey
   name: TransitionName
   children: ComponentChildren
-  direction?: 'auto' | 'inverse' | 1 | -1
+  direction?: TransitionDirection
   shouldCleanup?: boolean
+  isLayout?: boolean
   cleanupException?: TKey
+  shouldLockUI?: boolean
   containerClassname?: string
   innerClassnames?: string | {[key in TKey]: string}
   timeout?: number
+  onExitEnd?: VoidFunction
 }
 export interface SingleTransitionProps {
   name: TransitionName
   in?: boolean
   unmount?: boolean
+  shouldSkip?: boolean
+  shouldLockUI?: boolean
+  direction?: TransitionDirection
+  onEnter?: () => void
+  toggle?: boolean
   /**
    * If used async component, must use appear....
    */
@@ -37,6 +45,8 @@ export interface SingleTransitionProps {
   timeout?: number
   children: ComponentChildren
   onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
+  onMouseLeave?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
+  onMouseEnter?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   onExited?: (node?: Element) => void
   onEntered?: (node?: Element) => void
   key?: string | number

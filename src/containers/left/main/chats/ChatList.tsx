@@ -12,7 +12,7 @@ import './ChatList.scss'
 const Skeleton = () => {
   return (
     <>
-      {Array.from({length: 20}).map((id) => (
+      {Array.from({length: 10}).map((id) => (
         <div class="skeleton-chat-item" key={id}>
           <div class="skeleton skeleton-avatar" />
 
@@ -62,16 +62,14 @@ export const Chats: FC = () => {
   }
 
   return (
-    <>
-      <Transition
-        containerClassname="chats-list scrollable scrollable-y"
-        name="fade"
-        shouldCleanup
-        activeKey={activeScreen}
-        // durations={250}
-      >
-        {render()}
-      </Transition>
-    </>
+    <Transition
+      containerClassname="chats-list scrollable scrollable-y"
+      name="fade"
+      shouldCleanup
+      activeKey={activeScreen}
+      // durations={250}
+    >
+      {render()}
+    </Transition>
   )
 }

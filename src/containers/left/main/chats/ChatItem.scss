@@ -1,8 +1,49 @@
 .chat-item {
   .list-item__title {
-    font-weight: 600;
+    font-weight: 500;
   }
 
+  .status {
+    position: relative;
+
+    & .online-badge-transition {
+      width: max-content;
+      height: max-content;
+      background-color: transparent !important;
+      top: auto;
+      left: auto;
+      bottom: 10%;
+      right: 10%;
+      min-width: 10px;
+      min-height: 10px;
+    }
+    & .online-badge {
+      position: absolute;
+      background-color: var(--c-green);
+      box-shadow: 0 0 0 2px var(--c-bg);
+      min-width: 10px;
+      min-height: 10px;
+      border-radius: 50%;
+    }
+  }
+
+  &.opened {
+    background-color: var(--c-primary);
+    color: #fff;
+    &:hover {
+      background-color: var(--c-primary);
+    }
+    --c-font-secondary: #fff;
+
+    .badge {
+      background-color: #fff;
+      color: #000;
+    }
+    // .list-item__subtitle {
+    // color: #fff;
+    // }
+  }
+  // transition: height 0.3s ease;
   // .row {
   //   text-overflow: ellipsis;
   //   overflow: hidden;

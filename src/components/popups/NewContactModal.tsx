@@ -16,9 +16,6 @@ import type {ApiUser} from 'api/types/users'
 
 import {getActions} from 'state/action'
 
-import {useEventListener} from 'hooks/useEventListener'
-import {useBoolean} from 'hooks/useFlag'
-
 import {getRandomAvatarVariant} from 'utilities/avatar'
 import {addEscapeListener} from 'utilities/keyboardListener'
 import {validatePhone} from 'utilities/phone/validatePhone'
@@ -35,9 +32,10 @@ import './NewContactModal.scss'
 export interface NewContactModalProps {
   isOpen: boolean
   userId?: string
+  isByPhoneNumber?: boolean
 }
 /**
- * сам компонент Modal робити не асинхроним, і там буде transition і все таке, а інші модалки - асінхронні
+ * сам компонент Modal робити не асинхроним ???, і там буде transition і все таке, а інші модалки - асінхронні
  */
 const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose */}) => {
   const actions = getActions()
