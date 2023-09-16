@@ -13,7 +13,7 @@ interface OwnProps {
   chatId: string
 }
 interface StateProps {}
-const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId}) => {
+const ChatInputImpl: FC<OwnProps & StateProps> = (/* {chatId} */) => {
   const value = useSignal('')
 
   const handleChange = (e: TargetedEvent<HTMLInputElement, ChangeEvent>) => {
@@ -33,7 +33,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId}) => {
             'is-empty': value.value.length === 0,
           })}
         >
-          <div data-placeholder="Message" class="input-field-fake"></div>
+          <div data-placeholder="Message" class="input-field-fake" />
 
           <input value={value} onInput={handleChange} placeholder="daun" class="input-field" />
         </div>
@@ -47,7 +47,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId}) => {
   )
 }
 
-const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
+const mapStateToProps: MapState<OwnProps, StateProps> = (/* state, ownProps */) => {
   return {}
 }
 export const ChatInput = memo(connect(mapStateToProps)(ChatInputImpl))

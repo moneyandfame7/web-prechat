@@ -30,7 +30,6 @@ export function addByKey<T extends object>(target: T, source: Partial<RevertDeep
 export function deleteByKey<T extends object>(target: T) {
   Object.keys(target).forEach((key) => {
     // if (target[key as keyof T]) {
-    console.log(`Was deleted - ${key}`)
     delete target[key as keyof T]
     // }
   })

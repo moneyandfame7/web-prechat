@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback, useEffect, useMemo} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect} from 'preact/compat'
 
 import {SettingsContext} from 'context/settings'
 
@@ -10,14 +10,11 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n/types'
 
-import {getInitials} from 'utilities/string/getInitials'
-
 import {SettingsScreens} from 'types/screens'
 
 import {useLeftColumn} from 'containers/left/context'
 
 import {ColumnWrapper} from 'components/ColumnWrapper'
-import {ConfirmButton} from 'components/ConfirmButton'
 import {ProfileAvatar} from 'components/ProfileAvatar'
 import ConfirmModal from 'components/popups/ConfirmModal.async'
 import {MenuItem} from 'components/popups/menu'

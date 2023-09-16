@@ -5,9 +5,8 @@ import clsx from 'clsx'
 
 import type {SignalOr} from 'types/ui'
 
-import {Icon} from 'components/ui'
-
 import {Ripple} from '../Ripple'
+import {Icon} from './Icon'
 
 import './Checkbox.scss'
 

@@ -18,5 +18,5 @@ export class ApiMessages extends ApiBaseMethod {
     return cleanTypename(data.sendMessage)
   }
 
-  public async getMessages(input: GetMessagesInput) {}
+  // public async getMessages(input: GetMessagesInput) {}
 }

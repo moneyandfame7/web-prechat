@@ -2,9 +2,9 @@ import type {RefObject} from 'preact'
 
 import type {LottieRefCurrentProps} from 'lottie-react'
 
-import type {Size} from 'types/ui'
+import type {ANIMATED_SESSION_ICONS} from 'state/helpers/account'
 
-import type {ANIMATED_SESSION_ICONS} from 'containers/left/settings/helpers'
+import type {Size} from 'types/ui'
 
 type DeviceAnimations = `Device-${(typeof ANIMATED_SESSION_ICONS)[number]}`
 export type LottieAnimations =

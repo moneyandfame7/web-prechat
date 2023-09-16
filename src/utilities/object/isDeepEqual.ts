@@ -1,5 +1,6 @@
 import type {AnyObject} from 'types/common'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isDeepEqual<T = any>(value1: T, value2: T): boolean {
   const type1 = typeof value1
   const type2 = typeof value2
@@ -19,7 +20,9 @@ export function isDeepEqual<T = any>(value1: T, value2: T): boolean {
   }
 
   if (isArray1) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const array1 = value1 as any[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const array2 = value2 as any[]
 
     if (array1.length !== array2.length) {

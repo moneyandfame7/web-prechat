@@ -53,5 +53,5 @@ createAction('init', async (state): Promise<void> => {
     state.initialization = false
   }, 400)
 
-  console.log({global: state})
+  // console.log({global: state})
 })

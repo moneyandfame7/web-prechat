@@ -6,9 +6,6 @@ import type {ApiMessage} from 'api/types/messages'
 import {type MapState, connect} from 'state/connect'
 import {selectChatMessages} from 'state/selectors/messages'
 
-import {AvatarTest} from 'components/ui/AvatarTest'
-import {ListItem} from 'components/ui/ListItem'
-
 import {MessageItem} from './MessageItem'
 
 import './MessagesList.scss'
@@ -19,7 +16,7 @@ type OwnProps = {
 
 type StateProps = {
   messagesIds: string[]
-  messagesById: Record<string, ApiMessage>
+  messagesById?: Record<string, ApiMessage>
 }
 /**
  * @todo views, sending status icon,
@@ -42,6 +39,7 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
 
   return {
     messagesById,
+    messagesIds: [],
   }
 }
 

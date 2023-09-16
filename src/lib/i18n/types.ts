@@ -42,7 +42,7 @@ export function TEST_translate<K extends keyof MyKeyset>(key: K, ...rest: Transl
     pluralizeFns.set(i18n.lang_code, pluralizedFn)
   }
   if (typeof translation === 'undefined') {
-    console.error('TRANSLATE NOT FOUND', key)
+    // console.error('TRANSLATE NOT FOUND', key)
     // TEST_fetchLanguage(i18n.lang_code)
     TEST_changeLanguage(i18n.lang_code)
     return String(key)
@@ -53,6 +53,7 @@ export function TEST_translate<K extends keyof MyKeyset>(key: K, ...rest: Transl
 
   const pluralKey = pluralizedFn(params.count as number)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const pluralizedTranslation: string = (translation as any)[pluralKey]! || translation.other
   if (!pluralizedTranslation) {
     // eslint-disable-next-line no-console
@@ -145,9 +146,9 @@ type TrimString<TString extends string> = TString extends `${' '}${infer Rest}`
   : TString
 
 // need use as const for work
-const obj = {
-  HelloInterpolate: 'Hello, {{aboba}}',
-} as const
-type Test = TranslationParameters<typeof obj.HelloInterpolate>
+// const obj = {
+//   HelloInterpolate: 'Hello, {{aboba}}',
+// } as const
+// type Test = TranslationParameters<typeof obj.HelloInterpolate>
 
 type IsNever<T> = [T] extends [never] ? true : false

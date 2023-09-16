@@ -1,4 +1,4 @@
-import {type FC, useEffect} from 'preact/compat'
+import {type FC} from 'preact/compat'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'

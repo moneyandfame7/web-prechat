@@ -8,7 +8,7 @@ type HandlerName =
   | 'onLeft'
   | 'onRight'
   | 'onTab'
-type Handler = (e: KeyboardEvent) => void | boolean
+type Handler = (e: KeyboardEvent) => void | boolean | Promise<void>
 type CaptureOptions = Partial<Record<HandlerName, Handler>>
 
 const keyToHandlerName: Record<string, HandlerName> = {

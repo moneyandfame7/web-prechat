@@ -130,9 +130,7 @@ export class ApolloClientWrapper {
             'prechat-session': auth.session || '',
           },
         }),
-        shouldRetry: (err) => {
-          console.log(err, '00000000000[[[[[[[[]]]]]]]]')
-
+        shouldRetry: (/* err */) => {
           return false
         },
       })

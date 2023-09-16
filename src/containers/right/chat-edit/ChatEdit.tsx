@@ -12,7 +12,7 @@ export interface ChatEditProps {
   currentScreen: ChatEditScreens
 }
 interface StateProps {}
-const ChatEdit: FC<ChatEditProps> = ({chatId, onCloseScreen, currentScreen}) => {
+const ChatEdit: FC<ChatEditProps> = ({chatId, onCloseScreen}) => {
   return (
     <ColumnWrapper title="Edit" onGoBack={onCloseScreen}>
       Chat edit {chatId}
@@ -20,7 +20,7 @@ const ChatEdit: FC<ChatEditProps> = ({chatId, onCloseScreen, currentScreen}) => 
   )
 }
 
-const mapStateToProps: MapState<ChatEditProps, StateProps> = (state, ownProps) => {
+const mapStateToProps: MapState<ChatEditProps, StateProps> = (/* state, ownProps */) => {
   return {}
 }
 

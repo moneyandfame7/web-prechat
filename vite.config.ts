@@ -57,9 +57,9 @@ export default ({mode}) => {
         devOptions: {
           enabled: true,
         },
-
         workbox: {
           globPatterns: ['**/*.{js,ts,css,html}', '**/*.{svg,png,jpg,gif,woff2,json}'],
+          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
         },
       }),
       // chunkSplitPlugin({

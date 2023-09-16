@@ -35,7 +35,6 @@ const ServiceWorker: FC = memo(() => {
     <>
       {needRefresh && (
         <UpdateAppPopup
-          isOpen
           onUpdate={() => {
             updateServiceWorker(false)
           }}

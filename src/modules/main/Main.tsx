@@ -26,12 +26,7 @@ interface StateProps {
   newContactByPhone?: boolean
   shouldGetSelf: boolean
 }
-const Main: FC<StateProps> = ({
-  isNewContactModalOpen,
-  newContactByPhone,
-  newContactUserId,
-  shouldGetSelf,
-}) => {
+const Main: FC<StateProps> = ({isNewContactModalOpen, newContactUserId, shouldGetSelf}) => {
   const global = getGlobalState()
   const {getChats, getSelf, getContactList, updateUserStatus} = getActions()
   useEffect(() => {

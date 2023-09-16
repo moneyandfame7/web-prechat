@@ -19,17 +19,17 @@ import Settings from './settings/Settings.async'
 
 import './LeftColumn.scss'
 
-const classNames: Record<LeftColumnGroup, string> = {
-  [LeftColumnGroup.Main]: 'LeftColumn-Main',
-  [LeftColumnGroup.Contacts]: 'LeftColumn-Contacts',
-  [LeftColumnGroup.Settings]: 'LeftColumn-Settings',
-  [LeftColumnGroup.NewChannel]: 'LeftColumn-NewChannel',
-  [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup',
-}
+// const classNames: Record<LeftColumnGroup, string> = {
+//   [LeftColumnGroup.Main]: 'LeftColumn-Main',
+//   [LeftColumnGroup.Contacts]: 'LeftColumn-Contacts',
+//   [LeftColumnGroup.Settings]: 'LeftColumn-Settings',
+//   [LeftColumnGroup.NewChannel]: 'LeftColumn-NewChannel',
+//   [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup',
+// }
 type StateProps = {
   isChatOpen: boolean
 }
-const LeftColumn: FC<StateProps> = ({isChatOpen}) => {
+const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
   const {globalSettingsScreen} = getGlobalState()
 
   const [activeScreen, setActiveScreen] = useState(LeftColumnScreen.Chats)
@@ -81,7 +81,8 @@ const LeftColumn: FC<StateProps> = ({isChatOpen}) => {
     }
 
     if (activeScreen === LeftColumnScreen.Settings) {
-      console.log(SettingsScreens[settingsScreen])
+      // eslint-disable-next-line no-console
+      console.error(SettingsScreens[settingsScreen], 'NEED TO HANDLE SETTINGS')
     }
 
     setActiveScreen(LeftColumnScreen.Chats)

@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback, useEffect, useRef, useState} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect} from 'preact/compat'
 
 import type {ApiChat} from 'api/types'
 
@@ -14,7 +14,6 @@ import {addEscapeListener} from 'utilities/keyboardListener'
 import {connectStateToNavigation} from 'utilities/routing'
 
 import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
-import UpdateAppPopup from 'components/popups/UpdateAppPopup'
 import {Button, IconButton} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
@@ -84,7 +83,7 @@ const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
       : undefined
   }, [isChatOpen])
 
-  const isNext = useRef(false)
+  // const isNext = useRef(false)
   const {value, toggle} = useBoolean(false)
   return (
     <div class="MiddleColumn">

@@ -3,10 +3,8 @@ import {type FC, memo, useCallback} from 'preact/compat'
 import type {AnyFunction} from 'types/common'
 
 import {Button} from 'components/ui'
-import {useCachedLazy} from 'hooks/useCachedLazy'
 
-import {Modal} from './modal'
-import {ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
+import {Modal, ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
 
 import './ConfirmModal.scss'
 

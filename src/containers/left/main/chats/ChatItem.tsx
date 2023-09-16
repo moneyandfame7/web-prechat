@@ -1,10 +1,9 @@
-import {type FC, TargetedEvent, memo, useMemo} from 'preact/compat'
+import {type FC, memo, useMemo} from 'preact/compat'
 
 import clsx from 'clsx'
 
 import type {ApiChat, ApiUser} from 'api/types'
 
-import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {getChatName_deprecated, getChatRoute} from 'state/helpers/chats'
 import {getMessageText} from 'state/helpers/messages'
@@ -13,11 +12,7 @@ import {selectChat} from 'state/selectors/chats'
 import {isUserOnline, selectUser} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
 
-import {useFastClick} from 'hooks/useFastClick'
-
 import {formatDate} from 'utilities/date/convert'
-
-import {MouseClickHandler} from 'types/ui'
 
 import {SingleTransition} from 'components/transitions'
 import {AvatarTest} from 'components/ui/AvatarTest'
@@ -47,17 +42,17 @@ const ChatItemImpl: FC<OwnProps & StateProps> = ({
   currentChatId,
 }) => {
   const global = getGlobalState()
-  const {openChat} = getActions()
+  // const {openChat} = getActions()
   const chatRoute = getChatRoute(isPrivate ? user : chat)
   const chatDate = useMemo(
     () => chat && formatDate(new Date(chat?.createdAt), true, false),
     [chat?.createdAt]
   )
 
-  const handleClick = (e: TargetedEvent<HTMLElement, MouseEvent>) => {
-    e.preventDefault()
-    openChat({id: chat?.id, shouldChangeHash: true, username: user?.username})
-  }
+  // const handleClick = (e: TargetedEvent<HTMLElement, MouseEvent>) => {
+  //   e.preventDefault()
+  //   openChat({id: chat?.id, shouldChangeHash: true, username: user?.username})
+  // }
 
   // const clickHandlers = useFastClick({fast: true, handler: handleClick})
 
@@ -96,7 +91,7 @@ export const ChatItem = memo(
     if (!chat) {
       return {}
     }
-    const {senderId, text, isOutgoing} = chat.lastMessage || {}
+    const {senderId /* , text, isOutgoing */} = chat.lastMessage || {}
     const lastMessageSender = senderId ? selectUser(state, senderId) : undefined
 
     const isPrivate = chat?.type === 'chatTypePrivate'

@@ -75,7 +75,6 @@ export class ApiChats extends ApiBaseMethod {
         chatId,
       },
     })
-    console.log({data})
     return data.getChatFull
   }
 

@@ -5,8 +5,7 @@ import {getGlobalState} from 'state/signal'
 
 import {Button} from 'components/ui'
 
-import {Modal} from './modal'
-import {ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
+import {Modal, ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
 
 export interface CommonModalProps {
   isOpen: boolean
@@ -14,6 +13,7 @@ export interface CommonModalProps {
 const CommonModal: FC<CommonModalProps> = ({isOpen}) => {
   const {closeCommonModal} = getActions()
   const {commonModal} = getGlobalState()
+
   return (
     <Modal isOpen={isOpen} onClose={closeCommonModal} closeOnEsc>
       <ModalHeader>
@@ -21,7 +21,7 @@ const CommonModal: FC<CommonModalProps> = ({isOpen}) => {
       </ModalHeader>
       <ModalContent>{commonModal.body}</ModalContent>
       <ModalActions>
-        <Button variant="transparent" fullWidth onClick={closeCommonModal}>
+        <Button variant="transparent" fullWidth onClick={() => closeCommonModal()}>
           Ok
         </Button>
       </ModalActions>

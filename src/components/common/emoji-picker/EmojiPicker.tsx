@@ -123,11 +123,11 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({recentEmojis, isOpe
       // behavior: 'smooth',
       top: topOffset,
     })
-    console.log(categoryEl.getBoundingClientRect())
     setActiveCategoryIndex(idx)
   }
 
   function handleEmojiClick(emojiId: string) {
+    // eslint-disable-next-line no-console
     console.log('CLICKED:', emojiData?.emojis[emojiId])
   }
 

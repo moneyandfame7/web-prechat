@@ -24,7 +24,7 @@ function detectPlatform(): string | undefined {
   const windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE']
   const iosPlatforms = ['iPhone', 'iPad', 'iPod']
   /*  */
-  const androidMatch = userAgent.match(/android\s([0-9\.]*)/i)
+  const androidMatch = userAgent.match(/android\s([0-9.]*)/i)
   if (
     iosPlatforms.indexOf(platform) !== -1 ||
     (platform === 'MacIntel' && 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 2)

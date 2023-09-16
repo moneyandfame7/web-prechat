@@ -1,4 +1,4 @@
-import type {FC} from 'preact/compat'
+// import type {FC} from 'preact/compat'
 
-interface RightHeaderProps {}
-const RightHeaderImpl: FC<RightHeaderProps> = () => {}
+// interface RightHeaderProps {}
+// const RightHeaderImpl: FC<RightHeaderProps> = () => {}

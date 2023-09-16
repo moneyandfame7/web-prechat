@@ -30,7 +30,7 @@ export function t(key: LanguagePackKeys): Signal<string> {
   //   // return key
   // }
   // console.log(translate)
-  return translate
+  return translate as Signal<string>
 }
 
 export async function changeLanguage(language: ApiLangCode) {

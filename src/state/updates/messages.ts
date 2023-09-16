@@ -20,6 +20,7 @@ export function updateMessages(
   }
   if (!byId) {
     global.messages.byChatId[chatId] = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       byId: messages as any,
     }
   } else {

@@ -47,7 +47,7 @@ const CreateChat: FC<CreateChatProps> = ({isGroup}) => {
     }
   }, [activeScreen])
 
-  console.log('CREATE_CHAT', LeftColumnScreen[activeScreen])
+  // console.log('CREATE_CHAT', LeftColumnScreen[activeScreen])
   const renderScreen = useCallback(() => {
     switch (activeGroup) {
       case CreateChatGroup.Step1:

@@ -1,6 +1,6 @@
 import {type FC} from 'preact/compat'
 
-import {selectChat, selectChatsIds, selectIsChatsFetching} from 'state/selectors/chats'
+import {selectChatsIds, selectIsChatsFetching} from 'state/selectors/chats'
 import {getGlobalState} from 'state/signal'
 
 import {Transition} from 'components/transitions'

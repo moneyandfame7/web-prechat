@@ -1,6 +1,6 @@
-import type {Ref, RefObject} from 'preact'
+import type {RefObject} from 'preact'
 import {type CSSProperties, type TargetedEvent} from 'preact/compat'
-import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
+import {useCallback, useEffect, useState} from 'preact/hooks'
 
 import {useBoolean} from './useFlag'
 
@@ -9,7 +9,7 @@ export function useContextMenu(
   menuRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLDivElement>,
   getMenuElement: () => HTMLElement | null,
-  getLimiterElement?: () => HTMLElement | null,
+  _getLimiterElement?: () => HTMLElement | null,
   withPortal?: boolean
   // limiter?: 'trigger' | 'window' | 'custom' = 'trigger'
 ) {
@@ -46,11 +46,11 @@ export function useContextMenu(
     // getMenuElement()
     const menuEl = menuRef.current
     // const containerEl = getContainerElement()
-    const limiterEl = getLimiterElement?.()
+    // const limiterEl = getLimiterElement?.()
     const container = triggerRef.current
     const menuWidth = menuEl?.offsetWidth
     const menuHeight = menuEl?.offsetHeight
-    const limiterWidth = limiterEl?.offsetWidth || container?.offsetWidth || window.innerWidth
+    // const limiterWidth = limiterEl?.offsetWidth || container?.offsetWidth || window.innerWidth
 
     /**
      * @todo container, or trigger, or window limiter for width.
@@ -62,24 +62,24 @@ export function useContextMenu(
       return
     }
     const triggerRect = container.getBoundingClientRect()
-    const menuRect = menuEl.getBoundingClientRect()
+    // const menuRect = menuEl.getBoundingClientRect()
     let {x, y} = position
-    console.log({y}, triggerRect.height, triggerRect.top)
+    // console.log({y}, triggerRect.height, triggerRect.top)
     const additionalXForPortal = withPortal ? triggerRect.left : 0
     const calculatedXWithPortal = x - additionalXForPortal
 
-    const additionalYForPortal = withPortal ? triggerRect.top : 0
-    const calculatedXYithPortal = y - additionalXForPortal
+    // const additionalYForPortal = withPortal ? triggerRect.top : 0
+    // const calculatedXYithPortal = y - additionalXForPortal
 
     const notInContainer = calculatedXWithPortal + menuWidth > container.offsetWidth
-    const notInContainerY = calculatedXYithPortal + menuHeight > container.offsetHeight
+    // const notInContainerY = calculatedXYithPortal + menuHeight > container.offsetHeight
     // console.log({y}, triggerRect.top, {menuHeight})
 
     // console.log({triggerRect, y})
     // const top = y - triggerRect.top + additionalYForPortal
     // y -= menuHeight
 
-    console.log('OFFSET:', y - additionalYForPortal, container.offsetHeight)
+    // console.log('OFFSET:', y - additionalYForPortal, container.offsetHeight)
 
     // const test = container.offsetHeight + container.offsetTop - y
     // y = test

@@ -107,8 +107,6 @@ const Transition = <TKey extends number | string>({
           },
           onEnter: () => {
             isAnimated.current = true
-
-            console.log('ANIMATED: ', isAnimated.current)
           },
           shouldLockUI,
         } as Partial<SingleTransitionProps>)

@@ -16,19 +16,15 @@ interface StateProps {
   isSavedMessages?: boolean
 }
 
-const ProfileInfoImpl: FC<OwnProps & StateProps> = ({chatFull, user, isSavedMessages}) => {
+const ProfileInfoImpl: FC<OwnProps & StateProps> = ({user, isSavedMessages}) => {
   const buildedClass = clsx('profile-info', {
     'is-me': isSavedMessages,
   })
 
-  return (
-    <div class={buildedClass}>
-      <ProfileAvatar />
-    </div>
-  )
+  return <div class={buildedClass}>{user && <ProfileAvatar peer={user} />}</div>
 }
 
-const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
+const mapStateToProps: MapState<OwnProps, StateProps> = (_, ownProps) => {
   return {
     isSavedMessages: ownProps.user?.isSelf,
   }

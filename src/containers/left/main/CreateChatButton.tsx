@@ -12,7 +12,6 @@ import {LeftColumnScreen} from 'types/ui'
 
 import {Menu, MenuItem} from 'components/popups/menu'
 import {FloatButton, Icon} from 'components/ui'
-import {DropdownMenu} from 'components/ui/DropdownMenu'
 
 import {useLeftColumn} from '../context'
 

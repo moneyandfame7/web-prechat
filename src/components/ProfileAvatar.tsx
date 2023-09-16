@@ -12,10 +12,6 @@ interface ProfileAvatarProps {
   peer: ApiChat | ApiUser
 }
 export const ProfileAvatar: FC<ProfileAvatarProps> = memo(({peer}) => {
-  const isChat = peer && 'type' in peer
-  const user = isChat ? undefined : peer
-  const chat = isChat ? peer : undefined
-
   const renderPhoto = () => {
     if (peer?.photo) {
       return <img src={peer.photo.url} alt="Profile avatar" width={200} height={200} />

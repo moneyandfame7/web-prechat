@@ -1,7 +1,8 @@
-import {memo, type FC, useCallback} from 'preact/compat'
+import {type FC, memo, useCallback} from 'preact/compat'
+
+import {getActions} from 'state/action'
 
 import {Button, FloatButton, Icon} from 'components/ui'
-import {getActions} from 'state/action'
 
 import {useLeftColumn} from '../context'
 
@@ -18,7 +19,7 @@ const Contacts: FC = () => {
   return (
     <>
       Contacts
-      <Button onClick={resetScreen}>Reset</Button>
+      <Button onClick={() => resetScreen()}>Reset</Button>
       <FloatButton
         shown
         onClick={handleClickButton}

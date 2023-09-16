@@ -12,8 +12,7 @@ import {LottiePlayer, type LottieRefCurrentProps} from 'lib/lottie'
 import {Button} from 'components/ui'
 import {PrimaryTitle} from 'components/ui/PrimaryTitle'
 
-import {Modal, ModalTitle} from './modal'
-import {ModalContent, ModalHeader} from './modal/Modal'
+import {Modal, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
 
 import styles from './ActiveSessionModal.module.scss'
 

@@ -13,7 +13,6 @@ export async function add({name, key, value, expiration}: CacheOptions) {
     return
   }
   const cache = await storageCache.open(name)
-  console.log(value instanceof Response, 'INSTANCE?', value)
   const item: CacheResponse = {
     value: value instanceof Response ? await value.json() : value,
     expiration: expiration ? Date.now() + expiration : undefined,

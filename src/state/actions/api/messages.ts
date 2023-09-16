@@ -4,7 +4,7 @@ import {createAction} from 'state/action'
 import {isPrivateChat2} from 'state/helpers/chats'
 import {selectChat} from 'state/selectors/chats'
 
-createAction('sendMessage', async (state, actions, payload) => {
+createAction('sendMessage', async (state, _, payload) => {
   const {currentChat} = state
 
   if (!currentChat.chatId) {
@@ -32,9 +32,8 @@ createAction('sendMessage', async (state, actions, payload) => {
   }
 })
 
-createAction('getMessages', async (state, actions, payload) => {
-  const {chatId, limit, offset} = payload
-
-  const result = await Api.messages.getMessages(payload)
+createAction('getMessages', async (_, _actions) => {
+  // const {chatId, limit, offset} = payload
+  // await Api.messages.getMessages(payload)
   // const ids=
 })

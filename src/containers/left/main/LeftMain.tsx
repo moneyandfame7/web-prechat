@@ -1,5 +1,5 @@
 import {type FC, Fragment, memo} from 'preact/compat'
-import {useCallback, useEffect, useRef, useState} from 'preact/hooks'
+import {useCallback, useEffect, useState} from 'preact/hooks'
 
 import {LeftColumnScreen} from 'types/ui'
 
@@ -23,7 +23,6 @@ enum LeftMainGroup {
 
 const LeftMain: FC = (props) => {
   const [search, setSearch] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
 
   const {activeScreen, setScreen} = useLeftColumn()
   const [activeGroup, setActiveGroup] = useState(LeftMainGroup.Chats)

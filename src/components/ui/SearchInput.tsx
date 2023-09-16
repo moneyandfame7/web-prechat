@@ -1,5 +1,4 @@
-import {type RefObject} from 'preact'
-import {type FC, memo, useEffect, useLayoutEffect, useRef} from 'preact/compat'
+import {type FC, memo, useLayoutEffect, useRef} from 'preact/compat'
 
 import {t} from 'lib/i18n'
 

@@ -43,7 +43,7 @@ createAction('terminateAuthorization', async (state, actions, payload) => {
   }
 })
 
-createAction('terminateAllAuthorizations', async (state, actions, payload) => {
+createAction('terminateAllAuthorizations', async (state) => {
   const result = await Api.account.terminateAllAuthorizations()
 
   if (!result) {
@@ -51,7 +51,7 @@ createAction('terminateAllAuthorizations', async (state, actions, payload) => {
   }
 
   const selfSessionId = state.auth.session!
-  const {[selfSessionId]: remaining, ...terminated} = state.activeSessions.byId
+  const {[selfSessionId]: remaining /* ...terminated */} = state.activeSessions.byId
 
   updateSessions(state, {
     selfSessionId: remaining,

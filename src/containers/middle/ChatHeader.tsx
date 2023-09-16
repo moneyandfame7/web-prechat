@@ -38,7 +38,7 @@ export const ChatHeader: FC<OwnProps> = memo(({chat, onCloseChat}) => {
   }
 
   const shouldDisplayBtn = isLaptop || isMobile
-  const clickHandlers = useFastClick({handler: handleClickHeader})
+  const clickHandlers = useFastClick(handleClickHeader)
 
   const isChatCollapsed = isLaptop
   return (

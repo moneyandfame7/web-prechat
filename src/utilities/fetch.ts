@@ -14,6 +14,7 @@ export async function retryFetch<T>(
       return await fetchJson<T>(url, withCache)
     } catch (error) {
       // Log the error or handle it as needed
+      // eslint-disable-next-line no-console
       console.error(`Fetch attempt ${retries + 1} failed: ${error}`)
 
       // Retry after the specified delay

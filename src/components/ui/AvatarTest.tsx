@@ -4,12 +4,11 @@ import clsx from 'clsx'
 
 import type {ApiChat, ApiColorVariant, ApiPeer, ApiUser} from 'api/types'
 
-import {getChatName, getChatName_deprecated} from 'state/helpers/chats'
+import {getChatName} from 'state/helpers/chats'
 import {getUserName, isUserId} from 'state/helpers/users'
 import {isUserOnline} from 'state/selectors/users'
-import {getGlobalState} from 'state/signal'
 
-import {getSignalOr} from 'utilities/getSignalOr'
+// import {getSignalOr} from 'utilities/getSignalOr'
 import {getInitials} from 'utilities/string/getInitials'
 
 import type {SignalOr} from 'types/ui'
@@ -39,7 +38,7 @@ interface AvatarTestProps {
 
 // передавати просто тут одразу peer.
 export const AvatarTest: FC<AvatarTestProps> = ({
-  fullName,
+  // fullName,
   variant = 'BLUE',
   size = 'm',
   shape = 'circular',

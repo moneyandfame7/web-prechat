@@ -16,7 +16,6 @@ import type {ApiMessage} from 'api/types/messages'
 import type {ApiLangCode, LanguagePack} from 'types/lib'
 import type {UserConnection} from 'types/request'
 
-import type {ApiUserFull} from './api'
 import type {AuthScreens, RightColumnScreens, SettingsScreens} from './screens'
 
 export type Theme = 'light' | 'dark' | 'system'
@@ -91,7 +90,7 @@ export interface GlobalState {
     contactIds: string[]
     statusesByUserId: Record<string, ApiUserStatus>
     byId: Record<string, ApiUser>
-    fullById: {[userId: string]: ApiUserFull}
+    // fullById: {[userId: string]: ApiUserFull}
   }
 
   chats: {

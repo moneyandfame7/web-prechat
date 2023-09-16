@@ -6,18 +6,17 @@ import {useBoolean} from 'hooks/useFlag'
 import {Menu} from 'components/popups/menu'
 import type {MenuPlacement, MenuTransform} from 'components/popups/menu/Menu'
 
-import {type IconName} from '.'
-
+// import {type IconName} from '.'
 import './DropdownMenu.scss'
 
-interface MenuItems {
-  icon?: IconName
-  title: string
-  handler?: VoidFunction
-  withConfirm?: boolean
-  action?: string
-  // or just pass as children items
-}
+// interface MenuItems {
+//   icon?: IconName
+//   title: string
+//   handler?: VoidFunction
+//   withConfirm?: boolean
+//   action?: string
+//   // or just pass as children items
+// }
 interface DropdownMenuProps {
   children: ComponentChildren
   button: VNode

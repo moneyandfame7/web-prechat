@@ -1,6 +1,6 @@
 import type {ComponentChildren, RefObject} from 'preact'
 import {
-  CSSProperties,
+  type CSSProperties,
   type FC,
   type TargetedEvent,
   memo,
@@ -17,7 +17,6 @@ import {logDebugWarn} from 'lib/logger'
 
 import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/config'
 import {addEscapeListener} from 'utilities/keyboardListener'
-import {stopEvent} from 'utilities/stopEvent'
 
 import {SingleTransition} from 'components/transitions'
 import {Portal} from 'components/ui/Portal'
@@ -79,7 +78,7 @@ export const Menu: FC<MenuProps> = memo(
     style,
     withPortal,
     shouldHandleAwayClick = true,
-    withLeave,
+    // withLeave,
   }) => {
     let menuRef = useRef<HTMLDivElement>(null)
 

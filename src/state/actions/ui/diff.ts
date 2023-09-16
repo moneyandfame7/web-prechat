@@ -1,5 +1,4 @@
 import {createAction} from 'state/action'
-import {updateCommonModalState, updateNotificationState} from 'state/updates/diff'
 
 import {MODAL_TRANSITION_MS, NOTIFICATION_TRANSITION} from 'common/config'
 import {updateByKey} from 'utilities/object/updateByKey'
@@ -57,7 +56,7 @@ createAction('copyToClipboard', (_, actions, payload) => {
   })
 })
 
-createAction('openRightColumn', (state, actions, payload) => {
+createAction('openRightColumn', (state, _, payload) => {
   const {screen} = payload
   state.rightColumn = {
     isOpen: true,

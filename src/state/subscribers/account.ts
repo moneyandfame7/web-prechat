@@ -3,8 +3,8 @@ import type {ApiSession} from 'api/types'
 import {createSubscribe} from 'state/subscribe'
 import {updateSession, updateSessions, updateUser} from 'state/updates'
 
-createSubscribe('onAuthorizationCreated', (global, actions, data) => {
-  console.log(`NEW SESSION -`, data)
+createSubscribe('onAuthorizationCreated', (global, _, data) => {
+  // console.log(`NEW SESSION -`, data)
 
   const withAdded: Record<string, ApiSession> = {
     ...global.activeSessions.byId,
@@ -33,13 +33,13 @@ createSubscribe('onAuthorizationTerminated', async (state, actions, data) => {
   updateSessions(state, updatedById)
 })
 
-createSubscribe('onAuthorizationUpdated', (global, actions, data) => {
-  console.log('UPDATED SESSION -', data)
+createSubscribe('onAuthorizationUpdated', (global, _, data) => {
+  // console.log('UPDATED SESSION -', data)
   updateSession(global, data.id, data)
 })
 
-createSubscribe('onUserStatusUpdated', (global, actions, data) => {
-  console.log('NEW USER STATUS - ', data)
+createSubscribe('onUserStatusUpdated', (global, _, data) => {
+  // console.log('NEW USER STATUS - ', data)
 
   const {userId, status} = data
   updateUser(global, userId, {

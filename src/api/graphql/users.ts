@@ -1,6 +1,6 @@
 import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
-import type {ApiInputGetUsers, ApiInputUser, ApiUser, ApiUserFull} from 'api/types/users'
+import type {ApiInputGetUsers, ApiUser} from 'api/types/users'
 
 import {FRAGMENT_PHOTO} from './messages'
 
@@ -41,20 +41,4 @@ export const QUERY_GET_USERS: TypedDocumentNode<
     }
   }
   ${FRAGMENT_USER}
-`
-
-export const QUERY_GET_USER_FULL: TypedDocumentNode<
-  {getUserFull: ApiUserFull},
-  {input: ApiInputUser}
-> = gql`
-  query GetUserFull($input: UserInput!) {
-    getUserFull(input: $input) {
-      avatar {
-        avatarVariant
-        hash
-        url
-      }
-      bio
-    }
-  }
 `

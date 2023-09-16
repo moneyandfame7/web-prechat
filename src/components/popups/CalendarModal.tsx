@@ -1,4 +1,4 @@
-import {type FC, memo, useEffect, useLayoutEffect, useMemo, useState} from 'preact/compat'
+import {type FC, memo, useLayoutEffect, useMemo, useState} from 'preact/compat'
 
 import clsx from 'clsx'
 import {useRef} from 'react'
@@ -25,8 +25,7 @@ import {TimePicker} from 'components/common/TimePicker'
 import {Transition} from 'components/transitions'
 import {Button, IconButton} from 'components/ui'
 
-import {Modal} from './modal'
-import {ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
+import {Modal, ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
 
 import './CalendarModal.scss'
 

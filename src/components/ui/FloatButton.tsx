@@ -9,12 +9,12 @@ import {Button, type ButtonProps} from './Button'
 
 import './FloatButton.scss'
 
-interface FloatButtonProps extends ButtonProps {
+interface FloatButtonProps {
   icon: VNode
   'aria-label': SignalOrString
   shown: boolean
 }
-export const FloatButton: FC<FloatButtonProps> = ({
+export const FloatButton: FC<FloatButtonProps & Omit<ButtonProps, 'icon'>> = ({
   icon,
   children,
   className,

@@ -1,4 +1,4 @@
-import type {FC} from 'preact/compat'
+import type {FC, TargetedEvent} from 'preact/compat'
 
 import clsx from 'clsx'
 
@@ -21,7 +21,7 @@ export interface ButtonProps {
   color?: 'primary' | 'red' | 'green' | 'gray'
   withFastClick?: boolean
   ripple?: boolean
-  onClick?: () => void
+  onClick?: (e?: TargetedEvent<HTMLButtonElement, MouseEvent>) => void
   id?: SignalOr<string>
   className?: string
   fullWidth?: boolean
@@ -60,7 +60,7 @@ export const Button: FC<ButtonProps> = ({
     className
   )
 
-  const clickHandlers = useFastClick({fast: withFastClick, handler: onClick})
+  const clickHandlers = useFastClick(onClick, withFastClick)
 
   return (
     <button

@@ -6,7 +6,6 @@ import {buildRecord} from 'utilities/object/buildRecord'
 
 createSubscribe('onChatCreated', (state, _, data) => {
   const {chat, users} = data
-  console.log('NEW CHAT >>>>>>>>>>>><<<<<<<<:', chat, users)
 
   updateChats(state, {
     [chat.id]: chat,

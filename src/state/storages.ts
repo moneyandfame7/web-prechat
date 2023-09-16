@@ -154,6 +154,7 @@ export async function stopPersist() {
 }
 
 export async function hydrateStore() {
+  // eslint-disable-next-line no-console
   console.time('HYDRATE')
 
   if (PERSIST_DISABLED) {
@@ -207,6 +208,7 @@ export async function hydrateStore() {
     await stopPersist()
   }
 
+  // eslint-disable-next-line no-console
   console.timeEnd('HYDRATE')
 }
 

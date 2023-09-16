@@ -13,7 +13,7 @@ import {SingleTransition} from 'components/transitions'
 import {IconButton} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
 
-import {ModalProvider, useModalContext} from '../modal'
+import {ModalProvider, useModalContext} from './context'
 
 import './Modal.scss'
 
@@ -56,12 +56,12 @@ export const Modal: FC<ModalProps> = ({
   )
 
   useEffect(() => {
-    return isOpen
+    return isOpen && closeOnEsc
       ? addEscapeListener(() => {
           onClose()
         })
       : undefined
-  }, [isOpen])
+  }, [isOpen, closeOnEsc])
   const buildedClass = ['Modal-paper', className].filter(Boolean).join(' ')
   return (
     <ModalProvider value={{isOpen, hasCloseButton, onClose}}>

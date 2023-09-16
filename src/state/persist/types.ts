@@ -4,11 +4,11 @@ import type {
   ApiChatFull,
   ApiLangCode,
   ApiLangPack,
+  ApiMessage,
   ApiPeerId,
   ApiSession,
   ApiUser,
 } from 'api/types'
-import {ApiMessage} from 'api/types/messages'
 
 import type {AnyObject} from 'types/common'
 import type {AuthState, SettingsState} from 'types/state'

@@ -1,4 +1,5 @@
 import type {API_AVATAR_VARIANTS} from 'common/config'
+
 import type {UserConnection} from './request'
 
 export type Platform = 'macOS' | 'iOS' | 'Windows' | 'Android' | 'Linux' | 'Unknown'
@@ -52,11 +53,6 @@ export interface ApiUser {
 //   | _ApiAuthResponse.authSignUpRequired
 //   | _ApiAuthResponse.authDone
 //   | _ApiAuthResponse.authPasswordRequired
-
-export interface ApiUserFull {
-  avatar: ApiAvatar
-  bio?: string
-}
 
 export type ApiUserStatus =
   | {

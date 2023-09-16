@@ -67,7 +67,6 @@ export const INITIAL_STATE: GlobalState = {
     byId: {},
     contactIds: [],
     statusesByUserId: {},
-    fullById: {},
   },
 
   messages: {

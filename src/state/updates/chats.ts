@@ -1,5 +1,3 @@
-import {RevertDeepSignal} from 'deepsignal'
-
 import type {ApiChat, ApiChatFull, ApiPeer} from 'api/types'
 
 import {getChatUsername_deprecated, isPeerChat} from 'state/helpers/chats'
@@ -7,7 +5,6 @@ import {selectChat} from 'state/selectors/chats'
 import {storages} from 'state/storages'
 
 import {DEBUG} from 'common/config'
-import {deepClone} from 'utilities/object/deepClone'
 import {deepCopy} from 'utilities/object/deepCopy'
 import {isDeepEqual} from 'utilities/object/isDeepEqual'
 import {updateByKey} from 'utilities/object/updateByKey'

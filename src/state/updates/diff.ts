@@ -5,7 +5,6 @@ import {storages} from 'state/storages'
 
 import {updateByKey} from 'utilities/object/updateByKey'
 
-import {RightColumnScreens} from 'types/screens'
 import type {GlobalState, SignalGlobalState} from 'types/state'
 
 export function updateNotificationState(
@@ -29,6 +28,7 @@ export function updateSessions(
   // updateByKey(global.activeSessions.byId, sessionsById)
 
   global.activeSessions = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     byId: sessionsById as any,
     ids,
   }

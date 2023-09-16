@@ -16,7 +16,6 @@ import {getGlobalState} from 'state/signal'
 
 import {RightColumnScreens} from 'types/screens'
 
-import {ColumnHeader} from 'components/ColumnHeader'
 import {ColumnWrapper} from 'components/ColumnWrapper'
 import {IconButton} from 'components/ui'
 import {AvatarTest} from 'components/ui/AvatarTest'
@@ -31,15 +30,15 @@ interface StateProps {
   onlineCount?: number
   canEdit?: boolean
   user?: ApiUser
-  memberIds: string[]
+  memberIds?: string[]
   members?: ApiChatMember[]
 }
 const ChatProfile: FC<ChatProfileProps & StateProps> = ({
-  chatId,
-  chatFull,
-  canEdit,
+  // chatId,
+  // chatFull,
+  // canEdit,
   onCloseScreen,
-  memberIds,
+  // memberIds,
   members,
 }) => {
   const global = getGlobalState()
@@ -93,6 +92,7 @@ const mapStateToProps: MapState<ChatProfileProps, StateProps> = (state, ownProps
     user,
     memberIds,
     members: chatFull?.members,
+    onlineCount: 0,
   }
 }
 

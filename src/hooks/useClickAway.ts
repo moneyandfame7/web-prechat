@@ -18,7 +18,6 @@ export const useClickAway = <T extends HTMLElement = HTMLElement>(
     if (!el || el.contains(clicked)) {
       return
     }
-    console.log('MOUSE_EVENT')
 
     handler(event, clicked)
   })

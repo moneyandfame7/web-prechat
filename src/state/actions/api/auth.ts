@@ -6,7 +6,7 @@ import type {ApiSession, AuthSignUpInput} from 'api/types/auth'
 import {createAction} from 'state/action'
 import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
 import {startPersist} from 'state/storages'
-import {destroySubscribe, getActiveSubscriptions} from 'state/subscribe'
+import {getActiveSubscriptions} from 'state/subscribe'
 import {updateAuthState} from 'state/updates/auth'
 import {updateSettingsState} from 'state/updates/settings'
 

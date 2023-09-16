@@ -40,7 +40,8 @@ async function init() {
     import('preact/debug')
     const global = getGlobalState()
 
-    window.addEventListener('dblclick', (ev) => {
+    window.addEventListener('dblclick', () => {
+      // eslint-disable-next-line no-console
       console.log(global)
     })
   }
@@ -48,7 +49,9 @@ async function init() {
 
 init()
 render(
+  /* @ts-expect-error Preact type confused */
   <ApolloProvider client={ApolloClient.getClient()}>
+    {/* @ts-expect-error Preact type confused  */}
     <Application />
   </ApolloProvider>,
   document.getElementById('app') as HTMLElement

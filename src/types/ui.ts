@@ -40,6 +40,7 @@ export type Size = 'small' | 'medium' | 'large'
 export type SignalOrString = string | Signal<string> | undefined
 
 export type SignalOr<T> = Signal<T> | T
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface VNodeWithKey<TKey, TProps = any> extends VNode<TProps> {
   key: TKey
 }

@@ -1,17 +1,12 @@
 import type {ComponentChild} from 'preact'
-import {type FC, TargetedEvent, memo, useCallback, useRef} from 'preact/compat'
+import {type FC, type TargetedEvent, memo, useCallback, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
-
-import {getActions} from 'state/action'
 
 import {useContextMenu} from 'hooks/useContextMenu'
 import {useFastClick} from 'hooks/useFastClick'
 
 import {IS_SENSOR} from 'common/config'
-import {stopEvent} from 'utilities/stopEvent'
-
-import {MouseHandler} from 'types/ui'
 
 import {Ripple} from 'components/Ripple'
 import {Menu, MenuItem} from 'components/popups/menu'
@@ -31,6 +26,7 @@ interface ListItemProps {
   withCheckbox?: boolean
   contextActions?: MenuContextActions
   onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
+  onToggleCheckbox?: (checked: boolean) => void
   icon?: IconName
   title?: ComponentChild
   subtitle?: ComponentChild
@@ -50,7 +46,6 @@ export const ListItem: FC<ListItemProps> = memo(
     title,
     subtitle,
     withRipple = !IS_SENSOR,
-    onClick,
     additional,
     className,
     badge,
@@ -59,9 +54,11 @@ export const ListItem: FC<ListItemProps> = memo(
     href,
     withCheckbox = false,
     isChecked = false,
-    contextActions,
+    // contextActions,
     withContextMenuPortal = false,
-    onMouseDown,
+    onClick,
+    onToggleCheckbox,
+    // onMouseDown,
   }) => {
     const menuRef = useRef<HTMLDivElement>(null)
 
@@ -95,14 +92,14 @@ export const ListItem: FC<ListItemProps> = memo(
     const hasInfo =
       Boolean(title) || Boolean(subtitle) || Boolean(additional) || Boolean(badge)
 
-    const clickHandlers = useFastClick({fast: true, handler: onClick})
+    const clickHandlers = useFastClick(onClick, true)
 
     function renderContent() {
       return (
         <>
           {icon && <Icon name={icon} />}
           {withCheckbox && (
-            <Checkbox checked={isChecked} withRipple={false} onToggle={onClick} />
+            <Checkbox checked={isChecked} withRipple={false} onToggle={onToggleCheckbox} />
           )}
           {children}
           {hasInfo && (
@@ -125,11 +122,11 @@ export const ListItem: FC<ListItemProps> = memo(
         </>
       )
     }
-    const {openChat} = getActions()
     return (
       <div ref={containerRef} class="list-item-container">
         <ButtonElement
           class={buildedClass}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           {...(clickHandlers as any)}
           onContextMenu={handleContextMenu}
           // class={buildedClass}

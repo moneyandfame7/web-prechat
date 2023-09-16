@@ -134,15 +134,18 @@ export class ApiManager {
   }
 
   private resolveResponse<M extends keyof MethodsMap, TData extends MethodsMap[M]['res']>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     result: ApolloQueryResult<any> | FetchResult<any>,
     splitted: Split<M>
   ) {
     if ('error' in result && result.error) {
+      // eslint-disable-next-line no-console
       console.error('RESOLVE_error:', result.error)
       // logger.error(result.error)
       return undefined
     }
     if (result.errors) {
+      // eslint-disable-next-line no-console
       console.error('RESOLVE_errors:', result.errors)
       return undefined
     }

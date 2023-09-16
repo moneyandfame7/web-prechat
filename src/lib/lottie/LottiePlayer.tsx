@@ -2,10 +2,9 @@ import type {FC, TargetedEvent} from 'preact/compat'
 import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
 
 import clsx from 'clsx'
-import {useInactivePage} from 'hooks'
 import Lottie from 'lottie-react'
 
-import {timeout} from 'utilities/schedulers/timeout'
+import {useInactivePage} from 'hooks'
 
 import {getFallback} from './helpers'
 import type {LottiePlayerProps} from './types'
@@ -43,7 +42,7 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
   }, [])
 
   const pauseOnClick = useCallback(
-    (e: TargetedEvent<HTMLDivElement, Event>) => {
+    (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
       e.preventDefault()
 
       if (isPaused) {
@@ -92,9 +91,11 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
         </div>
       )}
 
+      {/* @ts-expect-error Preact types confused */}
       <Lottie
         // ref={elRef}
-        onClick={isPausable ? pauseOnClick : undefined}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onClick={isPausable ? (pauseOnClick as any) : undefined}
         lottieRef={lottieRef}
         loop={loop}
         autoplay={false}

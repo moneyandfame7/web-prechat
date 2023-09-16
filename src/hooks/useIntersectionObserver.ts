@@ -1,5 +1,5 @@
 import {type RefObject} from 'preact'
-import {Inputs, useCallback, useEffect, useRef, useState} from 'preact/hooks'
+import {useEffect, useRef, useState} from 'preact/hooks'
 
 import {debounce} from 'common/functions'
 import {throttle} from 'utilities/schedulers/throttle'
@@ -31,7 +31,7 @@ export function useIntersectionObserver(
   const intersectionRef = useRef<IntersectionRef>()
   const rootCallbackRef = useRef<RootCb>()
 
-  // rootCallbackRef.current = rootCallback
+  rootCallbackRef.current = rootCallback
 
   useEffect(() => {
     if (isDisabled) {
@@ -61,10 +61,9 @@ export function useIntersectionObserver(
         }
       })
 
-      rootCallback?.(entries)
-      // if (rootCallbackRef.current) {
-      //   rootCallbackRef.current(entries)
-      // }
+      if (rootCallbackRef.current) {
+        rootCallbackRef.current(entries)
+      }
 
       entriesMap.clear()
     }

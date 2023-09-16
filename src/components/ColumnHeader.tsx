@@ -10,7 +10,7 @@ interface ColumnHeaderProps extends PropsWithChildren {
 }
 export const ColumnHeader: FC<ColumnHeaderProps> = ({children, className, onClick}) => {
   const buildedClass = [className, 'column-header'].filter(Boolean).join(' ')
-  const clickHandlers = useFastClick({fast: true, handler: onClick})
+  const clickHandlers = useFastClick(onClick, true)
   return (
     <div {...(onClick ? clickHandlers : {})} class={buildedClass}>
       {children}

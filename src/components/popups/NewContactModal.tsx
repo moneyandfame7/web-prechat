@@ -17,15 +17,14 @@ import type {ApiUser} from 'api/types/users'
 import {getActions} from 'state/action'
 
 import {getRandomAvatarVariant} from 'utilities/avatar'
-import {addEscapeListener} from 'utilities/keyboardListener'
+import {addKeyboardListeners} from 'utilities/keyboardListener'
 import {validatePhone} from 'utilities/phone/validatePhone'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
 import {Button, InputText} from 'components/ui'
 import {AvatarTest} from 'components/ui/AvatarTest'
 
-import {Modal, ModalActions, ModalContent, ModalTitle} from './modal'
-import {ModalHeader} from './modal/Modal'
+import {Modal, ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
 
 import './NewContactModal.scss'
 
@@ -75,13 +74,13 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
     actions.closeAddContactModal()
   }, [])
 
-  const handleEnter = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      handleSubmit()
-    }
-    /* if e.key==='Escape' close */
-  }, [])
+  // const handleEnter = useCallback((e: KeyboardEvent) => {
+  //   if (e.key === 'Enter') {
+  //     e.preventDefault()
+  //     handleSubmit()
+  //   }
+  //   /* if e.key==='Escape' close */
+  // }, [])
 
   const clearForm = useCallback(() => {
     firstName.value = ''
@@ -105,7 +104,7 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
   const phoneInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    return isOpen ? addEscapeListener(handleSubmit) : undefined
+    return isOpen ? addKeyboardListeners({onEnter: handleSubmit}) : undefined
   }, [])
   return (
     <Modal
@@ -113,6 +112,7 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
       onClose={handleClose}
       isOpen={isOpen}
       shouldCloseOnBackdrop
+      closeOnEsc
     >
       <ModalHeader hasCloseButton>
         <ModalTitle>New Contact</ModalTitle>

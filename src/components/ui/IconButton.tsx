@@ -4,9 +4,7 @@ import clsx from 'clsx'
 
 import {useFastClick} from 'hooks/useFastClick'
 
-import {IS_SENSOR} from 'common/config'
-
-import {SignalOr} from 'types/ui'
+import type {SignalOr} from 'types/ui'
 
 import {Ripple} from '../Ripple'
 import type {ButtonProps} from './Button'
@@ -44,7 +42,7 @@ export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
     disabled: isDisabled,
   })
 
-  const clickHandlers = useFastClick({fast: withFastClick, handler: onClick})
+  const clickHandlers = useFastClick(onClick, withFastClick)
 
   return (
     <div id={id} class={buildedClass} {...clickHandlers} disabled={isDisabled} {...props}>

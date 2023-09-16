@@ -1,6 +1,6 @@
 import {type Actions} from 'state/action'
 import {isValidUsername} from 'state/helpers/chats'
-import {selectUsername, selectUsernameByChatId} from 'state/selectors/chats'
+import {selectUsernameByChatId} from 'state/selectors/chats'
 
 import {type SignalGlobalState} from 'types/state'
 

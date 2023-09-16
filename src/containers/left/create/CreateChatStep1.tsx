@@ -53,10 +53,11 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
         {filteredList.map((user) => {
           return (
             <Fragment key={user.id}>
+              {/* якщо не працює - змінити onToggleCheckbox */}
               <ListItem
                 withCheckbox
                 isChecked={selectedIds.includes(user.id)}
-                onClick={() => {
+                onToggleCheckbox={() => {
                   handleSelect(user.id)
                 }}
                 // withRipple={false}

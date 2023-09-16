@@ -54,7 +54,7 @@ const PrivateChatInfoImpl: FC<OwnProps & StateProps> = ({
 
 const mapStateToProps: MapState<OwnProps, StateProps> = (
   state,
-  {userId, showSelf = false, withOnlineStatus, withTypingStatus}
+  {userId, showSelf = false, withOnlineStatus /* withTypingStatus */}
 ) => {
   const user = selectUser(state, userId)
   if (!user) {
