@@ -3,7 +3,7 @@ import type {ApiChat, ApiPeer, ApiUser} from 'api/types'
 import {type MakeRequired, isSavedMessages} from 'state/selectors/chats'
 import {selectUser} from 'state/selectors/users'
 
-import {USE_USERNAMES} from 'common/config'
+import {USE_USERNAMES} from 'common/environment'
 
 import type {SignalGlobalState} from 'types/state'
 

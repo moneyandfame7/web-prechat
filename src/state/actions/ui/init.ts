@@ -5,7 +5,7 @@ import {hydrateStore, stopPersist} from 'state/storages'
 
 import * as cache from 'lib/cache'
 
-import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/config'
+import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/environment'
 import {deepCopy} from 'utilities/object/deepCopy'
 import {changeHash} from 'utilities/routing'
 

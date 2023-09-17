@@ -11,7 +11,7 @@ import {updateSettingsState} from 'state/updates'
 
 import * as cache from 'lib/cache'
 
-import {DEBUG} from 'common/config'
+import {DEBUG} from 'common/environment'
 
 import type {ApiLangCode, LanguagePackKeys} from 'types/lib'
 

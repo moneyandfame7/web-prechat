@@ -4,7 +4,7 @@ import * as icons from 'assets/icons/all'
 
 import {logDebugWarn} from 'lib/logger'
 
-import {IS_SENSOR} from 'common/config'
+import {IS_SENSOR} from 'common/environment'
 
 import './Icon.scss'
 

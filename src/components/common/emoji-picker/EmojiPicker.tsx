@@ -17,9 +17,9 @@ import {type MapState, connect} from 'state/connect'
 import {useBoolean} from 'hooks/useFlag'
 import {useIntersectionObserver} from 'hooks/useIntersectionObserver'
 
-import {type EmojiData} from 'utilities/emoji'
+import {type EmojiData, type EmojiSkin} from 'utilities/emoji'
 import {retryFetch} from 'utilities/fetch'
-import {timeout} from 'utilities/schedulers/timeout'
+import {preloadImage} from 'utilities/preloadImage'
 
 import {ScreenLoader} from 'components/ScreenLoader'
 import {SingleTransition} from 'components/transitions'
@@ -44,11 +44,16 @@ const categoriesIcons: Record<string, IconName> = {
   flags: 'flag',
 }
 
-async function initData(): Promise<EmojiData> {
+async function initData(emojiSkin: EmojiSkin): Promise<EmojiData> {
   const data = await retryFetch<EmojiData>(
     'https://cdn.jsdelivr.net/npm/@emoji-mart/data@latest/sets/14/apple.json',
     false
-  ).then(timeout(5000))
+  )
+  await Promise.all(
+    Object.values(data.emojis).map(async (e) => {
+      await preloadImage(`emoji/${e.skins[emojiSkin].unified}.png`)
+    })
+  )
 
   return data
 }
@@ -60,8 +65,13 @@ export interface EmojiPickerProps {
 }
 interface StateProps {
   recentEmojis: string[]
+  skinEmoji: EmojiSkin
 }
-const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({recentEmojis, isOpen}) => {
+const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
+  recentEmojis,
+  isOpen,
+  skinEmoji,
+}) => {
   const [emojiData, setEmojiData] = useState<EmojiData | null>(null)
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0)
   const headerRef = useRef<HTMLDivElement>(null)
@@ -103,11 +113,11 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({recentEmojis, isOpe
   useEffect(() => {
     if (isOpen && !emojiData) {
       ;(async () => {
-        const data = await initData()
+        const data = await initData(skinEmoji)
         setEmojiData(data)
       })()
     }
-  }, [isOpen])
+  }, [isOpen, skinEmoji])
 
   const changeCategory = (idx: number, e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault()
@@ -211,6 +221,7 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({recentEmojis, isOpe
             ) : (
               allCategories.map((c, idx) => (
                 <EmojiCategory
+                  skinEmoji={skinEmoji}
                   key={c.id}
                   category={c}
                   emojiData={emojiData}
@@ -234,7 +245,8 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({recentEmojis, isOpe
 
 const mapStateToProps: MapState<EmojiPickerProps, StateProps> = (state) => {
   return {
-    recentEmojis: state.recentEmojis,
+    recentEmojis: state.emojis.recent,
+    skinEmoji: state.emojis.skin,
   }
 }
 

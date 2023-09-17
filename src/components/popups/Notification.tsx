@@ -3,7 +3,7 @@ import {type FC, memo, useCallback, useEffect} from 'preact/compat'
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
-import {NOTIFICATION_TRANSITION} from 'common/config'
+import {NOTIFICATION_TRANSITION} from 'common/environment'
 
 import {SingleTransition} from 'components/transitions'
 import {Icon} from 'components/ui'

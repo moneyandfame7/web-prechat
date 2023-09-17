@@ -4,7 +4,7 @@ import {getChatUsername_deprecated, isPeerChat} from 'state/helpers/chats'
 import {selectChat} from 'state/selectors/chats'
 import {storages} from 'state/storages'
 
-import {DEBUG} from 'common/config'
+import {DEBUG} from 'common/environment'
 import {deepCopy} from 'utilities/object/deepCopy'
 import {isDeepEqual} from 'utilities/object/isDeepEqual'
 import {updateByKey} from 'utilities/object/updateByKey'

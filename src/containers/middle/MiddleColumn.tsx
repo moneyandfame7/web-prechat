@@ -85,9 +85,28 @@ const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
 
   // const isNext = useRef(false)
   const {value, toggle} = useBoolean(false)
+  // const [loaded, setLoaded] = useState(false)
   return (
     <div class="MiddleColumn">
       {/* {renderChat()} */}
+      {/* <img
+        // height={700}
+        onLoadCapture={(e) => {
+          const test = e.currentTarget.getBoundingClientRect()
+          console.log({test})
+        }}
+        style={{
+          opacity: loaded ? 1 : 0,
+          transition: '0.3s opacity ease',
+        }}
+        src="https://plus.unsplash.com/premium_photo-1694822449585-a2444c288b96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80"
+        alt="l"
+        onLoad={(e) => {
+          setLoaded(true)
+          // console.log
+          console.log('END')
+        }}
+      /> */}
       <EmojiPicker isOpen={value} />
       <IconButton icon="smile" onClick={toggle} />
       {isChatOpen && (
@@ -112,7 +131,7 @@ const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
           {/* </div> */}
         </>
       )}
-
+      {/* {useParseEmoji('🇺🇦')} */}
       {/*
        * ChatHeader
        * MessagesList

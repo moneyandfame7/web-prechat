@@ -1,6 +1,6 @@
 import {type TargetedEvent, useMemo} from 'preact/compat'
 
-import {IS_SENSOR} from 'common/config'
+import {IS_SENSOR} from 'common/environment'
 
 import type {AnyFunction} from 'types/common'
 

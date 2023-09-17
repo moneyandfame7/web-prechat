@@ -2,7 +2,7 @@ import {type FC, memo, useCallback, useMemo, useState} from 'preact/compat'
 
 import {SettingsContext} from 'context/settings'
 
-import {APP_TRANSITION_NAME} from 'common/config'
+import {APP_TRANSITION_NAME} from 'common/environment'
 
 import {SettingsGroup, SettingsScreens, getSettingsActiveGroup} from 'types/screens'
 

@@ -3,7 +3,7 @@ import {type FC, memo, useEffect, useState} from 'preact/compat'
 import {connect} from 'state/connect'
 import {getGlobalState} from 'state/signal'
 
-import {APP_TRANSITION_NAME} from 'common/config'
+import {APP_TRANSITION_NAME} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
 import {SettingsScreens} from 'types/screens'

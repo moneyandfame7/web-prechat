@@ -15,7 +15,7 @@ import {useClickAway} from 'hooks/useClickAway'
 
 import {logDebugWarn} from 'lib/logger'
 
-import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/config'
+import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
 import {SingleTransition} from 'components/transitions'

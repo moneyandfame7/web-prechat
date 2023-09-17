@@ -3,7 +3,7 @@ import type {ApiMessage} from 'api/types/messages'
 import {createPersistStore} from 'state/persist'
 import type {PersistIdbStorage, Storages, StoragesName} from 'state/persist/types'
 
-import {DEBUG} from 'common/config'
+import {DEBUG} from 'common/environment'
 import {pick} from 'utilities/object/pick'
 import {updateByKey} from 'utilities/object/updateByKey'
 

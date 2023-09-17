@@ -4,7 +4,7 @@ import {getGlobalState} from 'state/signal'
 
 import {t} from 'lib/i18n'
 
-import {GITHUB_SOURCE} from 'common/config'
+import {GITHUB_SOURCE} from 'common/environment'
 
 import {LeftColumnScreen} from 'types/ui'
 

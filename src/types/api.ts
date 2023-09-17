@@ -1,4 +1,4 @@
-import type {API_AVATAR_VARIANTS} from 'common/config'
+import type {API_AVATAR_VARIANTS} from 'common/environment'
 
 import type {UserConnection} from './request'
 

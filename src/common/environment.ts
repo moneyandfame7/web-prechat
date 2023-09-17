@@ -83,8 +83,11 @@ export const IS_SENSOR = window.matchMedia('(pointer: coarse)').matches
 export const IS_MOBILE = window.matchMedia('(max-width: 768px)').matches
 export const AUTH_CAPTCHA_EL = 'auth_captcha_el'
 export const AUTH_CAPTCHA_CONTAINER = 'auth_captcha_container'
-export const DEBUG = import.meta.env.DEV /* || ?debug=1 */
+export const DEBUG =
+  import.meta.env.DEV || import.meta.env.NODE_ENV === 'staging' /* || ?debug=1 */
+export const USE_APPLE_EMOJI = true
 
+export const IS_EMOJI_SUPPORTED = IS_APPLE && USE_APPLE_EMOJI
 export const GITHUB_SOURCE = 'https://github.com/moneyandfame7/web-prechat#readme'
 
 export const APP_TRANSITION_NAME = (

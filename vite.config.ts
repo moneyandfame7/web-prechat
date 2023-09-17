@@ -22,16 +22,13 @@ const handlebarsPlugin = handlebars({
 
 const USE_HTTPS = false
 const NO_MINIFY = false
-const CHECK_CODE = true
+const CHECK_CODE = false
 
 // https://vitejs.dev/config/
 // eslint-disable-next-line import/no-anonymous-default-export
 export default ({mode}) => {
   process.env = {...process.env, ...loadEnv(mode, process.cwd())}
-  const {VITE_APP_NAME, VITE_APP_URL, VITE_APP_IMAGE, DEV} = process.env as Record<
-    string,
-    string
-  >
+
   return defineConfig({
     plugins: [
       svgr(),

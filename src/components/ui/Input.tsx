@@ -50,6 +50,8 @@ interface InputProps {
   variant?: InputVariant
   fixedLabel?: boolean
   pattern?: string
+  autoComplete?: SignalOr<string>
+  autoCorrect?: SignalOr<string>
 }
 
 export const InputText: FC<InputProps> = ({
@@ -80,6 +82,8 @@ export const InputText: FC<InputProps> = ({
   inputMode,
   fixedLabel,
   variant = 'outlined',
+  autoComplete,
+  autoCorrect,
 }) => {
   const valueLength = useSignal(maxLength)
   const labelText = error || label
@@ -142,6 +146,8 @@ export const InputText: FC<InputProps> = ({
     <div className={buildedClassname} {...dataProps}>
       <input
         // autoFocus={autoFocus}
+        autoCorrect={autoCorrect}
+        autocomplete={autoComplete}
         pattern={pattern}
         inputMode={inputMode}
         tabIndex={tabIndex}

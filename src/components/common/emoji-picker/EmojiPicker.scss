@@ -116,7 +116,7 @@
 }
 .emoji-category__content {
   // position: absolute;
-  position: unset;
+  position: unset !important;
 
   width: 100%;
   --emoji-size: 2.125rem;

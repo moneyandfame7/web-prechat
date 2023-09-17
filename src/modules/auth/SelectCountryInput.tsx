@@ -13,7 +13,7 @@ import type {ApiCountry} from 'api/types/langPack'
 
 import {t} from 'lib/i18n'
 
-import {TRANSITION_DURATION_ZOOM_FADE} from 'common/config'
+import {TRANSITION_DURATION_ZOOM_FADE} from 'common/environment'
 
 import {Menu, MenuItem} from 'components/popups/menu'
 import {Icon, InputText} from 'components/ui'
@@ -88,7 +88,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
             !country.name.toLowerCase().includes(stringName.toLowerCase())
           }
         >
-          <span class="country-emoji">{/* parseEmoji(country.emoji) */ country.emoji}</span>
+          <span class="country-emoji">{country.emoji}</span>
           <span class="country-name">{country.name}</span>
           <span class="country-code">{country.dial_code}</span>
         </MenuItem>

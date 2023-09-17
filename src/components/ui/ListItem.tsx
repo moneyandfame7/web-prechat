@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import {useContextMenu} from 'hooks/useContextMenu'
 import {useFastClick} from 'hooks/useFastClick'
 
-import {IS_SENSOR} from 'common/config'
+import {IS_SENSOR} from 'common/environment'
 
 import {Ripple} from 'components/Ripple'
 import {Menu, MenuItem} from 'components/popups/menu'

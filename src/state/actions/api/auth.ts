@@ -14,7 +14,7 @@ import {updateSettingsState} from 'state/updates/settings'
 import * as firebase from 'lib/firebase'
 import {logDebugWarn} from 'lib/logger'
 
-import {USER_BROWSER, USER_PLATFORM} from 'common/config'
+import {USER_BROWSER, USER_PLATFORM} from 'common/environment'
 import {logger} from 'utilities/logger'
 import {makeRequest} from 'utilities/makeRequest'
 import {removeSession, saveSession} from 'utilities/session'

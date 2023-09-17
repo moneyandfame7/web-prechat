@@ -172,7 +172,7 @@ $theme-map-dark: (
   --c-bg-2: #f4f4f5;
   --c-bg-rgb: 255, 255, 255;
 
-  --c-message-container-bg: #9bbf7e;
+  --c-message-container-bg: #{$c-bg};
   --c-message-bg: #{$c-message-bg};
   --c-message-meta: #{$c-message-meta};
   --c-message-highlight: rgba(0, 0, 0, 0.15);

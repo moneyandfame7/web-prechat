@@ -1,7 +1,7 @@
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiLangKey} from 'api/types/langPack'
 
-import {DEBUG} from 'common/config'
+import {DEBUG} from 'common/environment'
 
 import type {SignInPayload, SignUpPayload} from 'types/action'
 import type {ApiLangCode} from 'types/lib'

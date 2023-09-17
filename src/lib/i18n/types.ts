@@ -5,7 +5,7 @@ import {getGlobalState} from 'state/signal'
 import {storages} from 'state/storages'
 import {updateSettingsState} from 'state/updates'
 
-import {DEBUG} from 'common/config'
+import {DEBUG} from 'common/environment'
 
 import type lang from './lang'
 

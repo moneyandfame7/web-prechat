@@ -3,7 +3,6 @@
 @import 'variables';
 @import 'mixins';
 @import 'typography';
-@import 'scroll';
 @import 'partials'; // @import '../assets/webfonts/fonts.css';
 #app {
   height: 100%;
@@ -69,7 +68,7 @@ body {
 }
 .scrollable-y {
   overflow-y: auto;
-  padding-inline-start: 0.375rem;
+  // padding-inline-start: 0.375rem;
 }
 .scrollable {
   overflow-y: auto;

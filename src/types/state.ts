@@ -81,7 +81,11 @@ export interface GlobalState {
   auth: AuthState
   initialization: boolean
   globalSearch: GlobalSearchState
-  recentEmojis: string[]
+  // recentEmojis: string[]
+  emojis: {
+    recent: string[]
+    skin: 0 | 1 | 2 | 3 | 4 | 5
+  }
   rightColumn: {
     screen: RightColumnScreens
     isOpen: boolean

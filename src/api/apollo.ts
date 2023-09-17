@@ -17,7 +17,7 @@ import {createClient} from 'graphql-ws'
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
-import {DEBUG} from 'common/config'
+import {DEBUG} from 'common/environment'
 
 import type {ApiError} from './types/diff'
 
@@ -174,7 +174,9 @@ export class ApolloClientWrapper {
 export function createApolloClientWrapper(): ApolloClientWrapper {
   const httpUrl = import.meta.env.VITE_API_URL
   // eslint-disable-next-line prefer-template
-  const wsUrl = httpUrl.replace(DEBUG ? 'http://' : 'https://', 'wss://') + '/subscriptions'
+  const wsUrl =
+    httpUrl.replace(DEBUG ? 'http://' : 'https://', DEBUG ? 'ws://' : 'wss://') +
+    '/subscriptions'
 
   const client = new ApolloClientWrapper({
     httpUrl,

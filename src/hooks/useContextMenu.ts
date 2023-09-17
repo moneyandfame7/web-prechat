@@ -7,7 +7,7 @@ import {useBoolean} from './useFlag'
 /* withPortal or not? */
 export function useContextMenu(
   menuRef: RefObject<HTMLDivElement>,
-  triggerRef: RefObject<HTMLDivElement>,
+  triggerRef: RefObject<HTMLElement>,
   getMenuElement: () => HTMLElement | null,
   _getLimiterElement?: () => HTMLElement | null,
   withPortal?: boolean

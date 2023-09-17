@@ -1,6 +1,6 @@
 import {createAction} from 'state/action'
 
-import {MODAL_TRANSITION_MS, NOTIFICATION_TRANSITION} from 'common/config'
+import {MODAL_TRANSITION_MS, NOTIFICATION_TRANSITION} from 'common/environment'
 import {updateByKey} from 'utilities/object/updateByKey'
 
 import {RightColumnScreens} from 'types/screens'
