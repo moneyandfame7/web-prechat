@@ -30,6 +30,10 @@
   padding-inline: 15px;
   padding-block: 10px;
   background-color: var(--c-surface);
+
+  .list-item__title {
+    font-weight: 400;
+  }
   // &:last-child {
   //   margin: 15px 0 80px;
   // }

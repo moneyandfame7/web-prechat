@@ -56,6 +56,7 @@ import {ReactComponent as username} from './username.svg'
 import {ReactComponent as users} from './users.svg'
 import {ReactComponent as close} from './x.svg'
 
+export {ReactComponent as delete} from './delete.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

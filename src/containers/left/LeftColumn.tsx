@@ -124,7 +124,7 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
         activeScreen,
       }}
     >
-      <div class="LeftColumn">
+      <div class="LeftColumn" id="left-column">
         {/* <SingleTransition
           unmount={false}
           in={isChatOpen}

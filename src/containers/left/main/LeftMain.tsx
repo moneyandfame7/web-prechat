@@ -102,7 +102,11 @@ const LeftMain: FC = (props) => {
         >
           {renderScreen()}
         </SwitchTransition> */}
-        <Transition activeKey={activeGroup} name="fade" cleanupException={LeftMainGroup.Chats}>
+        <Transition
+          activeKey={activeGroup}
+          name="zoomFade"
+          cleanupException={LeftMainGroup.Chats}
+        >
           {renderScreen()}
         </Transition>
         <CreateChatButton />

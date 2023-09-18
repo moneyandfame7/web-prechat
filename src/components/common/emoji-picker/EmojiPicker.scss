@@ -1,8 +1,13 @@
 .emoji-picker {
   max-width: 380px;
   left: 40px;
-  background-color: var(--c-surface-transparent);
-  backdrop-filter: blur(6px);
+  // background-color: var(--c-surface-transparent);
+  // backdrop-filter: blur(6px);
+
+  box-shadow: var(--menu-shadow);
+  background-color: var(--menu-bg) !important;
+  backdrop-filter: blur(50px);
+
   min-height: 300px;
   max-height: 425px;
   border-radius: 12px;
@@ -10,10 +15,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  &__content {
-    height: 100%;
-  }
 }
 
 .emoji-content {
@@ -46,7 +47,7 @@
   margin-bottom: 5px;
   display: flex;
   align-items: center;
-  border-bottom: 1px solid var(--c-border-input);
+  border-bottom: 1px solid var(--c-border);
   position: relative;
   .search-btn {
     // float: right;
@@ -102,7 +103,63 @@
     bottom: 0px;
   }
 }
+.emoji-footer {
+  padding-inline: 10px;
+  padding-block: 5px;
+  margin-block-start: 3px;
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  border-top: 1px solid var(--c-border);
+  position: relative;
 
+  .skin-tone {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border-radius: 100%;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    background-color: #5d4437;
+    &::after {
+      content: '';
+      mix-blend-mode: overlay;
+      background: linear-gradient(#fff3, #0000);
+      border: 1px solid #000c;
+      border-radius: 100%;
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 -2px 3px #000, inset 0 1px 2px #fff;
+    }
+    &-1 {
+      background-color: #ffc93a;
+    }
+    &-2 {
+      background-color: #ffdab7;
+    }
+    &-3 {
+      background-color: #e7b98f;
+    }
+    &-4 {
+      background-color: #c88c61;
+    }
+    &-5 {
+      background-color: #a46134;
+    }
+    &-6 {
+      background-color: #5d4437;
+    }
+  }
+
+  .skin-tone-menu {
+    bottom: 40px;
+    // right: -200px;
+    top: auto;
+    background-color: var(--c-surface) !important;
+  }
+}
 .emoji-category {
   width: 100%;
   padding-inline: 0.5rem;

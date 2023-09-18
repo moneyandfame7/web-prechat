@@ -20,11 +20,27 @@ import './css/index.scss'
  *
  * @todo - Messages:
  *  > Sending, getting.
+ *     > **Getting**:
+ *       - limit
  *  > Unread count.
+ *  > Read/unread - https://www.youtube.com/watch?v=Roa71K-5R74
  *  > Infinite scroll.
  *  > Media, emoji uploading, documents ( voice ?).
  *  > Contacts, Poll.
+ *
+ * @todo - Chat folders:
+ * > getChatFolders - method API.
+ * > sortChatFolders - method API.
+ * > deleteChatFolder - method API.
+ * > updateChatFolder - method API.
+ *   > change name, icon...
+ * > defaultFolderIndex
+ *
+ * @todo - Emoji:
+ *  > renderText() function? (for avatar, nicknames and other shit)
+ *
  * @todo - Media (photo/vide):
+ * https://stackblitz.com/edit/react-ts-bwsqfc?file=App.tsx
  *  > Blurhash.
  *    > for video - need to get first frame and blur hash it??
  *    > for photo - just get hash

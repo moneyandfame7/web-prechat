@@ -4,13 +4,41 @@ import {useCallback, useEffect, useState} from 'preact/hooks'
 
 import {useBoolean} from './useFlag'
 
+function getLimiterRect(
+  containerRef?: RefObject<HTMLElement>,
+  getLimiterElement?: () => HTMLElement | null
+) {
+  if (getLimiterElement) {
+    const limiter = getLimiterElement()
+
+    // console.log('RETURN LIMITER:', limiter)
+
+    if (limiter) {
+      return limiter.getBoundingClientRect()
+    }
+  }
+  if (containerRef?.current) {
+    const rect = containerRef.current.getBoundingClientRect()
+    return rect
+  }
+
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight,
+    left: window.screenLeft,
+    right: 0,
+    top: window.screenTop,
+  }
+}
+
 /* withPortal or not? */
 export function useContextMenu(
   menuRef: RefObject<HTMLDivElement>,
   triggerRef: RefObject<HTMLElement>,
   getMenuElement: () => HTMLElement | null,
-  _getLimiterElement?: () => HTMLElement | null,
-  withPortal?: boolean
+  getLimiterElement?: () => HTMLElement | null,
+  withPortal?: boolean,
+  dynamicTransformOrigin?: boolean
   // limiter?: 'trigger' | 'window' | 'custom' = 'trigger'
 ) {
   const {value, setFalse, setTrue} = useBoolean(false)
@@ -45,9 +73,11 @@ export function useContextMenu(
   useEffect(() => {
     // getMenuElement()
     const menuEl = menuRef.current
-    // const containerEl = getContainerElement()
-    // const limiterEl = getLimiterElement?.()
-    const container = triggerRef.current
+    const limiterEl = getLimiterElement?.()
+    const container = getLimiterRect(triggerRef, getLimiterElement)
+
+    const triggerRect = triggerRef.current?.getBoundingClientRect()
+    const limiterRect = limiterEl?.getBoundingClientRect()
     const menuWidth = menuEl?.offsetWidth
     const menuHeight = menuEl?.offsetHeight
     // const limiterWidth = limiterEl?.offsetWidth || container?.offsetWidth || window.innerWidth
@@ -58,20 +88,37 @@ export function useContextMenu(
      * має вимикатись коли ще раз клацаємо контекст меню?
      * на телефоні шоб працювало
      */
-    if (!position || !menuEl || !container || !menuWidth || !menuHeight) {
+    if (!position || !menuEl || !container || !menuWidth || !menuHeight || !triggerRect) {
       return
     }
-    const triggerRect = container.getBoundingClientRect()
-    // const menuRect = menuEl.getBoundingClientRect()
     let {x, y} = position
+
+    console.log(limiterEl)
     // console.log({y}, triggerRect.height, triggerRect.top)
-    const additionalXForPortal = withPortal ? triggerRect.left : 0
+    const additionalXForPortal = withPortal ? container.left : 0
     const calculatedXWithPortal = x - additionalXForPortal
 
     // const additionalYForPortal = withPortal ? triggerRect.top : 0
     // const calculatedXYithPortal = y - additionalXForPortal
+    // console.log('LIMITER: ', limiterEl ? limiterEl : 'WINDOW')
+    // const notInContainer = calculatedXWithPortal + menuWidth > container.width
+    // console.log(calculatedXWithPortal > container.width / 2, 'RIGHT ORIGIN')
+    const notInContainer = limiterRect
+      ? x + menuWidth > limiterRect.width
+      : x > window.innerWidth - menuWidth
+    // console.log({container, x, menuWidth}, notInContainer)
 
-    const notInContainer = calculatedXWithPortal + menuWidth > container.offsetWidth
+    if (notInContainer) {
+      if (limiterRect) {
+        console.log({notInContainer})
+
+        x = limiterRect.width - menuWidth - 5 /*  - (x - triggerRect.left) */
+      } else {
+        x = window.innerWidth - menuWidth - 5
+      }
+
+      // x = container.width - menuWidth
+    }
     // const notInContainerY = calculatedXYithPortal + menuHeight > container.offsetHeight
     // console.log({y}, triggerRect.top, {menuHeight})
 
@@ -84,24 +131,33 @@ export function useContextMenu(
     // const test = container.offsetHeight + container.offsetTop - y
     // y = test
     // console.log({test})
-    if (notInContainer) {
-      x = container.offsetWidth - menuWidth - 5 + additionalXForPortal
-    }
-    if (!withPortal) {
-      y += container.offsetTop
-    }
+
+    /* @!!!!@ */
+    // if (notInContainer) {
+    //   x = container.offsetWidth - menuWidth - 5 + additionalXForPortal
+    // }
+    // x = x > window.innerWidth - menuWidth ? window.innerWidth : x
+    // if (!withPortal) {
+    //   y += container.top
+    // }
+    /* IDK */
+    // if (!withPortal) {
+    //   x = triggerRef.current!.offsetLeft
+    // }
+    // console.log(triggerRef.current?.offsetLeft, x)
+
     // y = y + additionalYForPortal - triggerRect.top - top + menuHeight
     // y = y + menuHeight
+
     /**
      * додавати bottom, top
      */
-    const transformOrigin =
-      calculatedXWithPortal > container.offsetWidth / 2 ? 'top right' : 'top left'
-
+    // const transformOrigin =
+    //   calculatedXWithPortal > container.width / 2 ? 'top right' : 'top left'
     setStyles({
       left: x,
       top: y,
-      transformOrigin,
+      transformOrigin: /* dynamicTransformOrigin ? transformOrigin :  */ 'top left',
     })
   }, [position, getMenuElement, withPortal])
 

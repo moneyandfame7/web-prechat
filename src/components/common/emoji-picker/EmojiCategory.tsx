@@ -2,7 +2,7 @@ import {type FC, useRef} from 'preact/compat'
 
 import {type ObserveFn, useOnIntersect} from 'hooks/useIntersectionObserver'
 
-import {IS_SAFARI} from 'common/environment'
+import {IS_EMOJI_SUPPORTED, IS_SAFARI} from 'common/environment'
 import {type EmojiData, type EmojiSkin, type IEmojiCategory} from 'utilities/emoji'
 import {remToPx} from 'utilities/remToPx'
 
@@ -72,14 +72,34 @@ export const EmojiCategory: FC<EmojiCategoryProps> = ({
         name="fade"
         timeout={IS_SAFARI ? 300 : 200}
       >
-        {category.emojis.map((e) => (
-          <EmojiButton
-            key={e}
-            currentSkin={skinEmoji}
-            skins={emojiData.emojis[e].skins}
-            onClick={onSelectEmoji}
-          />
-        ))}
+        {category.emojis.map((e) => {
+          const emoji = emojiData.emojis[e]
+          const skins = emoji.skins
+          const withCurrentSkin = skins.length > 1 ? skins[skinEmoji] : skins[0]
+          const src = `emoji/${withCurrentSkin.unified}.png`
+          return (
+            <span class="emoji-item" key={e}>
+              {IS_EMOJI_SUPPORTED ? (
+                withCurrentSkin.native
+              ) : (
+                <img
+                  width={34}
+                  height={34}
+                  alt={withCurrentSkin.native}
+                  src={src}
+                  // loading="lazy"
+                  // onLoad={
+                  //   !isLoaded
+                  //     ? (e) => {
+                  //         setIsLoaded(true)
+                  //       }
+                  //     : undefined
+                  // }
+                />
+              )}
+            </span>
+          )
+        })}
       </SingleTransition>
       {/* </div> */}
     </div>

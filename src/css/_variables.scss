@@ -57,7 +57,7 @@ $c-primary-light: #3390ec;
 
 $c-primary-rgb: 50, 144, 236; // rgb(80,162,233)
 $c-primary-hover: darken($c-primary, 2%);
-$c-primary-transparent: rgba(darken($c-primary, 10%), 0.3);
+$c-primary-transparent: rgba(darken($c-primary, 10%), 0.1);
 $c-icon: #707579;
 $c-green: #35c759;
 $c-green-hover: darken($c-green, 2%);
@@ -78,6 +78,7 @@ $c-font-primary: #000;
 $c-font-secondary: $c-icon;
 $c-font-secondary-2: $c-icon-2;
 $c-font-red: #df3f40;
+$c-danger: #df3f40;
 // AVATARS GRADIENTS
 $c-avatar-yellow: linear-gradient(
   111.4deg,
@@ -111,8 +112,6 @@ $theme-map-dark: (
   --theme-test: 120px
 );
 :root {
-  --bubble-arrow-width: 1rem;
-
   --z-left-column: 1;
   --z-middle-column: 2;
   --z-right-column: 3;
@@ -164,6 +163,11 @@ $theme-map-dark: (
   //
 
   // components
+  --menu-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
+  --menu-bg: rgb(255 255 255 / 85%);
+  --menu-backdrop-filter: 50px;
+  --bubble-arrow-width: 1rem;
+
   --c-border-input: #{$c-border};
   --c-border-hover-input: #{$c-border-hover};
   --c-placeholder: #{$c-font-secondary};
@@ -175,13 +179,16 @@ $theme-map-dark: (
   --c-message-container-bg: #{$c-bg};
   --c-message-bg: #{$c-message-bg};
   --c-message-meta: #{$c-message-meta};
+
   --c-message-highlight: rgba(0, 0, 0, 0.15);
+
   --c-box-shadow-section: rgba(0, 0, 0, 0.06);
+  --c-shadow-light: rgb(114, 114, 114, 0.169);
+
   --c-surface: #{$c-surface};
   --c-surface-2: #{$c-surface-2};
   --c-surface-3: #{$c-surface-3};
   --c-surface-transparent: #{$c-surface-transparent};
-  // --c-surface-3-transparent: #{rgba($c-surface-3, 70%)};
   --c-surface-3-transparent: #{rgba(0, 0, 0, 0.06)};
 
   --c-border: #{$c-border};
@@ -196,7 +203,7 @@ $theme-map-dark: (
 
   --c-ripple: #{$c-ripple};
   --c-error: #{$c-font-red};
-
+  --c-danger: #{$c-danger};
   --c-green: #{$c-green};
   --c-green-hover: #{$c-green-hover};
   --c-green-transparent: #{$c-green-transparent};
@@ -249,6 +256,8 @@ $theme-map-dark: (
     $c-surface-3: ligthen($c-bg-surface, 5%);
 
     // components
+    --menu-bg: rgb(33 33 33 / 75%);
+
     --c-border-input: #{$c-border-input};
     --c-border-hover-input: #{lighten($c-border-input, 5%)};
 
@@ -261,21 +270,24 @@ $theme-map-dark: (
     --c-bg-2: #0f0f0f;
     // --c-scrollbar: #{$c-border-input};
     // --c-scrollbar: rgba(255, 255, 255, 0.2);
+
     --c-surface: #{$c-bg-surface};
     --c-surface-2: #{lighten($c-bg-surface, 2%)};
     --c-surface-3: #{$c-surface-3};
-
     --c-surface-transparent: #{rgba($c-bg-surface, 80%)};
     --c-surface-3-transparent: #{rgba(0, 0, 0, 0.3)};
+
+    --c-shadow-light: rgb(0, 0, 0, 0.251);
 
     --c-border: #{$c-border};
     --c-border-hover: #{lighten($c-border, 3%)};
 
     --c-primary: #{$c-primary};
     --c-primary-light: #{$c-primary-light};
-
     --c-primary-hover: #{darken($c-primary, 3%)};
-    --c-primary-transparent: #{rgba(darken($c-primary, 10%), 0.3)};
+    --c-primary-transparent: #{rgba(darken($c-primary, 10%), 0.1)};
+
+    --c-danger: #ff595a;
 
     --c-icon: #{$c-icon};
     --c-icon-2: #{$c-icon-2};

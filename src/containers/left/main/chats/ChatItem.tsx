@@ -62,6 +62,7 @@ const ChatItemImpl: FC<OwnProps & StateProps> = ({
   return (
     <ListItem
       // onClick={handleClick}
+      withContextMenuPortal
       href={chatRoute}
       withRipple
       className={buildedClass}

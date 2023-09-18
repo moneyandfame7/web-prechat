@@ -1,4 +1,4 @@
-import {type FC, type TargetedEvent, useCallback, useMemo} from 'preact/compat'
+import {type FC, type TargetedEvent, memo, useCallback, useMemo} from 'preact/compat'
 
 import {IS_EMOJI_SUPPORTED} from 'common/environment'
 import {type EmojiItem, type EmojiSkin} from 'utilities/emoji'
@@ -16,7 +16,7 @@ function getEmojiSkin(skins: EmojiItem[], currentSkin: EmojiSkin) {
 
   return emoji
 }
-export const EmojiButton: FC<EmojiButtonProps> = ({skins, currentSkin, onClick}) => {
+export const EmojiButton: FC<EmojiButtonProps> = memo(({skins, currentSkin, onClick}) => {
   const withCurrentSkin = useMemo(() => {
     return getEmojiSkin(skins, currentSkin)
   }, [currentSkin])
@@ -58,4 +58,4 @@ export const EmojiButton: FC<EmojiButtonProps> = ({skins, currentSkin, onClick})
       </span>
     </>
   )
-}
+})

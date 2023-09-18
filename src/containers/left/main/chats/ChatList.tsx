@@ -5,6 +5,7 @@ import {getGlobalState} from 'state/signal'
 
 import {Transition} from 'components/transitions'
 
+import {ChatFolders} from './ChatFolders'
 import {ChatItem} from './ChatItem'
 
 import './ChatList.scss'
@@ -62,14 +63,15 @@ export const Chats: FC = () => {
   }
 
   return (
-    <Transition
-      containerClassname="chats-list scrollable scrollable-y"
-      name="fade"
-      shouldCleanup
-      activeKey={activeScreen}
-      // durations={250}
-    >
-      {render()}
-    </Transition>
+    // <Transition
+    //   containerClassname="chats-list scrollable scrollable-y"
+    //   name="fade"
+    //   shouldCleanup
+    //   activeKey={activeScreen}
+    //   // durations={250}
+    // >
+    //   {render()}
+    // </Transition>
+    <ChatFolders />
   )
 }

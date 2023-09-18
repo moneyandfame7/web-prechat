@@ -107,6 +107,15 @@ const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
           console.log('END')
         }}
       /> */}
+      <Button
+        onClick={() => {
+          const theme = global.settings.general.theme
+          actions.changeTheme(theme === 'dark' ? 'light' : 'dark')
+        }}
+      >
+        Change theme
+      </Button>
+
       <EmojiPicker isOpen={value} />
       <IconButton icon="smile" onClick={toggle} />
       {isChatOpen && (

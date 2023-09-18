@@ -12,13 +12,15 @@ import {
 import clsx from 'clsx'
 
 import {useClickAway} from 'hooks/useClickAway'
+import {useFastClick} from 'hooks/useFastClick'
 
 import {logDebugWarn} from 'lib/logger'
 
-import {IS_SENSOR, TRANSITION_DURATION_MENU} from 'common/environment'
+import {TRANSITION_DURATION_MENU} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
 import {SingleTransition} from 'components/transitions'
+import {Icon, type IconName} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
 
 import {MenuProvider, useMenuContext} from './context'
@@ -60,6 +62,7 @@ interface MenuProps {
   withPortal?: boolean
   shouldHandleAwayClick?: boolean
   withLeave?: boolean
+  timeout?: number
 }
 
 export const Menu: FC<MenuProps> = memo(
@@ -78,6 +81,7 @@ export const Menu: FC<MenuProps> = memo(
     style,
     withPortal,
     shouldHandleAwayClick = true,
+    timeout,
     // withLeave,
   }) => {
     let menuRef = useRef<HTMLDivElement>(null)
@@ -172,7 +176,7 @@ export const Menu: FC<MenuProps> = memo(
           name="zoomFade"
           unmount={withMount}
           // appear
-          timeout={TRANSITION_DURATION_MENU}
+          timeout={timeout || TRANSITION_DURATION_MENU}
         >
           <>{children}</>
         </SingleTransition>
@@ -195,54 +199,42 @@ interface MenuItemProps {
   hidden?: boolean
   selected?: boolean
   to?: string
+  icon?: IconName
+  danger?: boolean
 }
 export const MenuItem: FC<MenuItemProps> = memo(
-  ({children, className, hidden = false, selected = false, onClick, to}) => {
+  ({children, className, hidden = false, selected = false, onClick, to, icon, danger}) => {
     const {onClose, autoClose} = useMenuContext()
 
     const handleClick = useCallback(
       (e: TargetedEvent<HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
         e.preventDefault()
-        autoClose && onClose()
         onClick?.()
+        autoClose && onClose()
       },
       [onClick, autoClose, onClose]
-    )
-
-    const handleMouseDown = useCallback(
-      (e: TargetedEvent<HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
-        if (!IS_SENSOR && e.button === 0) {
-          handleClick(e)
-        }
-      },
-      [handleClick]
     )
 
     const buildedClass = clsx('Menu_item', className, {
       hidden,
       selected,
+      danger,
     })
-    const itemProps = {
-      onClick: IS_SENSOR ? handleClick : undefined,
-      onMouseDown: !IS_SENSOR ? handleMouseDown : undefined,
-      class: buildedClass,
-    }
+
+    const clickHandlers = useFastClick(handleClick, !danger)
+    const ItemEl = to ? 'a' : 'div'
     return (
       <>
-        {to ? (
-          <a {...itemProps} href={to} target="_blank" rel="noreferrer">
-            {children}
-          </a>
-        ) : (
-          <div {...itemProps}>{children}</div>
-        )}
-        {/* <div
-          onClick={IS_SENSOR ? handleClick : undefined}
-          onMouseDown={!IS_SENSOR ? handleMouseDown : undefined}
+        <ItemEl
           class={buildedClass}
+          {...clickHandlers}
+          href={to}
+          target="_blank"
+          rel="noreferrer"
         >
+          {icon && <Icon name={icon} />}
           {children}
-        </div> */}
+        </ItemEl>
       </>
     )
   }

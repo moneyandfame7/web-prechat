@@ -2,6 +2,7 @@ import {
   type FC,
   type TargetedEvent,
   memo,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -22,6 +23,7 @@ import {retryFetch} from 'utilities/fetch'
 import {preloadImage} from 'utilities/preloadImage'
 
 import {ScreenLoader} from 'components/ScreenLoader'
+import {Menu, MenuItem} from 'components/popups/menu'
 import {SingleTransition} from 'components/transitions'
 import {IconButton, type IconName} from 'components/ui'
 
@@ -49,11 +51,11 @@ async function initData(emojiSkin: EmojiSkin): Promise<EmojiData> {
     'https://cdn.jsdelivr.net/npm/@emoji-mart/data@latest/sets/14/apple.json',
     false
   )
-  await Promise.all(
-    Object.values(data.emojis).map(async (e) => {
-      await preloadImage(`emoji/${e.skins[emojiSkin].unified}.png`)
-    })
-  )
+  // await Promise.all(
+  //   Object.values(data.emojis).map(async (e) => {
+  //     await preloadImage(`emoji/${e.skins[emojiSkin].unified}.png`)
+  //   })
+  // )
 
   return data
 }
@@ -153,10 +155,10 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
           return
         }
         const newIdx = +id.split('emoji-category-')[1]
-
         emojiIntersections[newIdx] = entry.isIntersecting
 
         const minIndex = emojiIntersections.findIndex((isIntersecting) => isIntersecting)
+        // console.log({minIndex})
 
         setActiveCategoryIndex(minIndex)
       })
@@ -182,15 +184,31 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
     'search-active': value,
   })
 
+  // const handleOnClose = useCallback(() => {
+  //   console.log('EXITED')
+
+  //   setActiveCategoryIndex(0)
+  //   // emojiContainerRef.current?.scrollTo({top: 10})
+  // }, [])
+  const [isSkinMenuOpen, setSkinMenuOpen] = useState(false)
+  const handleSkinMenuOpen = useCallback(() => {
+    setSkinMenuOpen(true)
+  }, [])
+
+  const handleSkinMenuClose = useCallback(() => {
+    setSkinMenuOpen(false)
+  }, [])
   return (
     <div class="just-test-container">
       {/* <IconButton icon="smile" onClick={toggle} /> */}
       <SingleTransition
+        timeout={150}
         appear
         styles={{transformOrigin: 'left bottom'}}
         in={isOpen}
         name="zoomFade"
         toggle
+        unmount={false}
         className={buildedClass}
       >
         <div class="emoji-header">
@@ -237,6 +255,47 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
               ))
             )}
           </div>
+        </div>
+        <div class="emoji-footer">
+          <span class="skin-tone" onClick={handleSkinMenuOpen} />
+
+          <Menu
+            withBackdrop
+            withMount
+            className="skin-tone-menu"
+            onClose={handleSkinMenuClose}
+            isOpen={isSkinMenuOpen}
+            transform="bottom right"
+            placement={{
+              right: true,
+            }}
+            timeout={300}
+          >
+            <MenuItem>
+              <span class="skin-tone skin-tone-1" />
+              Default
+            </MenuItem>
+            <MenuItem>
+              <span class="skin-tone skin-tone-2" />
+              Light
+            </MenuItem>
+            <MenuItem>
+              <span class="skin-tone skin-tone-3" />
+              Medium-light
+            </MenuItem>
+            <MenuItem>
+              <span class="skin-tone skin-tone-4" />
+              Medium
+            </MenuItem>
+            <MenuItem>
+              <span class="skin-tone skin-tone-5" />
+              Medium-dark
+            </MenuItem>
+            <MenuItem>
+              <span class="skin-tone skin-tone-6" />
+              Dark
+            </MenuItem>
+          </Menu>
         </div>
       </SingleTransition>
     </div>

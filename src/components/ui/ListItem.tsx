@@ -17,9 +17,10 @@ import {Icon, type IconName} from './Icon'
 import './ListItem.scss'
 
 export interface MenuContextActions {
-  title: string
-  icon: IconName
   handler: VoidFunction
+  title: string
+  icon?: IconName
+  danger?: boolean
 }
 interface ListItemProps {
   withRipple?: boolean
@@ -77,8 +78,9 @@ export const ListItem: FC<ListItemProps> = memo(
         menuRef,
         containerRef,
         getMenuElement,
-        getLimiterElement,
-        withContextMenuPortal
+        undefined,
+        withContextMenuPortal,
+        true
       )
 
     const ButtonElement = href ? 'a' : 'div'
