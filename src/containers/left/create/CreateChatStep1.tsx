@@ -56,8 +56,9 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
               {/* якщо не працює - змінити onToggleCheckbox */}
               <ListItem
                 withCheckbox
+                withContextMenuPortal
                 isChecked={selectedIds.includes(user.id)}
-                onToggleCheckbox={() => {
+                onClick={() => {
                   handleSelect(user.id)
                 }}
                 // withRipple={false}

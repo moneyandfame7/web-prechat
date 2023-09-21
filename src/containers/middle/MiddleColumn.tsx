@@ -1,34 +1,52 @@
-import {type FC, memo, useCallback, useEffect} from 'preact/compat'
+import {useSignal} from '@preact/signals'
+import {type FC, type TargetedEvent, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
 import type {ApiChat} from 'api/types'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
-import {selectCurrentChat} from 'state/selectors/chats'
+import {
+  selectChat,
+  selectCurrentChat,
+  selectCurrentOpenedChat,
+  selectOpenedChats,
+} from 'state/selectors/chats'
 import {getGlobalState} from 'state/signal'
 
+import {usePrevious} from 'hooks'
 import {useBoolean} from 'hooks/useFlag'
 import {useLayout} from 'hooks/useLayout'
 
+import {IS_EMOJI_SUPPORTED} from 'common/environment'
+import {EMOJI_REGEX, getEmojiUnified} from 'utilities/emoji'
 import {addEscapeListener} from 'utilities/keyboardListener'
 import {connectStateToNavigation} from 'utilities/routing'
 
-import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
-import {Button, IconButton} from 'components/ui'
+import {OpenedChat} from 'types/state'
+import type {PreactNode} from 'types/ui'
+
+import {InfiniteScroll} from 'components/InfiniteScroll'
+import {Transition} from 'components/transitions'
+import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
 import {MessagesList} from './MessagesList'
+import {getCleanupExceptionKey} from './helpers/getCleanupExceptionKey'
 
 import './MiddleColumn.scss'
 
 interface OwnProps {}
 interface StateProps {
-  currentChat?: ApiChat
+  // currentChat?: ApiChat
+  chatId?: string
+  activeTransitionKey: number
 }
 
 type InjectedProps = OwnProps & StateProps
-const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
+
+const withAnimations = !document.documentElement.classList.contains('animation-none')
+const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
   const global = getGlobalState()
   const actions = getActions()
   const {isMobile, isLaptop} = useLayout()
@@ -37,7 +55,7 @@ const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
     document.body.classList.toggle('left-column-shown', true)
 
     /* if with animation - timeout, else just close...??? */
-    if (isMobile) {
+    if (isMobile && withAnimations) {
       setTimeout(() => {
         actions.openChat({id: undefined})
       }, 300)
@@ -56,7 +74,7 @@ const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
       window.removeEventListener('hashchange', handleNavigation)
     }
   }, [closeChat, isMobile])
-  const isChatOpen = !!currentChat
+  const isChatOpen = !!chatId
   const isChatCollapsed = isLaptop && isChatOpen
   useEffect(() => {
     // if (!isMobile) {
@@ -84,80 +102,58 @@ const MiddleColumn: FC<InjectedProps> = ({currentChat}) => {
   }, [isChatOpen])
 
   // const isNext = useRef(false)
-  const {value, toggle} = useBoolean(false)
-  // const [loaded, setLoaded] = useState(false)
+  const prevTransitionKey = usePrevious(activeTransitionKey)
+  const cleanupExceptionKey = getCleanupExceptionKey(activeTransitionKey, prevTransitionKey)
+  // const cleanupExceptionKey = (
+  //   prevTransitionKey !== undefined && prevTransitionKey < currentTransitionKey ? prevTransitionKey : undefined
+  // );
   return (
     <div class="MiddleColumn">
-      {/* {renderChat()} */}
-      {/* <img
-        // height={700}
-        onLoadCapture={(e) => {
-          const test = e.currentTarget.getBoundingClientRect()
-          console.log({test})
-        }}
-        style={{
-          opacity: loaded ? 1 : 0,
-          transition: '0.3s opacity ease',
-        }}
-        src="https://plus.unsplash.com/premium_photo-1694822449585-a2444c288b96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2787&q=80"
-        alt="l"
-        onLoad={(e) => {
-          setLoaded(true)
-          // console.log
-          console.log('END')
-        }}
-      /> */}
+      {/* <h3>Current chat:{global.openedChats[activeTransitionKey]?.chatId}</h3>
+      <h3>Chats: {JSON.stringify(global.openedChats)}</h3> */}
       <Button
         onClick={() => {
           const theme = global.settings.general.theme
           actions.changeTheme(theme === 'dark' ? 'light' : 'dark')
         }}
       >
-        Change theme
+        Toggle theme.
       </Button>
-
-      <EmojiPicker isOpen={value} />
-      <IconButton icon="smile" onClick={toggle} />
       {isChatOpen && (
         <>
-          <ChatHeader chat={currentChat} onCloseChat={closeChat} />
-          {/* <Transition
-              activeKey={currentChatId}
-              name="slideFade"
-              direction={isNext.current ? 1 : -1}
-            ></Transition> */}
-          {/* {currentChat.id} */}
-          <Button
-            onClick={() => {
-              actions.changeTheme(global.settings.general.theme === 'dark' ? 'light' : 'dark')
-            }}
+          <ChatHeader
+            activeTransitionKey={activeTransitionKey}
+            chatId={chatId}
+            onCloseChat={closeChat}
+          />
+
+          <Transition
+            timeout={450}
+            cleanupException={cleanupExceptionKey}
+            activeKey={activeTransitionKey}
+            name="slide"
+            shouldCleanup
           >
-            TOGGLE_THEME
-          </Button>
-          {/* <div class="chat-container"> */}
-          <MessagesList chat={currentChat} />
-          <ChatInput chatId={currentChat.id} />
-          {/* </div> */}
+            <div class="future-transition-container">
+              <MessagesList chatId={chatId} />
+              <ChatInput chatId={chatId} />
+            </div>
+          </Transition>
         </>
       )}
-      {/* {useParseEmoji('🇺🇦')} */}
-      {/*
-       * ChatHeader
-       * MessagesList
-       * Input?
-       */}
     </div>
   )
 }
 
 export default memo(
   connect<OwnProps, StateProps>((state) => {
-    const currentChat = selectCurrentChat(state)
-    if (!currentChat) {
-      return {}
-    }
+    const openedChats = selectOpenedChats(state)
+
+    const openedChat: OpenedChat | undefined = openedChats[openedChats.length - 1]
+
     return {
-      currentChat,
+      chatId: openedChat?.chatId,
+      activeTransitionKey: Math.max(0, openedChats.length - 1),
     }
   })(MiddleColumn)
 )

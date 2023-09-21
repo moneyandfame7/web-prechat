@@ -100,9 +100,7 @@ export const ListItem: FC<ListItemProps> = memo(
       return (
         <>
           {icon && <Icon name={icon} />}
-          {withCheckbox && (
-            <Checkbox checked={isChecked} withRipple={false} onToggle={onToggleCheckbox} />
-          )}
+          {withCheckbox && <Checkbox checked={isChecked} withRipple={false} />}
           {children}
           {hasInfo && (
             <>

@@ -114,15 +114,19 @@ $theme-map-dark: (
 :root {
   --z-left-column: 1;
   --z-middle-column: 2;
+  --z-middle-header: 1;
   --z-right-column: 3;
   --z-popup: 4;
   --z-menu-backdrop: #{$z-menu-backdrop};
   --z-menu: #{$z-menu};
   --right-column-width: #{$right-column-width};
   --left-column-width: 420px;
+  --emoji-picker-height: 425px;
+  --chat-input-height: 54px;
   @include responsive(mobile) {
     --right-column-width: 100dvw;
     --left-column-width: 100%;
+    --emoji-picker-height: 300px;
   }
   @include responsive(tablet) {
     --right-column-width: 420px;
@@ -176,7 +180,7 @@ $theme-map-dark: (
   --c-bg-2: #f4f4f5;
   --c-bg-rgb: 255, 255, 255;
 
-  --c-message-container-bg: #{$c-bg};
+  --c-message-container-bg: #e6ebee; /* #{$c-bg}; */
   --c-message-bg: #{$c-message-bg};
   --c-message-meta: #{$c-message-meta};
 

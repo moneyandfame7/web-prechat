@@ -1,16 +1,11 @@
 import {type FC, memo, useCallback, useState} from 'preact/compat'
 
-import {selectChatsIds} from 'state/selectors/chats'
-import {getGlobalState} from 'state/signal'
-
 import {type TabItem, TabList} from 'components/common/tabs/TabList'
 import {Transition} from 'components/transitions'
 
-import {ChatItem} from './ChatItem'
+import {ChatList} from './ChatList'
 
 import './ChatFolders.scss'
-
-const TAB_PANELS = ['FIRST', 'SECOND', 'THIRD', 'FOURTH', 'FIFTH']
 
 const TAB_BTNS = [
   {
@@ -67,18 +62,6 @@ const TAB_BTNS = [
   },
 ] as TabItem[]
 
-const List = () => {
-  const global = getGlobalState()
-  const chatIds = selectChatsIds(global)
-
-  return (
-    <>
-      {chatIds.map((id) => (
-        <ChatItem chatId={id} key={id} />
-      ))}
-    </>
-  )
-}
 const ChatFolders: FC = memo(() => {
   const [chatFolder, setCurrentChatFolder] = useState(0)
 
@@ -96,13 +79,13 @@ const ChatFolders: FC = memo(() => {
       />
 
       <Transition
-        innerClassnames="chat-list scrollable scrollable-y"
+        // innerClassnames="chat-list scrollable scrollable-y"
         name="slide"
         activeKey={chatFolder}
         shouldCleanup={false}
       >
         {/* {TAB_PANELS[chatFolder]} */}
-        <List />
+        <ChatList />
       </Transition>
     </div>
   )

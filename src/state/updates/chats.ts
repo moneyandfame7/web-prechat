@@ -1,7 +1,7 @@
 import type {ApiChat, ApiChatFull, ApiPeer} from 'api/types'
 
 import {getChatUsername_deprecated, isPeerChat} from 'state/helpers/chats'
-import {selectChat} from 'state/selectors/chats'
+import {selectChat, selectOpenedChats} from 'state/selectors/chats'
 import {storages} from 'state/storages'
 
 import {DEBUG} from 'common/environment'
@@ -12,13 +12,31 @@ import {updateByKey} from 'utilities/object/updateByKey'
 import type {GlobalState, SignalGlobalState} from 'types/state'
 
 import {updateUsers} from '.'
+import {updateMessages} from './messages'
 
 export function updateChats(global: SignalGlobalState, chatsById: Record<string, ApiChat>) {
   updateByKey(global.chats.byId, chatsById)
-
+  // Object.keys(global.chats.byId).forEach(c=>{
+  //   updateLastMessage(global,c)
+  // })
   // Object.values(chatsById)
   const list = Object.values(global.chats.byId as Record<string, ApiChat>)
-
+  list.forEach((c) => {
+    if (c.lastMessage) {
+      // console.log('CHAT MESSAGE', c.lastMessage)
+      updateMessages(
+        global,
+        c.id,
+        {
+          [c.lastMessage.id]: c.lastMessage,
+        },
+        true
+      )
+      // updateMessages(global, c.id, {
+      //   [c.lastMessage.id]: c.lastMessage,
+      // })
+    }
+  })
   const orderedIds = list
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .map((s) => s.id)
@@ -104,6 +122,31 @@ export function updateCurrentChat(
   updateByKey(global.currentChat, toUpd)
 }
 
+export function updateOpenedChats(
+  global: SignalGlobalState,
+  chatId?: string,
+  username?: string,
+  replaceHistory?: boolean
+) {
+  const openedChats = selectOpenedChats(global)
+
+  let newOpenedChats = openedChats
+  if (replaceHistory) {
+    newOpenedChats = chatId ? [{chatId, username, isMessagesLoading: false}] : []
+  } else if (chatId) {
+    const currentOpened = openedChats[openedChats.length - 1]
+    if (
+      !currentOpened ||
+      currentOpened.chatId !== chatId ||
+      currentOpened.chatId !== username
+    ) {
+      newOpenedChats = [...newOpenedChats, {chatId, username, isMessagesLoading: false}]
+    }
+  } else {
+    newOpenedChats = openedChats.slice(0, -1)
+  }
+  global.openedChats = newOpenedChats
+}
 export function updateUsernamesFromPeers(global: SignalGlobalState, peers: ApiPeer[]) {
   const usernames = global.chats.usernames
   const usernamePredicate = (p: ApiPeer) => {

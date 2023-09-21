@@ -21,10 +21,11 @@ export interface PersistStorage {
 }
 
 export interface PersistIdbStorage<T extends AnyObject> extends PersistStorage {
-  put: (obj: Partial<T>) => Promise<void>
+  put: (obj: Partial<T>, force?: boolean) => Promise<void>
   get: () => Promise<T | undefined>
   getOne: <K extends keyof T>(key: K) => Promise<T[K] | undefined>
   remove: (key: keyof T) => Promise<any>
+  update: <K extends keyof T>(key: K, obj: Partial<T[K]>, force?: boolean) => Promise<void>
 }
 // export type StoragesName =
 //   | 'auth'

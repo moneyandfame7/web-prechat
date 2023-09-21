@@ -1,4 +1,4 @@
-import {type FC, memo, useLayoutEffect, useRef} from 'preact/compat'
+import {type FC, memo, useEffect, useLayoutEffect, useRef} from 'preact/compat'
 
 import type {MenuContextActions} from 'components/ui/ListItem'
 
@@ -22,6 +22,10 @@ const TabList: FC<TabListProps> = memo(
   ({tabs, activeTab, onChange, contextLimiterSelector}) => {
     const tabListRef = useRef<HTMLDivElement>(null)
     const lineRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+      // const tab=
+    }, [])
 
     useLayoutEffect(() => {
       if (!tabListRef.current || !lineRef.current) {

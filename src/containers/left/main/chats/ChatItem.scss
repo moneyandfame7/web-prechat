@@ -27,22 +27,25 @@
     }
   }
 
-  &.opened {
-    background-color: var(--c-primary);
-    color: #fff;
-    &:hover {
+  @media only screen and (min-width: 768.1px) {
+    &.opened {
       background-color: var(--c-primary);
-    }
-    --c-font-secondary: #fff;
+      color: #fff;
+      &:hover {
+        background-color: var(--c-primary);
+      }
+      --c-font-secondary: #fff;
 
-    .badge {
-      background-color: #fff;
-      color: #000;
+      .badge {
+        background-color: #fff;
+        color: #000;
+      }
+      // .list-item__subtitle {
+      // color: #fff;
+      // }
     }
-    // .list-item__subtitle {
-    // color: #fff;
-    // }
   }
+
   // transition: height 0.3s ease;
   // .row {
   //   text-overflow: ellipsis;

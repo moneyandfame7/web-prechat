@@ -11,7 +11,8 @@ import {LeftGoBack} from '../LeftGoBack'
 import {useLeftColumn} from '../context'
 import {CreateChatButton} from './CreateChatButton'
 import {LeftMainMenu} from './MainMenu'
-import {Chats} from './chats/ChatList'
+import {ChatFolders} from './chats/ChatFolders'
+import {ChatList} from './chats/ChatList'
 import Search from './search/Search.async'
 
 import './LeftMain.scss'
@@ -41,9 +42,9 @@ const LeftMain: FC = (props) => {
   const renderScreen = useCallback(() => {
     switch (activeGroup) {
       case LeftMainGroup.Chats:
-        return <Chats key={LeftMainGroup.Chats} />
+        return <ChatFolders />
       case LeftMainGroup.Search:
-        return <Search key={LeftMainGroup.Search} />
+        return <Search />
     }
   }, [activeGroup])
   const handleSearch = (value: string) => {

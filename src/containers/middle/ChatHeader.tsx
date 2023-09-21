@@ -5,6 +5,7 @@ import type {ApiChat} from 'api/types'
 import {getActions} from 'state/action'
 import {isUserId} from 'state/helpers/users'
 
+import {usePrevious} from 'hooks'
 import {useFastClick} from 'hooks/useFastClick'
 import {useLayout} from 'hooks/useLayout'
 
@@ -13,42 +14,66 @@ import {RightColumnScreens} from 'types/screens'
 import {ColumnHeader} from 'components/ColumnHeader'
 import {GroupChatInfo} from 'components/common/GroupChatInfo'
 import {PrivateChatInfo} from 'components/common/PrivateChatInfo'
-import {IconButton} from 'components/ui'
+import {Transition} from 'components/transitions'
+import {IconButton, type IconName} from 'components/ui'
+
+import {getCleanupExceptionKey} from './helpers/getCleanupExceptionKey'
 
 import './ChatHeader.scss'
 
 interface OwnProps {
-  chat: ApiChat
+  chatId: string
   onCloseChat: VoidFunction
+  activeTransitionKey: number
 }
 
-export const ChatHeader: FC<OwnProps> = memo(({chat, onCloseChat}) => {
-  const {openRightColumn} = getActions()
+export const ChatHeader: FC<OwnProps> = memo(({chatId, onCloseChat, activeTransitionKey}) => {
+  const {openRightColumn, openPreviousChat} = getActions()
   const {isMobile, isLaptop} = useLayout()
   const handleClickHeader = useCallback(() => {
     openRightColumn({screen: RightColumnScreens.ChatProfile})
   }, [])
 
   function renderChatInfo() {
-    return isUserId(chat.id) ? (
-      <PrivateChatInfo userId={chat.id} />
+    return isUserId(chatId) ? (
+      <PrivateChatInfo userId={chatId} />
     ) : (
-      <GroupChatInfo chat={chat} />
+      <GroupChatInfo chatId={chatId} />
     )
   }
 
-  const shouldDisplayBtn = isLaptop || isMobile
+  function handleGoBack() {
+    // 0 - means that no have prev history of opened chats
+    if (activeTransitionKey === 0) {
+      onCloseChat()
+    } else {
+      openPreviousChat()
+    }
+  }
+
   const clickHandlers = useFastClick(handleClickHeader)
 
-  const isChatCollapsed = isLaptop
+  const backBtnIcon: IconName | undefined =
+    activeTransitionKey === 0 && isLaptop
+      ? 'close'
+      : activeTransitionKey === 1 || isMobile
+      ? 'arrowLeft'
+      : undefined
+  const prevTransitionKey = usePrevious(activeTransitionKey)
+  const cleanupExceptionKey = getCleanupExceptionKey(activeTransitionKey, prevTransitionKey)
   return (
     <ColumnHeader className="chat-header">
-      {shouldDisplayBtn && (
-        <IconButton icon={isChatCollapsed ? 'close' : 'arrowLeft'} onClick={onCloseChat} />
-      )}
-      <div {...clickHandlers} class="chat-info-wrapper">
-        {renderChatInfo()}
-      </div>
+      <Transition
+        timeout={350}
+        cleanupException={cleanupExceptionKey}
+        activeKey={activeTransitionKey}
+        name="slideFade"
+      >
+        {backBtnIcon && <IconButton icon={backBtnIcon} onClick={handleGoBack} />}
+        <div {...clickHandlers} class="chat-info-wrapper">
+          {renderChatInfo()}
+        </div>
+      </Transition>
     </ColumnHeader>
   )
 })

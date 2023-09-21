@@ -1,3 +1,4 @@
+import {ApiMessageEntity} from 'api/types'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiLangKey} from 'api/types/langPack'
 
@@ -72,12 +73,18 @@ interface ActionPayloads {
   createGroup: CreateGroupInput
   getChats: void
   getChat: {id: string}
-  openChat: {id: string | undefined; username?: string; shouldChangeHash?: boolean}
+  openChat: {
+    id: string | undefined
+    username?: string
+    shouldChangeHash?: boolean
+    shouldReplaceHistory?: boolean
+  }
   openChatByUsername: {username: string}
+  openPreviousChat: void
   getChatFull: {id: string}
 
   /* Messages */
-  sendMessage: {text: string}
+  sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}
   getMessages: {chatId: string; limit: number; offset: number; offsetDate?: Date}
 
   /* Account */

@@ -189,6 +189,7 @@ export async function hydrateStore() {
     if (messages) {
       const byChatId = pickFromPersistedMessages(messages)
       Object.keys(byChatId).forEach((chatId) => {
+        console.log({chatId}, 'MESSAGE_IDS?')
         updateMessages(global, chatId, byChatId[chatId].byId)
       })
     }

@@ -5,11 +5,13 @@
   width: var(--left-column-width);
   height: 100dvh;
   z-index: var(--z-left-column);
-  transition: transform var(--slide-dark-transition), filter var(--slide-dark-transition),
-    background-color 0.2s ease;
 
+  @include withAnimations {
+    transition: transform var(--slide-dark-transition), filter var(--slide-dark-transition),
+      background-color 0.2s ease;
+  }
   .column-header {
-    user-select: all;
+    user-select: none; // ?
   }
 
   @include responsive(tablet) {

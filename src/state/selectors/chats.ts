@@ -3,7 +3,7 @@ import type {ApiChatId} from 'api/types/diff'
 
 import {getChatUsername_deprecated, isPrivateChat2} from 'state/helpers/chats'
 
-import type {SignalGlobalState} from 'types/state'
+import type {OpenedChat, SignalGlobalState} from 'types/state'
 
 import {isUserOnline, selectUser} from './users'
 
@@ -92,6 +92,13 @@ export function selectCurrentChat(global: SignalGlobalState): ApiChat | undefine
   return currentChatId ? global.chats.byId[currentChatId] : undefined
 }
 
+export function selectOpenedChats(global: SignalGlobalState): OpenedChat[] {
+  return global.openedChats
+}
+export function selectCurrentOpenedChat(global: SignalGlobalState): OpenedChat | undefined {
+  return global.openedChats[global.openedChats.length - 1]
+}
+
 export function isSavedMessages(global: SignalGlobalState, chatId: string) {
   const currentId = global.auth.userId
 
@@ -103,7 +110,11 @@ export function isChatChannel(chat: ApiChat) {
 }
 
 export function selectIsChatsFetching(global: SignalGlobalState) {
-  return global.chats.isLoading && selectChatsIds(global).length === 0
+  return global.chats.isLoading /*  && selectChatsIds(global).length === 0 */
+}
+
+export function selectIsMessagesLoading(global: SignalGlobalState) {
+  return selectCurrentOpenedChat(global)?.isMessagesLoading
 }
 
 export function selectAllChats(global: SignalGlobalState) {

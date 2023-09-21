@@ -1,4 +1,4 @@
-import {type FC} from 'preact/compat'
+import {type FC, useEffect} from 'preact/compat'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
@@ -26,6 +26,23 @@ enum AppScreens {
 
 const Application: FC = () => {
   const global = getGlobalState()
+
+  useEffect(() => {
+    const channel = new BroadcastChannel('stateChannel')
+
+    channel.onmessage = (event) => {
+      const receivedState = event.data
+      // Update the state in this tab when receiving updates from other tabs
+
+      console.log({receivedState})
+      // setAppState(receivedState)
+    }
+
+    return () => {
+      // Cleanup the event listener
+      channel.close()
+    }
+  }, [])
   // useEffect(()=>{},[])
   let initialScreen: AppScreens
   if (ClientError.getError().value.length) {

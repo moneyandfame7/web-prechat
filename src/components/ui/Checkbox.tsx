@@ -28,6 +28,7 @@ export const Checkbox: FC<CheckboxProps> = ({
   id,
 }) => {
   const handleChange = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    console.log('HANDLE CHANGE?')
     onToggle?.(e.currentTarget.checked)
   }, [])
 

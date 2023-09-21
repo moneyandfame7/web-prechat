@@ -13,11 +13,11 @@ export function useFastClick<T extends AnyFunction>(handler?: T, fast = true) {
   }
   const onMouseDown = useMemo(() => {
     return fast && !IS_SENSOR ? (handleMouseDown as unknown as T) : undefined
-  }, [fast, IS_SENSOR])
+  }, [fast, IS_SENSOR, handler])
 
   const onClick = useMemo(() => {
     return IS_SENSOR || !fast ? (handler as unknown as T) : undefined
-  }, [IS_SENSOR, fast])
+  }, [IS_SENSOR, fast, handler])
 
   return {
     onMouseDown,

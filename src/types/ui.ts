@@ -1,5 +1,5 @@
 import type {Signal} from '@preact/signals'
-import type {VNode} from 'preact'
+import type {ComponentChildren, VNode} from 'preact'
 import type {StateUpdater, TargetedEvent} from 'preact/compat'
 
 /* LEFT */
@@ -44,4 +44,5 @@ export type SignalOr<T> = Signal<T> | T
 export interface VNodeWithKey<TKey, TProps = any> extends VNode<TProps> {
   key: TKey
 }
+export type PreactNode = string | number | boolean | VNode | PreactNode[]
 export type Key = string | number

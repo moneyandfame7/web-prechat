@@ -1,14 +1,17 @@
 import '../subscribers/account'
 import '../subscribers/chats'
+import '../subscribers/messages'
 import './api/account'
 import './api/auth'
 import './api/chats'
 import './api/contacts'
 import './api/langPack'
+import './api/messages'
 import './api/search'
 import './api/users'
 
 /* Ui */
+import './ui/chats'
 import './ui/diff'
 import './ui/init'
 import './ui/search'

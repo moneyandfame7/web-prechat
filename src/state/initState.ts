@@ -87,14 +87,15 @@ export const INITIAL_STATE: GlobalState = {
 
   messages: {
     byChatId: {},
+    idsByChatId: {},
   },
 
   currentChat: {
     chatId: undefined,
     username: undefined,
-    isChatInfoShown: undefined,
+    isMessagesLoading: false,
   },
-
+  openedChats: [],
   rightColumn: {
     screen: RightColumnScreens.ChatProfile,
     isOpen: false,

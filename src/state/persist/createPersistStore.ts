@@ -102,8 +102,8 @@ export function idbMethods<T extends AnyObject>(
 
   return {
     /* Put. */
-    async put(obj) {
-      if (!enabled.value) {
+    async put(obj, force) {
+      if (!enabled.value && !force) {
         return
       }
 
@@ -120,6 +120,19 @@ export function idbMethods<T extends AnyObject>(
         }
       }
       await tx.done
+    },
+    async update(key, obj, force) {
+      if (!enabled.value && !force) {
+        return
+      }
+
+      const db = await dbPromise
+      const tx = db.transaction(storeName, 'readwrite')
+      const store = tx.objectStore(storeName)
+
+      await store.delete(key as string)
+
+      await store.put(deepCopy(obj), optionalParameters?.keyPath ? undefined : (key as string))
     },
     /* Get. */
     async get() {

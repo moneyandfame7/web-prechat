@@ -1,4 +1,5 @@
 import {storages} from 'state/storages'
+import {updateSyncState} from 'state/sync'
 
 import lang from 'lib/i18n/lang'
 
@@ -58,6 +59,7 @@ export function updateSettingsState(
     updateByKey(global.settings.passcode, passcode)
   }
 
+  updateSyncState(settings)
   storages.settings.put(settings)
 }
 

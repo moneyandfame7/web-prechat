@@ -5,6 +5,7 @@ import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition
 
 export type TransitionName =
   | 'slide'
+  | 'slideY'
   | 'slideFade'
   | 'slideFadeY'
   | 'zoomSlide'
@@ -12,9 +13,12 @@ export type TransitionName =
   | 'fade'
   | 'slideDark'
   | 'rotate'
+  | 'zoomIcon'
+export type TransitionEasing = 'ease' | 'ease-in' | 'ease-in-out' | 'ease-out' | 'linear'
 export type TransitionDirection = 'auto' | 'inverse' | 1 | -1
 export interface TransitionProps<TKey extends number | string> {
   activeKey: TKey
+  appear?: boolean
   name: TransitionName
   children: ComponentChildren
   direction?: TransitionDirection
@@ -34,6 +38,7 @@ export interface SingleTransitionProps {
   shouldSkip?: boolean
   shouldLockUI?: boolean
   direction?: TransitionDirection
+  visibilityHidden?: boolean
   onEnter?: () => void
   toggle?: boolean
   /**
@@ -43,6 +48,7 @@ export interface SingleTransitionProps {
   className?: string
   transitionClassnames?: CSSTransitionClassNames
   timeout?: number
+  easing?: 'ease' | 'linear' | 'ease-in' | 'ease-in-out'
   children: ComponentChildren
   onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   onMouseLeave?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void

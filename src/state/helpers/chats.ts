@@ -11,6 +11,20 @@ import {getUserName, isUserId} from './users'
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]{5,}$/
 
+export function buildLocalPrivateChat({user}: {user: ApiUser}): ApiChat {
+  return {
+    id: user.id,
+    _id: crypto.randomUUID(),
+    color: user.color,
+    createdAt: new Date().toISOString() as any,
+    isOwner: false,
+    title: getUserName(user),
+    type: 'chatTypePrivate',
+    userId: user.id,
+    isSavedMessages: false,
+    unreadCount: 0,
+  }
+}
 export function getPeerName(peer: ApiUser | ApiChat) {
   if ('title' in peer) {
     return peer.title

@@ -9,7 +9,12 @@ import {selectChat, selectChatByUsername, selectChatFull} from 'state/selectors/
 import {selectUser} from 'state/selectors/users'
 import {storages} from 'state/storages'
 import {updateCurrentChat} from 'state/updates'
-import {replacePeer, updateChatFullInfo, updateChats} from 'state/updates/chats'
+import {
+  replacePeer,
+  updateChatFullInfo,
+  updateChats,
+  updateOpenedChats,
+} from 'state/updates/chats'
 
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
@@ -102,40 +107,53 @@ createAction('getChatFull', async (state, _, payload) => {
 })
 
 createAction('openChat', async (state, actions, payload) => {
-  const {id, shouldChangeHash, username} = payload
+  const {id, shouldChangeHash, shouldReplaceHistory = true, username} = payload
+
   if (!id || (!id && !username)) {
-    changeHash({hash: undefined})
-    document.title = 'Prechat'
-    return updateCurrentChat(state, {
+    changeHash({hash: undefined, silent: true})
+    document.title = ''
+    updateCurrentChat(state, {
       chatId: undefined,
       username: undefined,
     })
+    updateOpenedChats(state, undefined, undefined, shouldReplaceHistory)
+
+    return
   }
   const chat = selectChat(state, id)
+  const isPrivate = isUserId(id)
+  const user = isPrivate ? selectUser(state, id) : undefined
   if (!chat) {
-    actions.getChat({id})
+    if (isPrivate) {
+      actions.getUser(id)
+    } else {
+      actions.getChat({id})
+    }
   }
 
   document.title = chat?.title || ''
 
-  const isPrivate = isUserId(id)
-
   if (shouldChangeHash) {
-    changeHash({hash: getChatUsername(state, chat!) || chat?.id, silent: true})
+    // @todo переробити
+
+    const hash = isPrivate ? user?.username || user?.id : chat?.id
+
+    console.log({hash})
+    if (hash) {
+      changeHash({hash, silent: true})
+    }
   }
   // const isSaved = isSavedMessages(state, id)
   const needLoadFull = !isPrivate && !selectChatFull(state, id)
 
   if (needLoadFull) {
     actions.getChatFull({id})
-  } else if (isPrivate /* && !selectUser(state, id) */) {
-    actions.getUser(id)
   }
-
   updateCurrentChat(state, {
     chatId: id,
     username,
   })
+  updateOpenedChats(state, id, username, shouldReplaceHistory) // for test false
 })
 
 createAction('openChatByUsername', async (state, actions, payload) => {

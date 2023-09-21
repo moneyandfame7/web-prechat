@@ -19,6 +19,7 @@ import './Transition.scss'
  */
 const Transition = <TKey extends number | string>({
   name,
+  appear,
   children,
   activeKey,
   shouldCleanup = false,
@@ -71,7 +72,8 @@ const Transition = <TKey extends number | string>({
 
     return (
       <SingleTransition
-        name="fade"
+        appear={appear}
+        name="zoomFade"
         className={className}
         key={key}
         transitionClassnames={TRANSITION_CLASSES}
@@ -142,6 +144,8 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
     toggle,
     onMouseLeave,
     onMouseEnter,
+    visibilityHidden,
+    easing,
   }) => {
     const {classNames, styles: buildedStyles} = buildProperties(
       name,
@@ -149,7 +153,9 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
       timeout,
       direction,
       toggle,
-      animateIn
+      animateIn,
+      visibilityHidden,
+      easing
     )
 
     const buildedClassname = clsx(className, 'transition-item', {

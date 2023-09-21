@@ -17,15 +17,16 @@ import {type MapState, connect} from 'state/connect'
 
 import {useBoolean} from 'hooks/useFlag'
 import {useIntersectionObserver} from 'hooks/useIntersectionObserver'
+import {useLayout} from 'hooks/useLayout'
 
-import {type EmojiData, type EmojiSkin} from 'utilities/emoji'
+import {type EmojiData, type EmojiItem, type EmojiSkin} from 'utilities/emoji'
 import {retryFetch} from 'utilities/fetch'
-import {preloadImage} from 'utilities/preloadImage'
 
 import {ScreenLoader} from 'components/ScreenLoader'
 import {Menu, MenuItem} from 'components/popups/menu'
 import {SingleTransition} from 'components/transitions'
 import {IconButton, type IconName} from 'components/ui'
+import {Portal} from 'components/ui/Portal'
 
 import {EmojiCategory} from './EmojiCategory'
 
@@ -46,7 +47,7 @@ const categoriesIcons: Record<string, IconName> = {
   flags: 'flag',
 }
 
-async function initData(emojiSkin: EmojiSkin): Promise<EmojiData> {
+async function initData(): Promise<EmojiData> {
   const data = await retryFetch<EmojiData>(
     'https://cdn.jsdelivr.net/npm/@emoji-mart/data@latest/sets/14/apple.json',
     false
@@ -64,6 +65,7 @@ const emojiIntersections: boolean[] = []
 
 export interface EmojiPickerProps {
   isOpen: boolean
+  onSelectEmoji: (e: EmojiItem) => void
 }
 interface StateProps {
   recentEmojis: string[]
@@ -73,7 +75,10 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   recentEmojis,
   isOpen,
   skinEmoji,
+  onSelectEmoji,
 }) => {
+  const {isMobile} = useLayout()
+
   const [emojiData, setEmojiData] = useState<EmojiData | null>(null)
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0)
   const headerRef = useRef<HTMLDivElement>(null)
@@ -86,6 +91,7 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
     if (!isOpen || !headerRef.current || !barRef.current) {
       return
     }
+
     const tab = document.getElementById(`emoji_${activeCategoryIndex}`)
     if (!tab) {
       return
@@ -115,12 +121,17 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   useEffect(() => {
     if (isOpen && !emojiData) {
       ;(async () => {
-        const data = await initData(skinEmoji)
+        const data = await initData()
         setEmojiData(data)
       })()
     }
   }, [isOpen, skinEmoji])
 
+  useEffect(() => {
+    if (isMobile) {
+      document.body.classList.toggle('emoji-menu-open', isOpen)
+    }
+  }, [isOpen, isMobile])
   const changeCategory = (idx: number, e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault()
     const categoryEl = document.getElementById(`emoji-category-${idx}`)
@@ -138,9 +149,9 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
     setActiveCategoryIndex(idx)
   }
 
-  function handleEmojiClick(emojiId: string) {
+  function handleEmojiClick(emoji: EmojiItem) {
     // eslint-disable-next-line no-console
-    console.log('CLICKED:', emojiData?.emojis[emojiId])
+    onSelectEmoji(emoji)
   }
 
   const {observe} = useIntersectionObserver(
@@ -164,7 +175,6 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
       })
     }
   )
-
   const allCategories = useMemo(() => {
     if (!emojiData?.categories) {
       return []
@@ -182,6 +192,7 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
 
   const buildedClass = clsx('emoji-picker', {
     'search-active': value,
+    'mobile-menu': isMobile,
   })
 
   // const handleOnClose = useCallback(() => {
@@ -198,114 +209,112 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   const handleSkinMenuClose = useCallback(() => {
     setSkinMenuOpen(false)
   }, [])
-  return (
-    <div class="just-test-container">
-      {/* <IconButton icon="smile" onClick={toggle} /> */}
-      <SingleTransition
-        timeout={150}
-        appear
-        styles={{transformOrigin: 'left bottom'}}
-        in={isOpen}
-        name="zoomFade"
-        toggle
-        unmount={false}
-        className={buildedClass}
-      >
-        <div class="emoji-header">
-          <IconButton className="search-btn" icon="search" onClick={toggleSearch} />
-          {/* @todo винести окремо Input з анімацією placeholder`a, і т.д */}
-          <input placeholder="Search" class="search-input" />
-          <div
-            class="emoji-header-container scrollable scrollable-x scrollable-hidden"
-            ref={headerRef}
-          >
-            {Object.keys(categoriesIcons).map((i, idx) => (
-              <IconButton
-                id={`emoji_${idx}`}
-                onClick={(e) => changeCategory(idx, e)}
-                className="category-btn"
-                key={i}
-                icon={categoriesIcons[i]}
-                title={i}
+  const picker = (
+    <SingleTransition
+      timeout={isMobile ? undefined : 150}
+      appear
+      styles={{transformOrigin: 'left bottom'}}
+      in={isOpen}
+      name={isMobile ? 'slideY' : 'zoomFade'}
+      toggle
+      unmount
+      className={buildedClass}
+    >
+      <div class="emoji-header">
+        <IconButton className="search-btn" icon="search" onClick={toggleSearch} />
+        {/* @todo винести окремо Input з анімацією placeholder`a, і т.д */}
+        <input placeholder="Search" class="search-input" />
+        <div
+          class="emoji-header-container scrollable scrollable-x scrollable-hidden"
+          ref={headerRef}
+        >
+          {Object.keys(categoriesIcons).map((i, idx) => (
+            <IconButton
+              id={`emoji_${idx}`}
+              onClick={(e) => changeCategory(idx, e)}
+              className="category-btn"
+              key={i}
+              icon={categoriesIcons[i]}
+              title={i}
+            />
+          ))}
+          <div ref={barRef} class="emoji-header__line" />
+        </div>
+      </div>
+      <div class="emoji-content">
+        <div ref={emojiContainerRef} class="scrollable scrollable-y">
+          {shouldLoading ? (
+            <ScreenLoader size="medium" withBg={false} />
+          ) : (
+            allCategories.map((c, idx) => (
+              <EmojiCategory
+                skinEmoji={skinEmoji}
+                key={c.id}
+                category={c}
+                emojiData={emojiData}
+                idx={idx}
+                intersectionObserve={observe}
+                onSelectEmoji={handleEmojiClick}
+                shouldRender={
+                  idx === activeCategoryIndex ||
+                  idx === activeCategoryIndex - 1 ||
+                  idx === activeCategoryIndex + 1
+                }
               />
-            ))}
-            <div ref={barRef} class="emoji-header__line" />
-          </div>
+            ))
+          )}
         </div>
-        <div class="emoji-content">
-          <div ref={emojiContainerRef} class="scrollable scrollable-y">
-            {shouldLoading ? (
-              <ScreenLoader size="medium" withBg={false} />
-            ) : (
-              allCategories.map((c, idx) => (
-                <EmojiCategory
-                  skinEmoji={skinEmoji}
-                  key={c.id}
-                  category={c}
-                  emojiData={emojiData}
-                  idx={idx}
-                  intersectionObserve={observe}
-                  onSelectEmoji={handleEmojiClick}
-                  shouldRender={
-                    idx === activeCategoryIndex ||
-                    idx === activeCategoryIndex - 1 ||
-                    idx === activeCategoryIndex + 1
-                  }
-                />
-              ))
-            )}
-          </div>
-        </div>
-        <div class="emoji-footer">
-          <span class="skin-tone" onClick={handleSkinMenuOpen} />
+      </div>
+      <div class="emoji-footer">
+        <span class="skin-tone" onClick={handleSkinMenuOpen} />
 
-          <Menu
-            withBackdrop
-            withMount
-            className="skin-tone-menu"
-            onClose={handleSkinMenuClose}
-            isOpen={isSkinMenuOpen}
-            transform="bottom right"
-            placement={{
-              right: true,
-            }}
-            timeout={300}
-          >
-            <MenuItem>
-              <span class="skin-tone skin-tone-1" />
-              Default
-            </MenuItem>
-            <MenuItem>
-              <span class="skin-tone skin-tone-2" />
-              Light
-            </MenuItem>
-            <MenuItem>
-              <span class="skin-tone skin-tone-3" />
-              Medium-light
-            </MenuItem>
-            <MenuItem>
-              <span class="skin-tone skin-tone-4" />
-              Medium
-            </MenuItem>
-            <MenuItem>
-              <span class="skin-tone skin-tone-5" />
-              Medium-dark
-            </MenuItem>
-            <MenuItem>
-              <span class="skin-tone skin-tone-6" />
-              Dark
-            </MenuItem>
-          </Menu>
-        </div>
-      </SingleTransition>
-    </div>
+        <Menu
+          withBackdrop
+          withMount
+          className="skin-tone-menu"
+          onClose={handleSkinMenuClose}
+          isOpen={isSkinMenuOpen}
+          transform="bottom right"
+          placement={{
+            right: true,
+          }}
+          timeout={300}
+        >
+          <MenuItem>
+            <span class="skin-tone skin-tone-1" />
+            Default
+          </MenuItem>
+          <MenuItem>
+            <span class="skin-tone skin-tone-2" />
+            Light
+          </MenuItem>
+          <MenuItem>
+            <span class="skin-tone skin-tone-3" />
+            Medium-light
+          </MenuItem>
+          <MenuItem>
+            <span class="skin-tone skin-tone-4" />
+            Medium
+          </MenuItem>
+          <MenuItem>
+            <span class="skin-tone skin-tone-5" />
+            Medium-dark
+          </MenuItem>
+          <MenuItem>
+            <span class="skin-tone skin-tone-6" />
+            Dark
+          </MenuItem>
+        </Menu>
+      </div>
+    </SingleTransition>
   )
+  return isMobile ? <Portal>{picker}</Portal> : picker
 }
 
 const mapStateToProps: MapState<EmojiPickerProps, StateProps> = (state) => {
   return {
     recentEmojis: state.emojis.recent,
-    skinEmoji: state.emojis.skin,
+    skinEmoji: 4,
   }
 }
 

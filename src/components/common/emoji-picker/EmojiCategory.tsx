@@ -3,12 +3,10 @@ import {type FC, useRef} from 'preact/compat'
 import {type ObserveFn, useOnIntersect} from 'hooks/useIntersectionObserver'
 
 import {IS_EMOJI_SUPPORTED, IS_SAFARI} from 'common/environment'
-import {type EmojiData, type EmojiSkin, type IEmojiCategory} from 'utilities/emoji'
+import {type EmojiData, EmojiItem, type EmojiSkin, type IEmojiCategory} from 'utilities/emoji'
 import {remToPx} from 'utilities/remToPx'
 
 import {SingleTransition} from 'components/transitions'
-
-import {EmojiButton} from './EmojiButton'
 
 interface EmojiCategoryProps {
   skinEmoji: EmojiSkin
@@ -17,7 +15,7 @@ interface EmojiCategoryProps {
   shouldRender: boolean
   category: IEmojiCategory
   intersectionObserve?: ObserveFn
-  onSelectEmoji: (emojiId: string) => void
+  onSelectEmoji: (emoji: EmojiItem) => void
 }
 
 const ITEMS_PER_ROW = 8
@@ -66,6 +64,7 @@ export const EmojiCategory: FC<EmojiCategoryProps> = ({
         className="emoji-category__content"
         in={shouldRender}
         styles={{
+          // avoid hardcode 8 - count in row, but in different display can be another
           minHeight: Math.ceil(category.emojis.length / 8) * EMOJI_BUTTON_PX,
         }}
         unmount
@@ -78,7 +77,7 @@ export const EmojiCategory: FC<EmojiCategoryProps> = ({
           const withCurrentSkin = skins.length > 1 ? skins[skinEmoji] : skins[0]
           const src = `emoji/${withCurrentSkin.unified}.png`
           return (
-            <span class="emoji-item" key={e}>
+            <span onClick={() => onSelectEmoji(withCurrentSkin)} class="emoji-item" key={e}>
               {IS_EMOJI_SUPPORTED ? (
                 withCurrentSkin.native
               ) : (
@@ -87,7 +86,7 @@ export const EmojiCategory: FC<EmojiCategoryProps> = ({
                   height={34}
                   alt={withCurrentSkin.native}
                   src={src}
-                  // loading="lazy"
+                  loading="lazy"
                   // onLoad={
                   //   !isLoaded
                   //     ? (e) => {

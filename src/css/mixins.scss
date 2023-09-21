@@ -22,10 +22,12 @@
 }
 
 @mixin bgAndColorTransition($properties...) {
-  transition-duration: 0.2s;
-  transition-timing-function: ease;
+  @include withAnimations {
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
 
-  transition-property: background-color, $properties;
+    transition-property: background-color, $properties;
+  }
 }
 
 @mixin defaultTransition($propertie) {

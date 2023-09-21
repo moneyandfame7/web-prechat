@@ -1,0 +1,42 @@
+.input-scroll {
+  flex-shrink: 0;
+  min-height: var(--chat-input-height);
+  transition: height 100ms linear;
+  // background-color: var(--c-bg);
+  // margin: 15px;
+  // border-radius: 12px;
+  // max-height: 200px;
+  overflow: hidden;
+  // border: 3px solid green;
+}
+.text-area {
+  white-space: pre-wrap;
+  caret-color: var(--c-primary);
+  background-color: transparent;
+  width: 100%;
+  overflow-y: auto;
+  min-height: var(--chat-input-height);
+
+  // padding: 10px;
+  padding-inline: 15px;
+  padding-block: 15px;
+  height: auto;
+  // display: flex;
+  line-height: 1.2;
+  max-height: 350px;
+  @include responsive(mobile) {
+    max-height: 215px;
+  }
+  // align-items: center;
+  // min-height: var(--base-height);
+  // height: var(--base-height);
+  // margin: 15px;
+  resize: none;
+  // width: inherit;
+  // &::-webkit-scrollbar {
+  //   width: 0;
+  // }
+  @include withAnimations {
+    transition: height 100ms linear;
+  }
+}

@@ -2,7 +2,7 @@ import type {CSSProperties} from 'preact/compat'
 
 import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition'
 
-import type {TransitionDirection, TransitionName} from './types'
+import type {TransitionDirection, TransitionEasing, TransitionName} from './types'
 
 export const TRANSITION_CLASSES = {
   /* Appear - first mount. */
@@ -33,7 +33,9 @@ export function buildProperties(
   timeout?: number,
   direction?: TransitionDirection,
   toggle?: boolean,
-  animateIn?: boolean
+  animateIn?: boolean,
+  visibilityHidden?: boolean,
+  easing?: TransitionEasing
 ) {
   const isBackwards = direction === -1 || direction === 'inverse'
   const shouldToggle = toggle ? (isBackwards ? animateIn : !animateIn) : isBackwards
@@ -44,6 +46,7 @@ export function buildProperties(
     styles: {
       ...styles,
       ...(timeout ? {animationDuration: `${timeout}ms`} : {}),
+      ...(easing ? {animationTimingFunction: easing} : {}),
     } as CSSProperties,
     classNames: {
       appearActive: `transition-${computedName}_to`,
@@ -51,7 +54,7 @@ export function buildProperties(
       exitActive: `transition-${computedName}_from`,
       appearDone: `transition-item_active`,
       enterDone: `transition-item_active`,
-      exitDone: `transition-item_inactive`,
+      exitDone: visibilityHidden ? 'transition-item_hide' : `transition-item_inactive`,
     } as CSSTransitionClassNames,
   }
 }

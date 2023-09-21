@@ -5,7 +5,6 @@ import {getGlobalState} from 'state/signal'
 
 import {Transition} from 'components/transitions'
 
-import {ChatFolders} from './ChatFolders'
 import {ChatItem} from './ChatItem'
 
 import './ChatList.scss'
@@ -13,7 +12,7 @@ import './ChatList.scss'
 const Skeleton = () => {
   return (
     <>
-      {Array.from({length: 10}).map((id) => (
+      {Array.from({length: 8}).map((id) => (
         <div class="skeleton-chat-item" key={id}>
           <div class="skeleton skeleton-avatar" />
 
@@ -47,7 +46,7 @@ enum TestKey {
   Skeleton,
   List,
 }
-export const Chats: FC = () => {
+export const ChatList: FC = () => {
   const global = getGlobalState()
   const isChatsFetching = selectIsChatsFetching(global)
 
@@ -62,16 +61,18 @@ export const Chats: FC = () => {
     }
   }
 
+  // const buildedClass = clsx('chats-list', {
+  //   'scrollable scrollable-y': !isChatsFetching,
+  // })
   return (
-    // <Transition
-    //   containerClassname="chats-list scrollable scrollable-y"
-    //   name="fade"
-    //   shouldCleanup
-    //   activeKey={activeScreen}
-    //   // durations={250}
-    // >
-    //   {render()}
-    // </Transition>
-    <ChatFolders />
+    <Transition
+      containerClassname="chats-list scrollable scrollable-y"
+      name="fade"
+      shouldCleanup
+      activeKey={activeScreen}
+      // durations={250}
+    >
+      {render()}
+    </Transition>
   )
 }

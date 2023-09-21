@@ -76,6 +76,11 @@ export interface GlobalSearchState {
   }
   isLoading: boolean
 }
+export interface OpenedChat {
+  chatId?: string
+  username?: string
+  isMessagesLoading: boolean
+}
 export interface GlobalState {
   settings: SettingsState
   auth: AuthState
@@ -96,7 +101,6 @@ export interface GlobalState {
     byId: Record<string, ApiUser>
     // fullById: {[userId: string]: ApiUserFull}
   }
-
   chats: {
     byId: Record<string, ApiChat>
     isLoading: boolean
@@ -107,6 +111,7 @@ export interface GlobalState {
 
   messages: {
     byChatId: Record<string, {byId: Record<string, ApiMessage>}>
+    idsByChatId: Record<string, string[]>
   }
 
   activeSessions: {
@@ -134,12 +139,16 @@ export interface GlobalState {
     // messages: ApiMessage[]
     chatId?: string
     username?: string
-    isChatInfoShown?: boolean
+    isMessagesLoading: boolean
   }
+
+  openedChats: OpenedChat[]
 
   globalSettingsScreen?: SettingsScreens
   countryList: ApiCountry[]
 }
+
+// export type SyncedState = GlobalState
 
 export type SignalGlobalState = DeepSignal<GlobalState>
 

@@ -8,7 +8,10 @@ export class ApiMessages extends ApiBaseMethod {
     const {data} = await this.client.mutate({
       mutation: MUTATION_SEND_MESSAGE,
       variables: {
-        input,
+        input: {
+          ...input,
+          entities: input.entities?.length ? input.entities : undefined,
+        },
       },
     })
     if (!data?.sendMessage) {

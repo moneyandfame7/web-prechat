@@ -35,6 +35,19 @@ export const FRAGMENT_MESSAGE: DocumentNode = gql`
     action {
       ...AllMessageActionFields
     }
+    content {
+      formattedText {
+        text
+        entities {
+          start
+          end
+          type
+        }
+      }
+      action {
+        ...AllMessageActionFields
+      }
+    }
     text
     createdAt
     updatedAt
@@ -45,12 +58,14 @@ export const FRAGMENT_MESSAGE: DocumentNode = gql`
 `
 
 export const MUTATION_SEND_MESSAGE: TypedDocumentNode<{
-  sendMessage: ApiMessage
+  sendMessage: {message: ApiMessage}
   input: SendMessageInput
 }> = gql`
   mutation SendMessage($input: SendMessageInput!) {
     sendMessage(input: $input) {
-      ...AllMessageFields
+      message {
+        ...AllMessageFields
+      }
     }
   }
 

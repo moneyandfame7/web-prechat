@@ -11,8 +11,11 @@
   // body.has-chat & {
   // }
   height: 100dvh;
-  transition: transform var(--slide-dark-transition), filter var(--slide-dark-transition),
-    background-color 200ms ease;
+
+  @include withAnimations {
+    transition: transform var(--slide-dark-transition), filter var(--slide-dark-transition),
+      background-color 200ms ease;
+  }
   display: flex;
   flex-direction: column;
   // background-color: var(--c-bg);
@@ -50,4 +53,11 @@
   @media only screen and (min-width: 768.1px) and (max-width: 1280px) {
     // background-color: red;
   }
+}
+.future-transition-container {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
 }

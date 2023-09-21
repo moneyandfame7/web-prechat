@@ -8,6 +8,8 @@ import {getChatName} from 'state/helpers/chats'
 import {getUserName, isUserId} from 'state/helpers/users'
 import {isUserOnline} from 'state/selectors/users'
 
+import {useFastClick} from 'hooks/useFastClick'
+
 // import {getSignalOr} from 'utilities/getSignalOr'
 import {getInitials} from 'utilities/string/getInitials'
 
@@ -34,6 +36,7 @@ interface AvatarTestProps {
   text?: string
   peer?: ApiPeer
   withOnlineStatus?: boolean
+  onClick?: VoidFunction
 }
 
 // передавати просто тут одразу peer.
@@ -47,6 +50,7 @@ export const AvatarTest: FC<AvatarTestProps> = ({
   peer,
   withOnlineStatus,
   text,
+  onClick,
 }) => {
   const isUser = peer && isUserId(peer.id)
   const user = isUser ? peer && (peer as ApiUser) : undefined
@@ -77,8 +81,10 @@ export const AvatarTest: FC<AvatarTestProps> = ({
       'saved-messages': isSavedMessages,
     }
   )
+
+  const clickHandlers = useFastClick(onClick, true)
   return (
-    <div class={buildedClassname}>
+    <div {...clickHandlers} class={buildedClassname}>
       {renderContent()}
       {withOnlineStatus && (
         <SingleTransition in={userStatus} name="zoomFade" className="online-badge-transition">

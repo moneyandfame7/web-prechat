@@ -6141,6 +6141,11 @@ util-deprecate@^1.0.1:
   resolved "https://registry.yarnpkg.com/util-deprecate/-/util-deprecate-1.0.2.tgz#450d4dc9fa70de732762fbd2d4a28981419a0ccf"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
+virtua@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/virtua/-/virtua-0.9.0.tgz#6e61b337b16e48336444b6ef6d9663dbfa7294f4"
+  integrity sha512-QKEUaCVOAmNy7AYKRuwk0gwrVOb0d2P4u1zqqywFpv0boPnwvbSKFs8hG+Ds0tEUDvFk/PIH96JtCxdX0z15Yg==
+
 vite-plugin-checker@^0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/vite-plugin-checker/-/vite-plugin-checker-0.6.2.tgz#3790381734440033e6cb3cee9d92fcfdd69a4d71"

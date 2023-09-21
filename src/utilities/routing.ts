@@ -36,7 +36,7 @@ export function connectStateToNavigation(
     const hash = window.location.hash
     if (hash.length === 0) {
       if (event) {
-        closeChat()
+        // closeChat() // !!!IDK WHAT NEED TO DO THERE
         // actions.openChat({id: undefined})
       }
       return changeHash({hash: undefined})

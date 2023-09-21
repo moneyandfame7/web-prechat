@@ -2,13 +2,18 @@
   display: flex;
   align-items: center;
   position: relative;
-  padding-inline: 15px;
+  // margin-inline: 15px; // when use padding, line not under tab btn
+  // padding-inline: 15px;
   // background-color: red;
-
+  &::before,
+  &::after {
+    content: '';
+    width: 15px;
+    flex: 0 0 auto;
+  }
   .tab-btn {
     // flex-grow: 1;
     // margin-inline: 10px;
-
     display: flex;
     align-items: center;
     justify-content: center;

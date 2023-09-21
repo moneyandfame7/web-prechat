@@ -10,3 +10,22 @@
 .primary-color {
   color: var(--c-primary);
 }
+
+.emoji-native {
+  display: inline !important;
+
+  font-family: apple color emoji, segoe ui emoji, noto color emoji, android emoji, emojisymbols,
+    emojione mozilla, twemoji mozilla, segoe ui symbol;
+  vertical-align: unset !important;
+  line-height: 1 !important;
+}
+
+.emoji-image {
+  width: 18px;
+  height: 18px;
+
+  display: inline-block;
+  max-width: 100%;
+  max-height: 100%;
+  vertical-align: middle;
+}

@@ -13,7 +13,7 @@
     border-bottom: 1px solid var(--c-border);
     box-shadow: 0 2px 2px var(--c-shadow-light);
     margin-bottom: 10px;
-
+    // box-shadow: rgba(17, 17, 26, 0.1) 0px 1px 0px;
     @include bgAndColorTransition(border-color);
     // box-shadow: 0 1px 5px -1px #00000029;
   }

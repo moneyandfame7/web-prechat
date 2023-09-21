@@ -1,20 +1,32 @@
 .emoji-picker {
+  height: var(--emoji-picker-height);
   max-width: 380px;
   left: 40px;
   // background-color: var(--c-surface-transparent);
   // backdrop-filter: blur(6px);
-
+  z-index: var(--z-menu);
   box-shadow: var(--menu-shadow);
   background-color: var(--menu-bg) !important;
   backdrop-filter: blur(50px);
 
   min-height: 300px;
-  max-height: 425px;
   border-radius: 12px;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  &.mobile-menu {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    border-radius: 0;
+    // max-height: 300px;
+    max-width: 100%;
+    background-color: var(--c-bg) !important;
+  }
 }
 
 .emoji-content {
@@ -180,6 +192,7 @@
   --emoji-total-size: 2.625rem;
   display: grid;
 
+  column-gap: 0.25rem;
   grid-template-columns: repeat(auto-fill, var(--emoji-total-size));
   justify-content: space-between;
   font-size: var(--emoji-size);
