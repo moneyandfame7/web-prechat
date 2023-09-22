@@ -1,4 +1,4 @@
-import type {ApiChat, ApiUser} from 'api/types'
+import type {ApiUser} from 'api/types'
 import type {ApiMessage, ApiMessageAction, ApiMessageEntity} from 'api/types/messages'
 
 import {parseStringToJSX} from 'lib/i18n/helpers'
@@ -36,6 +36,15 @@ export function buildLocalMessage({
     senderId,
     isOutgoing: !isChannel,
   }
+}
+
+export function orderHistory(messages: ApiMessage[]) {
+  return messages.sort((a, b) => {
+    const aDate = new Date(a.createdAt).getTime()
+    const bDate = new Date(b.createdAt).getTime()
+
+    return aDate - bDate
+  })
 }
 
 export function getMessageActionText(action: ApiMessageAction, sender?: ApiUser) {

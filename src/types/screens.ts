@@ -29,8 +29,7 @@ export enum SettingsScreens {
   PrivacyRuleSection,
 
   General,
-  Appearance,
-  AppearanceChatBackground,
+  Wallpapers,
 
   /* CHAT FOLDERS */
   ChatFolders,
@@ -66,7 +65,6 @@ export enum SettingsGroup {
   EditProfile,
   Notifications,
   DataAndStorage,
-  Appearance,
   Privacy,
   General,
   ChatFolders,
@@ -98,10 +96,7 @@ export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
     SettingsScreens.ChatFoldersNewIncludes,
   ],
   [SettingsGroup.Devices]: [SettingsScreens.Devices],
-  [SettingsGroup.Appearance]: [
-    SettingsScreens.Appearance,
-    SettingsScreens.AppearanceChatBackground,
-  ],
+
   [SettingsGroup.Language]: [SettingsScreens.Language],
 }
 

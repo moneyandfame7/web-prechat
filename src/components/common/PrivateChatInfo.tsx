@@ -44,7 +44,7 @@ const PrivateChatInfoImpl: FC<OwnProps & StateProps> = ({
         peer={user}
       />
       <div class="chat-info__container">
-        <FullNameTitle peer={user!} isSavedMessages={isSavedMessages} />
+        {user && <FullNameTitle peer={user} isSavedMessages={isSavedMessages} />}
         <p class="list-item__subtitle">{userStatus}</p>
       </div>
       {/* </ListItem> */}
@@ -62,7 +62,11 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (
   }
   const isSavedMessages = user.isSelf && !showSelf
   // const isOnline = !isSavedMessages && user && isUserOnline(user)
-  const userStatus = withOnlineStatus ? getUserStatus(user) : undefined
+  const userStatus = withOnlineStatus
+    ? isSavedMessages
+      ? 'chat with yourself'
+      : getUserStatus(user)
+    : undefined
   return {
     user,
     userStatus,

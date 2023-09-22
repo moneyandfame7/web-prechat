@@ -1,29 +1,18 @@
-import {useSignal} from '@preact/signals'
-import {type FC, type TargetedEvent, memo, useCallback, useEffect, useRef} from 'preact/compat'
-
-import type {ApiChat} from 'api/types'
+import {type FC, memo, useCallback, useEffect, useMemo} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
-import {
-  selectChat,
-  selectCurrentChat,
-  selectCurrentOpenedChat,
-  selectOpenedChats,
-} from 'state/selectors/chats'
+import {selectOpenedChats} from 'state/selectors/chats'
+import {selectChatMessageIds} from 'state/selectors/messages'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
-import {useBoolean} from 'hooks/useFlag'
 import {useLayout} from 'hooks/useLayout'
 
-import {IS_EMOJI_SUPPORTED} from 'common/environment'
-import {EMOJI_REGEX, getEmojiUnified} from 'utilities/emoji'
 import {addEscapeListener} from 'utilities/keyboardListener'
 import {connectStateToNavigation} from 'utilities/routing'
 
-import {OpenedChat} from 'types/state'
-import type {PreactNode} from 'types/ui'
+import type {OpenedChat} from 'types/state'
 
 import {InfiniteScroll} from 'components/InfiniteScroll'
 import {Transition} from 'components/transitions'
@@ -31,6 +20,7 @@ import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
+import {MessageItem} from './MessageItem'
 import {MessagesList} from './MessagesList'
 import {getCleanupExceptionKey} from './helpers/getCleanupExceptionKey'
 
@@ -107,18 +97,28 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
   // const cleanupExceptionKey = (
   //   prevTransitionKey !== undefined && prevTransitionKey < currentTransitionKey ? prevTransitionKey : undefined
   // );
+  const messagesIds = useMemo(
+    () => selectChatMessageIds(global, 'c_740c5f09-e3da-423b-88e6-2cb73401f7ad'),
+    []
+  )
+
+  useEffect(() => {
+    console.log({messagesIds})
+  }, [])
   return (
-    <div class="MiddleColumn">
+    <div class="MiddleColumn" id="middle-column">
       {/* <h3>Current chat:{global.openedChats[activeTransitionKey]?.chatId}</h3>
       <h3>Chats: {JSON.stringify(global.openedChats)}</h3> */}
       <Button
         onClick={() => {
           const theme = global.settings.general.theme
+
           actions.changeTheme(theme === 'dark' ? 'light' : 'dark')
         }}
       >
-        Toggle theme.
+        Toggle theme. {global.settings.general.theme}
       </Button>
+      {/* {messagesIds && <InfiniteScroll messageIds={messagesIds} />} */}
       {isChatOpen && (
         <>
           <ChatHeader

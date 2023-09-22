@@ -59,6 +59,7 @@ export const AvatarTest: FC<AvatarTestProps> = ({
 
   const renderContent = () => {
     let textAvatar: string | undefined = text
+
     if (isSavedMessages) {
       return <Icon name="savedMessages" />
     } else if (chat) {
@@ -73,7 +74,6 @@ export const AvatarTest: FC<AvatarTestProps> = ({
 
     return textAvatar ? getInitials(textAvatar) : undefined
   }
-
   const avatarVariant = user?.color || chat?.color || variant
   const buildedClassname = clsx(
     `Avatar Avatar-${size} Avatar-${shape} Avatar-c-${avatarVariant}`,

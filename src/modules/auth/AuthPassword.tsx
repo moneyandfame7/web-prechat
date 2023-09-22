@@ -1,12 +1,12 @@
-import {type FC, memo, useCallback} from 'preact/compat'
 import {useSignal} from '@preact/signals'
+import {type FC, memo, useCallback} from 'preact/compat'
 
 import {getGlobalState} from 'state/signal'
 
 import {t} from 'lib/i18n'
 
-import {Button, PasswordInput} from 'components/ui'
 import {MonkeyPassword} from 'components/monkeys'
+import {Button, PasswordInput} from 'components/ui'
 
 const AuthPassword: FC = () => {
   const {auth} = getGlobalState()
@@ -19,7 +19,7 @@ const AuthPassword: FC = () => {
   }, [])
 
   return (
-    <>
+    <div class="Auth_password">
       <MonkeyPassword see={showPassword} />
       <h1 class="title">Enter a Password</h1>
       <p class="subtitle">Your account is protected with an additional password.</p>
@@ -31,7 +31,7 @@ const AuthPassword: FC = () => {
         showPassword={showPassword}
       />
       <Button isLoading={auth.isLoading}>{t('Next')}</Button>
-    </>
+    </div>
   )
 }
 export default memo(AuthPassword)

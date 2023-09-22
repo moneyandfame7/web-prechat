@@ -36,3 +36,7 @@ export function isUserOnline(user: ApiUser) {
 export function selectSelf(global: SignalGlobalState): ApiUser | undefined {
   return global.users.byId[global.auth.userId!]
 }
+
+export function selectIsSelf(global: SignalGlobalState, id: string) {
+  return global.auth.userId === id
+}

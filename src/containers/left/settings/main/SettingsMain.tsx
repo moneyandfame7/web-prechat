@@ -29,7 +29,6 @@ interface SettingsItem {
   /* name - keyof i18n pack???? */
   name: string
   screen: SettingsScreens
-  withRight?: true
 }
 
 const SETTINGS_ITEMS: SettingsItem[] = [
@@ -54,11 +53,6 @@ const SETTINGS_ITEMS: SettingsItem[] = [
     screen: SettingsScreens.Privacy,
   },
   {
-    icon: 'favourites',
-    name: 'Appearance',
-    screen: SettingsScreens.Appearance,
-  },
-  {
     icon: 'folder',
     name: 'Chat folders',
     screen: SettingsScreens.ChatFolders,
@@ -67,13 +61,11 @@ const SETTINGS_ITEMS: SettingsItem[] = [
     icon: 'devices',
     name: 'Devices',
     screen: SettingsScreens.Devices,
-    withRight: true,
   },
   {
     icon: 'language',
     name: 'Language',
     screen: SettingsScreens.Language,
-    withRight: true,
   },
 ]
 

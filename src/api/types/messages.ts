@@ -34,6 +34,26 @@ export interface SendMessageInput {
   entities?: ApiMessageEntity[]
   sendAs?: ApiInputPeer
 }
+export enum HistoryDirection {
+  Backwards = 'Backwards',
+  Around = 'Around',
+  Forwards = 'Forwards',
+}
+export interface GetHistoryInput {
+  chatId: string
+  limit?: number
+  direction: HistoryDirection
+  /**
+   * Message cursor ID.
+   */
+  offsetId?: string
+  /**
+   * Whether need include to response message with offset id
+   */
+  includeOffset?: boolean
+
+  maxDate?: Date
+}
 export enum ApiMessageEntityType {
   Italic = 'italic',
   Bold = 'bold',

@@ -40,6 +40,10 @@ createAction('init', async (state): Promise<void> => {
   if (state.settings.general.theme === 'dark') {
     document.documentElement.classList.add('night')
   }
+  document.documentElement.attributeStyleMap.set(
+    '--message-text-size',
+    `${state.settings.general.messageTextSize}px`
+  )
 
   // const packLength = Object.keys(persisted?.settings?.i18n.pack)
   // if (!packLength) {

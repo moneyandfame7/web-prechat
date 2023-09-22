@@ -8,7 +8,6 @@ import {SettingsGroup, SettingsScreens, getSettingsActiveGroup} from 'types/scre
 
 import {Transition} from 'components/transitions'
 
-import SettingsAppearance from './appearance/SettingsAppearance.async'
 import SettingsChatFolders from './chat-folders/SettingsChatFolders.async'
 import SettingsDataAndStorage from './data-and-storage/SettingsDataAndStorage.async'
 import SettingsDevices from './devices/SettingsDevices.async'
@@ -67,8 +66,6 @@ const Settings: FC<SettingsProps> = ({currentScreen}) => {
         return <SettingsNotifications />
       case SettingsGroup.Privacy:
         return <SettingsPrivacy />
-      case SettingsGroup.Appearance:
-        return <SettingsAppearance />
     }
   }, [activeGroup])
 

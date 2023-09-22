@@ -47,6 +47,8 @@ createAction('addContact', async (state, actions, payload) => {
     // })
     actions.closeAddContactModal()
 
+    // settimeout?
+    actions.openChat({id: result.id, shouldChangeHash: true})
     /**
      * @todo if added by phone - open chat with him
      */

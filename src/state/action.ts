@@ -1,4 +1,4 @@
-import {ApiMessageEntity} from 'api/types'
+import {ApiMessageEntity, HistoryDirection} from 'api/types'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiLangKey} from 'api/types/langPack'
 
@@ -85,7 +85,14 @@ interface ActionPayloads {
 
   /* Messages */
   sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}
-  getMessages: {chatId: string; limit: number; offset: number; offsetDate?: Date}
+  getHistory: {
+    chatId: string
+    limit?: number
+    offsetId?: string
+    direction?: HistoryDirection
+    maxDate?: Date
+    includeOffset?: boolean
+  }
 
   /* Account */
   getAuthorizations: void

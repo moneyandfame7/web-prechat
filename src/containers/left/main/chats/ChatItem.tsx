@@ -4,7 +4,6 @@ import clsx from 'clsx'
 
 import type {ApiChat, ApiUser} from 'api/types'
 
-import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {getChatName_deprecated, getChatRoute} from 'state/helpers/chats'
 import {getMessageText} from 'state/helpers/messages'
@@ -13,7 +12,6 @@ import {selectChat} from 'state/selectors/chats'
 import {isUserOnline, selectUser} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
 
-import {IS_MOBILE} from 'common/environment'
 import {formatDate} from 'utilities/date/convert'
 
 import {SingleTransition} from 'components/transitions'
@@ -44,7 +42,6 @@ const ChatItemImpl: FC<OwnProps & StateProps> = ({
   currentChatId,
 }) => {
   const global = getGlobalState()
-  const {openChat} = getActions()
   const chatRoute = getChatRoute(isPrivate ? user : chat)
   const chatDate = useMemo(
     () => chat && formatDate(new Date(chat?.createdAt), true, false),
@@ -76,8 +73,8 @@ const ChatItemImpl: FC<OwnProps & StateProps> = ({
       badge={chat?.unreadCount || undefined}
     >
       <div class="status">
-        <AvatarTest chat={chat} isSavedMessages={isSavedMessages} withOnlineStatus />
-        {isPrivate && (
+        <AvatarTest peer={chat} isSavedMessages={isSavedMessages} withOnlineStatus />
+        {isPrivate && !isSavedMessages && (
           <SingleTransition in={isOnline} name="zoomFade" className="online-badge-transition">
             <span class="online-badge" />
           </SingleTransition>

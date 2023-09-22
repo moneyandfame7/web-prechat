@@ -24,14 +24,7 @@ export function updateChats(global: SignalGlobalState, chatsById: Record<string,
   list.forEach((c) => {
     if (c.lastMessage) {
       // console.log('CHAT MESSAGE', c.lastMessage)
-      updateMessages(
-        global,
-        c.id,
-        {
-          [c.lastMessage.id]: c.lastMessage,
-        },
-        true
-      )
+      updateMessages(global, c.id, {[c.lastMessage.id]: c.lastMessage}, true)
       // updateMessages(global, c.id, {
       //   [c.lastMessage.id]: c.lastMessage,
       // })
@@ -78,13 +71,10 @@ export function updateChat(
 
   updateByKey(chat, chatToUpd)
 
-  storages.chats.put({
-    // just put chat? we already update him...
-    [chatId]: {
-      ...chat,
-      ...chatToUpd,
-    },
-  })
+  const updated = {
+    [chatId]: chat,
+  }
+  storages.chats.put(updated)
 }
 
 export function updateChatsFull(

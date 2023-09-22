@@ -36,7 +36,7 @@ export const ChatHeader: FC<OwnProps> = memo(({chatId, onCloseChat, activeTransi
 
   function renderChatInfo() {
     return isUserId(chatId) ? (
-      <PrivateChatInfo userId={chatId} />
+      <PrivateChatInfo userId={chatId} withOnlineStatus withTypingStatus />
     ) : (
       <GroupChatInfo chatId={chatId} />
     )

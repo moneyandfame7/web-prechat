@@ -19,13 +19,16 @@
     background-color: var(--c-ripple);
   }
   &.selectable {
-    .Avatar {
-      margin-left: 30px;
-    }
-    padding-inline: 40px;
+    // .Avatar {
+    //   margin-left: 30px;
+    // }
+    // padding-inline: 40px;
+
+    // gap: 30px;
   }
 
-  > .Icon {
+  > .Icon,
+  > .Checkbox {
     /* REWRITE IT */
     margin: 0px 30px 0px 10px;
   }
@@ -46,14 +49,14 @@
 
   &__subtitle,
   &__title {
-    width: 85%;
+    // width: 85%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   &__title {
-    width: 70%;
-    font-weight: 500;
+    // width: 90%;
+    // font-weight: 500;
   }
   &__subtitle {
     font-size: 14px;

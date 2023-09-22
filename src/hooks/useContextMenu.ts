@@ -103,21 +103,28 @@ export function useContextMenu(
     // console.log('LIMITER: ', limiterEl ? limiterEl : 'WINDOW')
     // const notInContainer = calculatedXWithPortal + menuWidth > container.width
     // console.log(calculatedXWithPortal > container.width / 2, 'RIGHT ORIGIN')
-    const notInContainer = limiterRect
+    const notInContainerX = limiterRect
       ? x + menuWidth > limiterRect.width
       : x > window.innerWidth - menuWidth
     // console.log({container, x, menuWidth}, notInContainer)
+    const notInContainerY = limiterRect
+      ? y + menuHeight > limiterRect.height
+      : y > window.innerHeight - menuHeight
 
-    if (notInContainer) {
+    console.log({notInContainerY, notInContainerX})
+    if (notInContainerX) {
       if (limiterRect) {
-        console.log({notInContainer})
-
         x = limiterRect.width - menuWidth - 5 /*  - (x - triggerRect.left) */
       } else {
         x = window.innerWidth - menuWidth - 5
       }
-
-      // x = container.width - menuWidth
+    }
+    if (notInContainerY) {
+      if (limiterRect) {
+        y = limiterRect.height - menuHeight - 5
+      } else {
+        y = window.innerHeight - menuHeight
+      }
     }
     // const notInContainerY = calculatedXYithPortal + menuHeight > container.offsetHeight
     // console.log({y}, triggerRect.top, {menuHeight})

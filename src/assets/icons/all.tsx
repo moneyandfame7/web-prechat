@@ -60,6 +60,11 @@ export {ReactComponent as delete} from './delete.svg'
 export {ReactComponent as deleteleft} from './deleteleft.svg'
 export {ReactComponent as keyboard} from './keyboard.svg'
 export {ReactComponent as cloudDownload} from './clouddownload.svg'
+export {ReactComponent as reply} from './reply.svg'
+export {ReactComponent as forward} from './forward.svg'
+export {ReactComponent as copy} from './copy.svg'
+export {ReactComponent as select} from './select.svg'
+export {ReactComponent as image} from './image.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

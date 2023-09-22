@@ -179,12 +179,19 @@ $theme-map-dark: (
   --c-bg-body: #{$c-bg-body};
   --c-bg-2: #f4f4f5;
   --c-bg-rgb: 255, 255, 255;
-
+  --c-pattern: rgba(232, 231, 231, 0.3);
   --c-message-container-bg: #e6ebee; /* #{$c-bg}; */
-  --c-message-bg: #{$c-message-bg};
-  --c-message-meta: #{$c-message-meta};
+  // --c-bubble-bg: #{$c-message-bg};
 
-  --c-message-highlight: rgba(0, 0, 0, 0.15);
+  --c-bubble-bg: #e1ffc7;
+  --c-message-meta: #{$c-message-meta};
+  &.bubble-mode {
+    /* IDK */
+  }
+
+  --c-bubble-highlight: rgba(0, 0, 0, 0.381);
+
+  // --c-bubble-highlight: var(--c-ripple);
 
   --c-box-shadow-section: rgba(0, 0, 0, 0.06);
   --c-shadow-light: rgb(114, 114, 114, 0.169);
@@ -198,7 +205,8 @@ $theme-map-dark: (
   --c-border: #{$c-border};
   --c-border-hover: #{$c-border-hover};
 
-  --c-primary: #{$c-primary};
+  // --c-primary: #{$c-primary};
+  --c-primary: #50a2e9;
   --c-primary-hover: #{$c-primary-hover};
   --c-primary-light: #{$c-primary-light};
 
@@ -244,6 +252,7 @@ $theme-map-dark: (
 
   // html.night & {}
   &.night {
+    // &.bubble-mode {}
     // $c-primary: #888afd;
     $c-primary: #8774e1;
     $c-primary-light: #b2a6eb;
@@ -266,12 +275,17 @@ $theme-map-dark: (
     --c-border-hover-input: #{lighten($c-border-input, 5%)};
 
     --c-message-container-bg: #000;
-    --c-message-bg: #{$c-primary};
+    --c-bubble-bg: #{$c-primary};
     --c-message-meta: #{$c-primary-dark};
-    --c-message-highlight: hsl(299.14deg 44.17% 37.47% / 40%);
-    --c-bg: #{$c-bg};
+    // --c-message-highlight: hsl(299.14deg 44.17% 37.47% / 40%);
+    --c-bubble-highlight: #0a0a0a8c;
+    // --c-message-highlight: hsl(299.14deg 44.17% 37.47% / 40%);
+
+    --c-bg: #181818;
     --c-bg-body: #{$c-bg-body};
     --c-bg-2: #0f0f0f;
+    --c-pattern: #0a0a0a8c;
+
     // --c-scrollbar: #{$c-border-input};
     // --c-scrollbar: rgba(255, 255, 255, 0.2);
 

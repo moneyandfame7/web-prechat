@@ -19,7 +19,7 @@ import {logDebugWarn} from 'lib/logger'
 import {TRANSITION_DURATION_MENU} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
-import {SingleTransition} from 'components/transitions'
+import {SingleTransition, TransitionEasing} from 'components/transitions'
 import {Icon, type IconName} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
 
@@ -63,6 +63,7 @@ interface MenuProps {
   shouldHandleAwayClick?: boolean
   withLeave?: boolean
   timeout?: number
+  easing?: TransitionEasing
 }
 
 export const Menu: FC<MenuProps> = memo(
@@ -82,6 +83,7 @@ export const Menu: FC<MenuProps> = memo(
     withPortal,
     shouldHandleAwayClick = true,
     timeout,
+    easing,
     // withLeave,
   }) => {
     let menuRef = useRef<HTMLDivElement>(null)
@@ -169,6 +171,7 @@ export const Menu: FC<MenuProps> = memo(
       >
         {/* <Portal> */}
         <SingleTransition
+          easing={easing}
           elRef={menuRef}
           className={buildedClass}
           styles={{transformOrigin: transform, ...style}}

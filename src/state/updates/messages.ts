@@ -3,11 +3,9 @@ import type {DeepSignal} from 'deepsignal'
 import {ApiUser} from 'api/types'
 import type {ApiMessage} from 'api/types/messages'
 
-import {selectChat} from 'state/selectors/chats'
 import {selectChatMessageIds, selectMessage, selectMessages} from 'state/selectors/messages'
 import {storages} from 'state/storages'
 
-import {deepCopy} from 'utilities/object/deepCopy'
 import {updateByKey} from 'utilities/object/updateByKey'
 
 import type {SignalGlobalState} from 'types/state'
@@ -33,7 +31,7 @@ export function sortMessagesByNewest(
 /**
  * Add new message ids and sort
  */
-export function addMessagesIds(
+export function replaceMessageIds(
   global: SignalGlobalState,
   chatId: string,
   messages: ApiMessage[]
@@ -43,7 +41,6 @@ export function addMessagesIds(
   const unique = messages.filter((m) => !alreadyOrdered?.includes(m.id)).map((m) => m.id)
   const ordered2 = sortMessagesByNewest(global, chatId, [...(alreadyOrdered || []), ...unique])
 
-  console.log({ordered2, chatId})
   global.messages.idsByChatId[chatId] = [...ordered2]
 
   // if (!alreadyOrdered) {
@@ -52,18 +49,6 @@ export function addMessagesIds(
   // }
 }
 
-/**
- * Just replace old ids by new
- */
-export function replaceMessagesIds(
-  global: SignalGlobalState,
-  chatId: string,
-  messages: ApiMessage[]
-) {
-  const ids = messages.map((m) => m.id)
-
-  global.messages.idsByChatId[chatId] = [...ids]
-}
 /**
  * Додає нові повідомлення, але треба подумати, коли треба PUT, а коли ADD.
  */
@@ -91,10 +76,10 @@ export function updateMessages(
   //   global.messages.byChatId[chatId].byId as Record<string, ApiMessage>
   // )
 
-  addMessagesIds(global, chatId, Object.values(messages))
-  if (shouldPersist) {
-    storages.messages.put(messages, forcePersist)
-  }
+  replaceMessageIds(global, chatId, Object.values(messages))
+  // if (shouldPersist) {
+  //   storages.messages.put(messages, forcePersist)
+  // }
 }
 
 export function updateLastMessage(
@@ -113,7 +98,8 @@ export function updateMessage(
   global: SignalGlobalState,
   chatId: string,
   messageId: string,
-  messageToUpd: Partial<ApiMessage>
+  messageToUpd: Partial<ApiMessage>,
+  shouldPersist = true
 ) {
   const chat = global.messages.byChatId[chatId]
 
@@ -123,9 +109,11 @@ export function updateMessage(
   }
   updateByKey(message, messageToUpd)
 
-  storages.messages.put({
-    [messageId]: message,
-  })
+  if (shouldPersist) {
+    storages.messages.put({
+      [messageId]: message,
+    })
+  }
 }
 
 export function deleteMessage(global: SignalGlobalState, chatId: string, messageId: string) {

@@ -1,6 +1,6 @@
 import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
-import type {ApiMessage, SendMessageInput} from 'api/types/messages'
+import type {ApiMessage, GetHistoryInput, SendMessageInput} from 'api/types/messages'
 
 export const FRAGMENT_PHOTO: DocumentNode = gql`
   fragment AllPhotoFields on Photo {
@@ -66,6 +66,19 @@ export const MUTATION_SEND_MESSAGE: TypedDocumentNode<{
       message {
         ...AllMessageFields
       }
+    }
+  }
+
+  ${FRAGMENT_MESSAGE}
+`
+
+export const QUERY_GET_HISTORY: TypedDocumentNode<{
+  getHistory: ApiMessage[]
+  input: GetHistoryInput
+}> = gql`
+  query GetHistory($input: GetHistoryInput!) {
+    getHistory(input: $input) {
+      ...AllMessageFields
     }
   }
 

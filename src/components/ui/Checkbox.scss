@@ -1,6 +1,8 @@
 .Checkbox {
   font-size: 16px;
   font-weight: 300;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   gap: 30px;
@@ -10,6 +12,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 24px;
+    height: 24px;
   }
   cursor: pointer;
   @include withAnimations {

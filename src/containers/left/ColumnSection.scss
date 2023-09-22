@@ -1,0 +1,13 @@
+.column-section {
+  overflow-y: auto;
+  padding-inline: 15px;
+  padding-block: 10px;
+  background-color: var(--c-surface);
+  margin-block-end: 20px;
+  > h2 {
+    // font-weight: 600;
+    margin-block-end: 15px;
+  }
+
+  @include bgAndColorTransition();
+}

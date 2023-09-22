@@ -1,7 +1,7 @@
 import {ApiBaseMethod} from 'api/base'
-import {MUTATION_SEND_MESSAGE} from 'api/graphql/messages'
+import {MUTATION_SEND_MESSAGE, QUERY_GET_HISTORY} from 'api/graphql/messages'
 import {cleanTypename} from 'api/helpers/cleanupTypename'
-import type {SendMessageInput} from 'api/types/messages'
+import type {GetHistoryInput, SendMessageInput} from 'api/types/messages'
 
 export class ApiMessages extends ApiBaseMethod {
   public async sendMessage(input: SendMessageInput) {
@@ -19,6 +19,18 @@ export class ApiMessages extends ApiBaseMethod {
     }
 
     return cleanTypename(data.sendMessage)
+  }
+
+  public async getHistory(input: GetHistoryInput) {
+    const {data} = await this.client.query({
+      query: QUERY_GET_HISTORY,
+      variables: {
+        input,
+      },
+      fetchPolicy: 'cache-first',
+    })
+
+    return cleanTypename(data.getHistory)
   }
 
   // public async getMessages(input: GetMessagesInput) {}

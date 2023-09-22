@@ -39,7 +39,7 @@ const AuthCode: FC = () => {
     auth.screen = AuthScreens.PhoneNumber
   }
   return (
-    <>
+    <div class="Auth_code">
       <MonkeyTrack
         inputRef={inputRef}
         size="medium"
@@ -69,7 +69,7 @@ const AuthCode: FC = () => {
         cb={verifyCode}
         elRef={inputRef}
       />
-    </>
+    </div>
   )
 }
 

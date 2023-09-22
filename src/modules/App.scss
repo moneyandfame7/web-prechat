@@ -1,7 +1,8 @@
 .auth-page {
   height: calc(100% + 100px);
-  max-width: 400px;
-  width: 400px;
+  // max-width: 400px;
+  // width: 400px;
+  width: 100%;
   position: relative;
   padding: 50px 15px;
   margin: 0px auto;
@@ -10,6 +11,11 @@
   @include responsive(mobile) {
     max-width: 300px;
     padding: 50px 5px;
+  }
+
+  > .transition > .transition-item > * {
+    max-width: 400px;
+    margin: 0 auto;
   }
 
   .Lottie-player,

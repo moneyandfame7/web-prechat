@@ -34,6 +34,12 @@
   transition: $propertie 0.2s ease;
 }
 
+@mixin withBubbles() {
+  body.bubble-mode & {
+    @content;
+  }
+}
+
 @mixin withAnimations() {
   html:not(.animation-none) & {
     @content;

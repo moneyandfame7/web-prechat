@@ -25,6 +25,7 @@ export interface MenuContextActions {
 interface ListItemProps {
   withRipple?: boolean
   withCheckbox?: boolean
+  withRadio?: boolean
   contextActions?: MenuContextActions
   onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   onToggleCheckbox?: (checked: boolean) => void

@@ -1,0 +1,16 @@
+.settings-message-size {
+  padding-block-end: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  .message-size-details {
+    display: flex;
+    justify-content: space-between;
+    .message-size__value {
+      color: var(--c-font-secondary);
+    }
+  }
+  .input-slider-wrapper {
+    width: 100%;
+  }
+}

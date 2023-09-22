@@ -1,4 +1,4 @@
-import {type FC, useRef} from 'preact/compat'
+import {type FC} from 'preact/compat'
 
 import clsx from 'clsx'
 
@@ -10,19 +10,9 @@ export type SpinnerColor = 'primary' | 'neutral' | 'yellow' | 'white'
 interface SpinnerProps {
   size?: Size
   color?: SpinnerColor
-  zoom?: boolean
-  absoluted?: boolean
 }
-export const Spinner: FC<SpinnerProps> = ({
-  size = 'medium',
-  color = 'primary',
-  zoom,
-  absoluted,
-}) => {
-  const buildedClassname = clsx('spinner', `spinner-${size}`, `spinner-${color}`, {
-    zoomOnce: zoom,
-    absoluted,
-  })
+export const Spinner: FC<SpinnerProps> = ({size = 'medium', color = 'primary'}) => {
+  const buildedClassname = clsx('spinner', `spinner-${size}`, `spinner-${color}`, {})
 
   return (
     <div class={buildedClassname}>

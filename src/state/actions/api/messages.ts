@@ -1,14 +1,21 @@
+import {DeepSignal} from 'deepsignal'
+
 import {Api} from 'api/manager'
-import {ApiChat} from 'api/types'
+import {ApiMessage, HistoryDirection} from 'api/types'
 
 import {createAction} from 'state/action'
 import {buildLocalPrivateChat} from 'state/helpers/chats'
-import {buildLocalMessage} from 'state/helpers/messages'
+import {buildLocalMessage, orderHistory} from 'state/helpers/messages'
 import {isUserId} from 'state/helpers/users'
 import {selectChat, selectCurrentOpenedChat} from 'state/selectors/chats'
+import {selectChatMessageIds, selectMessages} from 'state/selectors/messages'
 import {selectUser} from 'state/selectors/users'
 import {updateChat, updateChats} from 'state/updates'
 import {updateMessage, updateMessages} from 'state/updates/messages'
+
+import {filterUnique} from 'utilities/array/filterUnique'
+import {buildRecord} from 'utilities/object/buildRecord'
+import {updateByKey} from 'utilities/object/updateByKey'
 
 createAction('sendMessage', async (state, _, payload) => {
   const {currentChat} = state
@@ -39,7 +46,7 @@ createAction('sendMessage', async (state, _, payload) => {
   })
   // updateLastMessage(state, chatId, localMessage, false)
   console.log({localMessage})
-  updateMessages(state, chatId, {[localMessage.id]: localMessage}, false)
+  updateMessages(state, chatId, {[localMessage.id]: localMessage}, false, false)
   updateChat(state, chatId, {
     lastMessage: localMessage,
   })
@@ -53,12 +60,11 @@ createAction('sendMessage', async (state, _, payload) => {
   })
 
   if (!sended) {
+    /* should delete local message? */
     return
   }
 
-  updateMessage(state, chatId, sended.message.id, {
-    sendingStatus: undefined,
-  })
+  updateMessage(state, chatId, sended.message.id, {sendingStatus: undefined}, false)
 
   // const {message} = sended
   // updateMessage(state, chatId, builded.id, {
@@ -84,19 +90,75 @@ createAction('sendMessage', async (state, _, payload) => {
   // })
 })
 
-createAction('getMessages', async (state, _actions) => {
-  const currentOpenedChat = selectCurrentOpenedChat(state)
-  if (!currentOpenedChat?.chatId) {
+createAction('getHistory', async (state, _actions, payload) => {
+  const {
+    chatId,
+    direction = HistoryDirection.Backwards,
+    limit = 10,
+    maxDate,
+    offsetId,
+    includeOffset = false,
+  } = payload
+  const chat = selectChat(state, chatId)
+  if (!chat) {
     return
   }
 
-  currentOpenedChat.isMessagesLoading = true
+  // currentOpenedChat.isMessagesLoading = true
 
-  setTimeout(() => {
-    currentOpenedChat.isMessagesLoading = false
-  }, 5000)
+  const result = await Api.messages.getHistory({
+    direction,
+    chatId,
+    offsetId,
+    limit,
+    maxDate,
+    includeOffset,
+  })
+  const oldMessages = selectMessages(state, chatId)
+  // const newMessages = result.map((m, idx) => ({
+  //   id: m.id,
+  //   idx,
+  //   text: m.content.formattedText?.text,
+  // }))
+  const merged = [...Object.values(oldMessages || []), ...Object.values(result)]
 
-  updateMessages(state, currentOpenedChat.chatId, {})
+  const orderedHistory = orderHistory(merged)
+  // const merged=[oldMessages?(...Object.values(oldMessages))]
+  // console.log(Object.values(oldMessages))
+  // const newMessages = result.map((m) => m.id)
+  // console.log({
+  //   merged: merged.map((m) => m.id),
+  //   ids: orderedHistory.map((m) => m.id),
+  // })
+  const orderedIds = filterUnique(orderedHistory.map((m) => m.id))
+
+  /* Avoid to recreate???? */
+  if (
+    oldMessages &&
+    Object.keys(result).every((newId) => Boolean(oldMessages[String(newId)]))
+  ) {
+    return
+  }
+  const record = buildRecord(result, 'id') as DeepSignal<Record<string, ApiMessage>>
+  if (!oldMessages) {
+    state.messages.byChatId[chatId] = {
+      byId: record,
+    }
+  } else {
+    updateByKey(oldMessages, record)
+  }
+  state.messages.idsByChatId[chatId] = [...orderedIds]
+
+  console.log({orderedIds})
+  // console.log(
+  //   merged.map((m) => m.id),
+  //   ids
+  // )
+  // console.log(filterUnique([...newMessages, ...(oldMessages || [])]))
+
+  // currentOpenedChat.isMessagesLoading = false
+  // console.log()
+  // updateMessages(state, currentOpenedChat.chatId, buildRecord(result, 'id'))
 
   // const {chatId, limit, offset} = payload
 

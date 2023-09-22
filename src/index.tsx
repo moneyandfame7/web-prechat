@@ -88,8 +88,6 @@ async function init() {
       console.log(global)
     })
   }
-
-  subscribeToSyncUpdate()
 }
 
 init()

@@ -33,6 +33,16 @@ export function selectIsPrivateChat(global: SignalGlobalState, chatId: string) {
     isPrivateChat2(chat)
   )
 }
+
+export function selectIsChannel(global: SignalGlobalState, chatId: string) {
+  const chat = selectChat(global, chatId)
+  if (!chat) {
+    return undefined
+  }
+
+  return isChatChannel(chat)
+  // c
+}
 // export function isPrivateChat(global:SignalGlobalState,peer:ApiPeer){
 //   const isSaved=peer.id===global.auth.userId
 //   return isSaved|| 'title' in peer && peer.id!==peer._id
@@ -110,7 +120,7 @@ export function isChatChannel(chat: ApiChat) {
 }
 
 export function selectIsChatsFetching(global: SignalGlobalState) {
-  return global.chats.isLoading /*  && selectChatsIds(global).length === 0 */
+  return global.isChatsFetching && selectChatsIds(global).length === 0
 }
 
 export function selectIsMessagesLoading(global: SignalGlobalState) {

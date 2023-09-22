@@ -113,7 +113,7 @@ const AuthPhoneNumber: FC = () => {
   }
 
   return (
-    <>
+    <div class="Auth_phone">
       <Logo />
       <h1 class="title">{t('Auth.Signin')}</h1>
       <p class="subtitle">{t('Auth.ConfirmNumber')}</p>
@@ -157,7 +157,7 @@ const AuthPhoneNumber: FC = () => {
       <div id="auth-recaptcha-wrapper">
         <div id="auth-recaptcha" />
       </div>
-    </>
+    </div>
   )
 }
 

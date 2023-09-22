@@ -48,7 +48,7 @@ export interface SingleTransitionProps {
   className?: string
   transitionClassnames?: CSSTransitionClassNames
   timeout?: number
-  easing?: 'ease' | 'linear' | 'ease-in' | 'ease-in-out'
+  easing?: TransitionEasing
   children: ComponentChildren
   onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   onMouseLeave?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void

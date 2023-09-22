@@ -14,9 +14,9 @@ import AuthPhoneNumber from './AuthPhoneNumber'
 import SignUp from './SignUp.async'
 
 const classNames = {
-  [AuthScreens.Code]: 'Auth_code',
+  // [AuthScreens.Code]: 'Auth_code',
   [AuthScreens.Password]: 'Auth_password',
-  [AuthScreens.PhoneNumber]: 'Auth_phone',
+  // [AuthScreens.PhoneNumber]: 'Auth_phone',
   [AuthScreens.SignUp]: 'Auth_signup',
 }
 
@@ -44,30 +44,12 @@ const Auth: FC = () => {
   return (
     <div class="scrollable scrollable-y scrollable-hidden" id="auth-scroll">
       <div class="auth-page">
-        {/* <Button
-          onClick={() => {
-            global.auth.session = '12348123848128348128348143'
-            saveSession(global.auth.session)
-            startPersist()
-          }}
-        >
-          Mock auth
-        </Button>
-        <Button
-          onClick={() => {
-            global.auth.screen =
-              global.auth.screen === AuthScreens.PhoneNumber
-                ? AuthScreens.Code
-                : AuthScreens.PhoneNumber
-          }}
-        >
-          TOGGLE_SCREEN
-        </Button> */}
         <Transition
-          innerClassnames={classNames}
-          name="fade"
+          // innerClassnames={classNames}
+          name="zoomFade"
           activeKey={global.auth.screen}
           shouldCleanup={false}
+          timeout={400}
         >
           {renderScreen()}
         </Transition>

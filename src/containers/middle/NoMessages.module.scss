@@ -1,2 +1,41 @@
 .root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .wrapper {
+    border-radius: 12px;
+    background-color: var(--c-message-highlight);
+    color: #fff;
+    margin: 10px;
+    border: 1px solid var(--c-border-input);
+    @include bgAndColorTransition(border-color);
+    padding-inline: 30px;
+    padding-block: 20px;
+    .saved-messages {
+      user-select: none;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      > .icon {
+        width: 75px;
+        height: 75px;
+        path {
+          fill: #fff;
+        }
+      }
+      .list {
+        > * {
+          list-style: disc;
+        }
+      }
+    }
+
+    .title {
+      font-weight: 500;
+      font-size: 16px;
+    }
+  }
 }

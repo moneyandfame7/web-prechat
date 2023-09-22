@@ -51,7 +51,7 @@ createAction('createGroup', async (state, _, payload) => {
 })
 
 createAction('getChats', async (state, actions) => {
-  state.chats.isLoading = true
+  state.isChatsFetching = true
   const chats = await Api.chats.getChats()
   if (!chats) {
     return
@@ -73,7 +73,7 @@ createAction('getChats', async (state, actions) => {
   )
 
   // setTimeout(() => {
-  state.chats.isLoading = false
+  state.isChatsFetching = false
   // }, 1000)
 })
 

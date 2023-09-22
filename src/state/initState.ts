@@ -78,7 +78,7 @@ export const INITIAL_STATE: GlobalState = {
   },
 
   initialization: false,
-
+  isChatsFetching: false,
   users: {
     byId: {},
     contactIds: [],
@@ -107,7 +107,6 @@ export const INITIAL_STATE: GlobalState = {
 
   chats: {
     byId: {},
-    isLoading: true,
     ids: [],
     usernames: {},
     fullById: {},

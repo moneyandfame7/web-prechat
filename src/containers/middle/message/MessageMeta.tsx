@@ -2,7 +2,7 @@ import {type FC, memo} from 'preact/compat'
 
 import type {ApiMessage, ApiMessageSendingStatus} from 'api/types'
 
-import {formatDate} from 'utilities/date/convert'
+import {formatDate, formatMessageTime} from 'utilities/date/convert'
 
 import {Icon} from 'components/ui'
 
@@ -13,9 +13,7 @@ interface MessageMetaProps {
   sendingStatus: ApiMessageSendingStatus
 }
 const MessageMeta: FC<MessageMetaProps> = memo(({message, sendingStatus}) => {
-  const messageSendDate = message
-    ? formatDate(new Date(message?.createdAt), true, false)
-    : undefined
+  const messageSendDate = message ? formatMessageTime(new Date(message?.createdAt)) : undefined
 
   function renderStatus() {
     switch (sendingStatus) {

@@ -82,19 +82,12 @@ export interface OpenedChat {
   isMessagesLoading: boolean
 }
 export interface GlobalState {
+  // recentEmojis: string[]
+
+  /* SYNCED STATE */
   settings: SettingsState
   auth: AuthState
-  initialization: boolean
   globalSearch: GlobalSearchState
-  // recentEmojis: string[]
-  emojis: {
-    recent: string[]
-    skin: 0 | 1 | 2 | 3 | 4 | 5
-  }
-  rightColumn: {
-    screen: RightColumnScreens
-    isOpen: boolean
-  }
   users: {
     contactIds: string[]
     statusesByUserId: Record<string, ApiUserStatus>
@@ -103,52 +96,66 @@ export interface GlobalState {
   }
   chats: {
     byId: Record<string, ApiChat>
-    isLoading: boolean
     ids: string[]
     usernames: {[username: string]: ApiChatId}
     fullById: {[chatId: string]: ApiChatFull}
   }
-
   messages: {
     byChatId: Record<string, {byId: Record<string, ApiMessage>}>
     idsByChatId: Record<string, string[]>
   }
-
   activeSessions: {
     byId: Record<string, ApiSession>
     ids: string[]
   }
+  emojis: {
+    recent: string[]
+    skin: 0 | 1 | 2 | 3 | 4 | 5
+  }
+  countryList: ApiCountry[]
 
+  /* For TAB STATE: */
+  initialization: boolean
+  isChatsFetching: boolean
+  rightColumn: {
+    screen: RightColumnScreens
+    isOpen: boolean
+  }
   newContact: {
     userId?: string
     isByPhoneNumber: boolean
   }
-
   notification: {
     title?: string
     isOpen: boolean
   }
-
   commonModal: {
     title?: string
     body?: string
     isOpen: boolean
   }
-
   currentChat: {
     // messages: ApiMessage[]
     chatId?: string
     username?: string
     isMessagesLoading: boolean
   }
-
   openedChats: OpenedChat[]
-
   globalSettingsScreen?: SettingsScreens
-  countryList: ApiCountry[]
 }
-
-// export type SyncedState = GlobalState
+/**
+ * SyncedState is a  shared state between tabs.
+ */
+// export type SyncedState = Pick<
+//   GlobalState,
+//   'activeSessions' | 'auth' | 'chats' | 'emojis' | 'messages' | 'settings' | 'users'
+// >
+export type SyncedState = {
+  settings: Partial<SettingsState>
+  auth: Partial<AuthState>
+  chats: Partial<GlobalState['chats']>
+  messages: Partial<GlobalState['messages']>
+} & Pick<GlobalState, 'activeSessions' | 'emojis' | 'users'>
 
 export type SignalGlobalState = DeepSignal<GlobalState>
 

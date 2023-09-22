@@ -40,7 +40,7 @@ const SettingsDevices: FC = () => {
     return (
       <>
         <div class="settings-section">
-          <ColumnSubtitle text="THIS DEVICE" />
+          <ColumnSubtitle primary>THIS DEVICE</ColumnSubtitle>
           <ActiveSession session={session} />
 
           {hasOtherSessions && (
@@ -69,7 +69,7 @@ const SettingsDevices: FC = () => {
   function renderOtherSessions(sessions: ApiSession[]) {
     return (
       <div class="settings-section">
-        <ColumnSubtitle text="Active sessions" />
+        <ColumnSubtitle primary>Active sessions</ColumnSubtitle>
         {sessions.map((s) => (
           <ActiveSession key={s.id} session={s} />
         ))}

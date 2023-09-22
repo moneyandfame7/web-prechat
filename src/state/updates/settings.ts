@@ -1,8 +1,8 @@
 import {storages} from 'state/storages'
-import {updateSyncState} from 'state/sync'
 
 import lang from 'lib/i18n/lang'
 
+import {changeTheme} from 'utilities/changeTheme'
 import {updateByKey} from 'utilities/object/updateByKey'
 
 import type {SettingsState, SignalGlobalState} from 'types/state'
@@ -39,16 +39,28 @@ export function resetSettingsState(global: SignalGlobalState) {
 
 export function updateSettingsState(
   global: SignalGlobalState,
-  settings: Partial<SettingsState>
+  settings: Partial<SettingsState>,
+  persist = true
 ) {
-  // if ((settings as any)?.i18n) {
-  //   throw new Error('DO NOT PASS i18n IN UPDATER')
-  // }
-
   const {i18n, passcode, ...justToUpdate} = settings
 
-  // if (Object.keys(justToUpdate)) {
-  //   // upd then
+  // if (justToUpdate.general?.theme !== global.settings.general.theme) {
+  //   switch (justToUpdate.general?.theme) {
+  //     case 'dark':
+  //       document.documentElement.classList.add('night')
+  //       break
+  //     case 'light':
+  //       document.documentElement.classList.remove('night')
+  //       break
+  //   }
+  // }
+
+  if (settings.general?.theme) {
+    changeTheme(settings.general.theme)
+  }
+  // if (settings.general?.theme !== justToUpdate.general?.theme) {
+  //   console.error('SWITCH THEME??')
+  //   // changeTheme()
   // }
   updateByKey(global.settings, justToUpdate)
 
@@ -59,8 +71,16 @@ export function updateSettingsState(
     updateByKey(global.settings.passcode, passcode)
   }
 
-  updateSyncState(settings)
-  storages.settings.put(settings)
+  if (persist) {
+    storages.settings.put(settings)
+  }
+}
+
+export function updateGeneralSettings(
+  global: SignalGlobalState,
+  general: Partial<SettingsState['general']>
+) {
+  updateByKey(global.settings.general, general)
 }
 
 export function updatePasscodeState(

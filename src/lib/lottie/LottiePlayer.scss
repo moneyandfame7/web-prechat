@@ -5,9 +5,11 @@
   }
   &_medium {
     height: 170px;
+    width: 170px;
   }
   &_large {
     height: 200px;
+    width: 200px;
   }
 }
 .Lottie {
@@ -44,7 +46,7 @@
     }
   }
   &-fallback {
-    width: max-content;
+    // width: max-content;
     display: flex;
     justify-content: center;
 

@@ -7,7 +7,7 @@ import {DEBUG} from 'common/environment'
 import {pick} from 'utilities/object/pick'
 import {updateByKey} from 'utilities/object/updateByKey'
 
-import type {GlobalState} from 'types/state'
+import type {GlobalState, SignalGlobalState} from 'types/state'
 
 import {getGlobalState} from './signal'
 import {updateAuthState, updateSessions, updateSettingsState, updateUsers} from './updates'
@@ -107,7 +107,7 @@ export const storages = {
 
 const PERSIST_DISABLED = false
 
-function pickPersisted(state: GlobalState): Omit<Storages, 'i18n'> {
+function pickPersisted(state: GlobalState): Omit<Storages, 'i18n' | 'usernames'> {
   const messages = pickPersistMessages(state)
 
   return {
@@ -115,7 +115,7 @@ function pickPersisted(state: GlobalState): Omit<Storages, 'i18n'> {
     users: state.users.byId,
     chats: state.chats.byId,
     chatsFull: state.chats.fullById,
-    usernames: state.chats.usernames,
+    // usernames: state.chats.usernames,
     settings: state.settings,
     sessions: state.activeSessions.byId,
     messages,
@@ -189,7 +189,6 @@ export async function hydrateStore() {
     if (messages) {
       const byChatId = pickFromPersistedMessages(messages)
       Object.keys(byChatId).forEach((chatId) => {
-        console.log({chatId}, 'MESSAGE_IDS?')
         updateMessages(global, chatId, byChatId[chatId].byId)
       })
     }
@@ -199,7 +198,16 @@ export async function hydrateStore() {
     if (sessions) {
       updateSessions(global, sessions)
     }
-
+    const test: Partial<SignalGlobalState> = {
+      auth: {
+        ...global.auth,
+        ...auth,
+      },
+      settings: {
+        ...global.settings,
+        ...settings,
+      },
+    }
     persistStore.enable()
 
     // for sync storage??
@@ -213,6 +221,9 @@ export async function hydrateStore() {
   console.timeEnd('HYDRATE')
 }
 
+/**
+ * @todo передавати global просто всередину?
+ */
 export async function startPersist() {
   persistStore.enable()
   const global = getGlobalState()
@@ -229,7 +240,7 @@ export async function forcePersist(global: GlobalState) {
     storages.users.put(pickedForPersist.users),
     storages.chats.put(pickedForPersist.chats),
     storages.sessions.put(pickedForPersist.sessions),
-    storages.usernames.put(pickedForPersist.usernames),
+    // storages.usernames.put(pickedForPersist.usernames),
     storages.messages.put(pickedForPersist.messages),
     // storages.i18n.put(pickedForPersist.i1n),
     /* i18nStorage?? */

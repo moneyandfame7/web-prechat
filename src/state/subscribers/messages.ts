@@ -4,10 +4,9 @@ import {updateChat, updateChats} from 'state/updates'
 import {updateMessages} from 'state/updates/messages'
 
 createSubscribe('onNewMessage', (state, actions, data) => {
-  console.log('YOU HAVE A NEW MESSAGE:', data)
   const {chat, message} = data
   if (message.isOutgoing) {
-    console.log('НУ ХЗ ТІПА ПОТІМ ПОДИВЛЮСЬ ЦЮ ХУЙНЮ')
+    console.log('Message subscribe outgoing. ( check on other sessions? )')
     return
   }
   const exist = selectChat(state, chat.id)
