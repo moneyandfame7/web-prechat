@@ -41,18 +41,6 @@
       transform: translate3d(100%, 0, 0);
     }
   }
-  @include responsive(laptop) {
-    // position: absolute;
-    // left: var(--left-column-width);
-    // width: calc(100% - var(--left-column-width));
-    // body.chat-collapsed & {
-    //   transform: translate3d(0, 0, 0);
-    // }
-  }
-
-  @media only screen and (min-width: 768.1px) and (max-width: 1280px) {
-    // background-color: red;
-  }
 }
 .future-transition-container {
   overflow: hidden;

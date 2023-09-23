@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'preact/hooks'
 
+import {getGlobalState} from 'state/signal'
+
 // export const useLayout = () => {
 //   const [isMobile, setIsMobile] = useState(window.matchMedia('(max-width: 480px)').matches)
 //   const [isTablet, setIsTablet] = useState(
@@ -38,11 +40,13 @@ import {useEffect, useState} from 'preact/hooks'
 // }
 
 export const useLayout = () => {
+  const global = getGlobalState()
   const getWindowMatches = () => ({
     isMobile: window.matchMedia('(max-width: 480px)').matches,
     isTablet: window.matchMedia('(min-width: 480.1px) and (max-width: 768px)').matches,
     isLaptop: window.matchMedia('(min-width: 768.1px) and (max-width: 1280px)').matches,
     isSmall: window.matchMedia('(max-width: 768px)').matches,
+    isAnimationOff: !global.settings.general.animations,
   })
 
   const [layout, setLayout] = useState(getWindowMatches)

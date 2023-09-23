@@ -68,6 +68,7 @@ const emojiIntersections: boolean[] = []
 export interface EmojiPickerProps {
   isOpen: boolean
   onSelectEmoji: (e: EmojiItem) => void
+  onChangeSkin: (skin: EmojiSkin) => void
   onClose: VoidFunction
 }
 interface StateProps {
@@ -79,9 +80,10 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   isOpen,
   skinEmoji,
   onSelectEmoji,
+  onChangeSkin,
   onClose,
 }) => {
-  const {isSmall} = useLayout()
+  const {isSmall, isAnimationOff} = useLayout()
 
   const [emojiData, setEmojiData] = useState<EmojiData | null>(null)
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0)
@@ -109,7 +111,6 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
 
     headerRef.current.scrollTo({
       left: isNotFullyVisible ? isNotFullyVisibleScrollLeft : linePosition,
-      behavior: 'smooth',
     })
 
     const {width: tabWidth, left: tabLeft} = tab.getBoundingClientRect()
@@ -202,14 +203,7 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
     'mobile-menu': isSmall,
   })
 
-  const [isSkinMenuOpen, setSkinMenuOpen] = useState(false)
-  const handleSkinMenuOpen = useCallback(() => {
-    setSkinMenuOpen(true)
-  }, [])
-
-  const handleSkinMenuClose = useCallback(() => {
-    setSkinMenuOpen(false)
-  }, [])
+  const {value: isSkinMenuOpen, setFalse: closeSkinMenu, setTrue: openSkinMenu} = useBoolean()
 
   useClickAway(
     emojiPickerRef,
@@ -231,14 +225,20 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
         })
       : undefined
   }, [isOpen])
-  console.log({activeCategoryIndex})
+
+  const skinItems = useMemo(() => {
+    /**
+     * @todo i18n
+     */
+    return ['Default', 'Light', 'Medium-Light', 'Medium', 'Medium-Dark', 'Dark']
+  }, [])
   const picker = (
     <SingleTransition
       timeout={isSmall ? undefined : 150}
       appear
       styles={{transformOrigin: 'left bottom'}}
       in={isOpen}
-      name={isSmall ? 'slideY' : 'zoomFade'}
+      name={isSmall ? 'slideY' : isAnimationOff ? 'fade' : 'zoomFade'}
       toggle
       unmount
       className={buildedClass}
@@ -293,44 +293,27 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
         </div>
       </div>
       <div class="emoji-footer">
-        <span class="skin-tone" onClick={handleSkinMenuOpen} />
+        <span class="skin-tone" onClick={openSkinMenu} />
 
         <Menu
           withBackdrop
           withMount
           className="skin-tone-menu"
-          onClose={handleSkinMenuClose}
+          onClose={closeSkinMenu}
           isOpen={isSkinMenuOpen}
           transform="bottom right"
           placement={{
             right: true,
+            bottom: true,
           }}
-          timeout={300}
+          // timeout={300}
         >
-          <MenuItem>
-            <span class="skin-tone skin-tone-1" />
-            Default
-          </MenuItem>
-          <MenuItem>
-            <span class="skin-tone skin-tone-2" />
-            Light
-          </MenuItem>
-          <MenuItem>
-            <span class="skin-tone skin-tone-3" />
-            Medium-light
-          </MenuItem>
-          <MenuItem>
-            <span class="skin-tone skin-tone-4" />
-            Medium
-          </MenuItem>
-          <MenuItem>
-            <span class="skin-tone skin-tone-5" />
-            Medium-dark
-          </MenuItem>
-          <MenuItem>
-            <span class="skin-tone skin-tone-6" />
-            Dark
-          </MenuItem>
+          {skinItems.map((label, i) => (
+            <MenuItem key={i}>
+              <span class={`skin-tone skin-tone-${i}`} />
+              {label}
+            </MenuItem>
+          ))}
         </Menu>
       </div>
     </SingleTransition>

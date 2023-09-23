@@ -95,6 +95,9 @@
   padding-inline: 10px;
   background-color: rgba(var(--c-font-primary-rgb), 0.06);
   @include bgAndColorTransition(transform, width);
+  @include withAnimations {
+    scroll-behavior: smooth;
+  }
   // padding-block: 10px;
   .emoji-picker.search-active & {
     width: calc(100% - var(--emoji-search-input-width) - 50px);
@@ -107,7 +110,9 @@
     position: absolute;
     // width: calc(10% + 8px);
     width: 10%;
-    transition: transform 0.15s ease;
+    @include withAnimations {
+      transition: transform 0.15s ease;
+    }
     left: 0;
     height: 4px;
     border-radius: 18px;
@@ -168,7 +173,8 @@
   .skin-tone-menu {
     bottom: 40px;
     // right: -200px;
-    top: auto;
+    // top: auto;
+    margin-inline-end: 15px;
     background-color: var(--c-surface) !important;
   }
 }

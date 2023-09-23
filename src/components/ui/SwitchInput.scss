@@ -1,4 +1,5 @@
 .switch-input-wrapper {
+  pointer-events: none; // to allow onChange on input
   position: relative;
   display: inline-block;
   width: 40px;

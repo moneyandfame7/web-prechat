@@ -1,13 +1,11 @@
 .text-area-wrapper {
   min-height: var(--chat-input-height);
   max-width: 80%;
-  transition: height 100ms linear;
-  // background-color: var(--c-bg);
-  // margin: 15px;
-  // border-radius: 12px;
-  // max-height: 200px;
+
+  @include withAnimations {
+    transition: height 100ms linear;
+  }
   overflow: hidden;
-  // border: 3px solid green;
 }
 .text-area {
   white-space: pre-line; //!IMPORTANT for correct break space
@@ -48,15 +46,21 @@
     // color: blue;
     color: var(--c-placeholder);
     // position: absolute;
-    transform: translateX(0);
     opacity: 1;
-    transition: transform 0.15s ease, opacity 0.25s ease;
+
+    @include withAnimations {
+      transition: transform 0.15s ease, opacity 0.25s ease;
+      transform: translateX(0);
+    }
   }
   &:not(.is-empty) {
     &::after {
-      transform: translateX(1rem);
       opacity: 0;
-      transition: transform 0.35s ease, opacity 0.25s ease;
+
+      @include withAnimations {
+        transform: translateX(1rem);
+        transition: transform 0.35s ease, opacity 0.25s ease;
+      }
     }
   }
 }

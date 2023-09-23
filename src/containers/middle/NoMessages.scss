@@ -1,10 +1,10 @@
-.root {
+.no-messages-wrapper {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  .wrapper {
+  .no-messages {
     border-radius: 12px;
     background-color: var(--c-bubble-highlight);
     color: #fff;
@@ -13,7 +13,7 @@
     @include bgAndColorTransition(border-color);
     padding-inline: 30px;
     padding-block: 20px;
-    .saved-messages {
+    &__saved-messages {
       user-select: none;
 
       display: flex;

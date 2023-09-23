@@ -22,8 +22,9 @@ interface TextAreaProps {
   html: Signal<string>
   inputRef: RefObject<HTMLDivElement>
   placeholder?: SignalOr<string>
+  isFocused: Signal<boolean>
 }
-const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder}) => {
+const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isFocused}) => {
   const inputScrollRef = useRef<HTMLDivElement>(null)
 
   const {isMobile} = useLayout()
@@ -58,6 +59,10 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder}) =>
   useLayoutEffect(() => {
     updateHeight()
   }, [isMobile])
+
+  useLayoutEffect(() => {
+    inputRef.current?.focus()
+  }, [])
   useSignalEffect(() => {
     // console.log{html:}, htmlRef.current)
 
@@ -77,7 +82,13 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder}) =>
       updateHeight()
     }
   })
-
+  useSignalEffect(() => {
+    if (isFocused?.value) {
+      inputRef.current?.focus()
+    } else {
+      inputRef.current?.blur()
+    }
+  })
   const buildedClass = clsx('text-area scrollable scrollable-y scrollable-hidden', {
     'is-empty': html.value.length === 0,
   })
@@ -86,6 +97,11 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder}) =>
       <div
         id="DALBAEB"
         contentEditable
+        autofocus
+        autoFocus
+        onBlur={() => {
+          isFocused.value = false
+        }}
         // onSelect={() => {
         //   console.log('SELECT?')
         // }}

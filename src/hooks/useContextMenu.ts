@@ -96,7 +96,6 @@ export function useContextMenu(
     console.log(limiterEl)
     // console.log({y}, triggerRect.height, triggerRect.top)
     const additionalXForPortal = withPortal ? container.left : 0
-    const calculatedXWithPortal = x - additionalXForPortal
 
     // const additionalYForPortal = withPortal ? triggerRect.top : 0
     // const calculatedXYithPortal = y - additionalXForPortal
@@ -111,7 +110,6 @@ export function useContextMenu(
       ? y + menuHeight > limiterRect.height
       : y > window.innerHeight - menuHeight
 
-    console.log({notInContainerY, notInContainerX})
     if (notInContainerX) {
       if (limiterRect) {
         x = limiterRect.width - menuWidth - 5 /*  - (x - triggerRect.left) */

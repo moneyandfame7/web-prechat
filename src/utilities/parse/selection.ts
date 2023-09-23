@@ -20,6 +20,20 @@ export function insertTextAtCursor(text: string, inputRef: RefObject<HTMLDivElem
   inputRef.current?.dispatchEvent(new Event('input', {bubbles: true}))
 }
 
+export function insertCursorAtEnd(inputRef: RefObject<HTMLDivElement>) {
+  if (!isSelectionInElement(inputRef.current!.id) || !inputRef.current) {
+    console.log('NY TI EBLAN? 222')
+    return
+  }
+
+  const selection = window.getSelection()
+  const range = document.createRange()
+  range.selectNodeContents(inputRef.current)
+  range.collapse(false) // Встановлюємо курсор в кінець
+  selection?.removeAllRanges()
+  selection?.addRange(range)
+}
+
 export function isSelectionInElement(elementId: string) {
   const selection = window.getSelection()
   if (!selection || !selection.rangeCount) {

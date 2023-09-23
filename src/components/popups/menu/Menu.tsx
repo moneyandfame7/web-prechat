@@ -13,6 +13,7 @@ import clsx from 'clsx'
 
 import {useClickAway} from 'hooks/useClickAway'
 import {useFastClick} from 'hooks/useFastClick'
+import {useLayout} from 'hooks/useLayout'
 
 import {logDebugWarn} from 'lib/logger'
 
@@ -161,6 +162,8 @@ export const Menu: FC<MenuProps> = memo(
     //     }
     //   }
     // }, [])
+
+    const {isAnimationOff} = useLayout()
     const menu = (
       <MenuProvider
         props={{
@@ -176,7 +179,7 @@ export const Menu: FC<MenuProps> = memo(
           className={buildedClass}
           styles={{transformOrigin: transform, ...style}}
           in={isOpen}
-          name="zoomFade"
+          name={isAnimationOff ? 'fade' : 'zoomFade'}
           unmount={withMount}
           // appear
           timeout={timeout ?? TRANSITION_DURATION_MENU}

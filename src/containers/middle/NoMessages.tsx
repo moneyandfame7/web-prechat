@@ -2,7 +2,7 @@ import {type FC} from 'preact/compat'
 
 import {Icon} from 'components/ui'
 
-import styles from './NoMessages.module.scss'
+import './NoMessages.scss'
 
 interface NoMessagesProps {
   isSavedMessages?: boolean
@@ -10,10 +10,10 @@ interface NoMessagesProps {
 const NoMessages: FC<NoMessagesProps> = ({isSavedMessages}) => {
   function renderSavedMessagesText() {
     return (
-      <div class={styles.savedMessages}>
-        <Icon className={styles.icon} name="cloudDownload" />
-        <h4 class={styles.title}>Your cloud storage</h4>
-        <ul class={styles.list}>
+      <div class="no-messages__saved-messages">
+        <Icon className="icon" name="cloudDownload" />
+        <h4 class="title">Your cloud storage</h4>
+        <ul class="list">
           <li>Forward messages here to save them</li>
           <li>Send media and files to store them</li>
           <li>Access this chat from any device</li>
@@ -24,8 +24,8 @@ const NoMessages: FC<NoMessagesProps> = ({isSavedMessages}) => {
   }
 
   return (
-    <div class={styles.root}>
-      <div class={styles.wrapper}>{isSavedMessages && renderSavedMessagesText()}</div>
+    <div class="no-messages-wrapper">
+      <div class="no-messages">{isSavedMessages && renderSavedMessagesText()}</div>
     </div>
   )
 }

@@ -1,3 +1,42 @@
+export const IGNORED_KEY_CODES_FOR_FOCUS = [
+  'Escape',
+  'Tab',
+  'Meta',
+  'Shift',
+  'Control',
+  'Alt',
+  'WindowsKeyCommand',
+  'CapsLock',
+  'F1',
+  'F2',
+  'F3',
+  'F4',
+  'F5',
+  'F6',
+  'F7',
+  'F8',
+  'F9',
+  'F10',
+  'F11',
+  'F12',
+  // 'ArrowUp', // idk
+  // 'ArrowDown',
+  // 'ArrowLeft',
+  // 'ArrowRight',
+
+  // 'Backspace', // handle later
+  // 'Enter', // handle later
+  'Insert',
+  'Delete',
+  'Home',
+  'End',
+  'PageUp',
+  'PageDown',
+  'PrintScreen',
+  'ScrollLock',
+  'PauseBreak',
+]
+
 type HandlerName =
   | 'onEnter'
   | 'onBackspace'

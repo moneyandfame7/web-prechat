@@ -27,7 +27,6 @@ export const LeftMainMenu: FC = memo(() => {
   const {changeGeneralSettings} = getActions()
   const handleSwitchAnimations = (e: MouseEvent) => {
     const target = e.target as HTMLElement
-
     if (
       target.classList.contains('switch-input-wrapper') ||
       target.classList.contains('switch-input-label')

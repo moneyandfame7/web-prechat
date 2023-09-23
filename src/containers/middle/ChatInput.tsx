@@ -1,5 +1,5 @@
 import {useComputed, useSignal} from '@preact/signals'
-import {type FC, memo, useCallback, useRef} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useLayoutEffect, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
 
@@ -7,9 +7,10 @@ import {getActions} from 'state/action'
 
 import {useBoolean} from 'hooks/useFlag'
 
+import {IGNORED_KEY_CODES_FOR_FOCUS} from 'utilities/keyboardListener'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'
-import {insertTextAtCursor} from 'utilities/parse/selection'
+import {insertCursorAtEnd, insertTextAtCursor} from 'utilities/parse/selection'
 
 import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
 import {MenuItem} from 'components/popups/menu'
@@ -31,6 +32,7 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
   const changeInputHtml = (html: string) => {
     inputHtml.value = html
   }
+
   const insertInCursor = (text: string) => {
     const replaced = renderText([text], ['emoji_html']).join(' ')
 
@@ -38,14 +40,51 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
   }
   const {
     value: isEmojiMenuOpen,
-    toggle: toggleEmojiMenu,
+    setTrue: openEmojiMenu,
     setFalse: closeEmojiMenu,
   } = useBoolean()
+  const inputFocused = useSignal(false)
 
+  const handleOpenEmojiMenu = useCallback(() => {
+    openEmojiMenu()
+    inputRef.current?.focus()
+  }, [])
   const buildedClass = clsx('chat-input', {
     'emoji-menu-shown': isEmojiMenuOpen,
   })
+  useLayoutEffect(() => {
+    inputFocused.value = true
+  }, [])
 
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      console.log(inputFocused.value)
+      if (e.metaKey || inputFocused.value || IGNORED_KEY_CODES_FOR_FOCUS.includes(e.key)) {
+        return
+      }
+
+      if (e.key === 'Enter') {
+        console.log('SUBMIT?')
+        return
+      } else if (e.key === 'Backspace') {
+        inputHtml.value = inputHtml.value.slice(0, -1)
+        inputFocused.value = true
+        insertCursorAtEnd(inputRef)
+
+        return
+      }
+      e.preventDefault()
+      inputFocused.value = true
+      inputHtml.value += e.key
+      insertCursorAtEnd(inputRef)
+    }
+
+    document.addEventListener('keydown', handleKeydown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeydown)
+    }
+  }, [])
   const handleSend = useCallback(() => {
     const {text, entities} = parseMessageInput(inputHtml.value)
 
@@ -59,9 +98,10 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
         <div class="input-message">
           <IconButton
             icon={isEmojiMenuOpen ? 'keyboard' : 'smile'}
-            onClick={toggleEmojiMenu}
+            onClick={handleOpenEmojiMenu}
           />
           <TextArea
+            isFocused={inputFocused}
             placeholder={'Message'}
             onChange={changeInputHtml}
             html={inputHtml}
@@ -90,6 +130,9 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
         isOpen={isEmojiMenuOpen}
         onSelectEmoji={(e) => {
           insertInCursor(e.native)
+        }}
+        onChangeSkin={(skin) => {
+          console.log({skin})
         }}
       />
     </div>

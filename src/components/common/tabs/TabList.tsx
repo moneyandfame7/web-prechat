@@ -51,7 +51,6 @@ const TabList: FC<TabListProps> = memo(
 
       tabListRef.current.scrollTo({
         left: isNotFullyVisible ? isNotFullyVisibleScrollLeft : linePosition,
-        behavior: 'smooth',
       })
 
       const {width: tabWidth, left: tabLeft} = tab.getBoundingClientRect()

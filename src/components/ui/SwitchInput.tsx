@@ -1,12 +1,4 @@
-import {
-  type ChangeEvent,
-  type FC,
-  type TargetedEvent,
-  useCallback,
-  useEffect,
-} from 'preact/compat'
-
-import {useFastClick} from 'hooks/useFastClick'
+import {type ChangeEvent, type FC, type TargetedEvent, useCallback} from 'preact/compat'
 
 import type {SignalOr, Size} from 'types/ui'
 
@@ -20,16 +12,11 @@ interface SwitchInputProps {
 const SwitchInput: FC<SwitchInputProps> = ({checked, onChange, size = 'small'}) => {
   const handleChange = useCallback(
     (e: TargetedEvent<HTMLInputElement, ChangeEvent>) => {
-      console.log('SWITCH', checked, e.currentTarget.checked)
-
       onChange?.(e.currentTarget.checked)
     },
     [checked]
   )
-  useEffect(() => {
-    console.log({checked})
-  }, [])
-  // const clickHandlers = useFastClick(handleChange, true)
+
   return (
     <div class={`switch-input-wrapper ${size}`}>
       <input

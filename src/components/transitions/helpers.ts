@@ -2,6 +2,8 @@ import type {CSSProperties} from 'preact/compat'
 
 import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition'
 
+import {getGlobalState} from 'state/signal'
+
 import type {TransitionDirection, TransitionEasing, TransitionName} from './types'
 
 export const TRANSITION_CLASSES = {

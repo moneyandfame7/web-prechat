@@ -6,10 +6,6 @@
   height: 100%;
   animation-fill-mode: forwards !important;
 
-  @include withoutAnimations {
-    animation-duration: 0ms !important;
-    transition: none !important;
-  }
   // animation-
   &_inactive {
     display: none !important;
@@ -62,6 +58,12 @@
 
   &-zoomSlide {
     /* Exited */
+    > .transition-item {
+      @include withoutAnimations {
+        animation-duration: 0ms !important;
+        transition: none !important;
+      }
+    }
     > .transition-item_from {
       transform: scale(1);
       transform-origin: center;
@@ -86,6 +88,12 @@
   }
 
   &-zoomSlideBackwards {
+    > .transition-item {
+      @include withoutAnimations {
+        animation-duration: 0ms !important;
+        transition: none !important;
+      }
+    }
     /* Exited */
     > .transition-item_from {
       animation: slide-in-200-backwards 0.25s ease-in-out;
@@ -139,6 +147,12 @@
     }
   }
   &-slide {
+    > .transition-item {
+      @include withoutAnimations {
+        animation-duration: 0ms !important;
+        transition: none !important;
+      }
+    }
     > .transition-item_from,
     &_from {
       animation: slide-out var(--slide-transition);
