@@ -39,9 +39,10 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({
   })
 
   return (
-    <div class="DropdownMenu">
+    <div class={`DropdownMenu ${isMenuOpen ? 'open' : ''}`}>
       {cloned}
       <Menu
+        autoClose
         isOpen={isMenuOpen}
         onClose={closeMenu}
         transform={transform}

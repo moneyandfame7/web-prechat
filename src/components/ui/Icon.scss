@@ -1,32 +1,22 @@
 .Icon {
   height: 24px;
   width: 24px;
+
   &-default {
     path {
       fill: var(--c-icon);
     }
-    // &:hover {
-    //   path {
-    //     fill: var(--c-icon);
-    //   }
-    // }
   }
   &-secondary {
     path {
       fill: var(--c-icon);
     }
-    // &:hover {
-    //   path {
-    //     fill: var(--c-icon);
-    //   }
-    // }
   }
+}
+
+.Icon-key {
+  stroke: var(--c-icon);
   path {
-    transition: all 0.2s ease !important;
+    fill: unset;
   }
-  // &:hover {
-  //   path {
-  //     fill: var(--c-icon-2);
-  //   }
-  // }
 }

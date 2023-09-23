@@ -15,13 +15,28 @@ export const TRANSITION_CLASSES = {
 } as CSSTransitionClassNames
 export const FALLBACK_TIMEOUT = 350
 
-export function getTransitionTimeout(name: TransitionName) {
+export function getTransitionTimeout(name: TransitionName, timeout?: number) {
+  if (name === 'fade') {
+    return timeout ?? FALLBACK_TIMEOUT
+  }
+  if (document.documentElement.classList.contains('animation-none')) {
+    return 0
+  }
+  if (timeout !== undefined) {
+    return timeout
+  }
+
   switch (name) {
     case 'zoomSlide':
       return 250
     default:
       return FALLBACK_TIMEOUT
   }
+}
+export function getTransitionName(name: TransitionName, timeout?: number) {
+  // if (document.documentElement.classList.contains('animation-none')) {
+  //  if(name==='')
+  // }
 }
 
 /**
@@ -45,8 +60,8 @@ export function buildProperties(
   return {
     styles: {
       ...styles,
-      ...(timeout ? {animationDuration: `${timeout}ms`} : {}),
-      ...(easing ? {animationTimingFunction: easing} : {}),
+      ...(timeout !== undefined && {animationDuration: `${timeout}ms`}),
+      ...(easing && {animationTimingFunction: easing}),
     } as CSSProperties,
     classNames: {
       appearActive: `transition-${computedName}_to`,

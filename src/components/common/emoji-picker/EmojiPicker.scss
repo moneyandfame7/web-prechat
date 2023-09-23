@@ -7,7 +7,7 @@
   z-index: var(--z-menu);
   box-shadow: var(--menu-shadow);
   background-color: var(--menu-bg) !important;
-  backdrop-filter: blur(50px);
+  @include withBlur(var(--menu-blur));
 
   min-height: 300px;
   border-radius: 12px;

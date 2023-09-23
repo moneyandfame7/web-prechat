@@ -1,3 +1,5 @@
+import type {DeepSignal} from 'deepsignal'
+
 import type {ApiMessage} from 'api/types/messages'
 
 import {createPersistStore} from 'state/persist'
@@ -7,8 +9,9 @@ import {DEBUG} from 'common/environment'
 import {pick} from 'utilities/object/pick'
 import {updateByKey} from 'utilities/object/updateByKey'
 
-import type {GlobalState, SignalGlobalState} from 'types/state'
+import type {GlobalState} from 'types/state'
 
+import {INITIAL_STATE} from './initState'
 import {getGlobalState} from './signal'
 import {updateAuthState, updateSessions, updateSettingsState, updateUsers} from './updates'
 import {updateChats, updateChatsFull} from './updates/chats'
@@ -21,48 +24,15 @@ const persistStore = createPersistStore({
   databaseName: 'prechat-state',
   version: 1,
   storages: [
-    {
-      name: 'auth',
-    },
-    {
-      name: 'settings',
-    },
-    {
-      name: 'chats',
-      optionalParameters: {
-        keyPath: 'id',
-      },
-    },
-    {
-      name: 'usernames',
-    },
-    {
-      name: 'chatsFull',
-      // optionalParameters: {
-      //   keyPath: 'id',
-      // },
-    },
-    {
-      name: 'users',
-      optionalParameters: {
-        keyPath: 'id',
-      },
-    },
-    {
-      name: 'i18n',
-    },
-    {
-      name: 'sessions',
-      optionalParameters: {
-        keyPath: 'id',
-      },
-    },
-    {
-      name: 'messages',
-      optionalParameters: {
-        keyPath: 'id',
-      },
-    },
+    {name: 'auth'},
+    {name: 'settings'},
+    {name: 'chats', optionalParameters: {keyPath: 'id'}},
+    {name: 'sessions', optionalParameters: {keyPath: 'id'}},
+    {name: 'messages', optionalParameters: {keyPath: 'id'}},
+    {name: 'users', optionalParameters: {keyPath: 'id'}},
+    {name: 'usernames'},
+    {name: 'chatsFull'},
+    {name: 'i18n'},
   ],
 })
 export function pickPersistMessages(state: GlobalState) {
@@ -172,10 +142,21 @@ export async function hydrateStore() {
   if (auth?.session || settings?.passcode.hasPasscode) {
     // MOVE TO "setGlobalState"
     if (auth) {
-      updateAuthState(global, auth)
+      updateAuthState(global, {
+        ...global.auth,
+        ...auth,
+      } as DeepSignal<any>)
     }
     if (settings) {
-      updateSettingsState(global, settings)
+      console.log({settings})
+      updateSettingsState(global, {
+        // ...global.settings,
+        ...settings,
+        general: {
+          // ...global.settings.general,
+          ...settings.general,
+        },
+      })
     }
     if (users) {
       updateUsers(global, users)
@@ -198,18 +179,11 @@ export async function hydrateStore() {
     if (sessions) {
       updateSessions(global, sessions)
     }
-    const test: Partial<SignalGlobalState> = {
-      auth: {
-        ...global.auth,
-        ...auth,
-      },
-      settings: {
-        ...global.settings,
-        ...settings,
-      },
-    }
-    persistStore.enable()
 
+    persistStore.enable()
+    if (!settings) {
+      storages.settings.put(INITIAL_STATE.settings)
+    }
     // for sync storage??
     // /* await */ forcePersist(global as GlobalState)
   } else {

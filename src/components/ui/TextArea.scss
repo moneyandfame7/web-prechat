@@ -1,6 +1,6 @@
-.input-scroll {
-  flex-shrink: 0;
+.text-area-wrapper {
   min-height: var(--chat-input-height);
+  max-width: 80%;
   transition: height 100ms linear;
   // background-color: var(--c-bg);
   // margin: 15px;
@@ -10,13 +10,13 @@
   // border: 3px solid green;
 }
 .text-area {
-  white-space: pre-wrap;
+  white-space: pre-line; //!IMPORTANT for correct break space
   caret-color: var(--c-primary);
   background-color: transparent;
   width: 100%;
-  overflow-y: auto;
+  // overflow-y: auto;
   min-height: var(--chat-input-height);
-
+  position: relative;
   // padding: 10px;
   padding-inline: 15px;
   padding-block: 15px;
@@ -38,5 +38,25 @@
   // }
   @include withAnimations {
     transition: height 100ms linear;
+  }
+
+  &::after {
+    pointer-events: none;
+    content: attr(data-placeholder);
+    position: absolute;
+    font-size: var(--message-text-size);
+    // color: blue;
+    color: var(--c-placeholder);
+    // position: absolute;
+    transform: translateX(0);
+    opacity: 1;
+    transition: transform 0.15s ease, opacity 0.25s ease;
+  }
+  &:not(.is-empty) {
+    &::after {
+      transform: translateX(1rem);
+      opacity: 0;
+      transition: transform 0.35s ease, opacity 0.25s ease;
+    }
   }
 }

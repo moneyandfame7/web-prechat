@@ -45,6 +45,16 @@
     @content;
   }
 }
+@mixin withoutAnimations() {
+  html.animation-none & {
+    @content;
+  }
+}
+@mixin withBlur($amount) {
+  @supports (backdrop-filter: blur($amount)) {
+    backdrop-filter: blur($amount);
+  }
+}
 
 @mixin whenNight() {
   html.night & {

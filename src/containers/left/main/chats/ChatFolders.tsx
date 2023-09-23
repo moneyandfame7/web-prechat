@@ -80,6 +80,7 @@ const ChatFolders: FC = memo(() => {
 
       <Transition
         // innerClassnames="chat-list scrollable scrollable-y"
+        timeout={0}
         name="slide"
         activeKey={chatFolder}
         shouldCleanup={false}

@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback} from 'preact/compat'
+import {type FC, memo, useCallback, useMemo} from 'preact/compat'
 
 import {SettingsContext} from 'context/settings'
 import type {DeepSignal} from 'deepsignal'
@@ -10,7 +10,7 @@ import {updateGeneralSettings} from 'state/updates'
 
 import {formatMessageTime} from 'utilities/date/convert'
 
-import type {SettingsState} from 'types/state'
+import type {SendShortcut, SettingsState, TimeFormat} from 'types/state'
 
 import {ColumnSection} from 'containers/left/ColumnSection'
 
@@ -25,22 +25,38 @@ interface StateProps {
   generalSettings: DeepSignal<SettingsState['general']>
 }
 const SettingsGeneralImpl: FC<StateProps> = ({generalSettings}) => {
-  const global = getGlobalState()
-  const {changeTheme} = getActions()
+  const {changeTheme, changeGeneralSettings} = getActions()
   const {resetScreen} = SettingsContext.useScreenContext()
 
-  const handleChangeMessageSize = useCallback((messageTextSize: number) => {
-    updateGeneralSettings(global, {messageTextSize})
-    // document.body.style.
-    document.documentElement.attributeStyleMap.set(
-      '--message-text-size',
-      `${messageTextSize}px`
-    )
-  }, [])
+  const handleChangeSettings = <T extends keyof SettingsState['general']>(
+    key: T,
+    value: SettingsState['general'][T]
+  ) => {
+    return () => {
+      changeGeneralSettings({
+        [key]: value,
+      })
+    }
+  }
 
-  const handleChangeSendKey = useCallback((messageSendByKey: 'enter' | 'ctrl-enter') => {
-    updateGeneralSettings(global, {messageSendByKey})
-  }, [])
+  const SETTINGS_SECTIONS = useMemo(
+    () => ({
+      theme: [
+        {value: 'light', label: 'Day'},
+        {value: 'dark', label: 'Night'},
+        {value: 'system', label: 'System Default'},
+      ],
+      sendByKey: [
+        {value: 'enter', label: 'Send By Enter', subtitle: 'New line by Shift + Enter'},
+        {value: 'ctrl-enter', label: 'Send by ⌘ + Enter', subtitle: 'New line by Enter'},
+      ],
+      timeFormat: [
+        {value: '12h', label: '12-hour', subtitle: formatMessageTime(new Date(), true)},
+        {value: '24h', label: '24-hour', subtitle: formatMessageTime(new Date(), false)},
+      ],
+    }),
+    []
+  )
   return (
     <ColumnWrapper title="General" onGoBack={resetScreen}>
       <ColumnSection title="Settings">
@@ -53,47 +69,37 @@ const SettingsGeneralImpl: FC<StateProps> = ({generalSettings}) => {
             value={generalSettings.$messageTextSize!}
             min={12}
             max={20}
-            onChange={handleChangeMessageSize}
+            onChange={(range) => handleChangeSettings('messageTextSize', range)()}
           />
         </div>
 
         <ListItem icon="image" title="Chat Wallpaper" />
-        <ListItem withCheckbox title="Enable Animations" />
+        <ListItem
+          onClick={handleChangeSettings('animations', !generalSettings.animations)}
+          withCheckbox
+          title="Enable Animations"
+          isChecked={generalSettings.animations}
+        />
       </ColumnSection>
       <ColumnSection title="Color Theme">
         <RadioGroup
           value={generalSettings.theme}
           onChange={changeTheme as (payload: string) => void}
-          values={[
-            {value: 'light', label: 'Day'},
-            {value: 'dark', label: 'Night'},
-            {value: 'loh', label: 'System Default'},
-          ]}
+          values={SETTINGS_SECTIONS.theme}
         />
       </ColumnSection>
-
       <ColumnSection title="Keyboard">
         <RadioGroup
-          value="light"
-          onChange={(v) => {
-            console.log({v})
-          }}
-          values={[
-            {value: 'enter', label: 'Send By Enter', subtitle: 'New line by Shift + Enter'},
-            {value: 'ctrl-enter', label: 'Send by cmd + Enter', subtitle: 'New line by Enter'},
-          ]}
+          value={generalSettings.messageSendByKey}
+          onChange={(v) => handleChangeSettings('messageSendByKey', v as SendShortcut)()}
+          values={SETTINGS_SECTIONS.sendByKey}
         />
       </ColumnSection>
       <ColumnSection title="Time Format">
         <RadioGroup
-          value="light"
-          onChange={(v) => {
-            console.log({v})
-          }}
-          values={[
-            {value: '12h', label: '12-hour', subtitle: formatMessageTime(new Date(), true)},
-            {value: '24h', label: '24-hour', subtitle: formatMessageTime(new Date(), false)},
-          ]}
+          value={generalSettings.timeFormat}
+          onChange={(v) => handleChangeSettings('timeFormat', v as TimeFormat)()}
+          values={SETTINGS_SECTIONS.timeFormat}
         />
       </ColumnSection>
     </ColumnWrapper>

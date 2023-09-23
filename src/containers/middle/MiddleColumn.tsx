@@ -17,6 +17,7 @@ import type {OpenedChat} from 'types/state'
 import {InfiniteScroll} from 'components/InfiniteScroll'
 import {Transition} from 'components/transitions'
 import {Button} from 'components/ui'
+import {SwitchInput} from 'components/ui/SwitchInput'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -39,20 +40,20 @@ const withAnimations = !document.documentElement.classList.contains('animation-n
 const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
   const global = getGlobalState()
   const actions = getActions()
-  const {isMobile, isLaptop} = useLayout()
+  const {isMobile, isSmall, isLaptop} = useLayout()
   const closeChat = useCallback(() => {
     document.body.classList.toggle('has-chat', false)
     document.body.classList.toggle('left-column-shown', true)
 
     /* if with animation - timeout, else just close...??? */
-    if (isMobile && withAnimations) {
+    if (isSmall && withAnimations) {
       setTimeout(() => {
         actions.openChat({id: undefined})
       }, 300)
     } else {
       actions.openChat({id: undefined})
     }
-  }, [isMobile])
+  }, [isSmall])
   useEffect(() => {
     // handleHashChangeTEST()
     const handleNavigation = connectStateToNavigation(global, actions, closeChat)
@@ -63,7 +64,7 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
     return () => {
       window.removeEventListener('hashchange', handleNavigation)
     }
-  }, [closeChat, isMobile])
+  }, [closeChat, isSmall])
   const isChatOpen = !!chatId
   const isChatCollapsed = isLaptop && isChatOpen
   useEffect(() => {
@@ -72,12 +73,12 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
 
     //   // return
     // }
-    if (isMobile) {
+    if (isSmall) {
       document.body.classList.toggle('left-column-shown', !isChatOpen)
     }
     document.body.classList.toggle('chat-collapsed', isChatCollapsed)
     document.body.classList.toggle('has-chat', isChatOpen)
-  }, [isChatOpen, isChatCollapsed, isMobile])
+  }, [isChatOpen, isChatCollapsed, isSmall])
 
   /**
    * @todo подивитись завтра анімації, швидко поклацати і схуялі воно не працює так як мені треба.... можливт треба transform десь прописати?

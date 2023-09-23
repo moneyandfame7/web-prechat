@@ -19,7 +19,7 @@ import {logDebugWarn} from 'lib/logger'
 import {TRANSITION_DURATION_MENU} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
-import {SingleTransition, TransitionEasing} from 'components/transitions'
+import {SingleTransition, type TransitionEasing} from 'components/transitions'
 import {Icon, type IconName} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
 
@@ -179,7 +179,7 @@ export const Menu: FC<MenuProps> = memo(
           name="zoomFade"
           unmount={withMount}
           // appear
-          timeout={timeout || TRANSITION_DURATION_MENU}
+          timeout={timeout ?? TRANSITION_DURATION_MENU}
         >
           <>{children}</>
         </SingleTransition>
@@ -198,22 +198,37 @@ export const Menu: FC<MenuProps> = memo(
 interface MenuItemProps {
   children: ComponentChildren
   className?: string
-  onClick?: (e?: MouseEvent) => void
+  onClick?: (e: MouseEvent) => void
   hidden?: boolean
   selected?: boolean
   to?: string
   icon?: IconName
   danger?: boolean
+  autoClose?: boolean
 }
 export const MenuItem: FC<MenuItemProps> = memo(
-  ({children, className, hidden = false, selected = false, onClick, to, icon, danger}) => {
-    const {onClose, autoClose} = useMenuContext()
+  ({
+    children,
+    className,
+    hidden = false,
+    selected = false,
+    onClick,
+    to,
+    icon,
+    danger,
+    autoClose = true,
+  }) => {
+    const {onClose, autoClose: globalCloseMenu} = useMenuContext()
 
     const handleClick = useCallback(
       (e: TargetedEvent<HTMLDivElement | HTMLAnchorElement, MouseEvent>) => {
-        e.preventDefault()
-        onClick?.()
-        autoClose && onClose()
+        if (!to) {
+          e.preventDefault()
+        }
+        onClick?.(e)
+        if (globalCloseMenu && autoClose && !to) {
+          onClose()
+        }
       },
       [onClick, autoClose, onClose]
     )
@@ -232,8 +247,7 @@ export const MenuItem: FC<MenuItemProps> = memo(
           class={buildedClass}
           {...clickHandlers}
           href={to}
-          target="_blank"
-          rel="noreferrer"
+          {...(to && {target: '_blank', rel: 'noreferrer'})}
         >
           {icon && <Icon name={icon} />}
           {children}

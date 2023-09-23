@@ -168,8 +168,8 @@ $theme-map-dark: (
 
   // components
   --menu-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
-  --menu-bg: rgb(255 255 255 / 85%);
-  --menu-backdrop-filter: 50px;
+  --menu-bg: rgb(255 255 255 / 60%);
+  --menu-blur: 12px;
   --bubble-arrow-width: 1rem;
 
   --c-border-input: #{$c-border};
@@ -195,7 +195,7 @@ $theme-map-dark: (
 
   --c-box-shadow-section: rgba(0, 0, 0, 0.06);
   --c-shadow-light: rgb(114, 114, 114, 0.169);
-
+  --c-shadow-default: rgb(114, 114, 114, 0.251);
   --c-surface: #{$c-surface};
   --c-surface-2: #{$c-surface-2};
   --c-surface-3: #{$c-surface-3};
@@ -216,6 +216,8 @@ $theme-map-dark: (
   --c-ripple: #{$c-ripple};
   --c-error: #{$c-font-red};
   --c-danger: #{$c-danger};
+  --c-gray: rgb(196, 201, 204);
+
   --c-green: #{$c-green};
   --c-green-hover: #{$c-green-hover};
   --c-green-transparent: #{$c-green-transparent};
@@ -296,7 +298,7 @@ $theme-map-dark: (
     --c-surface-3-transparent: #{rgba(0, 0, 0, 0.3)};
 
     --c-shadow-light: rgb(0, 0, 0, 0.251);
-
+    --c-shadow-default: rgb(16 16 16 / 61%);
     --c-border: #{$c-border};
     --c-border-hover: #{lighten($c-border, 3%)};
 
@@ -306,7 +308,7 @@ $theme-map-dark: (
     --c-primary-transparent: #{rgba(darken($c-primary, 10%), 0.1)};
 
     --c-danger: #ff595a;
-
+    --c-gray: rgb(113, 117, 121);
     --c-icon: #{$c-icon};
     --c-icon-2: #{$c-icon-2};
     --c-ripple: #{$c-ripple};

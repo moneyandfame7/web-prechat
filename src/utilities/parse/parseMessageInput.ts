@@ -15,10 +15,10 @@ const ENTITY_TYPE_BY_NAME: Record<string, ApiMessageEntityType> = {
 
 export function parseMessageInput(htmlString: string): ApiFormattedText {
   const parser = new DOMParser()
-  const doc = parser.parseFromString(htmlString, 'text/html')
+
+  const doc = parser.parseFromString(htmlString.replace(/&nbsp;/g, ''), 'text/html')
   const text = doc.body.textContent || ''
   const entities: ApiMessageEntity[] = []
-
   const traverseNodes = (node: Node, offset: number) => {
     if (node.nodeType === Node.ELEMENT_NODE) {
       const element = node as Element

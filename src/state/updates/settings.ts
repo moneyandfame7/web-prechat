@@ -1,8 +1,8 @@
+import {changeMessageSize, changeTheme, toggleAnimations} from 'state/helpers/settings'
 import {storages} from 'state/storages'
 
 import lang from 'lib/i18n/lang'
 
-import {changeTheme} from 'utilities/changeTheme'
 import {updateByKey} from 'utilities/object/updateByKey'
 
 import type {SettingsState, SignalGlobalState} from 'types/state'
@@ -44,24 +44,14 @@ export function updateSettingsState(
 ) {
   const {i18n, passcode, ...justToUpdate} = settings
 
-  // if (justToUpdate.general?.theme !== global.settings.general.theme) {
-  //   switch (justToUpdate.general?.theme) {
-  //     case 'dark':
-  //       document.documentElement.classList.add('night')
-  //       break
-  //     case 'light':
-  //       document.documentElement.classList.remove('night')
-  //       break
-  //   }
+  // if (settings.general?.theme) {
+  //   changeTheme(settings.general.theme)
+  // }
+  // if (settings.general?.animations !== undefined) {
+  //   console.log('LALALALAL')
+  //   toggleAnimations(settings.general.animations)
   // }
 
-  if (settings.general?.theme) {
-    changeTheme(settings.general.theme)
-  }
-  // if (settings.general?.theme !== justToUpdate.general?.theme) {
-  //   console.error('SWITCH THEME??')
-  //   // changeTheme()
-  // }
   updateByKey(global.settings, justToUpdate)
 
   if (i18n) {
@@ -78,9 +68,19 @@ export function updateSettingsState(
 
 export function updateGeneralSettings(
   global: SignalGlobalState,
-  general: Partial<SettingsState['general']>
+  general: Partial<SettingsState['general']>,
+  persist = true
 ) {
   updateByKey(global.settings.general, general)
+
+  if (persist) {
+    storages.settings.put({
+      general: {
+        ...global.settings.general,
+        ...general,
+      },
+    })
+  }
 }
 
 export function updatePasscodeState(

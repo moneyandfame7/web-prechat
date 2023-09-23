@@ -20,6 +20,8 @@
 // }
 html,
 body {
+  // overscroll-behavior: contain;
+
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -1,4 +1,5 @@
 import {createAction} from 'state/action'
+import {changeMessageSize, toggleAnimations} from 'state/helpers/settings'
 import {INITIAL_STATE} from 'state/initState'
 import {setGlobalState} from 'state/signal'
 import {hydrateStore, stopPersist} from 'state/storages'
@@ -6,6 +7,7 @@ import {hydrateStore, stopPersist} from 'state/storages'
 import * as cache from 'lib/cache'
 
 import {IS_APPLE, USER_BROWSER, USER_PLATFORM} from 'common/environment'
+import {changeTheme} from 'utilities/changeTheme'
 import {deepCopy} from 'utilities/object/deepCopy'
 import {changeHash} from 'utilities/routing'
 
@@ -23,7 +25,7 @@ createAction('reset', async (_state) => {
   // await actions.init() // ????
 })
 
-createAction('init', async (state): Promise<void> => {
+createAction('init', async (state, actions): Promise<void> => {
   state.initialization = true
   await hydrateStore()
 
@@ -37,14 +39,12 @@ createAction('init', async (state): Promise<void> => {
     document.documentElement.classList.add('is-safari')
   }
 
-  if (state.settings.general.theme === 'dark') {
-    document.documentElement.classList.add('night')
-  }
-  document.documentElement.attributeStyleMap.set(
-    '--message-text-size',
-    `${state.settings.general.messageTextSize}px`
-  )
+  changeTheme(state.settings.general.theme)
+  changeMessageSize(state.settings.general.messageTextSize)
 
+  const test = state.settings.general.animations
+  toggleAnimations(test)
+  actions.getConnection()
   // const packLength = Object.keys(persisted?.settings?.i18n.pack)
   // if (!packLength) {
   //   await changeLanguage(persisted.settings.suggestedLanguage || 'en')
@@ -53,9 +53,10 @@ createAction('init', async (state): Promise<void> => {
   // setGlobalState(persisted)
 
   /* for avoid flickering loading screen */
-  setTimeout(() => {
-    state.initialization = false
-  }, 400)
+
+  // setTimeout(() => {
+  state.initialization = false
+  // }, 400)
 
   // console.log({global: state})
 })

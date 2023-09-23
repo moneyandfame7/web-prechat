@@ -40,6 +40,7 @@ export const INITIAL_STATE: GlobalState = {
       messageSendByKey: 'enter',
       messageTextSize: 16,
       timeFormat: '24h',
+      animations: true,
     },
     transitions: {
       blur: true,

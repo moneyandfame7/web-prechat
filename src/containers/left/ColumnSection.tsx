@@ -7,13 +7,13 @@ import {ColumnSubtitle} from 'components/ColumnSubtitle'
 import './ColumnSection.scss'
 
 interface ColumnSectionProps {
-  title: string
+  title?: string
   children: PreactNode
 }
 const ColumnSection: FC<ColumnSectionProps> = ({title, children}) => {
   return (
     <div class="column-section">
-      <ColumnSubtitle primary>{title}</ColumnSubtitle>
+      {title && <ColumnSubtitle primary>{title}</ColumnSubtitle>}
       {children}
     </div>
   )

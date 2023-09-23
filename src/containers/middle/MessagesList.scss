@@ -6,12 +6,15 @@
   }
   flex: 1;
   padding-inline-start: 8px;
+
   @media only screen and (min-width: 1280px) {
     body.right-column-shown & {
       transform: translate3d(calc(var(--right-column-width) / -2), 0, 0);
     }
-    transition: transform var(--slide-dark-transition);
 
+    @include withAnimations {
+      transition: transform var(--slide-dark-transition);
+    }
     .messages-container {
       max-width: calc(100% - var(--right-column-width));
     }
@@ -21,7 +24,9 @@
     body.emoji-menu-open & {
       transform: translate3d(0, calc(var(--emoji-picker-height) / -1), 0);
     }
-    transition: transform var(--slide-transition);
+    @include withAnimations {
+      transition: transform var(--slide-transition);
+    }
   }
 
   transform: translate3d(0, 0, 0);
@@ -238,6 +243,9 @@
   position: relative;
   @include bgAndColorTransition();
 
+  @include withAnimations {
+    box-shadow: 0 1px 2px var(--c-shadow-default);
+  }
   &::before,
   &::after {
     @include bgAndColorTransition(border-color);

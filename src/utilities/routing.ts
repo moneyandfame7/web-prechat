@@ -36,10 +36,14 @@ export function connectStateToNavigation(
     const hash = window.location.hash
     if (hash.length === 0) {
       if (event) {
-        // closeChat() // !!!IDK WHAT NEED TO DO THERE
+        // console.log(event.oldURL, 'LALALA')
+        // console.log('EMPTY HASH?')
+        closeChat() // !!!IDK WHAT NEED TO DO THERE
         // actions.openChat({id: undefined})
       }
-      return changeHash({hash: undefined})
+      // console.log({hash, event})
+      return resetHash()
+      // return changeHash({hash: undefined, silent: true})
     }
     const parsed = parseHash(hash)
     if (!parsed) {

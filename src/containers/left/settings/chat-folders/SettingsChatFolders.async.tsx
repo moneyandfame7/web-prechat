@@ -1,12 +1,10 @@
 import {type FC, Suspense, lazy, memo} from 'preact/compat'
 
-import {ScreenLoader} from 'components/ScreenLoader'
-
 const SettingsChatFoldersAsync: FC = (props) => {
   const SettingsChatFolders = lazy(() => import('./SettingsChatFolders'))
 
   return (
-    <Suspense fallback={<ScreenLoader />}>
+    <Suspense fallback={null}>
       <SettingsChatFolders {...props} />
     </Suspense>
   )

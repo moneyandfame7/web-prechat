@@ -3,7 +3,12 @@ import {type FC, useRef} from 'preact/compat'
 import {type ObserveFn, useOnIntersect} from 'hooks/useIntersectionObserver'
 
 import {IS_EMOJI_SUPPORTED, IS_SAFARI} from 'common/environment'
-import {type EmojiData, EmojiItem, type EmojiSkin, type IEmojiCategory} from 'utilities/emoji'
+import {
+  type EmojiData,
+  type EmojiItem,
+  type EmojiSkin,
+  type IEmojiCategory,
+} from 'utilities/emoji'
 import {remToPx} from 'utilities/remToPx'
 
 import {SingleTransition} from 'components/transitions'

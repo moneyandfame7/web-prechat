@@ -7,7 +7,7 @@ import {DEBUG} from 'common/environment'
 import type {SignInPayload, SignUpPayload} from 'types/action'
 import type {ApiLangCode} from 'types/lib'
 import type {RightColumnScreens, SettingsScreens} from 'types/screens'
-import type {SignalGlobalState, Theme} from 'types/state'
+import type {SettingsState, SignalGlobalState, Theme} from 'types/state'
 
 import {getGlobalState} from './signal'
 
@@ -33,6 +33,7 @@ interface ActionPayloads {
   authInit: void
   openRightColumn: {screen?: RightColumnScreens}
   closeRightColumn: void
+  changeGeneralSettings: Partial<SettingsState['general']>
 
   // Differents
   openCommonModal: {title: string; body: string}

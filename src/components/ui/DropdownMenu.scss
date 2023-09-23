@@ -1,3 +1,9 @@
 .DropdownMenu {
   position: relative;
+
+  &.open {
+    > .IconButton {
+      background-color: var(--c-ripple) !important;
+    }
+  }
 }

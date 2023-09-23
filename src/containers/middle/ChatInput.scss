@@ -6,13 +6,27 @@
     body.right-column-shown & {
       transform: translate3d(calc(var(--right-column-width) / -2), 0, 0);
     }
-    transition: transform var(--slide-dark-transition);
+    @include withAnimations {
+      transition: transform var(--slide-dark-transition);
+    }
 
     // .messages-container {
     // 30px - for paddings around ( arrow and for comfortable )
     max-width: calc(100% - var(--right-column-width) - 30px);
     // }
   }
+
+  @media only screen and (max-width: 768px) {
+    body.emoji-menu-open & {
+      transform: translate3d(0, calc(var(--emoji-picker-height) / -1), 0);
+    }
+    @include withAnimations {
+      transition: transform var(--slide-transition);
+    }
+  }
+
+  // }
+
   @include responsive(mobile) {
     // --emoji-picker-height: 350px;
 
@@ -43,7 +57,7 @@
     height: var(--emoji-picker-height);
   }
 
-  .input-scroll {
+  .text-area-wrapper {
     flex: 1;
   }
 
@@ -61,14 +75,7 @@
   // }
 
   // @include responsive(mobile) {
-  @media only screen and (max-width: 768px) {
-    body.emoji-menu-open & {
-      transform: translate3d(0, calc(var(--emoji-picker-height) / -1), 0);
-    }
-  }
 
-  // }
-  transition: transform var(--slide-transition);
   .chat-input-container {
     display: flex;
     align-items: flex-end;
@@ -79,8 +86,11 @@
 
 .input-message {
   position: relative;
-  width: 100%;
+  width: 85%;
   background-color: var(--c-surface);
+
+  @include bgAndColorTransition();
+
   padding-inline: 10px;
   border-radius: 12px;
   display: flex;
@@ -94,7 +104,7 @@
   /* ARROW:  */
   &::before,
   &::after {
-    @include bgAndColorTransition();
+    @include bgAndColorTransition(border-color);
 
     position: absolute;
     content: '';
@@ -133,33 +143,23 @@
       height: 40px;
       background-color: var(--c-surface);
       font-size: 16px;
-      // color-pa
       caret-color: var(--c-primary);
-      // &:placeholder-shown {
-      //   background-color: blue;
-      // }
       &::placeholder {
         visibility: hidden;
       }
     }
-
-    // .input-field::placeholder-shown + .input-field-fake {
-    //   width: 10px;
-    // }
-
-    &:not(.is-empty) {
-      // background-color: green;
-
-      .input-field-fake {
-        // background-color: purple;
-
-        &::after {
-          transform: translateX(2rem);
-          opacity: 0;
-          transition: all 0.35s ease;
+    @include withAnimations {
+      &:not(.is-empty) {
+        .input-field-fake {
+          &::after {
+            transform: translateX(2rem);
+            opacity: 0;
+            transition: all 0.35s ease;
+          }
         }
       }
     }
+
     .input-field-fake {
       pointer-events: none;
       display: flex;
@@ -178,6 +178,10 @@
       }
       // padding-left: 5px;
     }
+  }
+
+  .IconButton {
+    margin-block-end: 7px;
   }
 
   // .FloatButton {

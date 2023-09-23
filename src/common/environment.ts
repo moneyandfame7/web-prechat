@@ -94,7 +94,7 @@ export const APP_TRANSITION_NAME = (
   IS_MOBILE ? 'slideDark' : 'zoomSlide'
 ) satisfies TransitionName
 export const TRANSITION_DURATION_ZOOM_FADE = 200
-export const TRANSITION_DURATION_MENU = 150 /* 150 */
+export const TRANSITION_DURATION_MENU = 200 /* 150 */
 
 export const NOTIFICATION_TRANSITION = 300
 export const MODAL_TRANSITION_MS = 300

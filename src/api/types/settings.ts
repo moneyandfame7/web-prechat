@@ -1,10 +1,12 @@
-export type ApiPrivacyKey =
-  | 'phoneNumber'
-  | 'lastSeen'
-  | 'profilePhoto'
-  | 'addForwardLink'
-  | 'addByPhone'
-  | 'chatInvite'
+export const PRIVACY_KEYS = [
+  'sendMessage',
+  'phoneNumber',
+  'lastSeen',
+  'profilePhoto',
+  'addForwardLink',
+  'addByPhone',
+  'chatInvite',
+] as const
 export type ApiPrivacyVisibility = 'Nobody' | 'Everybody' | 'Contacts'
 
 export type ApiPrivacyRule = {
@@ -12,20 +14,9 @@ export type ApiPrivacyRule = {
   allowedUsers: string[]
   blockedUsers: string[]
 }
+export type ApiPrivacyKey = (typeof PRIVACY_KEYS)[number]
 
 export type ApiPrivacy = {
   rule: ApiPrivacyRule
   key: ApiPrivacyKey
 }
-
-export const SETTINGS_SECTION = [
-  'Notifications and Sounds',
-  'Data and Storage',
-  'Privacy and Security',
-  'General Settings',
-  'Chat Folders',
-  'Devices',
-  'Language',
-] as const
-
-export type SettingsSection = (typeof SETTINGS_SECTION)[number]

@@ -16,14 +16,14 @@ interface ScreenLoaderProps {
   zoom?: boolean
 }
 export const ScreenLoader: FC<ScreenLoaderProps> = memo(
-  ({withBg = true, size = 'large', color, zoom}) => {
+  ({withBg = true, size = 'large', color}) => {
     return (
       <div
         class={clsx('screen-loader', {
           'with-bg': withBg,
         })}
       >
-        <Spinner size={size} color={color} zoom={zoom} />
+        <Spinner size={size} color={color} />
       </div>
     )
   }

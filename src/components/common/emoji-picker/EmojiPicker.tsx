@@ -15,12 +15,14 @@ import clsx from 'clsx'
 // import SmoothScroll from 'smooth-scroll'
 import {type MapState, connect} from 'state/connect'
 
+import {useClickAway} from 'hooks/useClickAway'
 import {useBoolean} from 'hooks/useFlag'
 import {useIntersectionObserver} from 'hooks/useIntersectionObserver'
 import {useLayout} from 'hooks/useLayout'
 
 import {type EmojiData, type EmojiItem, type EmojiSkin} from 'utilities/emoji'
 import {retryFetch} from 'utilities/fetch'
+import {addEscapeListener} from 'utilities/keyboardListener'
 
 import {ScreenLoader} from 'components/ScreenLoader'
 import {Menu, MenuItem} from 'components/popups/menu'
@@ -66,6 +68,7 @@ const emojiIntersections: boolean[] = []
 export interface EmojiPickerProps {
   isOpen: boolean
   onSelectEmoji: (e: EmojiItem) => void
+  onClose: VoidFunction
 }
 interface StateProps {
   recentEmojis: string[]
@@ -76,15 +79,16 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   isOpen,
   skinEmoji,
   onSelectEmoji,
+  onClose,
 }) => {
-  const {isMobile} = useLayout()
+  const {isSmall} = useLayout()
 
   const [emojiData, setEmojiData] = useState<EmojiData | null>(null)
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0)
   const headerRef = useRef<HTMLDivElement>(null)
   const emojiContainerRef = useRef<HTMLDivElement>(null)
   const barRef = useRef<HTMLDivElement>(null)
-
+  const emojiPickerRef = useRef<HTMLDivElement>(null)
   const shouldLoading = !emojiData
 
   useLayoutEffect(() => {
@@ -128,10 +132,11 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   }, [isOpen, skinEmoji])
 
   useEffect(() => {
-    if (isMobile) {
+    if (isSmall) {
       document.body.classList.toggle('emoji-menu-open', isOpen)
     }
-  }, [isOpen, isMobile])
+  }, [isOpen, isSmall])
+
   const changeCategory = (idx: number, e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault()
     const categoryEl = document.getElementById(`emoji-category-${idx}`)
@@ -157,7 +162,8 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   const {observe} = useIntersectionObserver(
     {
       rootRef: emojiContainerRef,
-      throttleMs: 200,
+      throttleMs: 250,
+      isDisabled: !isOpen,
     },
     (entries) => {
       entries.forEach((entry) => {
@@ -175,6 +181,7 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
       })
     }
   )
+
   const allCategories = useMemo(() => {
     if (!emojiData?.categories) {
       return []
@@ -192,15 +199,9 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
 
   const buildedClass = clsx('emoji-picker', {
     'search-active': value,
-    'mobile-menu': isMobile,
+    'mobile-menu': isSmall,
   })
 
-  // const handleOnClose = useCallback(() => {
-  //   console.log('EXITED')
-
-  //   setActiveCategoryIndex(0)
-  //   // emojiContainerRef.current?.scrollTo({top: 10})
-  // }, [])
   const [isSkinMenuOpen, setSkinMenuOpen] = useState(false)
   const handleSkinMenuOpen = useCallback(() => {
     setSkinMenuOpen(true)
@@ -209,16 +210,42 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   const handleSkinMenuClose = useCallback(() => {
     setSkinMenuOpen(false)
   }, [])
+
+  useClickAway(
+    emojiPickerRef,
+    (e, clicked) => {
+      if (isOpen && !isSmall && clicked.className !== 'backdrop') {
+        e.preventDefault()
+        // e.stopImmediatePropagation()
+        // stopEvent(e)
+        onClose()
+      }
+    },
+    !isOpen
+  )
+
+  useEffect(() => {
+    return isOpen
+      ? addEscapeListener(() => {
+          onClose()
+        })
+      : undefined
+  }, [isOpen])
+  console.log({activeCategoryIndex})
   const picker = (
     <SingleTransition
-      timeout={isMobile ? undefined : 150}
+      timeout={isSmall ? undefined : 150}
       appear
       styles={{transformOrigin: 'left bottom'}}
       in={isOpen}
-      name={isMobile ? 'slideY' : 'zoomFade'}
+      name={isSmall ? 'slideY' : 'zoomFade'}
       toggle
       unmount
       className={buildedClass}
+      elRef={emojiPickerRef}
+      onExited={() => {
+        setActiveCategoryIndex(0)
+      }}
     >
       <div class="emoji-header">
         <IconButton className="search-btn" icon="search" onClick={toggleSearch} />
@@ -308,7 +335,7 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
       </div>
     </SingleTransition>
   )
-  return isMobile ? <Portal>{picker}</Portal> : picker
+  return isSmall ? <Portal>{picker}</Portal> : picker
 }
 
 const mapStateToProps: MapState<EmojiPickerProps, StateProps> = (state) => {

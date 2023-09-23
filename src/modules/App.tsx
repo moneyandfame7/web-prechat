@@ -1,9 +1,10 @@
-import {type FC, useEffect} from 'preact/compat'
+import {type FC, useLayoutEffect} from 'preact/compat'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
 
+import {changeTheme} from 'state/helpers/settings'
 import {getGlobalState} from 'state/signal'
 
 import {ClientError} from 'lib/error/error'
@@ -26,24 +27,24 @@ enum AppScreens {
 
 const Application: FC = () => {
   const global = getGlobalState()
-
-  useEffect(() => {
-    const channel = new BroadcastChannel('stateChannel')
-
-    channel.onmessage = (event) => {
-      const receivedState = event.data
-      // Update the state in this tab when receiving updates from other tabs
-
-      console.log({receivedState})
-      // setAppState(receivedState)
+  useLayoutEffect(() => {
+    const prefersSystemTheme = global.settings.general.theme === 'system'
+    if (!prefersSystemTheme) {
+      return
     }
 
+    const handleChangeTheme = (e: MediaQueryListEvent) => {
+      // not action, because action change from system to dark or light
+      changeTheme(e.matches ? 'dark' : 'light')
+    }
+    const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)')
+
+    prefersDarkMode.addEventListener('change', handleChangeTheme)
     return () => {
-      // Cleanup the event listener
-      channel.close()
+      prefersDarkMode.removeEventListener('change', handleChangeTheme)
     }
-  }, [])
-  // useEffect(()=>{},[])
+  }, [global.settings.general.theme])
+
   let initialScreen: AppScreens
   if (ClientError.getError().value.length) {
     initialScreen = AppScreens.Error
@@ -75,9 +76,6 @@ const Application: FC = () => {
       <Transition timeout={350} name="fade" activeKey={initialScreen} shouldCleanup>
         {renderScreen()}
       </Transition>
-      <noscript>
-        <div className="noscript-warning">Please enable JavaScript to use this site.</div>
-      </noscript>
     </ErrorCatcher>
   )
 }

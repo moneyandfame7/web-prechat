@@ -65,6 +65,13 @@ export {ReactComponent as forward} from './forward.svg'
 export {ReactComponent as copy} from './copy.svg'
 export {ReactComponent as select} from './select.svg'
 export {ReactComponent as image} from './image.svg'
+export {ReactComponent as email} from './email.svg'
+export {ReactComponent as passwordOff} from './passwordoff.svg'
+export {ReactComponent as key} from './key.svg'
+export {ReactComponent as lockOff} from './lockOff.svg'
+export {ReactComponent as command} from './botcom.svg'
+export {ReactComponent as deleteUser} from './deleteuser.svg'
+export {ReactComponent as document} from './document.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

@@ -9,7 +9,11 @@ import {
   useRef,
 } from 'preact/compat'
 
+import clsx from 'clsx'
+
 import {useLayout} from 'hooks/useLayout'
+
+import type {SignalOr} from 'types/ui'
 
 import './TextArea.scss'
 
@@ -17,13 +21,14 @@ interface TextAreaProps {
   onChange: (html: string) => void
   html: Signal<string>
   inputRef: RefObject<HTMLDivElement>
+  placeholder?: SignalOr<string>
 }
-const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef}) => {
+const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder}) => {
   const inputScrollRef = useRef<HTMLDivElement>(null)
 
   const {isMobile} = useLayout()
-
   const maxInputHeight = isMobile ? 215 : 350
+
   const updateHeight = () => {
     const textarea = inputRef.current
     const scroller = inputScrollRef.current
@@ -44,29 +49,40 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef}) => {
         return
       }
       e.preventDefault()
-
       const {innerHTML} = textarea
+
       onChange(innerHTML === '<br>' ? '' : innerHTML)
     },
     [onChange]
   )
   useLayoutEffect(() => {
     updateHeight()
-  })
-
+  }, [isMobile])
   useSignalEffect(() => {
+    // console.log{html:}, htmlRef.current)
+
+    const inputV = inputRef.current!.innerHTML
+    console.log({inputV, v: html.value})
     if (html.value !== inputRef.current!.innerHTML) {
       inputRef.current!.innerHTML = html.value
+
+      // if(html.value==='\n\n' && inputRef.c)
     }
     if (html.value !== htmlRef.current) {
       htmlRef.current = html.value
-
+      // if (html.value === '\n' || html.value === '\n\n') {
+      //   html.value = ''
+      //   console.log('А Я ХЗ ШО ЗА ХУЙНЯ ЦЕ')
+      // }
       updateHeight()
     }
   })
 
+  const buildedClass = clsx('text-area scrollable scrollable-y scrollable-hidden', {
+    'is-empty': html.value.length === 0,
+  })
   return (
-    <div class="input-scroll" ref={inputScrollRef}>
+    <div class="text-area-wrapper" ref={inputScrollRef}>
       <div
         id="DALBAEB"
         contentEditable
@@ -76,13 +92,34 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef}) => {
         onKeyDown={(event) => {
           if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault()
-            console.log('SEND MESSAGE')
+            console.log('SEND MESSAGE', html.value)
+          }
+          if (event.key === 'Enter' && event.shiftKey) {
+            console.log({v: html.value})
           }
         }}
+        data-placeholder={placeholder}
+        // placeholder="АХАХХ"
         ref={inputRef}
-        class="text-area scrollable scrollable-y scrollable-hidden"
+        class={buildedClass}
         onInput={handleChange}
       />
+
+      {/* <div
+        className={clsx('chat-input-inner', {
+          'is-empty': html.value.length === 0,
+        })}
+      >
+
+        <input
+              // value={value}
+              onInput={(e) => {
+                console.log('LALALALLA')
+              }}
+              placeholder="daun"
+              class="input-field"
+            />
+      </div> */}
     </div>
   )
 }

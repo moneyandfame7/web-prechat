@@ -21,6 +21,7 @@ import type {AuthScreens, RightColumnScreens, SettingsScreens} from './screens'
 export type Theme = 'light' | 'dark' | 'system'
 export type DistanceUnit = 'kilometers' | 'miles'
 export type TimeFormat = '12h' | '24h'
+export type SendShortcut = 'enter' | 'ctrl-enter'
 export interface SettingsState {
   theme: Theme
   i18n: {
@@ -38,9 +39,10 @@ export interface SettingsState {
   general: {
     theme: Theme
     distanceUnit: DistanceUnit
-    messageSendByKey: 'enter' | 'ctrl-enter'
+    messageSendByKey: SendShortcut
     timeFormat: TimeFormat
     messageTextSize: number
+    animations: boolean
   }
   transitions: {
     blur: boolean

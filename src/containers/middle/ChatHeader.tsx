@@ -29,7 +29,7 @@ interface OwnProps {
 
 export const ChatHeader: FC<OwnProps> = memo(({chatId, onCloseChat, activeTransitionKey}) => {
   const {openRightColumn, openPreviousChat} = getActions()
-  const {isMobile, isLaptop} = useLayout()
+  const {isSmall, isLaptop} = useLayout()
   const handleClickHeader = useCallback(() => {
     openRightColumn({screen: RightColumnScreens.ChatProfile})
   }, [])
@@ -56,9 +56,10 @@ export const ChatHeader: FC<OwnProps> = memo(({chatId, onCloseChat, activeTransi
   const backBtnIcon: IconName | undefined =
     activeTransitionKey === 0 && isLaptop
       ? 'close'
-      : activeTransitionKey === 1 || isMobile
+      : activeTransitionKey === 1 || isSmall
       ? 'arrowLeft'
       : undefined
+
   const prevTransitionKey = usePrevious(activeTransitionKey)
   const cleanupExceptionKey = getCleanupExceptionKey(activeTransitionKey, prevTransitionKey)
   return (

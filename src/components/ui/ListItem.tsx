@@ -28,6 +28,9 @@ interface ListItemProps {
   withRadio?: boolean
   contextActions?: MenuContextActions
   onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
+  /**
+   * @deprecated
+   */
   onToggleCheckbox?: (checked: boolean) => void
   icon?: IconName
   title?: ComponentChild

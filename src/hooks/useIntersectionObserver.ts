@@ -24,6 +24,11 @@ export type ObserveFn = (target: HTMLElement, targetCb?: TargetCb) => VoidFuncti
 interface Intersection {
   observe: ObserveFn
 }
+
+/**
+ * @deprecated - Спиздив цей код, але хочу переписати сам. Колись.
+ *  ( в кінці сторінки новий приклад, можливо )
+ */
 export function useIntersectionObserver(
   {threshold = 0, rootRef, margin, debounceMs, throttleMs, leading, isDisabled}: Args,
   rootCallback?: RootCb
@@ -149,3 +154,48 @@ export function useIsIntersecting(
 
   return isIntersecting
 }
+
+// function useIntersectionObserver({
+//   rootRef,
+//   rootMargin,
+//   threshold
+// }, callback) {
+
+//   const observerRef = useRef();
+
+//   useEffect(() => {
+//     const observer = new IntersectionObserver(callback, {
+//       root: rootRef.current,
+//       rootMargin,
+//       threshold
+//     });
+
+//     observerRef.current = observer;
+
+//     return () => observer.disconnect();
+
+//   }, [rootRef, rootMargin, threshold, callback]);
+
+//   return observerRef.current;
+
+// }
+
+// function MyComponent() {
+
+//   const callback = (entries) => {
+//     // callback logic
+//   };
+
+//   const observer = useIntersectionObserver({
+//     rootRef,
+//     rootMargin: '0px 0px -200px 0px',
+//     threshold: 1.0
+//   }, debounce(callback, 500));
+
+//   useEffect(() => {
+//     observer.observe(targetRef.current);
+
+//     return () => observer.unobserve(targetRef.current);
+//   }, [observer]);
+
+// }
