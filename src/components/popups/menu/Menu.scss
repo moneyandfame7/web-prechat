@@ -15,7 +15,7 @@
   // box-shadow: var(--menu-shadow);
 
   box-shadow: 0 0.25rem 0.5rem 0.125rem var(--c-shadow-default);
-  background-color: var(--menu-bg);
+  background-color: var(--menu-bg) !important;
   // backdrop-filter: blur(50px);
   @include withBlur(var(--menu-blur));
 
@@ -97,7 +97,7 @@
 
   @include responsive(tablet) {
     padding: 10px;
-    background-color: var(--c-surface);
+    background-color: var(--c-surface) !important;
     &_item {
       font-size: 16px;
       // padding: 8px 16px;

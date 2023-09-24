@@ -43,6 +43,8 @@ interface ListItemProps {
   isChecked?: boolean
   withContextMenuPortal?: boolean
   onMouseDown?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
+  disabled?: boolean
+  danger?: boolean
 }
 
 export const ListItem: FC<ListItemProps> = memo(
@@ -63,19 +65,26 @@ export const ListItem: FC<ListItemProps> = memo(
     withContextMenuPortal = false,
     onClick,
     onToggleCheckbox,
+    disabled,
+    danger,
     // onMouseDown,
   }) => {
     const menuRef = useRef<HTMLDivElement>(null)
 
-    const getMenuElement = useCallback(() => {
-      return (
-        withContextMenuPortal ? document.querySelector('#portal') : containerRef.current
-      )!.querySelector('.list-item__context-menu') as HTMLElement | null
-    }, [withContextMenuPortal])
+    const getMenuElement = useCallback(
+      () =>
+        (withContextMenuPortal
+          ? document.querySelector('#portal')
+          : containerRef.current)!.querySelector(
+          '.list-item__context-menu'
+        ) as HTMLElement | null,
+      [withContextMenuPortal]
+    )
 
-    const getLimiterElement = useCallback(() => {
-      return containerRef.current?.parentElement as HTMLElement | null
-    }, [])
+    const getLimiterElement = useCallback(
+      () => containerRef.current?.parentElement as HTMLElement | null,
+      []
+    )
     const containerRef = useRef<HTMLDivElement>(null)
     const {handleContextMenuClose, handleContextMenu, isContextMenuOpen, styles} =
       useContextMenu(
@@ -93,12 +102,14 @@ export const ListItem: FC<ListItemProps> = memo(
       link: Boolean(href),
       selectable: withCheckbox,
       focused: isContextMenuOpen,
+      disabled,
+      danger,
     })
 
     const hasInfo =
       Boolean(title) || Boolean(subtitle) || Boolean(additional) || Boolean(badge)
 
-    const clickHandlers = useFastClick(onClick, true)
+    const clickHandlers = useFastClick(onClick, !danger)
 
     function renderContent() {
       return (

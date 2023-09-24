@@ -35,7 +35,7 @@ export const LeftMainMenu: FC = memo(() => {
     }
 
     changeGeneralSettings({
-      animations: !global.settings.general.animations,
+      animationsEnabled: !global.settings.general.animationsEnabled,
     })
   }
 
@@ -68,11 +68,11 @@ export const LeftMainMenu: FC = memo(() => {
         <SwitchInput
           onChange={() => {
             changeGeneralSettings({
-              animations: !global.settings.general.animations,
+              animationsEnabled: !global.settings.general.animationsEnabled,
             })
           }}
           size="medium"
-          checked={global.settings.general.animations}
+          checked={global.settings.general.animationsEnabled}
         />
       </MenuItem>
       <MenuItem>

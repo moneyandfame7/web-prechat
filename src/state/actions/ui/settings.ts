@@ -17,8 +17,8 @@ createAction('changeTheme', (state, _, payload) => {
 })
 
 createAction('changeGeneralSettings', (state, _, payload) => {
-  if (payload.animations !== undefined) {
-    toggleAnimations(payload.animations)
+  if (payload.animationsEnabled !== undefined) {
+    toggleAnimations(payload.animationsEnabled)
   }
   if (payload.theme) {
     changeTheme(payload.theme)

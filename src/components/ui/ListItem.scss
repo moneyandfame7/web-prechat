@@ -9,6 +9,9 @@
   padding-block: 10px;
   cursor: pointer;
   min-height: 52px;
+  // @include withAnimations {
+  // transition: opacity 0.2s ease;
+  // }
   &.clickable {
     &:hover {
       background-color: var(--c-ripple);
@@ -25,6 +28,27 @@
     // padding-inline: 40px;
 
     // gap: 30px;
+  }
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    // @include withAnimations {
+    //   transition: opacity 0.2s ease;
+    // }
+  }
+
+  &.danger {
+    --c-ripple: var(--c-danger-transparent);
+    > .Icon {
+      path {
+        fill: var(--c-danger);
+      }
+    }
+    color: var(--c-danger);
+    font-weight: 500;
+    &:hover {
+      background-color: var(--c-danger-transparent);
+    }
   }
 
   > .Icon,

@@ -43,6 +43,8 @@
   position: absolute;
   bottom: 6px;
   pointer-events: none;
+  border-radius: 12px;
+
   @include responsive(mobile) {
     height: 6px;
   }

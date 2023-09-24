@@ -17,6 +17,9 @@ export type Prettify<T> = {
   [K in keyof T]: T[K]
 } & {} // eslint-disable-line
 
+export type Include<T, U> = T extends U ? U : never
+// Exclude
+
 // type Split2<S extends string> = S extends `${string}{{${infer U}}}` ? U : S
 
 // type FOR_SPLIT = 'Привіт, {{name}}'

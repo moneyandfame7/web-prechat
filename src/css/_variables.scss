@@ -180,17 +180,19 @@ $theme-map-dark: (
   --c-bg-2: #f4f4f5;
   --c-bg-rgb: 255, 255, 255;
   --c-pattern: rgba(232, 231, 231, 0.3);
-  --c-message-container-bg: #e6ebee; /* #{$c-bg}; */
+  // --c-message-container-bg: #e6ebee; /* #{$c-bg}; */
+  --c-message-container-bg: #e6ebee;
   // --c-bubble-bg: #{$c-message-bg};
 
   --c-bubble-bg: #e1ffc7;
+  // --c-bubble-bg: #e6ebee;
   --c-message-meta: #{$c-message-meta};
-  &.bubble-mode {
-    /* IDK */
-  }
+  // &.bubble-mode {
+  //   /* IDK */
+  // }
 
-  --c-bubble-highlight: rgba(0, 0, 0, 0.381);
-
+  // --c-bubble-highlight: rgba(0, 0, 0, 0.381);
+  --c-bubble-highlight: hsl(202.5deg 18.03% 60.67% / 40%);
   // --c-bubble-highlight: var(--c-ripple);
 
   --c-box-shadow-section: rgba(0, 0, 0, 0.06);
@@ -213,9 +215,12 @@ $theme-map-dark: (
   --c-icon: #{$c-icon};
   --c-icon-2: #{$c-icon-2};
 
-  --c-ripple: #{$c-ripple};
+  --c-ripple: rgba(0, 0, 0, 6%);
   --c-error: #{$c-font-red};
   --c-danger: #{$c-danger};
+
+  --c-danger-transparent: #{rgba($c-danger, 0.1)};
+
   --c-gray: rgb(196, 201, 204);
 
   --c-green: #{$c-green};
@@ -280,7 +285,9 @@ $theme-map-dark: (
     --c-bubble-bg: #{$c-primary};
     --c-message-meta: #{$c-primary-dark};
     // --c-message-highlight: hsl(299.14deg 44.17% 37.47% / 40%);
-    --c-bubble-highlight: #0a0a0a8c;
+    // --c-bubble-highlight: #0a0a0a8c;
+    --c-bubble-highlight: hsl(0deg 0% 100% / 40%);
+
     // --c-message-highlight: hsl(299.14deg 44.17% 37.47% / 40%);
 
     --c-bg: #181818;
@@ -308,6 +315,8 @@ $theme-map-dark: (
     --c-primary-transparent: #{rgba(darken($c-primary, 10%), 0.1)};
 
     --c-danger: #ff595a;
+
+    --c-danger-transparent: #{rgba(#ff595a, 0.1)};
     --c-gray: rgb(113, 117, 121);
     --c-icon: #{$c-icon};
     --c-icon-2: #{$c-icon-2};

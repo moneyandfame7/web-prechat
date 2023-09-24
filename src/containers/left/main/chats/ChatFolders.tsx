@@ -1,5 +1,7 @@
 import {type FC, memo, useCallback, useState} from 'preact/compat'
 
+import {getPreferredAnimations} from 'state/helpers/settings'
+
 import {type TabItem, TabList} from 'components/common/tabs/TabList'
 import {Transition} from 'components/transitions'
 
@@ -80,8 +82,8 @@ const ChatFolders: FC = memo(() => {
 
       <Transition
         // innerClassnames="chat-list scrollable scrollable-y"
-        timeout={0}
-        name="slide"
+        // timeout={0}
+        name={getPreferredAnimations().chatFolders}
         activeKey={chatFolder}
         shouldCleanup={false}
       >

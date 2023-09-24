@@ -56,7 +56,8 @@
     }
   }
 
-  > .transition > .transition-item {
+  /* > .transition >  */
+  .transition-item {
     @include bgAndColorTransition();
     display: flex;
     flex-direction: column;

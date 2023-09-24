@@ -2,11 +2,14 @@
   .list-item__title {
     font-weight: 500;
   }
+  .list-item__subtitle {
+    max-width: 90%;
+  }
 
   .status {
     position: relative;
 
-    & .online-badge-transition {
+    .online-badge-transition {
       width: max-content;
       height: max-content;
       background-color: transparent !important;
@@ -39,6 +42,11 @@
       .badge {
         background-color: #fff;
         color: #000;
+      }
+
+      & .online-badge {
+        background-color: var(--c-white);
+        box-shadow: 0 0 0 2px var(--c-primary);
       }
       // .list-item__subtitle {
       // color: #fff;

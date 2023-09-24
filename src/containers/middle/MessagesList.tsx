@@ -89,7 +89,12 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
       const message = messagesById?.[id]
       const date = message?.createdAt && new Date(message.createdAt).toDateString()
 
-      if (date && date !== currentDate) {
+      /* так ми робимо action окремо від звичайних повідомлень
+      щоб не було проблем з аватаркою
+      */
+      /*       if (date && message.action) {
+        groups.push({date, ids: [id]})
+      } else  */ if (date && date !== currentDate) {
         groups.push({date, ids: [id]})
         currentDate = date
       } else {
@@ -99,7 +104,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
     })
 
     return groups
-  }, [messageIds])
+  }, [messageIds, chatId])
 
   // const groups = useMemo(() => {
   //   const groups: string[][] = []
@@ -198,7 +203,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
     <div class="messages-list scrollable" ref={listRef}>
       {/* <Spinner absoluted zoom size="medium" color="white" /> */}
       <Loader isVisible={!messageIds} isLoading />
-
+      {chatId}
       <SingleTransition
         className="messages-loading-transition"
         in={!!messageIds}
@@ -228,7 +233,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
             const groupDate = formatMessageGroupDate(new Date(group.date))
 
             return (
-              <div key={groupDate} class="message-date-group">
+              <div key={`${groupDate}${chatId}`} class="message-date-group">
                 <div class="bubble action is-date">
                   {/* Sticky date  */}
                   <div class="bubble-content">{groupDate}</div>

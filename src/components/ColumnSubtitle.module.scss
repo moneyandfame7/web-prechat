@@ -2,7 +2,10 @@
   color: var(--c-font-secondary);
   font-weight: 500;
   font-size: 16px;
-
+  display: flex;
+  align-items: center;
+  user-select: none;
+  gap: 20px;
   &.primary {
     color: var(--c-primary);
   }

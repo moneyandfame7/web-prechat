@@ -198,6 +198,7 @@
       font-size: 14px;
       font-weight: 500;
       padding-inline: 15px;
+      padding-block: 3px;
     }
   }
   &.is-date {
@@ -241,10 +242,11 @@
   margin-inline-start: 10px;
   // box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
   position: relative;
-  @include bgAndColorTransition();
+  @include bgAndColorTransition(box-shadow);
 
   @include withAnimations {
     box-shadow: 0 1px 2px var(--c-shadow-default);
+    animation: msg-appear 0.3s forwards ease-out;
   }
   &::before,
   &::after {
@@ -273,7 +275,20 @@
     // color: var(--c-user-yellow);
   }
 }
-
+@keyframes msg-appear {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
 /* Groups ( by sender and time ~10 minutes) */
 .bubbles-group {
   position: relative;

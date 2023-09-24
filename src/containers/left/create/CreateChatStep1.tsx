@@ -65,7 +65,7 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handle
                 title={getUserName(user)}
                 subtitle={getUserStatus(user)}
               >
-                <AvatarTest size="s" />
+                <AvatarTest size="s" peer={user} />
               </ListItem>
             </Fragment>
           )

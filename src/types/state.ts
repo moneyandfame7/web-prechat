@@ -16,12 +16,17 @@ import type {ApiMessage} from 'api/types/messages'
 import type {ApiLangCode, LanguagePack} from 'types/lib'
 import type {UserConnection} from 'types/request'
 
+import {TransitionName} from 'components/transitions'
+
+import {Include} from './common'
 import type {AuthScreens, RightColumnScreens, SettingsScreens} from './screens'
 
 export type Theme = 'light' | 'dark' | 'system'
 export type DistanceUnit = 'kilometers' | 'miles'
 export type TimeFormat = '12h' | '24h'
 export type SendShortcut = 'enter' | 'ctrl-enter'
+export type PageAnimations = Include<TransitionName, 'slideDark' | 'zoomSlide'>
+export type ChatFoldersAnimations = 'fade' | 'slide'
 export interface SettingsState {
   theme: Theme
   i18n: {
@@ -42,12 +47,13 @@ export interface SettingsState {
     messageSendByKey: SendShortcut
     timeFormat: TimeFormat
     messageTextSize: number
-    animations: boolean
+    animationsEnabled: boolean
+    animations: {
+      page: PageAnimations
+      chatFolders: ChatFoldersAnimations
+    }
   }
-  transitions: {
-    blur: boolean
-    pageTransitions: boolean
-  }
+
   languages?: ApiLanguage[]
 }
 

@@ -13,9 +13,10 @@ interface ColumnWrapperProps {
   goBackIcon?: IconName
   children: ComponentChildren
   headerContent?: VNode
+  contentClassname?: string
 }
 const ColumnWrapper: FC<ColumnWrapperProps> = memo(
-  ({title, children, onGoBack, headerContent, goBackIcon: icon}) => {
+  ({title, children, onGoBack, headerContent, goBackIcon: icon, contentClassname}) => {
     const contentColumnRef = useRef<HTMLDivElement>(null)
     const [isScrolled, setIsScrolled] = useState(false)
 
@@ -28,9 +29,8 @@ const ColumnWrapper: FC<ColumnWrapperProps> = memo(
         if (!contentColumnRef.current) {
           return
         }
-        const isScrolled = contentColumnRef.current.scrollTop > 0
 
-        setIsScrolled(isScrolled)
+        setIsScrolled(contentColumnRef.current.scrollTop > 0)
       }
 
       contentColumnRef.current?.addEventListener('scroll', handleScroll)
@@ -48,7 +48,10 @@ const ColumnWrapper: FC<ColumnWrapperProps> = memo(
           {/* {actions && <div class="column-header__actions">{actions}</div>} */}
         </div>
 
-        <div class="column-content scrollable scrollable-y" ref={contentColumnRef}>
+        <div
+          class={`column-content scrollable scrollable-y ${contentClassname || ''}`}
+          ref={contentColumnRef}
+        >
           {children}
         </div>
       </>

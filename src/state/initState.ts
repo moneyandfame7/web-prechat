@@ -1,5 +1,7 @@
 import lang from 'lib/i18n/lang'
 
+import {IS_MOBILE} from 'common/environment'
+
 import {AuthScreens, RightColumnScreens} from 'types/screens'
 import type {GlobalState} from 'types/state'
 
@@ -40,11 +42,11 @@ export const INITIAL_STATE: GlobalState = {
       messageSendByKey: 'enter',
       messageTextSize: 16,
       timeFormat: '24h',
-      animations: true,
-    },
-    transitions: {
-      blur: true,
-      pageTransitions: true,
+      animationsEnabled: true,
+      animations: {
+        page: IS_MOBILE ? 'slideDark' : 'zoomSlide',
+        chatFolders: 'slide',
+      },
     },
   },
   // recentEmojis: ['🇺🇦', '😂', '❤️', '😍', '🙌', '🎉', '🙏', '😊', '🤔', '😎', '👍'],

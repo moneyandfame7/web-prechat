@@ -50,7 +50,9 @@ const MessageBubblesGroupImpl: FC<MessageBubblesGroupProps & StateProps> = ({
           return (
             message && (
               <MessageBubble
+                key={messageId}
                 isLastInGroup={isLastInGroup}
+                isFirstInGroup={idx === 0}
                 withAvatar={withAvatar}
                 message={message}
               />
@@ -67,6 +69,8 @@ const mapStateToProps: MapState<MessageBubblesGroupProps, StateProps> = (state, 
   const messagesById = selectMessages(state, ownProps.chatId)
 
   const withAvatar =
+    /* хз, треба переробити адже  */
+    !messagesById?.[ownProps.groupIds[0]].action &&
     !groupSender?.isSelf &&
     (isUserId(ownProps.chatId) || !selectIsChannel(state, ownProps.chatId))
 

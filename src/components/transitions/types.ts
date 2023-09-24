@@ -27,7 +27,7 @@ export interface TransitionProps<TKey extends number | string> {
   cleanupException?: TKey
   shouldLockUI?: boolean
   containerClassname?: string
-  innerClassnames?: string | {[key in TKey]: string}
+  innerClassnames?: string | Partial<{[key in TKey]: string}>
   timeout?: number
   onExitEnd?: VoidFunction
 }

@@ -150,11 +150,15 @@ export async function hydrateStore() {
     if (settings) {
       console.log({settings})
       updateSettingsState(global, {
-        // ...global.settings,
+        ...global.settings,
         ...settings,
         general: {
-          // ...global.settings.general,
+          ...global.settings.general,
           ...settings.general,
+          animations: {
+            ...global.settings.general.animations,
+            ...settings.general.animations,
+          },
         },
       })
     }

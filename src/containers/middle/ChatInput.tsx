@@ -10,7 +10,11 @@ import {useBoolean} from 'hooks/useFlag'
 import {IGNORED_KEY_CODES_FOR_FOCUS} from 'utilities/keyboardListener'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'
-import {insertCursorAtEnd, insertTextAtCursor} from 'utilities/parse/selection'
+import {
+  insertCursorAtEnd,
+  insertTextAtCursor,
+  isSelectionInElement,
+} from 'utilities/parse/selection'
 
 import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
 import {MenuItem} from 'components/popups/menu'
@@ -56,35 +60,36 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
     inputFocused.value = true
   }, [])
 
-  useEffect(() => {
-    const handleKeydown = (e: KeyboardEvent) => {
-      console.log(inputFocused.value)
-      if (e.metaKey || inputFocused.value || IGNORED_KEY_CODES_FOR_FOCUS.includes(e.key)) {
-        return
-      }
+  // idk how to prevent on other elements
+  // useEffect(() => {
+  //   const handleKeydown = (e: KeyboardEvent) => {
+  //     console.log(inputFocused.value)
+  //     if (e.metaKey || inputFocused.value || IGNORED_KEY_CODES_FOR_FOCUS.includes(e.key)) {
+  //       return
+  //     }
 
-      if (e.key === 'Enter') {
-        console.log('SUBMIT?')
-        return
-      } else if (e.key === 'Backspace') {
-        inputHtml.value = inputHtml.value.slice(0, -1)
-        inputFocused.value = true
-        insertCursorAtEnd(inputRef)
+  //     if (e.key === 'Enter') {
+  //       console.log('SUBMIT?')
+  //       return
+  //     } else if (e.key === 'Backspace') {
+  //       inputHtml.value = inputHtml.value.slice(0, -1)
+  //       inputFocused.value = true
+  //       insertCursorAtEnd(inputRef)
 
-        return
-      }
-      e.preventDefault()
-      inputFocused.value = true
-      inputHtml.value += e.key
-      insertCursorAtEnd(inputRef)
-    }
+  //       return
+  //     }
+  //     e.preventDefault()
+  //     inputFocused.value = true
+  //     inputHtml.value += e.key
+  //     insertCursorAtEnd(inputRef)
+  //   }
 
-    document.addEventListener('keydown', handleKeydown)
+  //   document.addEventListener('keydown', handleKeydown)
 
-    return () => {
-      document.removeEventListener('keydown', handleKeydown)
-    }
-  }, [])
+  //   return () => {
+  //     document.removeEventListener('keydown', handleKeydown)
+  //   }
+  // }, [])
   const handleSend = useCallback(() => {
     const {text, entities} = parseMessageInput(inputHtml.value)
 

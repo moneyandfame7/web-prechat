@@ -84,13 +84,15 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
    * @todo подивитись завтра анімації, швидко поклацати і схуялі воно не працює так як мені треба.... можливт треба transform десь прописати?
    * @todo Reconnect in 3, 2, 1 seconds - for apollo
    */
-  useEffect(() => {
-    return isChatOpen
-      ? addEscapeListener(() => {
-          closeChat()
-        })
-      : undefined
-  }, [isChatOpen])
+  useEffect(
+    () =>
+      isChatOpen
+        ? addEscapeListener(() => {
+            closeChat()
+          })
+        : undefined,
+    [isChatOpen]
+  )
 
   // const isNext = useRef(false)
   const prevTransitionKey = usePrevious(activeTransitionKey)
@@ -127,7 +129,9 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
             chatId={chatId}
             onCloseChat={closeChat}
           />
-
+          {Array.from({length: 5}).map((v, id) => (
+            <div key={id} />
+          ))}
           <Transition
             timeout={450}
             cleanupException={cleanupExceptionKey}

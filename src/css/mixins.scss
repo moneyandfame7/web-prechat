@@ -31,7 +31,9 @@
 }
 
 @mixin defaultTransition($propertie) {
-  transition: $propertie 0.2s ease;
+  @include withAnimations {
+    transition: $propertie 0.2s ease;
+  }
 }
 
 @mixin withBubbles() {
@@ -52,7 +54,9 @@
 }
 @mixin withBlur($amount) {
   @supports (backdrop-filter: blur($amount)) {
-    backdrop-filter: blur($amount);
+    html:not(.no-menu-blur) & {
+      backdrop-filter: blur($amount);
+    }
   }
 }
 

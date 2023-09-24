@@ -1,12 +1,14 @@
 import {type FC, memo, useEffect, useState} from 'preact/compat'
 
 import {connect} from 'state/connect'
+import {getPreferredAnimations} from 'state/helpers/settings'
 import {getGlobalState} from 'state/signal'
 
 import {APP_TRANSITION_NAME} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
 import {SettingsScreens} from 'types/screens'
+import {PageAnimations} from 'types/state'
 import {LeftColumnGroup, LeftColumnScreen} from 'types/ui'
 
 import {Transition} from 'components/transitions'
@@ -31,7 +33,6 @@ type StateProps = {
 }
 const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
   const {globalSettingsScreen} = getGlobalState()
-
   const [activeScreen, setActiveScreen] = useState(LeftColumnScreen.Chats)
   const [settingsScreen, setSettingsScreen] = useState(SettingsScreens.Main)
   let activeGroup: LeftColumnGroup = LeftColumnGroup.Main
@@ -88,11 +89,13 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
     setActiveScreen(LeftColumnScreen.Chats)
   }
 
-  useEffect(() => {
-    return addEscapeListener(() => {
-      handleReset(false)
-    })
-  }, [activeScreen])
+  useEffect(
+    () =>
+      addEscapeListener(() => {
+        handleReset(false)
+      }),
+    [activeScreen]
+  )
   useEffect(() => {
     /* використовую глобальну змінну для того, щоб відкривати налаштування з інших екранів  */
     if (globalSettingsScreen !== undefined) {
@@ -135,7 +138,7 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
         <Transition
           cleanupException={LeftColumnGroup.Main}
           activeKey={activeGroup}
-          name={APP_TRANSITION_NAME}
+          name={getPreferredAnimations().page}
         >
           {renderScreen()}
         </Transition>
@@ -146,9 +149,10 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
 }
 
 export default memo(
-  connect(({currentChat}): StateProps => {
-    return {
+  connect(
+    ({currentChat, settings}): StateProps => ({
       isChatOpen: Boolean(currentChat.chatId),
-    }
-  })(LeftColumn)
+      // pageAnimations: settings.general.pageAnimations,
+    })
+  )(LeftColumn)
 )

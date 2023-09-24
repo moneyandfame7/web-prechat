@@ -72,6 +72,9 @@ export {ReactComponent as lockOff} from './lockOff.svg'
 export {ReactComponent as command} from './botcom.svg'
 export {ReactComponent as deleteUser} from './deleteuser.svg'
 export {ReactComponent as document} from './document.svg'
+export {ReactComponent as tools} from './tools.svg'
+export {ReactComponent as stickers} from './stickers.svg'
+export {ReactComponent as rightColumn} from './rightpanel.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

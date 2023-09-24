@@ -8,7 +8,6 @@ import {ApolloClient} from 'api/manager'
 
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
-import {subscribeToSyncUpdate} from 'state/sync'
 
 import {DEBUG} from 'common/environment'
 
@@ -23,9 +22,10 @@ import './css/index.scss'
  * @supports backdrop-blur: mixin. accept color and value for blur
  *
  * @todo - Settings:
- * > Animation level - 1, 2 ?
- *  > if 1 - just fade, 2 - great
+ *  > Menu blur, bubble zoom animation, page transitions, right column transition, ripple effect
+ *  > Also can check transition type - slideDark on zoomSlide
  *  > or off
+ *  > Background color - https://codesandbox.io/s/react-colorful-customization-demo-mq85z?file=/src/styles.css
  * @todo - Messages:
  *  > Sending, getting.
  *     > **Getting**:

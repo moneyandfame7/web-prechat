@@ -52,9 +52,9 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
         description: description.value,
       })
     }
+    resetScreen(true)
 
     setFalse()
-    resetScreen(true)
   }, [])
 
   return (

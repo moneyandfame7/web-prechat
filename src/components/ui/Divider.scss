@@ -3,13 +3,13 @@
   display: flex;
   white-space: nowrap;
   align-items: center;
-
+  user-select: none;
   &::after,
   &::before {
     content: '';
     display: block;
     width: 100%;
-    border-top: thin solid var(--c-border);
+    border-top: thin solid var(--c-border-input);
     @include defaultTransition(border-color);
   }
 
@@ -33,5 +33,11 @@
 
   &-wrapper {
     padding: 0px 7px;
+  }
+  &.primary {
+    color: var(--c-primary);
+  }
+  &.bold {
+    font-weight: 500;
   }
 }

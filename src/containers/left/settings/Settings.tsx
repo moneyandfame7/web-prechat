@@ -2,6 +2,8 @@ import {type FC, memo, useCallback, useMemo, useState} from 'preact/compat'
 
 import {SettingsContext} from 'context/settings'
 
+import {getPreferredAnimations} from 'state/helpers/settings'
+
 import {APP_TRANSITION_NAME} from 'common/environment'
 
 import {SettingsGroup, SettingsScreens, getSettingsActiveGroup} from 'types/screens'
@@ -23,6 +25,7 @@ import './Settings.scss'
 export interface SettingsProps {
   currentScreen: SettingsScreens
 }
+
 const Settings: FC<SettingsProps> = ({currentScreen}) => {
   const [activeScreen, setActiveScreen] = useState(currentScreen)
 
@@ -41,7 +44,6 @@ const Settings: FC<SettingsProps> = ({currentScreen}) => {
       case SettingsScreens.Main:
       case SettingsScreens.Notifications:
       case SettingsScreens.Privacy:
-      case SettingsScreens.Appearance:
         setActiveScreen(SettingsScreens.Main)
         break
     }
@@ -79,7 +81,11 @@ const Settings: FC<SettingsProps> = ({currentScreen}) => {
     >
       <Transition
         containerClassname="settings-wrapper"
-        name={APP_TRANSITION_NAME} // is mobile? slideDark : zoomSlide
+        // name={APP_TRANSITION_NAME} // is mobile? slideDark : zoomSlide
+        innerClassnames={{
+          [SettingsGroup.General]: 'settings-general',
+        }}
+        name={getPreferredAnimations().page}
         activeKey={activeGroup}
         shouldCleanup
         cleanupException={SettingsGroup.Main}

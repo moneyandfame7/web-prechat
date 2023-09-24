@@ -107,31 +107,34 @@ const SettingsMain: FC = () => {
     getAuthorizations()
   }, [])
 
-  const renderSettingsItems = useCallback(() => {
-    return SETTINGS_ITEMS.map((item) => (
-      <ListItem
-        key={item.name}
-        withRipple
-        onClick={() => {
-          setScreen(item.screen)
-        }}
-        icon={item.icon}
-        title={item.name}
-        right={
-          item.screen === SettingsScreens.Devices
-            ? activeSessionsCount
-            : item.screen === SettingsScreens.Language
-            ? TEST_translate('LANG_NATIVE_NAME')
-            : undefined
-        }
-      >
-        {/* <div class="settings-item"> */}
-        {/* <Icon name={item.icon} /> */}
-        {/* <p>{item.name}</p> */}
-        {/* </div> */}
-      </ListItem>
-    ))
-  }, [global.activeSessions.ids])
+  const renderSettingsItems = useCallback(
+    () =>
+      SETTINGS_ITEMS.map((item) => (
+        <ListItem
+          key={item.name}
+          withRipple
+          onClick={() => {
+            setScreen(item.screen)
+          }}
+          icon={item.icon}
+          title={item.name}
+          right={
+            // eslint-disable-next-line no-nested-ternary
+            item.screen === SettingsScreens.Devices
+              ? activeSessionsCount
+              : item.screen === SettingsScreens.Language
+              ? TEST_translate('LANG_NATIVE_NAME')
+              : undefined
+          }
+        >
+          {/* <div class="settings-item"> */}
+          {/* <Icon name={item.icon} /> */}
+          {/* <p>{item.name}</p> */}
+          {/* </div> */}
+        </ListItem>
+      )),
+    [global.activeSessions.ids]
+  )
   const {
     value: isLogoutOpen,
     setFalse: onCloseLogout,

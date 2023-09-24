@@ -46,7 +46,7 @@ export const useLayout = () => {
     isTablet: window.matchMedia('(min-width: 480.1px) and (max-width: 768px)').matches,
     isLaptop: window.matchMedia('(min-width: 768.1px) and (max-width: 1280px)').matches,
     isSmall: window.matchMedia('(max-width: 768px)').matches,
-    isAnimationOff: !global.settings.general.animations,
+    isAnimationOff: !global.settings.general.animationsEnabled,
   })
 
   const [layout, setLayout] = useState(getWindowMatches)

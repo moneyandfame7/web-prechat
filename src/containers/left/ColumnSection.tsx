@@ -9,14 +9,13 @@ import './ColumnSection.scss'
 interface ColumnSectionProps {
   title?: string
   children: PreactNode
+  className?: string
 }
-const ColumnSection: FC<ColumnSectionProps> = ({title, children}) => {
-  return (
-    <div class="column-section">
-      {title && <ColumnSubtitle primary>{title}</ColumnSubtitle>}
-      {children}
-    </div>
-  )
-}
+const ColumnSection: FC<ColumnSectionProps> = ({title, children, className}) => (
+  <div class={`column-section ${className || ''}`}>
+    {title && <ColumnSubtitle primary>{title}</ColumnSubtitle>}
+    {children}
+  </div>
+)
 
 export {ColumnSection}

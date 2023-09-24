@@ -16,6 +16,7 @@ interface MessageBubbleProps {
   withSenderName?: boolean
   withAvatar?: boolean
   isLastInGroup: boolean
+  isFirstInGroup: boolean
 }
 const MessageBubble: FC<MessageBubbleProps> = memo(
   ({message, sender, withSenderName, withAvatar, isLastInGroup}) => {
@@ -30,9 +31,15 @@ const MessageBubble: FC<MessageBubbleProps> = memo(
 
     const senderName = sender && getUserName(sender)
     const messageText = message?.content.formattedText?.text
-
+    if (message.action) {
+      return (
+        <div data-mid={message.id} id={`message-${message.id}`} class={buildedClass}>
+          <div class="bubble-content">{message.action.text}</div>
+        </div>
+      )
+    }
     return (
-      <div class={buildedClass}>
+      <div data-mid={message.id} class={buildedClass}>
         <div class="bubble-content">
           {withSenderName && (
             <p class="bubble-content__sender">{senderName || 'USER NAME_UNDF'}</p>

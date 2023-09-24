@@ -69,7 +69,7 @@
     }
 
     &.Button-green {
-      --color-ripple: var(--c-green-transparent);
+      --c-ripple: var(--c-green-transparent);
 
       @include transparentBtn(var(--c-green), var(--c-green-transparent));
     }

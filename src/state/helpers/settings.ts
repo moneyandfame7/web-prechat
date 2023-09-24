@@ -1,5 +1,13 @@
+import {getGlobalState} from 'state/signal'
+
 import type {ApiLangCode, SupportedLanguagesList} from 'types/lib'
 import type {Theme} from 'types/state'
+
+export function getPreferredAnimations() {
+  const global = getGlobalState()
+
+  return global.settings.general.animations
+}
 
 export const LANGUAGES_LIST: SupportedLanguagesList = [
   {

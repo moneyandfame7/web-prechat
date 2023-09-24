@@ -42,7 +42,7 @@ createAction('init', async (state, actions): Promise<void> => {
   changeTheme(state.settings.general.theme)
   changeMessageSize(state.settings.general.messageTextSize)
 
-  const test = state.settings.general.animations
+  const test = state.settings.general.animationsEnabled
   toggleAnimations(test)
   actions.getConnection()
   // const packLength = Object.keys(persisted?.settings?.i18n.pack)

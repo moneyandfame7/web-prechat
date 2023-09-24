@@ -64,9 +64,10 @@ const Transition = <TKey extends number | string>({
   const elements = elementsKeys.map((key) => {
     const element = elementsRef.current[key]
 
+    // eslint-disable-next-line no-nested-ternary
     const className = innerClassnames
       ? typeof innerClassnames === 'object'
-        ? innerClassnames[key as TKey]
+        ? innerClassnames?.[key as TKey]
         : innerClassnames
       : undefined
 
@@ -97,9 +98,9 @@ const Transition = <TKey extends number | string>({
     <TransitionGroup
       ref={containerRef}
       className={buildedContainerClass}
-      childFactory={(c: VNode) => {
-        /* react add to child component key prefix ".$" */
-        return cloneElement(c, {
+      /* react add to child component key prefix ".$" */
+      childFactory={(c: VNode) =>
+        cloneElement(c, {
           in: c.key === activeKey,
           unmount: cleanupException !== undefined ? c.key !== cleanupException : shouldCleanup,
           onExited: () => {
@@ -112,7 +113,7 @@ const Transition = <TKey extends number | string>({
           },
           shouldLockUI,
         } as Partial<SingleTransitionProps>)
-      }}
+      }
     >
       {elements}
     </TransitionGroup>
