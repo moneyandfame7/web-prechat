@@ -59,5 +59,6 @@ export function toggleAnimations(enabled: boolean) {
 }
 
 export function changeMessageSize(size: number) {
-  document.documentElement.attributeStyleMap.set('--message-text-size', `${size}px`)
+  // document.documentElement?.attributeStyleMap?.set('--message-text-size', `${size}px`)
+  document.documentElement.style.setProperty('--message-text-size', `${size}px`)
 }
