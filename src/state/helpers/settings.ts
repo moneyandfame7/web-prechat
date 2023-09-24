@@ -59,6 +59,7 @@ export function toggleAnimations(enabled: boolean) {
 }
 
 export function changeMessageSize(size: number) {
+  // not supported in mozila firefox and mobile version
   // document.documentElement?.attributeStyleMap?.set('--message-text-size', `${size}px`)
   document.documentElement.style.setProperty('--message-text-size', `${size}px`)
 }

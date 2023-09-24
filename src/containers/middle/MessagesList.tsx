@@ -203,7 +203,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
     <div class="messages-list scrollable" ref={listRef}>
       {/* <Spinner absoluted zoom size="medium" color="white" /> */}
       <Loader isVisible={!messageIds} isLoading />
-      {chatId}
+      {/* {chatId} */}
       <SingleTransition
         className="messages-loading-transition"
         in={!!messageIds}

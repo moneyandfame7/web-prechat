@@ -35,6 +35,7 @@ import './css/index.scss'
  *  > Infinite scroll.
  *  > StyledEntities - https://chat.openai.com/c/873afe8c-ee0e-4725-8be6-101e1f9eb0d4
  *   > url, email, phone, url-in-text, hashtag, mentions and others ( check core telegram api)
+ *  > On click url - confirm modal
  *  > Media, emoji uploading, documents ( voice ?).
  *  > Contacts, Poll.
  *  > Translating:

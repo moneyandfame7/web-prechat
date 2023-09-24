@@ -12,6 +12,7 @@ import {TEST_translate} from 'lib/i18n/types'
 
 import {SettingsScreens} from 'types/screens'
 
+import {ColumnSection} from 'containers/left/ColumnSection'
 import {useLeftColumn} from 'containers/left/context'
 
 import {ColumnWrapper} from 'components/ColumnWrapper'
@@ -175,7 +176,7 @@ const SettingsMain: FC = () => {
         {/*  */}
         <ProfileAvatar peer={currentUser!} />
       </div>
-      <div class="settings-section">
+      <ColumnSection>
         <ListItem withRipple onClick={handleClickPhone}>
           <div class="settings-item">
             <Icon name="phone" />
@@ -203,9 +204,9 @@ const SettingsMain: FC = () => {
             </div>
           </div>
         </ListItem>
-      </div>
+      </ColumnSection>
 
-      <div class="settings-section">{renderSettingsItems()}</div>
+      <ColumnSection>{renderSettingsItems()}</ColumnSection>
     </ColumnWrapper>
   )
 }

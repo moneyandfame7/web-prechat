@@ -195,13 +195,14 @@
       // background-color: rgba(0, 0, 0, 0.15); // light theme
       background-color: var(--c-bubble-highlight);
       color: #fff;
-      font-size: 14px;
+      font-size: calc(var(--message-text-size) - 3px);
       font-weight: 500;
       padding-inline: 15px;
       padding-block: 3px;
     }
   }
   &.is-date {
+    cursor: pointer;
     margin-block: 5px;
     font-weight: 600;
     position: sticky;
@@ -246,7 +247,7 @@
 
   @include withAnimations {
     box-shadow: 0 1px 2px var(--c-shadow-default);
-    animation: msg-appear 0.3s forwards ease-out;
+    animation: msg-appear 0.3s ease-out;
   }
   &::before,
   &::after {

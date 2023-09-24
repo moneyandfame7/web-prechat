@@ -27,6 +27,7 @@
       min-width: 10px;
       min-height: 10px;
       border-radius: 50%;
+      @include bgAndColorTransition(box-shadow);
     }
   }
 

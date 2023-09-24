@@ -41,7 +41,7 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
   }
 
   const htmlRef = useRef(html.value)
-
+  const focusedRef = useRef(isFocused.value)
   const handleChange = useCallback(
     (e: TargetedEvent<HTMLDivElement, ChangeEvent>) => {
       const textarea = inputRef.current
@@ -52,7 +52,7 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
       e.preventDefault()
       const {innerHTML} = textarea
 
-      onChange(innerHTML === '<br>' ? '' : innerHTML)
+      onChange(innerHTML === '<br>' || innerHTML === '&nbsp;' ? '' : innerHTML)
     },
     [onChange]
   )
@@ -60,9 +60,9 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
     updateHeight()
   }, [isMobile])
 
-  useLayoutEffect(() => {
-    inputRef.current?.focus()
-  }, [])
+  // useLayoutEffect(() => {
+  //   inputRef.current?.focus()
+  // }, [])
   useSignalEffect(() => {
     // console.log{html:}, htmlRef.current)
 
@@ -82,25 +82,36 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
       updateHeight()
     }
   })
-  useSignalEffect(() => {
-    if (isFocused?.value) {
-      inputRef.current?.focus()
-    } else {
-      inputRef.current?.blur()
-    }
-  })
+
+  // useSignalEffect(() => {
+  //   const value = isFocused.value
+  //   console.log(value, focusedRef.current)
+  //   if (value !== focusedRef.current) {
+  //     if (value) {
+  //       inputRef.current?.focus()
+  //     } else {
+  //       inputRef.current?.blur()
+  //     }
+  //   }
+  // })
+  // useSignalEffect(() => {
+  // })
   const buildedClass = clsx('text-area scrollable scrollable-y scrollable-hidden', {
     'is-empty': html.value.length === 0,
   })
   return (
     <div class="text-area-wrapper" ref={inputScrollRef}>
       <div
+        tabIndex={0}
         id="DALBAEB"
         contentEditable
         autofocus
         autoFocus
         onBlur={() => {
           isFocused.value = false
+        }}
+        onFocus={() => {
+          isFocused.value = true
         }}
         // onSelect={() => {
         //   console.log('SELECT?')

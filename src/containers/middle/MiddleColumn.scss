@@ -29,7 +29,6 @@
 
   @include responsive(tablet) {
     z-index: var(--z-middle-column);
-
     body.right-column-shown & {
       transform: translate3d(-20%, 0, 0);
       filter: brightness(0.7);

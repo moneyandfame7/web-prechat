@@ -129,9 +129,7 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
             chatId={chatId}
             onCloseChat={closeChat}
           />
-          {Array.from({length: 5}).map((v, id) => (
-            <div key={id} />
-          ))}
+
           <Transition
             timeout={450}
             cleanupException={cleanupExceptionKey}

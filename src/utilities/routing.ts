@@ -38,7 +38,7 @@ export function connectStateToNavigation(
       if (event) {
         // console.log(event.oldURL, 'LALALA')
         // console.log('EMPTY HASH?')
-        closeChat() // !!!IDK WHAT NEED TO DO THERE
+        // closeChat() // !!!IDK WHAT NEED TO DO THERE
         // actions.openChat({id: undefined})
       }
       // console.log({hash, event})

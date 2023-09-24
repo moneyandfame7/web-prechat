@@ -42,6 +42,7 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
 
     insertTextAtCursor(replaced, inputRef)
   }
+
   const {
     value: isEmojiMenuOpen,
     setTrue: openEmojiMenu,
@@ -63,25 +64,33 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
   // idk how to prevent on other elements
   // useEffect(() => {
   //   const handleKeydown = (e: KeyboardEvent) => {
-  //     console.log(inputFocused.value)
-  //     if (e.metaKey || inputFocused.value || IGNORED_KEY_CODES_FOR_FOCUS.includes(e.key)) {
-  //       return
-  //     }
+  //     const selection = window.getSelection()
+  //     if (!selection?.rangeCount) return
 
-  //     if (e.key === 'Enter') {
-  //       console.log('SUBMIT?')
-  //       return
-  //     } else if (e.key === 'Backspace') {
-  //       inputHtml.value = inputHtml.value.slice(0, -1)
-  //       inputFocused.value = true
-  //       insertCursorAtEnd(inputRef)
+  //     const range = selection.getRangeAt(0)
+  //     // if (range.startContainer === in.current) {
+  //     //   divRef.current.focus();
+  //     // }
+  //     //
+  //     console.log(range.startContainer)
+  //     // if (e.metaKey || inputFocused.value || IGNORED_KEY_CODES_FOR_FOCUS.includes(e.key)) {
+  //     //   return
+  //     // }
 
-  //       return
-  //     }
-  //     e.preventDefault()
-  //     inputFocused.value = true
-  //     inputHtml.value += e.key
-  //     insertCursorAtEnd(inputRef)
+  //     // if (e.key === 'Enter') {
+  //     //   console.log('SUBMIT?')
+  //     //   return
+  //     // } else if (e.key === 'Backspace') {
+  //     //   inputHtml.value = inputHtml.value.slice(0, -1)
+  //     //   inputFocused.value = true
+  //     //   insertCursorAtEnd(inputRef)
+
+  //     //   return
+  //     // }
+  //     // e.preventDefault()
+  //     // inputFocused.value = true
+  //     // inputHtml.value += e.key
+  //     // insertCursorAtEnd(inputRef)
   //   }
 
   //   document.addEventListener('keydown', handleKeydown)

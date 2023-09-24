@@ -1,34 +1,3 @@
-// .input-slider {
-//   border: none;
-
-//   @include bgAndColorTransition(border-color, scale);
-//   &::-webkit-slider-thumb {
-//     // background-color: var(--c-primary);
-
-//     background: #d46a6a;
-
-//     cursor: grab;
-//     @include bgAndColorTransition(border-color, scale);
-
-//     &:active {
-//       scale: 1.2;
-//     }
-//     &:hover {
-//       background-color: var(--c-primary-hover);
-//     }
-//   }
-
-//   &::-webkit-slider-runnable-track {
-//     -webkit-appearance: none;
-//     box-shadow: none;
-//     border: none;
-//     background: transparent;
-//     @include bgAndColorTransition(border-color);
-
-//     background-color: var(--c-border-input);
-//   }
-// }
-
 .input-slider-wrapper {
   position: relative;
   width: 80%;
@@ -49,6 +18,7 @@
     height: 6px;
   }
 }
+/* @todo refactor styles for class instead of type range? */
 input[type='range'] {
   cursor: pointer;
   width: 100%;
@@ -84,6 +54,23 @@ input[type='range']::-webkit-slider-thumb {
   // transition: background 0.3s ease-in-out;
   // transition: box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 0.3s ease;
 }
+input[type='range']::-moz-range-thumb {
+  height: 13px;
+  width: 13px;
+  border-radius: 50%;
+  background: var(--c-primary);
+  cursor: grab;
+  border: none;
+  @include responsive(mobile) {
+    width: 20px;
+    height: 20px;
+  }
+  // box-shadow: 0 0 2px 0 #555;
+  // background-color: red;
+
+  // transition: background 0.3s ease-in-out;
+  // transition: box-shadow 350ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 0.3s ease;
+}
 
 input[type='range']::-webkit-slider-runnable-track {
   -webkit-appearance: none;
@@ -93,10 +80,13 @@ input[type='range']::-webkit-slider-runnable-track {
   // background-color: red;
 }
 
-input[type='range']::-webkit-slider-thumb:hover {
-  // box-shadow: var(--c-primary-transparent) 0px 0px 0px 8px;
-}
+input[type='range']:active {
+  &::-moz-range-thumb {
+    box-shadow: var(--c-primary-transparent) 0px 0px 0px 8px;
 
+    transform: scale(1.1);
+  }
+}
 input[type='range']::-webkit-slider-thumb:active {
   box-shadow: var(--c-primary-transparent) 0px 0px 0px 8px;
 
