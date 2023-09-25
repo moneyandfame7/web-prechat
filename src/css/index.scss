@@ -31,7 +31,7 @@ body {
     Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --font-family-monospace: 'Cascadia Mono', 'Roboto Mono', 'Droid Sans Mono', 'SF Mono',
     'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
-  html.is-mac & {
+  html.is-ios & {
     --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Apple Color Emoji',
       'Helvetica Neue', sans-serif;
   }
