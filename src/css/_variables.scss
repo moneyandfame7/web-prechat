@@ -168,7 +168,7 @@ $theme-map-dark: (
 
   // components
   --menu-shadow: 0px 0px 10px rgba(0, 0, 0, 0.15);
-  --menu-bg: rgb(255 255 255 / 60%);
+  --menu-bg: rgb(255 255 255 / 80%);
   --menu-blur: 12px;
   --bubble-arrow-width: 1rem;
 
@@ -276,7 +276,7 @@ $theme-map-dark: (
     $c-surface-3: ligthen($c-bg-surface, 5%);
 
     // components
-    --menu-bg: rgb(33 33 33 / 75%);
+    --menu-bg: rgb(33 33 33 / 85%);
 
     --c-border-input: #{$c-border-input};
     --c-border-hover-input: #{lighten($c-border-input, 5%)};

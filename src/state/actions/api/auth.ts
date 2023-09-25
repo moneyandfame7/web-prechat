@@ -30,13 +30,16 @@ createAction('getConnection', async (state) => {
   const connection = await makeRequest('connection')
 
   const suggestedLanguage = connection.countryCode.toLowerCase() as ApiLangCode
-  const existLanguage = LANGUAGES_CODE_ARRAY.find((code) => code === suggestedLanguage)
+  const existLanguage = LANGUAGES_CODE_ARRAY.find(
+    (code) => code === navigator.language || code === suggestedLanguage
+  )
 
   updateAuthState(state, {
     connection,
   })
+
   updateSettingsState(state, {
-    suggestedLanguage: existLanguage ? suggestedLanguage : 'en',
+    suggestedLanguage: existLanguage || 'en',
   })
 })
 
@@ -244,6 +247,9 @@ createAction('signUp', async (state, _, payload) => {
   }
 })
 
+/**
+ * Sign out
+ */
 createAction('signOut', async (_, actions) => {
   /** @todo прибирати СЕСІЮ В САМУ ОСТАННЮ ЧЕРГУ, ЩОБ НЕ ЛОМАТИ ЮАЙКУ. ( тобто спочатку якось просто викинути на початковий екран....) */
   removeSession()

@@ -16,9 +16,9 @@ import type {ApiMessage} from 'api/types/messages'
 import type {ApiLangCode, LanguagePack} from 'types/lib'
 import type {UserConnection} from 'types/request'
 
-import {TransitionName} from 'components/transitions'
+import type {TransitionName} from 'components/transitions'
 
-import {Include} from './common'
+import type {Include} from './common'
 import type {AuthScreens, RightColumnScreens, SettingsScreens} from './screens'
 
 export type Theme = 'light' | 'dark' | 'system'
@@ -29,13 +29,17 @@ export type PageAnimations = Include<TransitionName, 'slideDark' | 'zoomSlide'>
 export type ChatFoldersAnimations = 'fade' | 'slide'
 export interface SettingsState {
   theme: Theme
+  /**
+   * @deprecated
+   */
   i18n: {
     lang_code: ApiLangCode
     pack: LanguagePack
   }
+  languages: ApiLanguage[]
+  language: ApiLangCode
   suggestedLanguage?: ApiLangCode
   showTranslate: boolean
-  animationLevel: 0 | 1 | 2
   passcode: {
     hasPasscode: boolean
     isScreenLocked: boolean
@@ -53,8 +57,19 @@ export interface SettingsState {
       chatFolders: ChatFoldersAnimations
     }
   }
+}
 
-  languages?: ApiLanguage[]
+export interface TwoFaState {
+  hasPassword: boolean
+  hint?: string
+  hasRecovery?: boolean
+  unconfirmedEmail?: string
+
+  error?: string
+  isLoading?: boolean
+  newPassword?: string
+  newHint?: string
+  newEmail?: string
 }
 
 export interface AuthState {
@@ -96,6 +111,7 @@ export interface GlobalState {
   settings: SettingsState
   auth: AuthState
   globalSearch: GlobalSearchState
+  twoFa: TwoFaState
   users: {
     contactIds: string[]
     statusesByUserId: Record<string, ApiUserStatus>
@@ -107,6 +123,10 @@ export interface GlobalState {
     ids: string[]
     usernames: {[username: string]: ApiChatId}
     fullById: {[chatId: string]: ApiChatFull}
+  }
+  blocked: {
+    ids: string[]
+    count: number
   }
   messages: {
     byChatId: Record<string, {byId: Record<string, ApiMessage>}>
@@ -166,35 +186,3 @@ export type SyncedState = {
 } & Pick<GlobalState, 'activeSessions' | 'emojis' | 'users'>
 
 export type SignalGlobalState = DeepSignal<GlobalState>
-
-export type TransitionsTypeKey = 'menuBlur' | 'pageTransitions'
-export type TransitionsType = {
-  [key in TransitionsTypeKey]: boolean
-}
-
-export type AuthStage =
-  | 'waitPhone'
-  | 'waitCode'
-  | 'waitPassword'
-  | 'waitRegister'
-  | 'authReady'
-export type State = {
-  settings: {
-    transitions: TransitionsType
-    theme: Theme
-    messageSendKey: 'enter' | 'ctrlEnter'
-    distanceUnit: 'kilometers' | 'miles'
-    language: ApiLangCode
-    languages?: ApiLanguage[]
-    messageTextSize: number
-    timeFormat: '12h' | '24h'
-  }
-
-  auth: {
-    currentUserId?: string
-    phoneNumber?: string
-    rememberMe: boolean
-    session?: string
-    screen: AuthScreens
-  }
-}

@@ -1,17 +1,17 @@
-import type {FC, RefObject, TargetedEvent} from 'preact/compat'
+import {type FC, type RefObject, type TargetedEvent, useRef} from 'preact/compat'
 
-import {t} from 'lib/i18n'
+import {TEST_translate, t} from 'lib/i18n'
 
 import type {SignalOr} from 'types/ui'
 
 import {InputText} from './Input'
 
 interface CodeInputProps {
-  elRef: RefObject<HTMLInputElement>
+  elRef?: RefObject<HTMLInputElement>
   error?: SignalOr<string>
   label?: SignalOr<string>
   value: SignalOr<string>
-  isLoading: boolean
+  isLoading?: boolean
   autoFocus?: boolean
   onInput: (value: string) => void
   cb?: (code: string) => void
@@ -28,6 +28,10 @@ export const CodeInput: FC<CodeInputProps> = ({
   onInput,
   cb,
 }) => {
+  let inputRef = useRef<HTMLInputElement>(null)
+  if (elRef) {
+    inputRef = elRef
+  }
   const handleOnInput = (e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()
 
@@ -49,11 +53,11 @@ export const CodeInput: FC<CodeInputProps> = ({
       pattern="[0-9]*"
       inputMode="tel"
       type="tel"
-      elRef={elRef}
+      elRef={inputRef}
       autoFocus={autoFocus}
       error={error}
       maxLength={CODE_LENGTH}
-      label={t('Code')}
+      label={TEST_translate('Code')}
       value={value}
       loading={isLoading}
       onInput={handleOnInput}

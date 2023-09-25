@@ -15,9 +15,8 @@ export enum SettingsScreens {
   /* PRIVACY */
   Privacy,
   PrivacyBlockedUsers,
-
+  BlockedUsers,
   /* PRIVACY--TWO FA */
-  PrivacyTwoFaSetPassword,
 
   PrivacyActiveSessions,
   PrivacyPhone,
@@ -26,6 +25,7 @@ export enum SettingsScreens {
   PrivacyAddForwardLink,
   PrivacyAddByPhone,
   PrivacyChatInvite,
+  PrivacySendMessage,
   PrivacyRuleSection,
 
   General,
@@ -39,6 +39,13 @@ export enum SettingsScreens {
 
   Devices,
   Language,
+  TwoFaMain,
+  TwoFaEnterPassword,
+  TwoFaReEnterPassword,
+  TwoFaPasswordHint,
+  TwoFaEmail,
+  TwoFaEmailConfirmation,
+  TwoFaPasswordSet,
 }
 
 export enum RightColumnScreens {
@@ -66,10 +73,12 @@ export enum SettingsGroup {
   Notifications,
   DataAndStorage,
   Privacy,
+  BlockedUsers,
   General,
   ChatFolders,
   Devices,
   Language,
+  TwoFa,
 }
 
 export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
@@ -98,6 +107,16 @@ export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
   [SettingsGroup.Devices]: [SettingsScreens.Devices],
 
   [SettingsGroup.Language]: [SettingsScreens.Language],
+  [SettingsGroup.BlockedUsers]: [SettingsScreens.BlockedUsers],
+  [SettingsGroup.TwoFa]: [
+    SettingsScreens.TwoFaMain,
+    SettingsScreens.TwoFaEnterPassword,
+    SettingsScreens.TwoFaReEnterPassword,
+    SettingsScreens.TwoFaPasswordHint,
+    SettingsScreens.TwoFaEmail,
+    SettingsScreens.TwoFaEmailConfirmation,
+    SettingsScreens.TwoFaPasswordSet,
+  ],
 }
 
 export const getSettingsActiveGroup = (screen: SettingsScreens): SettingsGroup => {
@@ -108,3 +127,6 @@ export const getSettingsActiveGroup = (screen: SettingsScreens): SettingsGroup =
   }
   return SettingsGroup.Main
 }
+
+export const isTwoFaScreen = (screen: SettingsScreens) =>
+  SETTINGS_SCREENS[SettingsGroup.TwoFa].includes(screen)

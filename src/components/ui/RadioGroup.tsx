@@ -1,26 +1,34 @@
-import {type ChangeEvent, type FC, type TargetedEvent, useCallback} from 'preact/compat'
+import {type FC} from 'preact/compat'
 
 import {ListItem} from './ListItem'
 
 import './RadioGroup.scss'
 
+export interface RadioGroupItem {
+  value: string
+  title: string
+  subtitle?: string
+}
 interface RadioGroupProps {
-  values: {value: string; label: string; subtitle?: string}[]
+  values: RadioGroupItem[]
   onChange: (value: string) => void
   value: string
   disabled?: boolean
+  loadingFor?: string
 }
-const RadioGroup: FC<RadioGroupProps> = ({values, onChange, value, disabled}) => (
+const RadioGroup: FC<RadioGroupProps> = ({values, onChange, value, disabled, loadingFor}) => (
   <div class="radio-group" value={'dark'}>
     {values.map((v) => (
       <ListItem
         disabled={disabled}
-        key={v.label}
-        onClick={() => onChange(v.value)}
-        title={v.label}
+        key={v.value}
+        onClick={() => {
+          !loadingFor && onChange(v.value)
+        }}
+        title={v.title}
         subtitle={v.subtitle}
       >
-        <label class="input-radio-wrapper">
+        <label class={`input-radio-wrapper${loadingFor === v.value ? ' loading' : ''}`}>
           <input
             class="input-radio"
             checked={value === v.value}

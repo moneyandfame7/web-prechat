@@ -28,9 +28,10 @@ export const INITIAL_STATE: GlobalState = {
       lang_code: 'en',
       pack: lang,
     },
+    languages: [],
+    language: 'en',
     showTranslate: false,
     suggestedLanguage: undefined,
-    animationLevel: 2,
     passcode: {
       isLoading: false,
       isScreenLocked: false,
@@ -48,6 +49,9 @@ export const INITIAL_STATE: GlobalState = {
         chatFolders: 'slide',
       },
     },
+  },
+  twoFa: {
+    hasPassword: false,
   },
   // recentEmojis: ['🇺🇦', '😂', '❤️', '😍', '🙌', '🎉', '🙏', '😊', '🤔', '😎', '👍'],
   // recentEmojis: [
@@ -115,6 +119,10 @@ export const INITIAL_STATE: GlobalState = {
     fullById: {},
   },
 
+  blocked: {
+    ids: [],
+    count: 0,
+  },
   globalSearch: {
     known: {},
     global: {},

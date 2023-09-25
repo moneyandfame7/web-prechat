@@ -1,8 +1,9 @@
 import type {ApiUser} from 'api/types'
 import type {ApiMessage, ApiMessageAction, ApiMessageEntity} from 'api/types/messages'
 
-import {parseStringToJSX} from 'lib/i18n/helpers'
-import {TEST_translate} from 'lib/i18n/types'
+import {TEST_translate} from 'lib/i18n'
+
+import {renderText} from 'utilities/parse/render'
 
 import {getUserName} from './users'
 
@@ -68,5 +69,5 @@ export function getMessageText(message?: ApiMessage, sender?: ApiUser) {
     text = message?.text || 'EMPTY_MESSAGE'
   }
 
-  return parseStringToJSX(text)
+  return renderText(text, ['emoji', 'markdown'])
 }

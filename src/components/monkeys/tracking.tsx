@@ -1,12 +1,16 @@
 import {type FC, type RefObject, memo, useEffect, useRef, useState} from 'preact/compat'
 
+import {usePrevious} from 'hooks'
+
 import {LottiePlayer, type LottieRefCurrentProps} from 'lib/lottie'
 
 import type {Size} from 'types/ui'
 
-import {usePrevious} from 'hooks'
-
-import {MONKEY_TRACK_FRAMES, MONKEY_TRACK_LAST_SEGMENT_ON_INPUT} from './helpers'
+import {
+  MONKEY_TRACK_FIRST_SEGMENT_ON_INPUT,
+  MONKEY_TRACK_FRAMES,
+  MONKEY_TRACK_LAST_SEGMENT_ON_INPUT,
+} from './helpers'
 
 interface AnimationSegments {
   speed: number
@@ -80,8 +84,12 @@ export const MonkeyTrack: FC<MonkeyTrackProps> = memo(
       // } else if (monkeyRef.current?.animationItem?.playSpeed === 20) {
       //   monkeyRef.current?.setSpeed(segmentsRef.current.speed)
       // }
-
+      // console.log({previousLength, currentLength})
+      // if (previousLength === 0 && currentLength === 1) {
+      //   firstSegment = MONKEY_TRACK_FIRST_SEGMENT_ON_INPUT
+      // }
       if (firstSegment >= MONKEY_TRACK_FRAMES || secondSegment >= MONKEY_TRACK_FRAMES) {
+        console.log('LALALALAL??')
         if (currentLength === 0) {
           firstSegment = MONKEY_TRACK_LAST_SEGMENT_ON_INPUT
           secondSegment = 0

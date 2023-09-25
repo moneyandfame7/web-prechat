@@ -5,8 +5,9 @@ import type {ApiLangCode} from 'api/types'
 import {LANGUAGES_LIST} from 'state/helpers/settings'
 import {getGlobalState} from 'state/signal'
 
-import {parseStringToJSX} from 'lib/i18n/helpers'
-import {TEST_changeLanguage, TEST_translate} from 'lib/i18n/types'
+import {TEST_changeLanguage, TEST_translate} from 'lib/i18n'
+
+import {renderText} from 'utilities/parse/render'
 
 import {Divider} from 'components/ui'
 
@@ -20,6 +21,7 @@ export const TEST_ChangeLanguage: FC = () => {
   render.current += 1
   return (
     <>
+      {language}
       <h4>CHANGE (renderCount: {render.current})</h4>
       <select value={language} onChange={handleSelectLanguage}>
         {LANGUAGES_LIST.map((lng) => (
@@ -29,10 +31,15 @@ export const TEST_ChangeLanguage: FC = () => {
         ))}
       </select>
       <Divider>KEYS:</Divider>
-      {TEST_translate('YourName')} | {TEST_translate('Auth.ContinueOnLanguage')} |{' '}
-      {TEST_translate('HelloInterpolate', {name: 'EBAL TVOI ROTIK :)'})} |{' '}
-      {parseStringToJSX(TEST_translate('CombinedPlurAndInter', {count: 888, name: 'DAVYDKA'}))}
-      {/* {parseStringToJSX(TEST_translate('HelloPluralize', {count: 228}).value)} */}
+
+      <h5>
+        {renderText(
+          TEST_translate('HelloInterpolate', {
+            name: 'Davyd',
+          }),
+          ['markdown']
+        )}
+      </h5>
     </>
   )
 }

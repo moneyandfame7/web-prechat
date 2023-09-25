@@ -1,5 +1,5 @@
 import type {Signal} from '@preact/signals'
-import type {ComponentChildren, VNode} from 'preact'
+import type {VNode} from 'preact'
 import type {StateUpdater, TargetedEvent} from 'preact/compat'
 
 /* LEFT */

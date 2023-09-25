@@ -39,7 +39,7 @@ export const ConfirmButton: FC<ConfirmButtonProps> = ({
       <ConfirmModal
         isOpen={isModalOpen}
         onClose={handleOnCancel}
-        title={title}
+        content={title}
         action={action}
         callback={callback}
       />

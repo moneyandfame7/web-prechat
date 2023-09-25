@@ -1,6 +1,9 @@
-import {type FC, memo, useCallback} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect} from 'preact/compat'
+
+import {addKeyboardListeners} from 'utilities/keyboardListener'
 
 import type {AnyFunction} from 'types/common'
+import type {PreactNode} from 'types/ui'
 
 import {Button} from 'components/ui'
 
@@ -9,7 +12,8 @@ import {Modal, ModalActions, ModalContent, ModalHeader, ModalTitle} from './moda
 import './ConfirmModal.scss'
 
 export interface ConfirmModalProps {
-  title: string
+  content: PreactNode
+  title?: string
   action: string
   isOpen: boolean
   callback: AnyFunction
@@ -19,17 +23,30 @@ export interface ConfirmModalProps {
  * Maybe rewrite to global state?
  * button onClick action - openConfirm({title:'',action:'',callback:''})
  */
-const ConfirmModal: FC<ConfirmModalProps> = ({title, action, isOpen, callback, onClose}) => {
-  const handleActionClick = useCallback(() => {
+const ConfirmModal: FC<ConfirmModalProps> = ({
+  content,
+  action,
+  isOpen,
+  callback,
+  onClose,
+  title,
+}) => {
+  const handleActionClick = () => {
     callback()
     onClose()
-  }, [callback, onClose])
+  }
+
+  useEffect(
+    () => (isOpen ? addKeyboardListeners({onEnter: handleActionClick}) : undefined),
+    [isOpen]
+  )
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} closeOnEsc className="ConfirmModal">
       <ModalHeader>
-        <ModalTitle>Prechat</ModalTitle>
+        <ModalTitle>{title || 'Prechat'}</ModalTitle>
       </ModalHeader>
-      <ModalContent>{title}</ModalContent>
+      <ModalContent>{content}</ModalContent>
       <ModalActions>
         <Button fullWidth={false} variant="transparent" onClick={onClose}>
           Close

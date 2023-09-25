@@ -16,6 +16,7 @@
 }
 
 .Button {
+  user-select: none;
   --c-ripple: var(--c-primary-transparent);
   flex-shrink: 0;
   position: relative;

@@ -24,6 +24,7 @@ export const QUERY_ACCOUNT_GET_PASSWORD: TypedDocumentNode<{getPassword: ''}, vo
     getPassword {
       hint
       email
+      hasRecovery
     }
   }
 `

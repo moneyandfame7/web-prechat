@@ -6,11 +6,13 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useRef,
 } from 'preact/compat'
 
 import clsx from 'clsx'
 
 import {getLengthMaybeSignal} from 'utilities/getLengthMaybeSignal'
+import {getSignalOr} from 'utilities/getSignalOr'
 import {isAnimationDisabled} from 'utilities/isAnimationEnabled'
 
 import type {AnyObject} from 'types/common'
@@ -26,7 +28,7 @@ interface InputProps {
   elRef?: RefObject<HTMLInputElement>
   id?: SignalOr<string>
   value: SignalOr<string>
-  error?: SignalOr<string>
+  error?: SignalOr<string | undefined>
   label?: SignalOr<string>
   disabled?: SignalOr<boolean>
   placeholder?: SignalOr<string>
@@ -86,7 +88,11 @@ export const InputText: FC<InputProps> = ({
   autoCorrect,
 }) => {
   const valueLength = useSignal(maxLength)
-  const labelText = error || label
+  const labelText = getSignalOr(error) || getSignalOr(label)
+  let ref = useRef<HTMLInputElement>(null)
+  if (elRef) {
+    ref = elRef
+  }
   // const inputRef = useRef(elRef || null)
   const handleOnInput = (e: TargetedEvent<HTMLInputElement, Event>) => {
     e.preventDefault()
@@ -97,6 +103,7 @@ export const InputText: FC<InputProps> = ({
 
     onInput(e)
   }
+  console.log({labelText}, label)
   const handleOnFocus = (e: TargetedEvent<HTMLInputElement, Event>) => {
     // elRef?.current?.focus()
     onFocus?.(e)
@@ -109,7 +116,7 @@ export const InputText: FC<InputProps> = ({
   }
 
   const buildedClassname = clsx(className, 'input-container', `input-${variant}`, {
-    error: Boolean(error),
+    error: Boolean(getSignalOr(error)),
     'not-empty': Boolean(getLengthMaybeSignal(value)),
     'start-icon': Boolean(startIcon),
     loading,
@@ -118,14 +125,14 @@ export const InputText: FC<InputProps> = ({
   })
 
   useLayoutEffect(() => {
-    if (autoFocus && elRef?.current) {
-      elRef?.current.focus()
+    if (autoFocus && ref?.current) {
+      ref?.current.focus()
     }
   }, [])
 
   useEffect(() => {
-    if (error) {
-      elRef?.current?.blur()
+    if (getSignalOr(error)) {
+      ref?.current?.blur()
     }
   }, [error])
 
@@ -151,7 +158,7 @@ export const InputText: FC<InputProps> = ({
         pattern={pattern}
         inputMode={inputMode}
         tabIndex={tabIndex}
-        ref={elRef}
+        ref={ref}
         id={id}
         onInput={handleOnInput}
         onBlur={handleOnBlur}

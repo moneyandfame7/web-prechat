@@ -1,14 +1,11 @@
-import {type FC, memo, useCallback, useMemo} from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
 import {getActions} from 'state/action'
-import {toggleAnimations} from 'state/helpers/settings'
 import {getGlobalState} from 'state/signal'
-import {updateGeneralSettings} from 'state/updates'
 
 import {t} from 'lib/i18n'
 
 import {GITHUB_SOURCE} from 'common/environment'
-import {stopEvent} from 'utilities/stopEvent'
 
 import {LeftColumnScreen} from 'types/ui'
 
@@ -24,7 +21,7 @@ import './MainMenu.scss'
 export const LeftMainMenu: FC = memo(() => {
   const {setScreen} = useLeftColumn()
   const global = getGlobalState()
-  const {changeGeneralSettings} = getActions()
+  const {changeSettings} = getActions()
   const handleSwitchAnimations = (e: MouseEvent) => {
     const target = e.target as HTMLElement
     if (
@@ -34,8 +31,10 @@ export const LeftMainMenu: FC = memo(() => {
       return // don't handle switch input
     }
 
-    changeGeneralSettings({
-      animationsEnabled: !global.settings.general.animationsEnabled,
+    changeSettings({
+      general: {
+        animationsEnabled: !global.settings.general.animationsEnabled,
+      },
     })
   }
 
@@ -67,8 +66,10 @@ export const LeftMainMenu: FC = memo(() => {
         {t('Animations')}
         <SwitchInput
           onChange={() => {
-            changeGeneralSettings({
-              animationsEnabled: !global.settings.general.animationsEnabled,
+            changeSettings({
+              general: {
+                animationsEnabled: !global.settings.general.animationsEnabled,
+              },
             })
           }}
           size="medium"

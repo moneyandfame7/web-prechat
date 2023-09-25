@@ -47,9 +47,9 @@
   }
   &-fallback {
     // width: max-content;
+    background-color: red;
     display: flex;
     justify-content: center;
-
     @include lottie-sizes();
     img {
       height: inherit;

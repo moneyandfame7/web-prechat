@@ -27,7 +27,9 @@ const ActiveSessionModal: FC<ActiveSessionModalProps> = ({session, isOpen, onClo
   const {terminateAuthorization} = getActions()
 
   const handleTerminateAuthorization = useCallback(async () => {
-    /* Mark is LOADING??? */
+    /**
+     * @todo Loader/error
+     */
     await terminateAuthorization({
       sessionId: session.id,
     })

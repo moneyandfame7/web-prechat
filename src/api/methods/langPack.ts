@@ -76,6 +76,6 @@ export class ApiLangPack extends ApiBaseMethod {
       return undefined
     }
 
-    return data.getLanguages
+    return cleanTypename(data.getLanguages)
   }
 }

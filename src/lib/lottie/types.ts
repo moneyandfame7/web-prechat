@@ -12,17 +12,23 @@ export type LottieAnimations =
   | 'Monkey-peek'
   | 'Monkey-idle'
   | 'Empty-folder'
+  | 'keychain'
+  | 'two-fa-hint'
+  | 'celebrations'
+  | 'email-recovery'
+  | 'love-letter'
+  | 'party-man'
   | DeviceAnimations
 
 export interface LottiePlayerProps {
   name: LottieAnimations
-  lottieRef: RefObject<LottieRefCurrentProps>
-  loop: boolean
-  autoplay: boolean
+  lottieRef?: RefObject<LottieRefCurrentProps>
+  loop?: boolean
+  autoplay?: boolean
   className?: string
-  loading: boolean
+  loading?: boolean
   withBlur?: boolean
-  size: Size
+  size?: Size
   hidden?: boolean
   isPausable?: boolean
 }

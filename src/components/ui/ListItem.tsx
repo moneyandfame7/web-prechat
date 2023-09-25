@@ -17,7 +17,7 @@ import {Icon, type IconName} from './Icon'
 import './ListItem.scss'
 
 export interface MenuContextActions {
-  handler: VoidFunction
+  handler: (e: MouseEvent) => void | Promise<void>
   title: string
   icon?: IconName
   danger?: boolean
@@ -26,7 +26,7 @@ interface ListItemProps {
   withRipple?: boolean
   withCheckbox?: boolean
   withRadio?: boolean
-  contextActions?: MenuContextActions
+  contextActions?: MenuContextActions[]
   onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   /**
    * @deprecated
@@ -61,8 +61,8 @@ export const ListItem: FC<ListItemProps> = memo(
     href,
     withCheckbox = false,
     isChecked = false,
-    // contextActions,
-    withContextMenuPortal = false,
+    contextActions,
+    withContextMenuPortal = true,
     onClick,
     onToggleCheckbox,
     disabled,
@@ -93,7 +93,8 @@ export const ListItem: FC<ListItemProps> = memo(
         getMenuElement,
         undefined,
         withContextMenuPortal,
-        true
+        true,
+        !contextActions
       )
 
     const ButtonElement = href ? 'a' : 'div'
@@ -152,20 +153,32 @@ export const ListItem: FC<ListItemProps> = memo(
         >
           {renderContent()}
         </ButtonElement>
-        <Menu
-          withMount
-          className="list-item__context-menu"
-          elRef={menuRef}
-          isOpen={isContextMenuOpen}
-          shouldHandleAwayClick={true}
-          onClose={handleContextMenuClose}
-          style={styles}
-          withPortal={withContextMenuPortal}
-        >
-          <MenuItem>Lol</MenuItem>
+        {contextActions && (
+          <Menu
+            withMount
+            className="list-item__context-menu"
+            elRef={menuRef}
+            isOpen={isContextMenuOpen}
+            shouldHandleAwayClick={true}
+            onClose={handleContextMenuClose}
+            style={styles}
+            withPortal={withContextMenuPortal}
+          >
+            {contextActions?.map((action) => (
+              <MenuItem
+                danger={action.danger}
+                key={action.title}
+                onClick={action.handler}
+                icon={action.icon}
+              >
+                {action.title}
+              </MenuItem>
+            ))}
+            {/* <MenuItem>Lol</MenuItem>
           <MenuItem>Kek</MenuItem>
-          <MenuItem>Eshkere</MenuItem>
-        </Menu>
+          <MenuItem>Eshkere</MenuItem> */}
+          </Menu>
+        )}
       </div>
     )
   }

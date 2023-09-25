@@ -38,13 +38,17 @@ export function useContextMenu(
   getMenuElement: () => HTMLElement | null,
   getLimiterElement?: () => HTMLElement | null,
   withPortal?: boolean,
-  dynamicTransformOrigin?: boolean
+  dynamicTransformOrigin?: boolean,
+  disabled?: boolean
   // limiter?: 'trigger' | 'window' | 'custom' = 'trigger'
 ) {
   const {value, setFalse, setTrue} = useBoolean(false)
   const [position, setPosition] = useState<{x: number; y: number} | undefined>(undefined)
   const [styles, setStyles] = useState<CSSProperties>()
   const handleContextMenu = (e: TargetedEvent<Element, MouseEvent>) => {
+    if (disabled) {
+      return
+    }
     // console.log({value, position, styles})
     // stopEvent(e)
     // console.log(e.target, e.currentTarget, menuRef.current)
@@ -71,6 +75,9 @@ export function useContextMenu(
   }
 
   useEffect(() => {
+    if (disabled) {
+      return
+    }
     // getMenuElement()
     const menuEl = menuRef.current
     const limiterEl = getLimiterElement?.()
@@ -164,7 +171,7 @@ export function useContextMenu(
       top: y,
       transformOrigin: /* dynamicTransformOrigin ? transformOrigin :  */ 'top left',
     })
-  }, [position, getMenuElement, withPortal])
+  }, [position, getMenuElement, withPortal, disabled])
 
   const handleContextMenuClose = useCallback(() => {
     setFalse()

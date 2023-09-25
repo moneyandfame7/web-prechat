@@ -43,28 +43,44 @@ createAction('terminateAuthorization', async (state, actions, payload) => {
   }
 })
 
-createAction('terminateAllAuthorizations', async (state) => {
-  const result = await Api.account.terminateAllAuthorizations()
+createAction('terminateAllAuthorizations', async (state, actions) => {
+  try {
+    const result = await Api.account.terminateAllAuthorizations()
 
-  if (!result) {
-    return
+    if (!result) {
+      return
+    }
+
+    const selfSessionId = state.auth.session!
+    const {[selfSessionId]: remaining /* ...terminated */} = state.activeSessions.byId
+
+    updateSessions(state, {
+      selfSessionId: remaining,
+    })
+  } catch (e) {
+    const error = getApiError(e)
+    switch (error?.code) {
+      case 'AUTH_SESSION_TOO_FRESH':
+        actions.openCommonModal({title: 'SessionTooFresh', body: error.message})
+        break
+      default:
+        return
+    }
   }
-
-  const selfSessionId = state.auth.session!
-  const {[selfSessionId]: remaining /* ...terminated */} = state.activeSessions.byId
-
-  updateSessions(state, {
-    selfSessionId: remaining,
-  })
 })
 
 const debounceUpdateUserStatus = debounce((cb) => cb(), 3000, true)
 
 createAction('updateUserStatus', async (state, actions, payload) => {
   if (!state.auth.session) {
+    /**
+     * @todo переробити, циклічність тут
+     */
     actions.signOut()
     return
   }
+  Api.account.updateAuthorizationActivity()
+
   if (payload.noDebounce) {
     const result = await Api.account.updateUserStatus(payload.isOnline)
     if (!result) {

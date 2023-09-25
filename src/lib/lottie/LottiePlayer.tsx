@@ -1,8 +1,8 @@
 import type {FC, TargetedEvent} from 'preact/compat'
-import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
+import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'preact/hooks'
 
 import clsx from 'clsx'
-import Lottie from 'lottie-react'
+import Lottie, {type LottieRefCurrentProps} from 'lottie-react'
 
 import {useInactivePage} from 'hooks'
 
@@ -23,8 +23,13 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
   hidden,
   isPausable,
 }) => {
+  let _lottieRef = useRef<LottieRefCurrentProps>(null)
+  if (lottieRef) {
+    _lottieRef = lottieRef
+  }
+
   const [animationData, setAnimationData] = useState<unknown>()
-  const [isPaused, setIsPaused] = useState(lottieRef.current?.animationItem?.isPaused)
+  const [isPaused, setIsPaused] = useState(_lottieRef.current?.animationItem?.isPaused)
   const playerHidden = loading || !animationData /* || !lottieRef.current */
 
   useLayoutEffect(() => {
@@ -35,26 +40,23 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
   }, [])
 
   const stopAnimationOnBlur = useCallback(() => {
-    if (withBlur && !hidden) lottieRef.current?.pause()
+    if (withBlur && !hidden) _lottieRef.current?.pause()
   }, [])
   const playAnimationOnFocus = useCallback(() => {
-    if (withBlur && !hidden) lottieRef.current?.play()
+    if (withBlur && !hidden) _lottieRef.current?.play()
   }, [])
 
-  const pauseOnClick = useCallback(
-    (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
-      e.preventDefault()
-
-      if (isPaused) {
-        lottieRef.current?.play()
-        setIsPaused(false)
-      } else {
-        lottieRef.current?.pause()
-        setIsPaused(true)
-      }
-    },
-    [isPaused]
-  )
+  const pauseOnClick = (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault()
+    console.log('PAUSE???', isPaused)
+    if (isPaused) {
+      _lottieRef.current?.play()
+      setIsPaused(false)
+    } else {
+      _lottieRef.current?.pause()
+      setIsPaused(true)
+    }
+  }
 
   useInactivePage({onBlur: stopAnimationOnBlur, onFocus: playAnimationOnFocus})
 
@@ -76,9 +78,9 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
       return
     }
     if (playerHidden) {
-      lottieRef.current?.pause()
+      _lottieRef.current?.pause()
     } else {
-      lottieRef.current?.play()
+      _lottieRef.current?.play()
     }
   }, [playerHidden])
   // const elRef = useRef<{base: HTMLDivElement}>(null)
@@ -96,7 +98,7 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
         // ref={elRef}
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onClick={isPausable ? (pauseOnClick as any) : undefined}
-        lottieRef={lottieRef}
+        lottieRef={_lottieRef}
         loop={loop}
         autoplay={false}
         className={playerClass}

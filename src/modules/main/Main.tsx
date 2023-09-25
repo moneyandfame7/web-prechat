@@ -33,7 +33,8 @@ const Main: FC<StateProps> = ({isNewContactModalOpen, newContactUserId, shouldGe
     if (shouldGetSelf) {
       getSelf()
     }
-    updateUserStatus({isOnline: true, isFirst: true})
+    updateUserStatus({isOnline: true, isFirst: true, noDebounce: true})
+
     getChats()
     getContactList()
 

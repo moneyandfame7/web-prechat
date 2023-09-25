@@ -8,7 +8,7 @@ import {getGlobalState} from 'state/signal'
 
 import {useBoolean} from 'hooks/useFlag'
 
-import {TEST_translate} from 'lib/i18n/types'
+import {TEST_translate} from 'lib/i18n'
 
 import {SettingsScreens} from 'types/screens'
 
@@ -165,7 +165,7 @@ const SettingsMain: FC = () => {
           <ConfirmModal
             isOpen={isLogoutOpen}
             onClose={onCloseLogout}
-            title="Are you sure you want to log out?"
+            content="Are you sure you want to log out?"
             action="Log Out"
             callback={signOut}
           />

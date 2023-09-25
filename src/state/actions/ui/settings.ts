@@ -1,31 +1,34 @@
 import {createAction} from 'state/action'
 import {changeMessageSize, toggleAnimations} from 'state/helpers/settings'
-import {updateGeneralSettings, updateSettingsState} from 'state/updates'
+import {storages} from 'state/storages'
+import {updateSettingsState} from 'state/updates'
 
 import {changeTheme} from 'utilities/changeTheme'
+import {updateByKey} from 'utilities/object/updateByKey'
 
 createAction('changeTheme', (state, _, payload) => {
   changeTheme(payload)
 
   updateSettingsState(state, {
     general: {
-      ...state.settings.general, // переробити хуйню цю
       theme: payload,
     },
-    theme: payload,
   })
 })
 
-createAction('changeGeneralSettings', (state, _, payload) => {
-  if (payload.animationsEnabled !== undefined) {
-    toggleAnimations(payload.animationsEnabled)
+createAction('changeSettings', (state, _, payload) => {
+  const {general, passcode, i18n} = payload
+
+  /* DOM helpers */
+  if (general?.animationsEnabled !== undefined) {
+    toggleAnimations(general.animationsEnabled)
   }
-  if (payload.theme) {
-    changeTheme(payload.theme)
+  if (general?.theme) {
+    changeTheme(general.theme)
   }
-  if (payload.messageTextSize) {
-    changeMessageSize(payload.messageTextSize)
+  if (general?.messageTextSize) {
+    changeMessageSize(general.messageTextSize)
   }
-  console.log({payload})
-  updateGeneralSettings(state, payload)
+
+  updateSettingsState(state, payload)
 })

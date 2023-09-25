@@ -33,7 +33,7 @@ const SettingsDevices: FC = () => {
   const hasOtherSessions = Boolean(otherSessions.length)
   const handleTerminateAllAuthorizations = useCallback(async () => {
     await terminateAllAuthorizations()
-    resetScreen()
+    // resetScreen()
   }, [])
 
   function renderCurrentSession(session: ApiSession) {

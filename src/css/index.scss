@@ -8,6 +8,7 @@
   height: 100%;
   width: 100%;
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .root {
@@ -21,6 +22,7 @@
 html,
 body {
   // overscroll-behavior: contain;
+  overflow: hidden; // disable overscroll behavior on macOS
 
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
@@ -45,7 +47,9 @@ body {
   scrollbar-color: transparent transparent;
   transition: scrollbar-color 0.3s ease;
 
+  // : none;
   -webkit-overflow-scrolling: touch;
+
   pointer-events: auto;
 
   &::-webkit-scrollbar-thumb {
@@ -128,5 +132,14 @@ html.hasOpenPopup {
   100% {
     transform: scale(0.5);
     opacity: 0;
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

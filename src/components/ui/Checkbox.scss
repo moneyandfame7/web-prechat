@@ -1,11 +1,16 @@
 .Checkbox {
   font-size: 16px;
-  font-weight: 300;
+  font-weight: 400;
   width: 24px;
-  height: 24px;
+  // height: 24px;
+  padding-inline: 20px;
+  padding-block: 20px;
   display: flex;
   align-items: center;
   gap: 30px;
+
+  width: 100%;
+  min-height: 52px;
   border-radius: var(--input-border-radius);
   &-wrapper {
     position: relative;
@@ -16,9 +21,10 @@
     height: 24px;
   }
   cursor: pointer;
-  @include withAnimations {
-    transition: background-color 0.2s ease;
-  }
+  // @include withAnimations {
+  //   transition: background-color 0.2s ease;
+  // }
+  @include bgAndColorTransition(color);
   &.disabled {
     pointer-events: none;
   }
@@ -33,13 +39,18 @@
     path {
       fill: #fff;
     }
-    display: none;
+    @include withAnimations {
+      animation: hide-icon 0.2s forwards ease;
+    }
+    @include withoutAnimations {
+      display: none;
+    }
     width: 18px;
     height: 18px;
   }
   &.ripple {
     &:hover {
-      background-color: var(--color-neutral-hover);
+      background-color: var(--c-ripple);
     }
   }
 
@@ -54,15 +65,21 @@
     justify-content: center;
     cursor: pointer;
 
-    @include withAnimations {
-      transition: all 0.2s ease;
-    }
+    @include bgAndColorTransition(border-color);
+    // @include withAnimations {
+    //   transition: all 0.2s ease;
+    // }
 
     &:checked {
       background-color: var(--c-primary);
       border-color: var(--c-primary);
       & + .Icon-check {
-        display: inline;
+        @include withAnimations {
+          animation: show-icon 0.2s ease;
+        }
+        @include withoutAnimations {
+          display: inline;
+        }
       }
     }
   }

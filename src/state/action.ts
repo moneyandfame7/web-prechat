@@ -1,10 +1,11 @@
-import {ApiMessageEntity, HistoryDirection} from 'api/types'
+import {type ApiMessageEntity, type HistoryDirection} from 'api/types'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiLangKey} from 'api/types/langPack'
 
 import {DEBUG} from 'common/environment'
 
 import type {SignInPayload, SignUpPayload} from 'types/action'
+import type {DeepPartial} from 'types/common'
 import type {ApiLangCode} from 'types/lib'
 import type {RightColumnScreens, SettingsScreens} from 'types/screens'
 import type {SettingsState, SignalGlobalState, Theme} from 'types/state'
@@ -33,7 +34,7 @@ interface ActionPayloads {
   authInit: void
   openRightColumn: {screen?: RightColumnScreens}
   closeRightColumn: void
-  changeGeneralSettings: Partial<SettingsState['general']>
+  changeSettings: DeepPartial<SettingsState>
 
   // Differents
   openCommonModal: {title: string; body: string}

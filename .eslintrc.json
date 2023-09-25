@@ -10,7 +10,7 @@
       "rules": {
         "no-console": "error",
         "no-shadow": "off",
-        "@typescript-eslint/no-shadow": "error",
+        // "@typescript-eslint/no-shadow": "error",
         // "unused-imports/no-unused-imports": "error",
         // "unused-imports/no-unused-vars": "error",
         "@typescript-eslint/no-unused-vars": "off",

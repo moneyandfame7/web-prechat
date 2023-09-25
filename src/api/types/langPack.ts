@@ -14,10 +14,11 @@ export type ApiLangPack = {
   strings: typeof lang
 }
 export interface ApiLanguage {
-  name: string
   langCode: ApiLangCode
+  name: string
   nativeName: string
   stringsCount: number
+  translatedCount: number
 }
 
 export interface GetLangStringInput {

@@ -17,6 +17,8 @@ createAction('getLanguages', async (state) => {
   if (!result) {
     return
   }
+
+  console.log({result})
   updateSettingsState(state, {
     languages: result, // CHECK IT
   })

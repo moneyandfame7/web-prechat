@@ -2,11 +2,19 @@ import type {PreactNode} from 'types/ui'
 
 import {replaceEmojis} from './replaceEmojis'
 import {replaceMarkdown} from './replaceMarkdown'
+import {replaceBreakes} from './replaceSpaces'
 
-export type TextRenderFilter = 'emoji' | 'emoji_html' | 'markdown' | 'links' | 'markdown_html'
+export type TextRenderFilter =
+  | 'emoji'
+  | 'emoji_html'
+  | 'markdown'
+  | 'links'
+  | 'markdown_html'
+  | 'breakes_html'
+  | 'breakes'
 
 export function renderText(
-  text: PreactNode,
+  node: PreactNode,
   filters: TextRenderFilter[] = ['emoji']
 ): PreactNode[] {
   return filters.reduce(
@@ -20,9 +28,13 @@ export function renderText(
           return replaceMarkdown(text, 'jsx')
         case 'markdown_html':
           return replaceMarkdown(text, 'html')
+        case 'breakes':
+          return replaceBreakes(text, 'jsx')
+        case 'breakes_html':
+          return replaceBreakes(text, 'html')
       }
       return text
     },
-    [text] as PreactNode[]
+    [node] as PreactNode[]
   )
 }

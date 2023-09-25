@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback, useEffect, useMemo} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useMemo, useRef} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
@@ -7,21 +7,24 @@ import {selectChatMessageIds} from 'state/selectors/messages'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
+import {useBoolean} from 'hooks/useFlag'
 import {useLayout} from 'hooks/useLayout'
 
+import {t} from 'lib/i18n'
+import {LottiePlayer} from 'lib/lottie'
+
+import {MOCK_TWO_FA} from 'common/app'
 import {addEscapeListener} from 'utilities/keyboardListener'
 import {connectStateToNavigation} from 'utilities/routing'
 
 import type {OpenedChat} from 'types/state'
 
-import {InfiniteScroll} from 'components/InfiniteScroll'
+import {TEST_ChangeLanguage} from 'components/test/ChangeLanguage'
 import {Transition} from 'components/transitions'
 import {Button} from 'components/ui'
-import {SwitchInput} from 'components/ui/SwitchInput'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
-import {MessageItem} from './MessageItem'
 import {MessagesList} from './MessagesList'
 import {getCleanupExceptionKey} from './helpers/getCleanupExceptionKey'
 
@@ -40,7 +43,7 @@ const withAnimations = !document.documentElement.classList.contains('animation-n
 const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
   const global = getGlobalState()
   const actions = getActions()
-  const {isMobile, isSmall, isLaptop} = useLayout()
+  const {isSmall, isLaptop} = useLayout()
   const closeChat = useCallback(() => {
     document.body.classList.toggle('has-chat', false)
     document.body.classList.toggle('left-column-shown', true)
@@ -104,10 +107,11 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
     () => selectChatMessageIds(global, 'c_740c5f09-e3da-423b-88e6-2cb73401f7ad'),
     []
   )
+  const render = useRef(0)
 
-  useEffect(() => {
-    console.log({messagesIds})
-  }, [])
+  render.current += 1
+
+  const {value: hidden, toggle} = useBoolean(true)
   return (
     <div class="MiddleColumn" id="middle-column">
       {/* <h3>Current chat:{global.openedChats[activeTransitionKey]?.chatId}</h3>
@@ -119,8 +123,26 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
           actions.changeTheme(theme === 'dark' ? 'light' : 'dark')
         }}
       >
-        Toggle theme. {global.settings.general.theme}
+        Toggle theme. {global.settings.general.$theme}
       </Button>
+      <Button
+        onClick={() => {
+          MOCK_TWO_FA.value = !MOCK_TWO_FA.value
+        }}
+      >
+        Toggle mock 2fa
+      </Button>
+      {/* <SwitchLanguageTest /> */}
+      <TEST_ChangeLanguage />
+      <LottiePlayer autoplay loop name="love-letter" hidden={hidden} />
+      <Button onClick={toggle}>Toggle</Button>
+      {/* <img src={skeleton} /> */}
+      <div>
+        {/* {render.current} */}
+        <p>{t('Privacy.WhoCanSendMessage')}</p>
+        <p>{t('Privacy.WhoCanAddByPhone')}</p>
+        <p>{t('Privacy.WhoCanInvite')}</p>
+      </div>
       {/* {messagesIds && <InfiniteScroll messageIds={messagesIds} />} */}
       {isChatOpen && (
         <>

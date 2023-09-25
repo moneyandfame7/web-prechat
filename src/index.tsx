@@ -14,6 +14,8 @@ import {DEBUG} from 'common/environment'
 import './css/index.scss'
 
 /**
+ * @todo - пошук і підсвічування повідомлень:
+ * https://chat.openai.com/c/9eee1ed1-aa2d-41a7-9e96-c0a538c0aede
  * share state between tabs ( broadcast channel, check support )
  * also need to refactor code, remove unused updates, fix monkey flickering
  * fix apollo retry
@@ -22,9 +24,9 @@ import './css/index.scss'
  * @supports backdrop-blur: mixin. accept color and value for blur
  *
  * @todo - Settings:
- *  > Menu blur, bubble zoom animation, page transitions, right column transition, ripple effect
- *  > Also can check transition type - slideDark on zoomSlide
- *  > or off
+ *  > Menu blur, bubble zoom animation, page transitions, right column transition, ripple effect +-
+ *  > Also can check transition type - slideDark on zoomSlide +
+ *  > or off +
  *  > Background color - https://codesandbox.io/s/react-colorful-customization-demo-mq85z?file=/src/styles.css
  * @todo - Messages:
  *  > Sending, getting.
@@ -37,7 +39,7 @@ import './css/index.scss'
  *   > url, email, phone, url-in-text, hashtag, mentions and others ( check core telegram api)
  *  > On click url - confirm modal
  *  > Media, emoji uploading, documents ( voice ?).
- *  > Contacts, Poll.
+ *  > Contacts, Poll, Location )))??
  *  > Translating:
  *   > Translate Modal
  *
@@ -81,7 +83,7 @@ async function init() {
   //     console.warn({err})
   //   })
   if (DEBUG) {
-    import('preact/debug')
+    // import('preact/debug')
     const global = getGlobalState()
 
     window.addEventListener('dblclick', () => {

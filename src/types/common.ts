@@ -18,6 +18,8 @@ export type Prettify<T> = {
 } & {} // eslint-disable-line
 
 export type Include<T, U> = T extends U ? U : never
+export type IsNever<T> = [T] extends [never] ? true : false
+
 // Exclude
 
 // type Split2<S extends string> = S extends `${string}{{${infer U}}}` ? U : S

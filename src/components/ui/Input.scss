@@ -4,6 +4,12 @@
 
   input {
     @include bgAndColorTransition(border-color);
+
+    @include whenNight {
+      @include defaultTransition(border-color);
+
+      // @include defaultTransition(bac);
+    }
     white-space: nowrap;
     &:not([type='password']) {
       text-overflow: ellipsis;
@@ -30,7 +36,9 @@
     &:-webkit-autofill-strong-password-viewable,
     &:-webkit-autofill-and-obscured {
       box-shadow: inset 0 0 0 10rem var(--c-surface);
-      -webkit-text-fill-color: var(--color-text);
+      -webkit-text-fill-color: var(--c-font-primary);
+
+      // border: 1px solid var(--color-neutral); // maybe this
     }
 
     &:focus {
@@ -164,7 +172,10 @@
     scale: 1;
     color: var(--color-placeholder);
     pointer-events: none;
-    transition: transform 0.2s ease-out, color 0.2s ease-out;
+    // transition: transform 0.2s ease-out, color 0.2s ease-out;
+
+    @include bgAndColorTransition(transform, color);
+
     white-space: nowrap;
   }
 
@@ -179,7 +190,9 @@
     border-radius: 12px;
     border: 2px solid var(--c-primary);
     pointer-events: none;
-    transition: opacity 0.2s ease-out;
+    // transition: opacity 0.2s ease-out;
+
+    @include bgAndColorTransition(border, opacity);
   }
   .length-indicator {
     position: absolute;
@@ -190,6 +203,7 @@
     font-size: 14px;
     color: var(--color-placeholder);
     background-color: var(--c-surface);
+    @include bgAndColorTransition(color);
   }
   .input-value {
     position: absolute;

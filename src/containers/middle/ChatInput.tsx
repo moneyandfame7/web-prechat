@@ -1,5 +1,5 @@
 import {useComputed, useSignal} from '@preact/signals'
-import {type FC, memo, useCallback, useEffect, useLayoutEffect, useRef} from 'preact/compat'
+import {type FC, memo, useCallback, useLayoutEffect, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
 
@@ -7,14 +7,9 @@ import {getActions} from 'state/action'
 
 import {useBoolean} from 'hooks/useFlag'
 
-import {IGNORED_KEY_CODES_FOR_FOCUS} from 'utilities/keyboardListener'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'
-import {
-  insertCursorAtEnd,
-  insertTextAtCursor,
-  isSelectionInElement,
-} from 'utilities/parse/selection'
+import {insertTextAtCursor} from 'utilities/parse/selection'
 
 import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
 import {MenuItem} from 'components/popups/menu'
@@ -45,13 +40,13 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
 
   const {
     value: isEmojiMenuOpen,
-    setTrue: openEmojiMenu,
+    toggle: toggleEmojiMenu,
     setFalse: closeEmojiMenu,
   } = useBoolean()
   const inputFocused = useSignal(false)
 
-  const handleOpenEmojiMenu = useCallback(() => {
-    openEmojiMenu()
+  const handleToggleEmojiMenu = useCallback(() => {
+    toggleEmojiMenu()
     inputRef.current?.focus()
   }, [])
   const buildedClass = clsx('chat-input', {
@@ -112,7 +107,7 @@ const ChatInputImpl: FC<OwnProps> = ({chatId}) => {
         <div class="input-message">
           <IconButton
             icon={isEmojiMenuOpen ? 'keyboard' : 'smile'}
-            onClick={handleOpenEmojiMenu}
+            onClick={handleToggleEmojiMenu}
           />
           <TextArea
             isFocused={inputFocused}

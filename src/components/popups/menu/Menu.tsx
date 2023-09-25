@@ -123,6 +123,7 @@ export const Menu: FC<MenuProps> = memo(
       !shouldHandleAwayClick || !isOpen
     )
 
+    // eslint-disable-next-line arrow-body-style
     useEffect(() => {
       return isOpen
         ? addEscapeListener(() => {
@@ -201,7 +202,7 @@ export const Menu: FC<MenuProps> = memo(
 interface MenuItemProps {
   children: ComponentChildren
   className?: string
-  onClick?: (e: MouseEvent) => void
+  onClick?: (e: MouseEvent) => void | Promise<void>
   hidden?: boolean
   selected?: boolean
   to?: string

@@ -7,6 +7,7 @@ import CSSTransition from 'react-transition-group/CSSTransition'
 
 import {usePrevious} from 'hooks'
 
+import {omit} from 'utilities/object/omit'
 import {joinStrings} from 'utilities/string/joinStrings'
 
 import {TRANSITION_CLASSES, buildProperties, getTransitionTimeout} from './helpers'
@@ -24,6 +25,7 @@ const Transition = <TKey extends number | string>({
   activeKey,
   shouldCleanup = false,
   cleanupException,
+  cleanupElements,
   direction = 'auto',
   containerClassname,
   timeout,
@@ -47,10 +49,11 @@ const Transition = <TKey extends number | string>({
     }
     const preservedRender =
       cleanupException !== undefined ? elementsRef.current[cleanupException] : undefined
+
     elementsRef.current = preservedRender ? {[cleanupException!]: preservedRender} : {}
 
     // forceUpdate()
-  }, [activeKey, shouldCleanup, cleanupException])
+  }, [activeKey, shouldCleanup, cleanupException, cleanupElements])
 
   elementsRef.current[activeKey] = children
   const elementsKeys = Object.keys(elementsRef.current).map((k) =>

@@ -25,6 +25,7 @@ export interface TransitionProps<TKey extends number | string> {
   shouldCleanup?: boolean
   isLayout?: boolean
   cleanupException?: TKey
+  cleanupElements?: TKey[]
   shouldLockUI?: boolean
   containerClassname?: string
   innerClassnames?: string | Partial<{[key in TKey]: string}>

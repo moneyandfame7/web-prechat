@@ -10,7 +10,7 @@
   // }
   // body.has-chat & {
   // }
-  height: 100dvh;
+  height: 100%;
 
   @include withAnimations {
     transition: transform var(--slide-dark-transition), filter var(--slide-dark-transition),
@@ -29,6 +29,8 @@
 
   @include responsive(tablet) {
     z-index: var(--z-middle-column);
+    position: absolute;
+    width: 100%;
     body.right-column-shown & {
       transform: translate3d(-20%, 0, 0);
       filter: brightness(0.7);

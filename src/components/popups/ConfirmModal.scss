@@ -2,9 +2,11 @@
   .Modal-title {
     margin: 0;
   }
-
+  .Modal-content {
+    line-height: 1.3;
+  }
   min-height: 100px;
-  min-width: 320px;
+  max-width: 250px;
   @include responsive(mobile) {
     min-width: 90%;
   }

@@ -3,7 +3,7 @@
   position: relative;
   // width: 420px;
   width: var(--left-column-width);
-  height: 100dvh;
+  height: 100%;
   z-index: var(--z-left-column);
 
   @include withAnimations {
@@ -15,11 +15,12 @@
   }
 
   @include responsive(tablet) {
-    position: absolute;
+    // position: absolute;
     width: 100%;
 
     body:not(.left-column-shown) & {
       transform: translateX(-20%);
+      // background: rgba(0, 0, 0, 0.9);
       filter: brightness(0.7);
     }
     body.left-column-shown & {

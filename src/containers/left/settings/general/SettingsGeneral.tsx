@@ -26,7 +26,7 @@ import {ColumnWrapper} from 'components/ColumnWrapper'
 import ConfirmModal from 'components/popups/ConfirmModal.async'
 import {Divider, Icon} from 'components/ui'
 import {ListItem} from 'components/ui/ListItem'
-import {RadioGroup} from 'components/ui/RadioGroup'
+import {RadioGroup, type RadioGroupItem} from 'components/ui/RadioGroup'
 import {Slider} from 'components/ui/Slider'
 
 import './SettingsGeneral.scss'
@@ -35,73 +35,83 @@ interface StateProps {
   generalSettings: DeepSignal<SettingsState['general']>
 }
 const SettingsGeneralImpl: FC<StateProps> = ({generalSettings}) => {
-  const {changeTheme, changeGeneralSettings} = getActions()
+  const {changeTheme, changeSettings} = getActions()
   const {resetScreen} = SettingsContext.useScreenContext()
 
   const handleChangeMessageSize = useCallback((size: number) => {
-    changeGeneralSettings({
-      messageTextSize: size,
+    changeSettings({
+      general: {
+        messageTextSize: size,
+      },
     })
   }, [])
 
   const handleChangePageAnimations = useCallback((name: string) => {
-    changeGeneralSettings({
-      animations: {
-        chatFolders: generalSettings.animations.chatFolders,
-        page: name as PageAnimations,
+    changeSettings({
+      general: {
+        animations: {
+          page: name as PageAnimations,
+        },
       },
     })
   }, [])
   const handleChangeChatFoldersAnimations = useCallback((name: string) => {
-    changeGeneralSettings({
-      animations: {
-        chatFolders: name as ChatFoldersAnimations,
-        page: generalSettings.animations.page,
+    changeSettings({
+      general: {
+        animations: {
+          chatFolders: name as ChatFoldersAnimations,
+        },
       },
     })
   }, [])
   const handleToggleAnimations = useCallback(() => {
-    changeGeneralSettings({
-      animationsEnabled: !generalSettings.animationsEnabled,
+    changeSettings({
+      general: {
+        animationsEnabled: !generalSettings.animationsEnabled,
+      },
     })
   }, [])
   const handleChangeFormat = useCallback((format: string) => {
-    changeGeneralSettings({
-      timeFormat: format as TimeFormat,
+    changeSettings({
+      general: {
+        timeFormat: format as TimeFormat,
+      },
     })
   }, [])
   const handleChangeSendKey = useCallback((shortcut: string) => {
-    changeGeneralSettings({
-      messageSendByKey: shortcut as SendShortcut,
+    changeSettings({
+      general: {
+        messageSendByKey: shortcut as SendShortcut,
+      },
     })
   }, [])
 
   const SETTINGS_SECTIONS = useMemo(
     () => ({
       theme: [
-        {value: 'light', label: 'Day'},
-        {value: 'dark', label: 'Night'},
-        {value: 'system', label: 'System Default'},
+        {value: 'light', title: 'Day'},
+        {value: 'dark', title: 'Night'},
+        {value: 'system', title: 'System Default'},
       ],
       sendByKey: [
-        {value: 'enter', label: 'Send By Enter', subtitle: 'New line by Shift + Enter'},
-        {value: 'ctrl-enter', label: 'Send by ⌘ + Enter', subtitle: 'New line by Enter'},
+        {value: 'enter', title: 'Send By Enter', subtitle: 'New line by Shift + Enter'},
+        {value: 'ctrl-enter', title: 'Send by ⌘ + Enter', subtitle: 'New line by Enter'},
       ],
       timeFormat: [
-        {value: '12h', label: '12-hour', subtitle: formatMessageTime(new Date(), true)},
-        {value: '24h', label: '24-hour', subtitle: formatMessageTime(new Date(), false)},
+        {value: '12h', title: '12-hour', subtitle: formatMessageTime(new Date(), true)},
+        {value: '24h', title: '24-hour', subtitle: formatMessageTime(new Date(), false)},
       ],
       pageAnimations: [
-        {value: 'zoomSlide', label: 'Zoom Slide'},
-        {value: 'slideDark', label: 'Slide Dark'},
+        {value: 'zoomSlide', title: 'Zoom Slide'},
+        {value: 'slideDark', title: 'Slide Dark'},
       ],
       chatFoldersAnimations: [
-        {value: 'fade', label: 'Fade'},
-        {value: 'slide', label: 'Slide'},
+        {value: 'fade', title: 'Fade'},
+        {value: 'slide', title: 'Slide'},
       ],
     }),
     []
-  )
+  ) satisfies Record<string, RadioGroupItem[]>
 
   const {
     value: isConfirmModalOpen,
@@ -110,7 +120,9 @@ const SettingsGeneralImpl: FC<StateProps> = ({generalSettings}) => {
   } = useBoolean()
 
   const handleResetGeneralSettings = useCallback(() => {
-    changeGeneralSettings(INITIAL_STATE.settings.general)
+    changeSettings({
+      general: INITIAL_STATE.settings.general,
+    })
   }, [])
   return (
     <ColumnWrapper title="General" onGoBack={resetScreen}>
@@ -145,7 +157,7 @@ const SettingsGeneralImpl: FC<StateProps> = ({generalSettings}) => {
         <ConfirmModal
           isOpen={isConfirmModalOpen}
           onClose={closeConfirmModal}
-          title="Are you sure you want to reset settings?"
+          content="Are you sure you want to reset settings?"
           action="Reset"
           callback={handleResetGeneralSettings}
         />

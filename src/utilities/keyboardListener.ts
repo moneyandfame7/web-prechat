@@ -76,6 +76,7 @@ const handlers: Record<HandlerName, Handler[]> = {
 }
 
 export function addKeyboardListeners(options: CaptureOptions) {
+  console.log('LALALALALLAL')
   if (!hasActiveHandlers()) {
     document.addEventListener('keydown', handleKeyDown, true)
   }
