@@ -58,7 +58,6 @@ const SettingsTwoFaEmailImpl: FC<StateProps> = ({twoFaState}) => {
       <ColumnSection>
         <LottiePlayer name="love-letter" autoplay />
         <InputText
-          autoFocus
           label={TEST_translate('TwoFa.EmailTitle')}
           error={inputError}
           value={inputValue}

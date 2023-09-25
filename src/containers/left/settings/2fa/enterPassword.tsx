@@ -68,7 +68,6 @@ const SettingsTwoFaEnterPasswordImpl: FC<StateProps> = ({twoFaState}) => {
       <ColumnSection>
         <MonkeyPassword see={showPassword} />
         <PasswordInput
-          autoFocus
           error={inputError}
           // disabled={auth.$isLoading}
           value={inputValue}

@@ -53,7 +53,6 @@ const SettingsTwoFaHintImpl: FC<StateProps> = ({twoFaState}) => {
           maxLength={10}
           value={hint}
           onInput={(e) => changeHint(e.currentTarget.value)}
-          autoFocus
           label={TEST_translate('TwoFa.HintPlaceholder')}
         />
         <Button onClick={() => handleNext(true)} isDisabled={isContinueDisabled}>

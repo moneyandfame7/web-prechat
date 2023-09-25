@@ -63,7 +63,6 @@ const SettingsTwoFaReEnterPasswordImpl: FC<StateProps> = ({twoFaState}) => {
         />
         <PasswordInput
           elRef={inputRef}
-          autoFocus
           error={inputError}
           value={inputValue}
           onInput={handleChangePassword}
