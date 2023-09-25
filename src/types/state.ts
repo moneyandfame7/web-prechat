@@ -56,6 +56,7 @@ export interface SettingsState {
       page: PageAnimations
       chatFolders: ChatFoldersAnimations
     }
+    blur: boolean
   }
 }
 

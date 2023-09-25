@@ -1,5 +1,5 @@
 import {createAction} from 'state/action'
-import {changeMessageSize, toggleAnimations} from 'state/helpers/settings'
+import {changeMessageSize, toggleAnimations, toggleBlur} from 'state/helpers/settings'
 import {storages} from 'state/storages'
 import {updateSettingsState} from 'state/updates'
 
@@ -28,6 +28,9 @@ createAction('changeSettings', (state, _, payload) => {
   }
   if (general?.messageTextSize) {
     changeMessageSize(general.messageTextSize)
+  }
+  if (general?.blur) {
+    toggleBlur(general.blur)
   }
 
   updateSettingsState(state, payload)

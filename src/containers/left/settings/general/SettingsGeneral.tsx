@@ -24,10 +24,11 @@ import {ColumnSection} from 'containers/left/ColumnSection'
 import {ColumnSubtitle} from 'components/ColumnSubtitle'
 import {ColumnWrapper} from 'components/ColumnWrapper'
 import ConfirmModal from 'components/popups/ConfirmModal.async'
-import {Divider, Icon} from 'components/ui'
+import {Checkbox, Divider, Icon} from 'components/ui'
 import {ListItem} from 'components/ui/ListItem'
 import {RadioGroup, type RadioGroupItem} from 'components/ui/RadioGroup'
 import {Slider} from 'components/ui/Slider'
+import {SwitchInput} from 'components/ui/SwitchInput'
 
 import './SettingsGeneral.scss'
 
@@ -146,6 +147,18 @@ const SettingsGeneralImpl: FC<StateProps> = ({generalSettings}) => {
           withCheckbox
           title="Enable Animations"
           isChecked={generalSettings.animationsEnabled}
+        />
+
+        <Checkbox
+          label="Menu blur"
+          checked={generalSettings.blur}
+          onToggle={(c) => {
+            changeSettings({
+              general: {
+                blur: c,
+              },
+            })
+          }}
         />
         <ListItem
           onClick={openConfirmModal}

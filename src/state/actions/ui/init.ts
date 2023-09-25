@@ -1,5 +1,5 @@
 import {createAction} from 'state/action'
-import {changeMessageSize, toggleAnimations} from 'state/helpers/settings'
+import {changeMessageSize, toggleAnimations, toggleBlur} from 'state/helpers/settings'
 import {INITIAL_STATE} from 'state/initState'
 import {setGlobalState} from 'state/signal'
 import {hydrateStore, stopPersist} from 'state/storages'
@@ -44,6 +44,7 @@ createAction('init', async (state, actions): Promise<void> => {
 
   const test = state.settings.general.animationsEnabled
   toggleAnimations(test)
+  toggleBlur(state.settings.general.blur)
   actions.getConnection()
   // const packLength = Object.keys(persisted?.settings?.i18n.pack)
   // if (!packLength) {

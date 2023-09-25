@@ -48,6 +48,7 @@ export const INITIAL_STATE: GlobalState = {
         page: IS_MOBILE ? 'slideDark' : 'zoomSlide',
         chatFolders: 'slide',
       },
+      blur: true,
     },
   },
   twoFa: {

@@ -63,3 +63,11 @@ export function changeMessageSize(size: number) {
   // document.documentElement?.attributeStyleMap?.set('--message-text-size', `${size}px`)
   document.documentElement.style.setProperty('--message-text-size', `${size}px`)
 }
+
+export function toggleBlur(enabled: boolean) {
+  if (enabled) {
+    document.documentElement.classList.remove('no-menu-blur')
+  } else {
+    document.documentElement.classList.add('no-menu-blur')
+  }
+}

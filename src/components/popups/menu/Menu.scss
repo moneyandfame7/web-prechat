@@ -19,6 +19,9 @@
   // backdrop-filter: blur(50px);
   @include withBlur(var(--menu-blur));
 
+  html.no-menu-blur & {
+    background-color: var(--c-surface) !important;
+  }
   &_item {
     width: 100%;
     font-size: 14px;
