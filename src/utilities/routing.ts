@@ -29,8 +29,8 @@ function isValidHash(hash: string) {
 
 export function connectStateToNavigation(
   global: SignalGlobalState,
-  actions: Actions,
-  closeChat: VoidFunction
+  actions: Actions
+  // closeChat: VoidFunction
 ): (event?: HashChangeEvent) => void {
   function handleNavigation(event?: HashChangeEvent) {
     const hash = window.location.hash

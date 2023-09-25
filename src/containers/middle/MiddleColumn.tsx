@@ -1,9 +1,8 @@
-import {type FC, memo, useCallback, useEffect, useMemo, useRef} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {selectOpenedChats} from 'state/selectors/chats'
-import {selectChatMessageIds} from 'state/selectors/messages'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
@@ -19,7 +18,6 @@ import {connectStateToNavigation} from 'utilities/routing'
 
 import type {OpenedChat} from 'types/state'
 
-import {TEST_ChangeLanguage} from 'components/test/ChangeLanguage'
 import {Transition} from 'components/transitions'
 import {Button} from 'components/ui'
 
@@ -59,7 +57,7 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
   }, [isSmall])
   useEffect(() => {
     // handleHashChangeTEST()
-    const handleNavigation = connectStateToNavigation(global, actions, closeChat)
+    const handleNavigation = connectStateToNavigation(global, actions /* closeChat */)
 
     handleNavigation()
     window.addEventListener('hashchange', handleNavigation)
@@ -103,10 +101,7 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
   // const cleanupExceptionKey = (
   //   prevTransitionKey !== undefined && prevTransitionKey < currentTransitionKey ? prevTransitionKey : undefined
   // );
-  const messagesIds = useMemo(
-    () => selectChatMessageIds(global, 'c_740c5f09-e3da-423b-88e6-2cb73401f7ad'),
-    []
-  )
+
   const render = useRef(0)
 
   render.current += 1
@@ -133,7 +128,6 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
         Toggle mock 2fa
       </Button>
       {/* <SwitchLanguageTest /> */}
-      <TEST_ChangeLanguage />
       <LottiePlayer autoplay loop name="love-letter" hidden={hidden} />
       <Button onClick={toggle}>Toggle</Button>
       {/* <img src={skeleton} /> */}

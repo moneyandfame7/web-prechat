@@ -8,7 +8,6 @@ import {connect} from 'state/connect'
 import {TEST_translate} from 'lib/i18n'
 import {LottiePlayer} from 'lib/lottie'
 
-import {SettingsScreens} from 'types/screens'
 import type {TwoFaState} from 'types/state'
 
 import {ColumnSection} from 'containers/left/ColumnSection'
@@ -20,7 +19,7 @@ interface StateProps {
   twoFaState: TwoFaState
 }
 const SettingsTwoFaEmailConfirmationImpl: FC<StateProps> = ({twoFaState}) => {
-  const {resetScreen, setScreen} = SettingsContext.useScreenContext()
+  const {resetScreen} = SettingsContext.useScreenContext()
   const code = useSignal('')
 
   const changeCode = (v: string) => {
@@ -44,12 +43,10 @@ const SettingsTwoFaEmailConfirmationImpl: FC<StateProps> = ({twoFaState}) => {
             {TEST_translate('TwoFa.RecoveryInfo', {email: twoFaState.newEmail})}
           </p>
         )}
+
+        {/* On change email need to call api? */}
         <Button variant="transparent">Change email</Button>
         <Button variant="transparent">Resend code</Button>
-
-        <Button onClick={() => setScreen(SettingsScreens.TwoFaPasswordSet)}>
-          {TEST_translate('Skip')}
-        </Button>
       </ColumnSection>
     </ColumnWrapper>
   )
