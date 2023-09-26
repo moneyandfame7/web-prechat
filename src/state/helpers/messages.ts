@@ -1,5 +1,10 @@
 import type {ApiUser} from 'api/types'
-import type {ApiMessage, ApiMessageAction, ApiMessageEntity} from 'api/types/messages'
+import type {
+  ApiDraft,
+  ApiMessage,
+  ApiMessageAction,
+  ApiMessageEntity,
+} from 'api/types/messages'
 
 import {TEST_translate} from 'lib/i18n'
 
@@ -60,14 +65,4 @@ export function getMessageActionText(action: ApiMessageAction, sender?: ApiUser)
     default:
       return 'Not Supported now'
   }
-}
-export function getMessageText(message?: ApiMessage, sender?: ApiUser) {
-  let text: string
-  if (message?.action) {
-    text = getMessageActionText(message.action, sender)
-  } else {
-    text = message?.text || 'EMPTY_MESSAGE'
-  }
-
-  return renderText(text, ['emoji', 'markdown'])
 }

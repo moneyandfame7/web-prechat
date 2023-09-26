@@ -6,20 +6,16 @@ import {selectOpenedChats} from 'state/selectors/chats'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
-import {useBoolean} from 'hooks/useFlag'
 import {useLayout} from 'hooks/useLayout'
 
 import {t} from 'lib/i18n'
-import {LottiePlayer} from 'lib/lottie'
 
-import {MOCK_TWO_FA} from 'common/app'
 import {addEscapeListener} from 'utilities/keyboardListener'
 import {connectStateToNavigation} from 'utilities/routing'
 
 import type {OpenedChat} from 'types/state'
 
 import {Transition} from 'components/transitions'
-import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -33,12 +29,12 @@ interface StateProps {
   // currentChat?: ApiChat
   chatId?: string
   activeTransitionKey: number
+  animationsEnabled: boolean
 }
 
 type InjectedProps = OwnProps & StateProps
 
-const withAnimations = !document.documentElement.classList.contains('animation-none')
-const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
+const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animationsEnabled}) => {
   const global = getGlobalState()
   const actions = getActions()
   const {isSmall, isLaptop} = useLayout()
@@ -47,14 +43,14 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
     document.body.classList.toggle('left-column-shown', true)
 
     /* if with animation - timeout, else just close...??? */
-    if (isSmall && withAnimations) {
+    if (isSmall && animationsEnabled) {
       setTimeout(() => {
         actions.openChat({id: undefined})
       }, 300)
     } else {
       actions.openChat({id: undefined})
     }
-  }, [isSmall])
+  }, [isSmall, animationsEnabled])
   useEffect(() => {
     // handleHashChangeTEST()
     const handleNavigation = connectStateToNavigation(global, actions /* closeChat */)
@@ -106,37 +102,8 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey}) => {
 
   render.current += 1
 
-  const {value: hidden, toggle} = useBoolean(true)
   return (
     <div class="MiddleColumn" id="middle-column">
-      {/* <h3>Current chat:{global.openedChats[activeTransitionKey]?.chatId}</h3>
-      <h3>Chats: {JSON.stringify(global.openedChats)}</h3> */}
-      <Button
-        onClick={() => {
-          const theme = global.settings.general.theme
-
-          actions.changeTheme(theme === 'dark' ? 'light' : 'dark')
-        }}
-      >
-        Toggle theme. {global.settings.general.$theme}
-      </Button>
-      <Button
-        onClick={() => {
-          MOCK_TWO_FA.value = !MOCK_TWO_FA.value
-        }}
-      >
-        Toggle mock 2fa
-      </Button>
-      {/* <SwitchLanguageTest /> */}
-      <LottiePlayer autoplay loop name="love-letter" hidden={hidden} />
-      <Button onClick={toggle}>Toggle</Button>
-      {/* <img src={skeleton} /> */}
-      <div>
-        {/* {render.current} */}
-        <p>{t('Privacy.WhoCanSendMessage')}</p>
-        <p>{t('Privacy.WhoCanAddByPhone')}</p>
-        <p>{t('Privacy.WhoCanInvite')}</p>
-      </div>
       {/* {messagesIds && <InfiniteScroll messageIds={messagesIds} />} */}
       {isChatOpen && (
         <>
@@ -169,10 +136,11 @@ export default memo(
     const openedChats = selectOpenedChats(state)
 
     const openedChat: OpenedChat | undefined = openedChats[openedChats.length - 1]
-
+    const animationsEnabled = state.settings.general.animationsEnabled
     return {
       chatId: openedChat?.chatId,
       activeTransitionKey: Math.max(0, openedChats.length - 1),
+      animationsEnabled,
     }
   })(MiddleColumn)
 )

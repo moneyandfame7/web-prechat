@@ -23,6 +23,10 @@ import './css/index.scss'
  * stop if not in view.
  * @supports backdrop-blur: mixin. accept color and value for blur
  *
+ * > Data And Storage -
+ * calculate Cached Storage and IDb storage size, can change quota and can clear cache, auto clear caching?
+ * > якщо settings undefined - писати Loading... і не дозволяти відкрити вкладку.
+ * переписати так щоб сеттінгс були на одному рівні?))
  * @todo - Settings:
  *  > Menu blur, bubble zoom animation, page transitions, right column transition, ripple effect +-
  *  > Also can check transition type - slideDark on zoomSlide +

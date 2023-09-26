@@ -16,6 +16,19 @@ export interface ApiMessage {
   editedAt?: Date
   action?: ApiMessageAction
 }
+export interface ApiDraft {
+  formattedText: ApiFormattedText
+  replyToMsgId?: string
+  date: Date
+  isLocal?: boolean
+}
+export type ApiInputSaveDraft = {
+  text: string | undefined
+  entities?: ApiMessageEntity[]
+  replyToMsgId?: string
+  date: Date
+  chatId: string
+}
 
 export interface ApiMessageAction {
   photo?: ApiPhoto

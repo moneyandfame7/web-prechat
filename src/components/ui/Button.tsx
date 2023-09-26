@@ -17,6 +17,7 @@ export interface ButtonProps {
   loadingText?: string
   isDisabled?: SignalOr<boolean | undefined>
   type?: 'button' | 'submit'
+  shape?: 'rounded' | 'default'
   variant?: 'contained' | 'transparent'
   color?: 'primary' | 'red' | 'green' | 'gray'
   withFastClick?: boolean
@@ -29,6 +30,7 @@ export interface ButtonProps {
   uppercase?: boolean
   icon?: IconName
   rounded?: boolean
+  iconPosition?: 'start' | 'end'
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -38,6 +40,7 @@ export const Button: FC<ButtonProps> = ({
   icon,
   isDisabled = false,
   variant = 'contained',
+  shape = 'default',
   children,
   ripple = true,
   fullWidth = true,
@@ -47,6 +50,7 @@ export const Button: FC<ButtonProps> = ({
   withFastClick = color !== 'red',
   uppercase = true,
   'aria-label': ariaLabel,
+  iconPosition = 'end',
 }) => {
   const buildClass = clsx(
     'Button',
@@ -56,6 +60,7 @@ export const Button: FC<ButtonProps> = ({
       'Button-loading': isLoading,
       'Button-fullwidth': fullWidth,
       'Button-noTransform': !uppercase,
+      'Button-rounded': shape === 'rounded',
     },
     className
   )
@@ -70,8 +75,11 @@ export const Button: FC<ButtonProps> = ({
       class={buildClass}
       {...clickHandlers}
     >
+      {!isLoading && icon && iconPosition === 'start' && <Icon name={icon} />}
+
       {!isLoading && children}
-      {!isLoading && icon && <Icon name={icon} />}
+      {!isLoading && icon && iconPosition === 'end' && <Icon name={icon} />}
+
       {isLoading && (
         <>
           {loadingText}
@@ -80,6 +88,7 @@ export const Button: FC<ButtonProps> = ({
           </span>
         </>
       )}
+
       {!isLoading && ripple && <Ripple />}
     </button>
   )

@@ -76,6 +76,12 @@
     }
   }
 
+  &-rounded {
+    border-radius: 24px;
+    height: max-content;
+    padding-block: 8px;
+  }
+
   &-loading {
     justify-content: center;
     > .loader {

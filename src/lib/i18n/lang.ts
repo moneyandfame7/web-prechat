@@ -29,6 +29,7 @@ const lang = {
   Chats: 'Chats',
   Delete: 'Delete',
   Disable: 'Disable',
+  Add: 'Add',
   IncorrectPassword: 'Incorrect password',
   'TwoFa.Title': 'Two-Step Verification',
   'TwoFa.SetPasswordInfo':
@@ -81,6 +82,12 @@ const lang = {
   'Auth.SignUp': 'Enter your name and add a profile picture',
   'Auth.SilentAuth': 'Silent (without contacts notification)',
   'Auth.StartMessaging': 'Start Messaging',
+  Folders: 'Folders',
+  FoldersRecommended: 'Recommended Folders',
+  'Folders.ChatFolders': 'Chat Folders',
+  'Folders.ChatFoldersInfo':
+    'Create folders for different groups of chats and quickly switch between them.',
+  'Folders.CreateFolder': 'Create Folder',
   HelloInterpolate: 'Hello, **{{name}}**',
   HelloPluralize: {
     one: 'Hello, 1 item',

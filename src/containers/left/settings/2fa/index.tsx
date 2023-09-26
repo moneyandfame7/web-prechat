@@ -1,89 +1,115 @@
-import {type FC, memo} from 'preact/compat'
+import {type FC, memo, useEffect} from 'preact/compat'
 
 import {SettingsContext} from 'context/settings'
 
-import {getPreferredAnimations} from 'state/helpers/settings'
+import {connect} from 'state/connect'
 
-import {usePrevious} from 'hooks'
+import {useBoolean} from 'hooks/useFlag'
+
+import {TEST_translate} from 'lib/i18n'
+import {LottiePlayer} from 'lib/lottie'
 
 import {MOCK_TWO_FA} from 'common/app'
+import {addKeyboardListeners} from 'utilities/keyboardListener'
+import {renderText} from 'utilities/parse/render'
 
-import {SettingsScreens, isTwoFaScreen} from 'types/screens'
+import {SettingsScreens} from 'types/screens'
+import type {TwoFaState} from 'types/state'
 
-import {Transition} from 'components/transitions'
+import {ColumnSection} from 'containers/left/ColumnSection'
 
-import {SettingsTwoFaEmail} from './email'
-import {SettingsTwoFaEmailConfirmation} from './emailConfirmation'
-import {SettingsTwoFaEnterPassword} from './enterPassword'
-import {SettingsTwoFaHint} from './hint'
-import {SettingsTwoFaMain} from './main'
-import {SettingsTwoFaPasswordSet} from './passwordSet'
-import {SettingsTwoFaReEnterPassword} from './reEnterPassword'
+import {ColumnWrapper} from 'components/ColumnWrapper'
+import ConfirmModal from 'components/popups/ConfirmModal.async'
+import {Button} from 'components/ui'
+import {ListItem} from 'components/ui/ListItem'
 
 import './styles.scss'
 
-const SettingsTwoFa: FC = () => {
-  const {activeScreen} = SettingsContext.useScreenContext()
-  // const [activeScreen, setActiveScreen] = useState<TwoFaScreens>(() =>
-  // MOCK_TWO_FA.value ? TwoFaScreens.EnterPassword : TwoFaScreens.Main
-  // )
-  // let twoFaScreen:Two
+interface StateProps {
+  twoFaState: TwoFaState
+}
 
-  const renderScreen = () => {
-    switch (activeScreen) {
-      case SettingsScreens.TwoFaMain:
-        return <SettingsTwoFaMain />
-      case SettingsScreens.TwoFaEmail:
-        return <SettingsTwoFaEmail />
-      case SettingsScreens.TwoFaEmailConfirmation:
-        return <SettingsTwoFaEmailConfirmation />
+const SettingsTwoFaImpl: FC<StateProps> = ({twoFaState}) => {
+  const {resetScreen, setScreen} = SettingsContext.useScreenContext()
+  // const {setScreen, resetScreen: resetTwoFaScreen} = useTwoFaStore()
 
-      // case TwoFaScreens.EmailCode:
-      //   return <SettingsTwoFaEmailCode />
-      case SettingsScreens.TwoFaEnterPassword:
-        return <SettingsTwoFaEnterPassword />
-      case SettingsScreens.TwoFaReEnterPassword:
-        return <SettingsTwoFaReEnterPassword />
-      case SettingsScreens.TwoFaPasswordHint:
-        return <SettingsTwoFaHint />
-      case SettingsScreens.TwoFaPasswordSet:
-        return <SettingsTwoFaPasswordSet />
-      // case TwoFaScreens.PasswordHint:
-      //   return <SettingsTwoWaPasswordHint />
-      // case TwoFaScreens.PasswordSet:
-      //   return <SettingsTwoFasPasswordSet />
-    }
+  const {
+    value: isConfirmDisableOpen,
+    setFalse: closeConfirm,
+    setTrue: openConfirm,
+  } = useBoolean()
+
+  useEffect(() =>
+    !MOCK_TWO_FA.value || !twoFaState.hasPassword
+      ? addKeyboardListeners({onEnter: () => setScreen(SettingsScreens.TwoFaEnterPassword)})
+      : undefined
+  )
+
+  function renderTitle() {
+    return (
+      <p class="two-fa-info">
+        {renderText(
+          TEST_translate(
+            MOCK_TWO_FA.value || twoFaState.hasPassword
+              ? 'TwoFa.EnabledPasswordText'
+              : 'TwoFa.SetPasswordInfo'
+          ),
+          ['breakes', 'markdown']
+        )}
+      </p>
+    )
   }
 
-  const prevScreen = usePrevious(activeScreen)
+  function renderContent() {
+    if (MOCK_TWO_FA.value || twoFaState.hasPassword) {
+      return (
+        <>
+          <ListItem icon="edit">Change Password</ListItem>
+          <ListItem icon="lockOff" onClick={openConfirm}>
+            Disable Password
+          </ListItem>
+          {}
+          <ListItem icon="email">
+            {MOCK_TWO_FA.value ? 'Change Recovery Email' : 'Set Recovery Email'}
+          </ListItem>
+        </>
+      )
+    }
 
-  /* IF HAS PASSWORD */
-  const testDir =
-    MOCK_TWO_FA.value &&
-    activeScreen === SettingsScreens.TwoFaMain &&
-    prevScreen === SettingsScreens.TwoFaEnterPassword
-      ? 1
-      : 'auto'
+    return (
+      <Button
+        onClick={() => {
+          setScreen(SettingsScreens.TwoFaEnterPassword)
+        }}
+      >
+        {TEST_translate('TwoFa.SetPassword')}
+      </Button>
+    )
+  }
 
   return (
-    <Transition
-      containerClassname="two-fa"
-      // name={APP_TRANSITION_NAME} // is mobile? slideDark : zoomSlide
-      innerClassnames={{
-        [SettingsScreens.TwoFaEnterPassword]: 'two-fa-enter-password',
-        [SettingsScreens.TwoFaReEnterPassword]: 'two-fa-enter-password',
-        [SettingsScreens.TwoFaPasswordHint]: 'two-fa-hint',
-        [SettingsScreens.TwoFaEmail]: 'two-fa-email',
-      }}
-      name={getPreferredAnimations().page}
-      activeKey={activeScreen}
-      shouldCleanup
-      shouldLockUI
-      direction={testDir}
-    >
-      {renderScreen()}
-    </Transition>
+    <ColumnWrapper onGoBack={resetScreen} title="Two-Step Verification">
+      <ColumnSection withoutMargin>
+        <LottiePlayer autoplay name="keychain" />
+        {renderTitle()}
+      </ColumnSection>
+      <ColumnSection className="two-fa__actions">{renderContent()}</ColumnSection>
+      <ConfirmModal
+        callback={() => resetScreen()}
+        content={TEST_translate('TwoFa.DisablePasswordAreYouSure')}
+        action={TEST_translate('Disable')}
+        isOpen={isConfirmDisableOpen}
+        onClose={closeConfirm}
+        title={TEST_translate('TwoFa.DisablePassword')}
+      />
+    </ColumnWrapper>
   )
 }
 
-export default memo(SettingsTwoFa)
+export const SettingsTwoFa = memo(
+  connect(
+    (state): StateProps => ({
+      twoFaState: state.twoFa,
+    })
+  )(SettingsTwoFaImpl)
+)

@@ -1,4 +1,4 @@
-import {type ApiMessageEntity, type HistoryDirection} from 'api/types'
+import {ApiDraft, type ApiMessageEntity, type HistoryDirection} from 'api/types'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiLangKey} from 'api/types/langPack'
 
@@ -94,6 +94,13 @@ interface ActionPayloads {
     direction?: HistoryDirection
     maxDate?: Date
     includeOffset?: boolean
+  }
+  saveDraft: {
+    text: string | undefined
+    formattedText?: ApiMessageEntity[]
+    replyToMsgId?: string
+    chatId: string
+    force?: boolean
   }
 
   /* Account */

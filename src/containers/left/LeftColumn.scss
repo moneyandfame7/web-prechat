@@ -21,6 +21,7 @@
     body:not(.left-column-shown) & {
       transform: translateX(-20%);
       // background: rgba(0, 0, 0, 0.9);
+
       filter: brightness(0.7);
     }
     body.left-column-shown & {

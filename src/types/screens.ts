@@ -33,13 +33,16 @@ export enum SettingsScreens {
 
   /* CHAT FOLDERS */
   ChatFolders,
+  ChatFoldersEdit,
   ChatFoldersNew,
   ChatFoldersNewIncludes,
   ChatFoldersNewExcludes,
 
   Devices,
   Language,
-  TwoFaMain,
+
+  /* Two Fa */
+  TwoFa,
   TwoFaEnterPassword,
   TwoFaReEnterPassword,
   TwoFaPasswordHint,
@@ -76,6 +79,7 @@ export enum SettingsGroup {
   BlockedUsers,
   General,
   ChatFolders,
+  ChatFoldersEdit,
   Devices,
   Language,
   TwoFa,
@@ -98,18 +102,13 @@ export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
     SettingsScreens.PrivacyRuleSection,
   ],
   [SettingsGroup.General]: [SettingsScreens.General],
-  [SettingsGroup.ChatFolders]: [
-    SettingsScreens.ChatFolders,
-    SettingsScreens.ChatFoldersNew,
-    SettingsScreens.ChatFoldersNewExcludes,
-    SettingsScreens.ChatFoldersNewIncludes,
-  ],
+  [SettingsGroup.ChatFolders]: [SettingsScreens.ChatFolders],
+  [SettingsGroup.ChatFoldersEdit]: [SettingsScreens.ChatFoldersEdit],
   [SettingsGroup.Devices]: [SettingsScreens.Devices],
 
   [SettingsGroup.Language]: [SettingsScreens.Language],
   [SettingsGroup.BlockedUsers]: [SettingsScreens.BlockedUsers],
   [SettingsGroup.TwoFa]: [
-    SettingsScreens.TwoFaMain,
     SettingsScreens.TwoFaEnterPassword,
     SettingsScreens.TwoFaReEnterPassword,
     SettingsScreens.TwoFaPasswordHint,

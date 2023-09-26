@@ -1,5 +1,5 @@
 import type {ApiPeer, ApiUser} from 'api/types'
-import type {ApiMessage} from 'api/types/messages'
+import type {ApiDraft, ApiMessage} from 'api/types/messages'
 
 import {isUserId} from 'state/helpers/users'
 
@@ -52,6 +52,13 @@ export function selectMessageSender(
   }
 
   return selectUser(global, message.senderId)
+}
+
+export function selectChatDraft(
+  global: SignalGlobalState,
+  chatId: string
+): ApiDraft | undefined {
+  return global.drafts.byChatId[chatId]
 }
 
 // export function selectIsOutgoing(global:SignalGlobalState)

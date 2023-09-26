@@ -9,14 +9,21 @@ import {usePrevious} from 'hooks'
 
 import {MOCK_TWO_FA} from 'common/app'
 
-import {SettingsGroup, SettingsScreens, getSettingsActiveGroup} from 'types/screens'
+import {SettingsScreens, getSettingsActiveGroup} from 'types/screens'
 import type {TwoFaState} from 'types/state'
 
 import {Transition} from 'components/transitions'
 
-import SettingsTwoFa from './2fa'
+import {SettingsTwoFa} from './2fa'
+import {SettingsTwoFaEmail} from './2fa/email'
+import {SettingsTwoFaEmailConfirmation} from './2fa/emailConfirmation'
+import {SettingsTwoFaEnterPassword} from './2fa/enterPassword'
+import {SettingsTwoFaHint} from './2fa/hint'
+import {SettingsTwoFaPasswordSet} from './2fa/passwordSet'
+import {SettingsTwoFaReEnterPassword} from './2fa/reEnterPassword'
 import {BlockedUsers} from './blockedUsers'
-import SettingsChatFolders from './chat-folders/SettingsChatFolders'
+import SettingsChatFolders from './chatFolders'
+import SettingsChatFolderEdit from './chatFolders/editFolder'
 import SettingsDataAndStorage from './data-and-storage/SettingsDataAndStorage'
 import SettingsDevices from './devices/SettingsDevices'
 import SettingsEditProfile from './edit-profile/SettingsEditProfile'
@@ -38,7 +45,7 @@ interface StateProps {
 const Settings: FC<SettingsProps & StateProps> = ({currentScreen, twoFaState}) => {
   const [activeScreen, setActiveScreen] = useState(currentScreen)
 
-  const activeGroup = getSettingsActiveGroup(activeScreen)
+  // const activeGroup = getSettingsActiveGroup(activeScreen)
   const handleReset = (force?: boolean) => {
     if (force === true) {
       setActiveScreen(SettingsScreens.Main)
@@ -70,40 +77,67 @@ const Settings: FC<SettingsProps & StateProps> = ({currentScreen, twoFaState}) =
         break
       case SettingsScreens.BlockedUsers:
       case SettingsScreens.TwoFaPasswordSet:
-      case SettingsScreens.TwoFaMain:
+      case SettingsScreens.TwoFa:
         setActiveScreen(SettingsScreens.Privacy)
+        break
+      case SettingsScreens.ChatFoldersEdit:
+        setActiveScreen(SettingsScreens.ChatFolders)
         break
       default:
         setActiveScreen(SettingsScreens.Main)
     }
   }
-  const renderScreen = useCallback(() => {
-    switch (activeGroup) {
-      case SettingsGroup.ChatFolders:
+
+  const renderScreen = () => {
+    switch (activeScreen) {
+      case SettingsScreens.ChatFolders:
         return <SettingsChatFolders />
-      case SettingsGroup.DataAndStorage:
+      case SettingsScreens.ChatFoldersEdit:
+        return <SettingsChatFolderEdit />
+      case SettingsScreens.DataAndStorage:
         return <SettingsDataAndStorage />
-      case SettingsGroup.Devices:
+      case SettingsScreens.Devices:
         return <SettingsDevices />
-      case SettingsGroup.General:
+      case SettingsScreens.General:
         return <SettingsGeneral />
-      case SettingsGroup.Language:
+      case SettingsScreens.Language:
         return <SettingsLanguage />
-      case SettingsGroup.Main:
+      case SettingsScreens.Main:
         return <SettingsMain />
-      case SettingsGroup.EditProfile:
+      case SettingsScreens.EditProfile:
         return <SettingsEditProfile />
-      case SettingsGroup.Notifications:
+      case SettingsScreens.Notifications:
         return <SettingsNotifications />
-      case SettingsGroup.Privacy:
+      case SettingsScreens.Privacy:
         return <SettingsPrivacy />
-      case SettingsGroup.TwoFa:
+      case SettingsScreens.TwoFa:
         return <SettingsTwoFa />
-      case SettingsGroup.BlockedUsers:
+      case SettingsScreens.TwoFaEnterPassword:
+        return <SettingsTwoFaEnterPassword />
+      case SettingsScreens.TwoFaReEnterPassword:
+        return <SettingsTwoFaReEnterPassword />
+      case SettingsScreens.TwoFaEmail:
+        return <SettingsTwoFaEmail />
+      case SettingsScreens.TwoFaEmailConfirmation:
+        return <SettingsTwoFaEmailConfirmation />
+      case SettingsScreens.TwoFaPasswordHint:
+        return <SettingsTwoFaHint />
+      case SettingsScreens.TwoFaPasswordSet:
+        return <SettingsTwoFaPasswordSet />
+      case SettingsScreens.BlockedUsers:
         return <BlockedUsers />
     }
-  }, [activeGroup])
+  }
 
+  const prevScreen = usePrevious(activeScreen)
+
+  // not work??
+  const testDir =
+    MOCK_TWO_FA.value &&
+    activeScreen === SettingsScreens.TwoFa &&
+    prevScreen === SettingsScreens.TwoFaEnterPassword
+      ? 1
+      : 'auto'
   return (
     <SettingsContext.Provider
       store={{
@@ -113,15 +147,25 @@ const Settings: FC<SettingsProps & StateProps> = ({currentScreen, twoFaState}) =
       }}
     >
       <Transition
+        direction={testDir}
         containerClassname="settings-wrapper"
         // name={APP_TRANSITION_NAME} // is mobile? slideDark : zoomSlide
         innerClassnames={{
-          [SettingsGroup.General]: 'settings-general',
+          [SettingsScreens.General]: 'settings-general',
+          [SettingsScreens.ChatFolders]: 'chat-folders',
+          [SettingsScreens.TwoFa]: 'two-fa two-fa-main',
+          [SettingsScreens.TwoFaEnterPassword]: 'two-fa two-fa-enter-password',
+          [SettingsScreens.TwoFaReEnterPassword]: 'two-fa two-fa-enter-password',
+          [SettingsScreens.TwoFaPasswordHint]: 'two-fa two-fa-hint',
+          [SettingsScreens.TwoFaEmail]: 'two-fa two-fa-email',
+          [SettingsScreens.TwoFaPasswordSet]: 'two-fa',
         }}
+        // direction={testDir}
         name={getPreferredAnimations().page}
-        activeKey={activeGroup}
-        shouldCleanup // @todo зробити для cleanupElements
+        activeKey={activeScreen}
+        shouldCleanup={false} // @todo зробити для cleanupElements
         shouldLockUI
+        // cleanupException={}
       >
         {renderScreen()}
       </Transition>

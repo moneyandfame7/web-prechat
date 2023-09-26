@@ -1,6 +1,11 @@
 import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
-import type {ApiMessage, GetHistoryInput, SendMessageInput} from 'api/types/messages'
+import type {
+  ApiInputSaveDraft,
+  ApiMessage,
+  GetHistoryInput,
+  SendMessageInput,
+} from 'api/types/messages'
 
 export const FRAGMENT_PHOTO: DocumentNode = gql`
   fragment AllPhotoFields on Photo {
@@ -57,10 +62,10 @@ export const FRAGMENT_MESSAGE: DocumentNode = gql`
   ${FRAGMENT_MESSAGE_ACTION}
 `
 
-export const MUTATION_SEND_MESSAGE: TypedDocumentNode<{
-  sendMessage: {message: ApiMessage}
-  input: SendMessageInput
-}> = gql`
+export const MUTATION_SEND_MESSAGE: TypedDocumentNode<
+  {sendMessage: {message: ApiMessage}},
+  {input: SendMessageInput}
+> = gql`
   mutation SendMessage($input: SendMessageInput!) {
     sendMessage(input: $input) {
       message {
@@ -72,10 +77,10 @@ export const MUTATION_SEND_MESSAGE: TypedDocumentNode<{
   ${FRAGMENT_MESSAGE}
 `
 
-export const QUERY_GET_HISTORY: TypedDocumentNode<{
-  getHistory: ApiMessage[]
-  input: GetHistoryInput
-}> = gql`
+export const QUERY_GET_HISTORY: TypedDocumentNode<
+  {getHistory: ApiMessage[]},
+  {input: GetHistoryInput}
+> = gql`
   query GetHistory($input: GetHistoryInput!) {
     getHistory(input: $input) {
       ...AllMessageFields
@@ -83,4 +88,31 @@ export const QUERY_GET_HISTORY: TypedDocumentNode<{
   }
 
   ${FRAGMENT_MESSAGE}
+`
+
+export const MUTATION_SAVE_DRAFT: DocumentNode = gql`
+  mutation SaveDraft($input: SaveDraftInput!) {
+    saveDraft(input: $input)
+  }
+`
+
+export const SUBSCRIBE_ON_DRAFT_UPDATE: DocumentNode = gql`
+  subscription OnDraftUpdate {
+    onDraftUpdate {
+      chatId
+      ownerId
+      draft {
+        formattedText {
+          text
+          entities {
+            start
+            end
+            type
+          }
+        }
+        date
+        replyToMsgId
+      }
+    }
+  }
 `

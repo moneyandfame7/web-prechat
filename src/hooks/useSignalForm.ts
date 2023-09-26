@@ -13,5 +13,10 @@ export function useSignalForm() {
     value.value = v
   }, [])
 
-  return [value, handleChange, error, isDisabled] as const
+  const clearForm = useCallback(() => {
+    value.value = ''
+    error.value = undefined
+  }, [])
+
+  return [value, handleChange, error, isDisabled, clearForm] as const
 }

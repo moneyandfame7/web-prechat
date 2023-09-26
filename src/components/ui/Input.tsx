@@ -103,7 +103,6 @@ export const InputText: FC<InputProps> = ({
 
     onInput(e)
   }
-  console.log({labelText}, label)
   const handleOnFocus = (e: TargetedEvent<HTMLInputElement, Event>) => {
     // elRef?.current?.focus()
     onFocus?.(e)

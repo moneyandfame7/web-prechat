@@ -1,6 +1,8 @@
 .two-fa {
-  background-color: var(--c-surface);
-
+  background-color: var(--c-surface) !important;
+  &-main {
+    z-index: 1; // in case, when user already has password and need to return to main screen
+  }
   .column-section {
     user-select: none;
   }

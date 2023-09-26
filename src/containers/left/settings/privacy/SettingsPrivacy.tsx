@@ -62,9 +62,7 @@ const SettingsPrivacy: FC = () => {
         <ListItem
           onClick={() => {
             setScreen(
-              MOCK_TWO_FA.value
-                ? SettingsScreens.TwoFaEnterPassword
-                : SettingsScreens.TwoFaMain
+              MOCK_TWO_FA.value ? SettingsScreens.TwoFaEnterPassword : SettingsScreens.TwoFa
             )
           }}
           icon="lock"

@@ -107,12 +107,12 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
         contentEditable
         autofocus
         autoFocus
-        onBlur={() => {
-          isFocused.value = false
-        }}
-        onFocus={() => {
-          isFocused.value = true
-        }}
+        // onBlur={() => {
+        //   isFocused.value = false
+        // }}
+        // onFocus={() => {
+        //   isFocused.value = true
+        // }}
         // onSelect={() => {
         //   console.log('SELECT?')
         // }}

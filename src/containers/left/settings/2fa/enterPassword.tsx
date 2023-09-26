@@ -30,28 +30,35 @@ const SettingsTwoFaEnterPasswordImpl: FC<StateProps> = ({twoFaState}) => {
   const {setScreen} = SettingsContext.useScreenContext()
   const isNew = !MOCK_TWO_FA.value ?? !twoFaState.hasPassword
   const showPassword = useSignal(false)
-  const [inputValue, handleChange, inputError, isBtnDisabled] = useSignalForm()
+  const [inputValue, handleChange, inputError, isBtnDisabled, clearForm] = useSignalForm()
 
   const handleContinue = (e?: Event) => {
     if (e) {
       stopEvent(e)
     }
-    if (!isNew) {
-      setScreen(SettingsScreens.TwoFaMain)
-
-      return
-    }
     if (!inputValue.value) {
-      inputError.value = ''
+      inputError.value = TEST_translate('IncorrectPassword')
       return
     }
+
+    if (!isNew) {
+      setScreen(SettingsScreens.TwoFa)
+      clearForm()
+      return
+    }
+
     twoFaState.newPassword = inputValue.value
     setScreen(SettingsScreens.TwoFaReEnterPassword)
+    // clearForm()
   }
 
   const handleBack = () => {
+    setTimeout(() => {
+      inputValue.value = ''
+      inputError.value = ''
+    }, 200)
     if (isNew) {
-      setScreen(SettingsScreens.TwoFaMain)
+      setScreen(SettingsScreens.TwoFa)
     } else {
       setScreen(SettingsScreens.Privacy)
       // resetScreen(true)

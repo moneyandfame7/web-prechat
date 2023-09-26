@@ -2,13 +2,13 @@ import {type FC, memo, useMemo} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import type {ApiChat, ApiUser} from 'api/types'
+import type {ApiChat, ApiDraft, ApiUser} from 'api/types'
 
 import {connect} from 'state/connect'
 import {getChatName_deprecated, getChatRoute} from 'state/helpers/chats'
-import {getMessageText} from 'state/helpers/messages'
 import {isUserId} from 'state/helpers/users'
 import {selectChat} from 'state/selectors/chats'
+import {selectChatDraft} from 'state/selectors/messages'
 import {isUserOnline, selectUser} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
 
@@ -17,6 +17,8 @@ import {formatDate} from 'utilities/date/convert'
 import {SingleTransition} from 'components/transitions'
 import {AvatarTest} from 'components/ui/AvatarTest'
 import {ListItem} from 'components/ui/ListItem'
+
+import {getMessageText} from './getChatPreview'
 
 import './ChatItem.scss'
 
@@ -31,6 +33,7 @@ type StateProps = {
   isSavedMessages?: boolean
   isPrivate?: boolean
   currentChatId?: string
+  draft?: ApiDraft
 }
 const ChatItemImpl: FC<OwnProps & StateProps> = ({
   lastMessageSender,
@@ -40,6 +43,7 @@ const ChatItemImpl: FC<OwnProps & StateProps> = ({
   isSavedMessages,
   isPrivate,
   currentChatId,
+  draft,
 }) => {
   const global = getGlobalState()
   const chatRoute = getChatRoute(isPrivate ? user : chat)
@@ -68,7 +72,7 @@ const ChatItemImpl: FC<OwnProps & StateProps> = ({
       title={chat && getChatName_deprecated(global, chat)}
       // icon="username"
       additional={chatDate}
-      subtitle={<>{getMessageText(chat?.lastMessage, lastMessageSender)}</>}
+      subtitle={<>{getMessageText(chat?.lastMessage, lastMessageSender, draft)}</>}
       // right="3"
       badge={chat?.unreadCount || undefined}
     >
@@ -100,6 +104,8 @@ export const ChatItem = memo(
     const isSavedMessages = chat?.id === state.auth.userId
     const isOnline = user ? isUserOnline(user) : undefined
     const currentChatId = state.currentChat.chatId
+
+    const draft = selectChatDraft(state, ownProps.chatId)
     return {
       isSavedMessages,
       lastMessageSender,
@@ -108,6 +114,7 @@ export const ChatItem = memo(
       isOnline,
       user,
       currentChatId,
+      draft,
     }
   })(ChatItemImpl)
 )

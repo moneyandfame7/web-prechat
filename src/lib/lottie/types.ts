@@ -18,6 +18,9 @@ export type LottieAnimations =
   | 'email-recovery'
   | 'love-letter'
   | 'party-man'
+  | 'folders-1'
+  | 'folders-2'
+  | 'folders-shared'
   | DeviceAnimations
 
 export interface LottiePlayerProps {

@@ -62,6 +62,10 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   useEffect(() => {
     getHistory({chatId, limit: 100})
   }, [chatId])
+
+  /**
+   * If has unread messages, scroll to first unread message.
+   */
   useLayoutEffect(() => {
     if (!listRef.current) {
       return

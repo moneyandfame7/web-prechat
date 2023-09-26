@@ -1,21 +1,32 @@
-import {DeepSignal} from 'deepsignal'
+import type {DeepSignal} from 'deepsignal'
 
+import {apiManager} from 'api/api-manager'
 import {Api} from 'api/manager'
-import {ApiMessage, HistoryDirection} from 'api/types'
+import {
+  type ApiDraft,
+  type ApiInputSaveDraft,
+  type ApiMessage,
+  HistoryDirection,
+} from 'api/types'
 
 import {createAction} from 'state/action'
 import {buildLocalPrivateChat} from 'state/helpers/chats'
 import {buildLocalMessage, orderHistory} from 'state/helpers/messages'
 import {isUserId} from 'state/helpers/users'
-import {selectChat, selectCurrentOpenedChat} from 'state/selectors/chats'
-import {selectChatMessageIds, selectMessages} from 'state/selectors/messages'
+import {selectChat} from 'state/selectors/chats'
+import {selectMessages} from 'state/selectors/messages'
 import {selectUser} from 'state/selectors/users'
 import {updateChat, updateChats} from 'state/updates'
-import {updateMessage, updateMessages} from 'state/updates/messages'
+import {deleteDraft, updateDraft, updateMessage, updateMessages} from 'state/updates/messages'
 
+import {debounce} from 'common/functions'
 import {filterUnique} from 'utilities/array/filterUnique'
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
+
+import type {SignalGlobalState} from 'types/state'
+
+const debouncedSaveDraft = debounce(saveDraft, 4000, false)
 
 createAction('sendMessage', async (state, _, payload) => {
   const {currentChat} = state
@@ -165,3 +176,49 @@ createAction('getHistory', async (state, _actions, payload) => {
   // await Api.messages.getMessages(payload)
   // const ids=
 })
+
+createAction('saveDraft', async (state, _actions, payload) => {
+  const {force, ...input} = payload
+  const chat = selectChat(state, input.chatId)
+  if (!chat) {
+    return
+  }
+  const processedInput = {
+    ...input,
+    date: new Date(),
+  }
+  if (force) {
+    return saveDraft(state, processedInput)
+  }
+
+  debouncedSaveDraft(state, processedInput)
+})
+
+async function saveDraft(state: SignalGlobalState, input: ApiInputSaveDraft) {
+  const draft = {
+    date: new Date(),
+    formattedText: {
+      text: input.text,
+      entities: input.entities,
+    },
+    replyToMsgId: input.replyToMsgId,
+    isLocal: true,
+  }
+  const result = await apiManager.invokeApi({
+    method: 'messages.saveDraft',
+    variables: {
+      input: {
+        ...input,
+        date: new Date(),
+      },
+    },
+  })
+  if (result) {
+    draft.isLocal = false
+  }
+  if (!input.text) {
+    deleteDraft(state, input.chatId)
+  } else {
+    updateDraft(state, input.chatId, draft as ApiDraft)
+  }
+}

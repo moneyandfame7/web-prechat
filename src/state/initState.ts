@@ -92,7 +92,9 @@ export const INITIAL_STATE: GlobalState = {
     contactIds: [],
     statusesByUserId: {},
   },
-
+  drafts: {
+    byChatId: {},
+  },
   messages: {
     byChatId: {},
     idsByChatId: {},

@@ -45,6 +45,7 @@ interface ListItemProps {
   onMouseDown?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   disabled?: boolean
   danger?: boolean
+  childrenPosition?: 'start' | 'end'
 }
 
 export const ListItem: FC<ListItemProps> = memo(
@@ -65,6 +66,7 @@ export const ListItem: FC<ListItemProps> = memo(
     withContextMenuPortal = true,
     onClick,
     onToggleCheckbox,
+    childrenPosition = 'start',
     disabled,
     danger,
     // onMouseDown,
@@ -117,7 +119,8 @@ export const ListItem: FC<ListItemProps> = memo(
         <>
           {icon && <Icon name={icon} />}
           {withCheckbox && <Checkbox checked={isChecked} withRipple={false} />}
-          {children}
+
+          {childrenPosition === 'start' && children}
           {hasInfo && (
             <>
               <div class="list-item__info">
@@ -133,6 +136,7 @@ export const ListItem: FC<ListItemProps> = memo(
               {right && <div class="list-item__right">{right}</div>}
             </>
           )}
+          {childrenPosition === 'end' && children}
 
           {withRipple && <Ripple />}
         </>
