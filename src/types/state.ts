@@ -11,7 +11,7 @@ import type {
   ApiUserStatus,
 } from 'api/types'
 import type {ApiChatId} from 'api/types/diff'
-import type {ApiDraft, ApiMessage} from 'api/types/messages'
+import type {ApiMessage} from 'api/types/messages'
 
 import type {ApiLangCode, LanguagePack} from 'types/lib'
 import type {UserConnection} from 'types/request'
@@ -141,9 +141,7 @@ export interface GlobalState {
     recent: string[]
     skin: 0 | 1 | 2 | 3 | 4 | 5
   }
-  drafts: {
-    byChatId: Record<string, ApiDraft>
-  }
+
   countryList: ApiCountry[]
 
   /* For TAB STATE: */

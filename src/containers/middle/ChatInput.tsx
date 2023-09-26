@@ -1,17 +1,15 @@
 import {useComputed, useSignal} from '@preact/signals'
-import {type FC, memo, useCallback, useEffect, useLayoutEffect, useRef} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import type {ApiDraft} from 'api/types'
-
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
-import {selectChatDraft} from 'state/selectors/messages'
-import {getGlobalState} from 'state/signal'
+import {selectChat} from 'state/selectors/chats'
 
 import {useBoolean} from 'hooks/useFlag'
 
+import {debounce} from 'common/functions'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'
 import {insertTextAtCursor} from 'utilities/parse/selection'
@@ -27,27 +25,40 @@ import './ChatInput.scss'
 interface OwnProps {
   chatId: string
 }
+
 interface StateProps {
-  draft?: ApiDraft
+  draft?: string
 }
+const debouncedSaveDraft = debounce((cb) => cb(), 5000, false)
 const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
-  const global = getGlobalState()
   const {sendMessage, saveDraft} = getActions()
   const inputRef = useRef<HTMLDivElement>(null)
 
-  const inputHtml = useSignal(draft ? draft.formattedText.text : '')
+  const inputHtml = useSignal(draft || '')
   const isSendDisabled = useComputed(() => inputHtml.value.length === 0)
   const changeInputHtml = (html: string) => {
     inputHtml.value = html
 
-    saveDraft({
-      text: html,
-      chatId,
+    void debouncedSaveDraft(() => {
+      const parsed = parseMessageInput(inputHtml.value)
+
+      if (!parsed.text.length) {
+        saveDraft({
+          text: undefined,
+          chatId,
+        })
+        return
+      }
+
+      saveDraft({
+        text: parsed.text,
+        chatId,
+      })
     })
   }
 
   useEffect(() => {
-    inputHtml.value = draft?.formattedText.text || ''
+    inputHtml.value = draft || ''
   }, [draft])
 
   const insertInCursor = (text: string) => {
@@ -80,12 +91,11 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
      * Nothing interesting.
      */
     return () => {
-      if (inputHtml.value.length) {
+      if (inputHtml.value.trim().length) {
         const parsed = parseMessageInput(inputHtml.value)
         saveDraft({
           chatId,
-          ...parsed,
-          force: true,
+          text: parsed.text,
         })
       }
     }
@@ -136,7 +146,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
     const {text, entities} = parseMessageInput(inputHtml.value)
 
     sendMessage({text, entities, chatId})
-    saveDraft({text: undefined, chatId, force: true})
+    saveDraft({text: undefined, chatId})
     inputHtml.value = ''
   }, [])
 
@@ -187,6 +197,8 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
   )
 }
 
-export const ChatInput = connect<OwnProps, StateProps>((state, ownProps) => ({
-  draft: selectChatDraft(state, ownProps.chatId),
-}))(ChatInputImpl)
+export const ChatInput = memo(
+  connect<OwnProps, StateProps>((state, ownProps) => ({
+    draft: selectChat(state, ownProps.chatId)?.draft,
+  }))(ChatInputImpl)
+)

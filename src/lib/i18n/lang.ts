@@ -70,6 +70,7 @@ const lang = {
     "Blocked users can't send you messages or add you to groups. They will not see your profile photos, stories, online and last seen status.",
   Animations: 'Animations',
   DarkMode: 'Dark Mode',
+  Today: 'Today',
   InstallApp: 'Install App',
   SourceCode: 'Source Code',
   'Auth.Signin': 'Sign in to Prechat',
@@ -114,6 +115,20 @@ const lang = {
   'Privacy.DeleteDrafts': 'Delete all Cloud Drafts',
   'Privacy.DeleteDraftsTitle': 'Delete cloud drafts',
   'Privacy.DeleteDraftsAreYouSure': 'Are you sure you want to delete all cloud drafts?',
+
+  /* Empty chat */
+  NoMessages: 'No messages here yet',
+  SavedMessagesTitle: 'Your cloud storage',
+  SavedMessagesDescription1: 'Forward messages here to save them',
+  SavedMessagesDescription2: 'Send media and files to store them',
+  SavedMessagesDescription3: 'Access this chat from any device',
+  SavedMessagesDescription4: 'Use search for quickly find things',
+  GroupEmptyTitle1: 'You have created a **group**.',
+  GroupEmptyTitle2: 'Groups can have:',
+  GroupDescription1: 'Up to 200,000 members',
+  GroupDescription2: 'Persistent chat history',
+  GroupDescription3: 'Public links such as t.me/title',
+  GroupDescription4: 'Admins with different rights',
 } as const
 
 export default lang

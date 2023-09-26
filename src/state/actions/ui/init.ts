@@ -1,3 +1,5 @@
+import {ApolloClient} from 'api/manager'
+
 import {createAction} from 'state/action'
 import {changeMessageSize, toggleAnimations, toggleBlur} from 'state/helpers/settings'
 import {INITIAL_STATE} from 'state/initState'
@@ -12,6 +14,7 @@ import {deepCopy} from 'utilities/object/deepCopy'
 import {changeHash} from 'utilities/routing'
 
 createAction('reset', async (_state) => {
+  await ApolloClient.client.clearStore()
   await stopPersist()
   changeHash({hash: undefined})
   // resetAuthState(state)
@@ -53,11 +56,10 @@ createAction('init', async (state, actions): Promise<void> => {
 
   // setGlobalState(persisted)
 
-  /* for avoid flickering loading screen */
-
-  // setTimeout(() => {
-  state.initialization = false
-  // }, 400)
+  /*  avoid flickering loading screen */
+  setTimeout(() => {
+    state.initialization = false
+  }, 400)
 
   // console.log({global: state})
 })

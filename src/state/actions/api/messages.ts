@@ -2,12 +2,7 @@ import type {DeepSignal} from 'deepsignal'
 
 import {apiManager} from 'api/api-manager'
 import {Api} from 'api/manager'
-import {
-  type ApiDraft,
-  type ApiInputSaveDraft,
-  type ApiMessage,
-  HistoryDirection,
-} from 'api/types'
+import {type ApiMessage, HistoryDirection} from 'api/types'
 
 import {createAction} from 'state/action'
 import {buildLocalPrivateChat} from 'state/helpers/chats'
@@ -17,20 +12,14 @@ import {selectChat} from 'state/selectors/chats'
 import {selectMessages} from 'state/selectors/messages'
 import {selectUser} from 'state/selectors/users'
 import {updateChat, updateChats} from 'state/updates'
-import {deleteDraft, updateDraft, updateMessage, updateMessages} from 'state/updates/messages'
+import {updateMessage, updateMessages} from 'state/updates/messages'
 
-import {debounce} from 'common/functions'
 import {filterUnique} from 'utilities/array/filterUnique'
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
 
-import type {SignalGlobalState} from 'types/state'
-
-const debouncedSaveDraft = debounce(saveDraft, 4000, false)
-
 createAction('sendMessage', async (state, _, payload) => {
   const {currentChat} = state
-
   if (!currentChat.chatId) {
     return
   }
@@ -56,26 +45,27 @@ createAction('sendMessage', async (state, _, payload) => {
     isChannel: chat.type === 'chatTypeChannel',
   })
   // updateLastMessage(state, chatId, localMessage, false)
-  console.log({localMessage})
   updateMessages(state, chatId, {[localMessage.id]: localMessage}, false, false)
   updateChat(state, chatId, {
     lastMessage: localMessage,
   })
   // after 1s need to set state status on pending?
   /* Catch error there and update message state */
-  const sended = await Api.messages.sendMessage({
-    id: localMessage.id,
-    chatId,
-    text,
-    entities,
-  })
-
-  if (!sended) {
-    /* should delete local message? */
-    return
+  try {
+    const sended = await Api.messages.sendMessage({
+      id: localMessage.id,
+      chatId,
+      text,
+      entities,
+    })
+    if (!sended) {
+      updateMessage(state, chatId, localMessage.id, {sendingStatus: 'failed'}, false)
+    } else {
+      updateMessage(state, chatId, sended.message.id, {sendingStatus: undefined}, true)
+    }
+  } catch (e) {
+    updateMessage(state, chatId, localMessage.id, {sendingStatus: 'failed'}, false)
   }
-
-  updateMessage(state, chatId, sended.message.id, {sendingStatus: undefined}, false)
 
   // const {message} = sended
   // updateMessage(state, chatId, builded.id, {
@@ -111,9 +101,10 @@ createAction('getHistory', async (state, _actions, payload) => {
     includeOffset = false,
   } = payload
   const chat = selectChat(state, chatId)
-  if (!chat) {
-    return
-  }
+  // if (!chat) {
+
+  //   return
+  // }
 
   // currentOpenedChat.isMessagesLoading = true
 
@@ -178,47 +169,28 @@ createAction('getHistory', async (state, _actions, payload) => {
 })
 
 createAction('saveDraft', async (state, _actions, payload) => {
-  const {force, ...input} = payload
-  const chat = selectChat(state, input.chatId)
+  // const {force, ...input} = payload
+  const chat = selectChat(state, payload.chatId)
   if (!chat) {
     return
   }
-  const processedInput = {
-    ...input,
-    date: new Date(),
-  }
-  if (force) {
-    return saveDraft(state, processedInput)
-  }
 
-  debouncedSaveDraft(state, processedInput)
-})
-
-async function saveDraft(state: SignalGlobalState, input: ApiInputSaveDraft) {
-  const draft = {
-    date: new Date(),
-    formattedText: {
-      text: input.text,
-      entities: input.entities,
-    },
-    replyToMsgId: input.replyToMsgId,
-    isLocal: true,
-  }
   const result = await apiManager.invokeApi({
     method: 'messages.saveDraft',
     variables: {
-      input: {
-        ...input,
-        date: new Date(),
-      },
+      input: payload,
     },
   })
-  if (result) {
-    draft.isLocal = false
+  if (!result) {
+    return
   }
-  if (!input.text) {
-    deleteDraft(state, input.chatId)
-  } else {
-    updateDraft(state, input.chatId, draft as ApiDraft)
-  }
-}
+
+  updateChat(state, payload.chatId, {
+    draft: payload.text,
+  })
+  // if (!input.text) {
+  //   deleteDraft(state, input.chatId)
+  // } else {
+  //   updateDraft(state, input.chatId, draft as ApiDraft)
+  // }
+})

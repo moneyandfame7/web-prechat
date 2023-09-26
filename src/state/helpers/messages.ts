@@ -1,10 +1,5 @@
 import type {ApiUser} from 'api/types'
-import type {
-  ApiDraft,
-  ApiMessage,
-  ApiMessageAction,
-  ApiMessageEntity,
-} from 'api/types/messages'
+import type {ApiMessage, ApiMessageAction, ApiMessageEntity} from 'api/types/messages'
 
 import {TEST_translate} from 'lib/i18n'
 

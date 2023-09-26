@@ -1,31 +1,78 @@
 import {type FC} from 'preact/compat'
 
+import type {ApiChatType, ApiMessage} from 'api/types'
+
+import {TEST_translate} from 'lib/i18n'
+
 import {Icon} from 'components/ui'
 
 import './NoMessages.scss'
 
 interface NoMessagesProps {
-  isSavedMessages?: boolean
+  isSavedMessages: boolean
+  type: ApiChatType | undefined
+  lastMessage?: ApiMessage
+  isChannel: boolean | undefined
+  isGroup: boolean | undefined
+  isPrivate: boolean | undefined
 }
-const NoMessages: FC<NoMessagesProps> = ({isSavedMessages}) => {
+const NoMessages: FC<NoMessagesProps> = ({
+  type,
+  isSavedMessages,
+  isChannel,
+  isGroup,
+  isPrivate,
+}) => {
   function renderSavedMessagesText() {
     return (
       <div class="no-messages__saved-messages">
         <Icon className="icon" name="cloudDownload" />
-        <h4 class="title">Your cloud storage</h4>
+        <h4 class="title">{TEST_translate('SavedMessagesTitle')}</h4>
         <ul class="list">
-          <li>Forward messages here to save them</li>
-          <li>Send media and files to store them</li>
-          <li>Access this chat from any device</li>
-          <li>Use search for quickly find things</li>
+          <li>{TEST_translate('SavedMessagesDescription1')}</li>
+          <li>{TEST_translate('SavedMessagesDescription2')}</li>
+          <li>{TEST_translate('SavedMessagesDescription3')}</li>
+          <li>{TEST_translate('SavedMessagesDescription4')}</li>
         </ul>
       </div>
     )
   }
 
+  function renderPrivateText() {
+    return <h4 class="title">{TEST_translate('NoMessages')}</h4>
+  }
+
+  function renderChannelText() {
+    return <>render channel</>
+  }
+
+  function renderGroupText() {
+    return (
+      <>
+        <h4 class="title">{TEST_translate('GroupEmptyTitle1')}</h4>
+        <h4 class="title">{TEST_translate('GroupEmptyTitle2')}</h4>
+        <ul class="list">
+          <li>{TEST_translate('GroupDescription1')}</li>
+          <li>{TEST_translate('GroupDescription2')}</li>
+          <li>{TEST_translate('GroupDescription3')}</li>
+          <li>{TEST_translate('GroupDescription4')}</li>
+        </ul>
+      </>
+    )
+  }
+
+  function renderContent() {
+    if (isSavedMessages) {
+      return renderSavedMessagesText()
+    }
+    if (isChannel) return renderChannelText()
+    if (isGroup) return renderGroupText()
+    if (isPrivate) return renderPrivateText()
+  }
+
   return (
     <div class="no-messages-wrapper">
-      <div class="no-messages">{isSavedMessages && renderSavedMessagesText()}</div>
+      <div class="no-messages">{renderContent()}</div>
     </div>
   )
 }

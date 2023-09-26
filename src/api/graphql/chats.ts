@@ -30,6 +30,7 @@ export const FRAGMENT_CHAT: DocumentNode = gql`
     isOwner
     isPinned
     createdAt
+    draft
     photo {
       ...AllPhotoFields
     }

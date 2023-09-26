@@ -1,4 +1,4 @@
-import {ApiDraft, type ApiMessageEntity, type HistoryDirection} from 'api/types'
+import {type ApiMessageEntity, type HistoryDirection} from 'api/types'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiLangKey} from 'api/types/langPack'
 
@@ -97,10 +97,7 @@ interface ActionPayloads {
   }
   saveDraft: {
     text: string | undefined
-    formattedText?: ApiMessageEntity[]
-    replyToMsgId?: string
     chatId: string
-    force?: boolean
   }
 
   /* Account */

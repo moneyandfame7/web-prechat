@@ -1,11 +1,19 @@
 import {type FC, memo, useEffect, useLayoutEffect, useMemo, useRef} from 'preact/compat'
 
 import type {ApiChat} from 'api/types'
-import type {ApiMessage} from 'api/types/messages'
+import {type ApiMessage, HistoryDirection} from 'api/types/messages'
 
 import {getActions} from 'state/action'
 import {type MapState, connect} from 'state/connect'
-import {selectChat, selectIsChatWithSelf, selectIsMessagesLoading} from 'state/selectors/chats'
+import {isPrivateChat2} from 'state/helpers/chats'
+import {isUserId} from 'state/helpers/users'
+import {
+  isChatChannel,
+  isChatGroup,
+  selectChat,
+  selectIsChatWithSelf,
+  selectIsMessagesLoading,
+} from 'state/selectors/chats'
 import {selectChatMessageIds, selectMessages} from 'state/selectors/messages'
 
 import {useIsFirstRender} from 'hooks/useIsFirstRender'
@@ -15,7 +23,6 @@ import {formatMessageGroupDate} from 'utilities/date/convert'
 import {SingleTransition} from 'components/transitions'
 import {Loader} from 'components/ui/Loader'
 
-import {MessageItem} from './MessageItem'
 import {NoMessages} from './NoMessages'
 import {MessageBubblesGroup} from './message/MessageGroup'
 
@@ -31,6 +38,9 @@ type StateProps = {
   isMessagesLoading?: boolean
   isSavedMessages: boolean
   chat?: ApiChat
+  isPrivateChat?: boolean
+  isChannel?: boolean
+  isGroup?: boolean
 }
 interface MessageGroup {
   date: string
@@ -54,13 +64,16 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   isMessagesLoading,
   chat,
   isSavedMessages,
+  isChannel,
+  isGroup,
+  isPrivateChat,
 }) => {
   const {getHistory} = getActions()
   const isFirstRender = useIsFirstRender()
   const listRef = useRef<HTMLDivElement>(null)
   /* Initial scroll in bottom of the list. */
   useEffect(() => {
-    getHistory({chatId, limit: 100})
+    getHistory({chatId, limit: 100 /* direction: HistoryDirection.Around */})
   }, [chatId])
 
   /**
@@ -203,6 +216,10 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
     console.log({combined})
   }, [combined])
   const emptyList = messageIds?.length === 0
+  const shouldRenderNoMessage =
+    messageIds?.length === 0 ||
+    (messageIds?.length === 1 && chat?.lastMessage?.action?.type === 'chatCreate')
+  // console.log({})
   return (
     <div class="messages-list scrollable" ref={listRef}>
       {/* <Spinner absoluted zoom size="medium" color="white" /> */}
@@ -215,7 +232,16 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
         timeout={250}
       >
         <div class={`messages-container ${emptyList ? 'empty' : ''}`}>
-          {emptyList && <NoMessages isSavedMessages={isSavedMessages} />}
+          {shouldRenderNoMessage && (
+            <NoMessages
+              isChannel={isChannel}
+              isPrivate={isPrivateChat}
+              isGroup={isGroup}
+              lastMessage={chat?.lastMessage}
+              type={chat?.type}
+              isSavedMessages={isSavedMessages}
+            />
+          )}
           {/*
           {dateGroup.map((group) => {
             return (
@@ -289,12 +315,18 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
   const isMessagesLoading = selectIsMessagesLoading(state)
   const isSavedMessages = selectIsChatWithSelf(state, chatId)
   const chat = selectChat(state, chatId)
+  const isPrivateChat = isUserId(chatId)
+  const isChannel = chat && isChatChannel(chat)
+  const isGroup = chat && isChatGroup(chat)
   return {
     messagesById,
     messageIds,
     isMessagesLoading,
     chat,
     isSavedMessages,
+    isPrivateChat,
+    isChannel,
+    isGroup,
   }
 }
 

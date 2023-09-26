@@ -1,7 +1,7 @@
 import {selectChat} from 'state/selectors/chats'
 import {createSubscribe} from 'state/subscribe'
 import {updateChat, updateChats} from 'state/updates'
-import {deleteDraft, updateDraft, updateMessages} from 'state/updates/messages'
+import {updateMessages} from 'state/updates/messages'
 
 createSubscribe('onNewMessage', (state, _, data) => {
   const {chat, message} = data
@@ -25,15 +25,13 @@ createSubscribe('onNewMessage', (state, _, data) => {
 })
 
 createSubscribe('onDraftUpdate', (state, _, data) => {
-  const {chatId, ownerId, draft} = data
+  const {chatId, ownerId, text} = data
   if (ownerId !== state.auth.userId) {
     console.error('NOT MY DRAFT???')
     return
   }
-  console.log('UPDATE_DRAFT_SUB:', {chatId, draft, ownerId})
-  if (draft) {
-    updateDraft(state, chatId, draft)
-  } else {
-    deleteDraft(state, chatId)
-  }
+  console.log('UPDATE_DRAFT_SUB:', {chatId, text, ownerId})
+  updateChat(state, chatId, {
+    draft: text,
+  })
 })

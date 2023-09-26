@@ -254,6 +254,7 @@ createAction('signOut', async (_, actions) => {
   /** @todo прибирати СЕСІЮ В САМУ ОСТАННЮ ЧЕРГУ, ЩОБ НЕ ЛОМАТИ ЮАЙКУ. ( тобто спочатку якось просто викинути на початковий екран....) */
   removeSession()
   actions.updateUserStatus({isOnline: false, noDebounce: true})
+  // треба ще на бекенд робити запит і видаляти сесію
   console.log(getActiveSubscriptions(), 'ACTIVE SUBSCRIBPTIONS')
   /* unsubscribe from subscribers if exist??? */
   await actions.reset()

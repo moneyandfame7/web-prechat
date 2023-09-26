@@ -101,18 +101,7 @@ export const SUBSCRIBE_ON_DRAFT_UPDATE: DocumentNode = gql`
     onDraftUpdate {
       chatId
       ownerId
-      draft {
-        formattedText {
-          text
-          entities {
-            start
-            end
-            type
-          }
-        }
-        date
-        replyToMsgId
-      }
+      text
     }
   }
 `

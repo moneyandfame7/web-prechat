@@ -1,6 +1,6 @@
 import type {ApiColorVariant, ApiInputUser, ApiUser} from '.'
 import type {ApiPhoto} from './diff'
-import type {ApiDraft, ApiFormattedText, ApiMessage} from './messages'
+import type {ApiMessage} from './messages'
 
 export type ApiChatType = 'chatTypePrivate' | 'chatTypeGroup' | 'chatTypeChannel'
 
@@ -9,7 +9,7 @@ export interface ApiChat {
   userId?: string
   type: ApiChatType
   title: string
-  draft?: ApiDraft
+  draft?: string
   color: ApiColorVariant
   inviteLink?: string
   membersCount?: number

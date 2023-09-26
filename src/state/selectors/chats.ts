@@ -119,6 +119,10 @@ export function isChatChannel(chat: ApiChat) {
   return chat.type === 'chatTypeChannel'
 }
 
+export function isChatGroup(chat: ApiChat) {
+  return chat.type === 'chatTypeGroup'
+}
+
 export function selectIsChatsFetching(global: SignalGlobalState) {
   return global.isChatsFetching && selectChatsIds(global).length === 0
 }

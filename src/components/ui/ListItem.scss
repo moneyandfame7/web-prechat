@@ -80,7 +80,7 @@
 
   &__subtitle,
   &__title {
-    @include defaultTransition(color);
+    // @include defaultTransition(color);
 
     // width: 85%;
     white-space: nowrap;

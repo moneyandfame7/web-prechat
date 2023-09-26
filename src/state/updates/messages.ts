@@ -1,14 +1,8 @@
 import type {DeepSignal} from 'deepsignal'
 
-import {ApiUser} from 'api/types'
-import type {ApiDraft, ApiMessage} from 'api/types/messages'
+import type {ApiMessage} from 'api/types/messages'
 
-import {
-  selectChatDraft,
-  selectChatMessageIds,
-  selectMessage,
-  selectMessages,
-} from 'state/selectors/messages'
+import {selectChatMessageIds, selectMessage, selectMessages} from 'state/selectors/messages'
 import {storages} from 'state/storages'
 
 import {isDeepEqual} from 'utilities/object/isDeepEqual'
@@ -142,12 +136,4 @@ export function deleteMessage(global: SignalGlobalState, chatId: string, message
   // delete
 
   // replaceMessages(global, chatId, rest)
-}
-
-export function deleteDraft(global: SignalGlobalState, peerId: string) {
-  delete global.drafts.byChatId[peerId]
-}
-
-export function updateDraft(global: SignalGlobalState, chatId: string, toUpdDraft: ApiDraft) {
-  global.drafts.byChatId[chatId] = toUpdDraft
 }

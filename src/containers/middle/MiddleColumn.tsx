@@ -2,6 +2,7 @@ import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
+import {changeTheme} from 'state/helpers/settings'
 import {selectOpenedChats} from 'state/selectors/chats'
 import {getGlobalState} from 'state/signal'
 
@@ -16,6 +17,7 @@ import {connectStateToNavigation} from 'utilities/routing'
 import type {OpenedChat} from 'types/state'
 
 import {Transition} from 'components/transitions'
+import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -104,6 +106,13 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
 
   return (
     <div class="MiddleColumn" id="middle-column">
+      <Button
+        onClick={() => {
+          actions.changeTheme(global.settings.general.theme === 'dark' ? 'light' : 'dark')
+        }}
+      >
+        Toggle theme
+      </Button>
       {/* {messagesIds && <InfiniteScroll messageIds={messagesIds} />} */}
       {isChatOpen && (
         <>

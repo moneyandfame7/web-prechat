@@ -94,6 +94,7 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
       lastName: lastName.value,
       phone: contactPhone.value,
     })
+
     setIsLoading(false)
   }, [])
 

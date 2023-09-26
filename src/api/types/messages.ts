@@ -17,16 +17,13 @@ export interface ApiMessage {
   action?: ApiMessageAction
 }
 export interface ApiDraft {
-  formattedText: ApiFormattedText
+  text: string
   replyToMsgId?: string
   date: Date
   isLocal?: boolean
 }
 export type ApiInputSaveDraft = {
   text: string | undefined
-  entities?: ApiMessageEntity[]
-  replyToMsgId?: string
-  date: Date
   chatId: string
 }
 

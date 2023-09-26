@@ -1,4 +1,4 @@
-import type {ApiChat, ApiDraft, ApiMessage, ApiUser, ApiUserStatus} from 'api/types'
+import type {ApiChat, ApiMessage, ApiUser, ApiUserStatus} from 'api/types'
 
 export interface ApiChatSub {
   chat: ApiChat
@@ -18,5 +18,5 @@ export interface ApiNewMessageSub {
 export interface ApiDraftUpdateSub {
   chatId: string
   ownerId: string
-  draft: ApiDraft | undefined
+  text: string | undefined
 }
