@@ -144,7 +144,6 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
     <div class={buildedClass}>
       <div class="chat-input-container">
         <div class="input-message">
-          {/* {draft?.formattedText.text} */}
           <IconButton
             icon={isEmojiMenuOpen ? 'keyboard' : 'smile'}
             onClick={handleToggleEmojiMenu}

@@ -41,7 +41,7 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
   }
 
   const htmlRef = useRef(html.value)
-  const focusedRef = useRef(isFocused.value)
+  // const focusedRef = useRef(isFocused.value)
   const handleChange = useCallback(
     (e: TargetedEvent<HTMLDivElement, ChangeEvent>) => {
       const textarea = inputRef.current
@@ -65,9 +65,6 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
   // }, [])
   useSignalEffect(() => {
     // console.log{html:}, htmlRef.current)
-
-    const inputV = inputRef.current!.innerHTML
-    console.log({inputV, v: html.value})
     if (html.value !== inputRef.current!.innerHTML) {
       inputRef.current!.innerHTML = html.value
 
@@ -82,6 +79,12 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
       updateHeight()
     }
   })
+
+  useLayoutEffect(() => {
+    setTimeout(() => {
+      inputRef.current?.focus()
+    }, 200)
+  }, [])
 
   // useSignalEffect(() => {
   //   const value = isFocused.value
@@ -105,14 +108,14 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
         tabIndex={0}
         id="DALBAEB"
         contentEditable
-        autofocus
-        autoFocus
-        // onBlur={() => {
-        //   isFocused.value = false
-        // }}
-        // onFocus={() => {
-        //   isFocused.value = true
-        // }}
+        // autofocus
+        // autoFocus
+        onBlur={() => {
+          isFocused.value = false
+        }}
+        onFocus={() => {
+          isFocused.value = true
+        }}
         // onSelect={() => {
         //   console.log('SELECT?')
         // }}
