@@ -156,6 +156,9 @@ export interface GlobalState {
     userId?: string
     isByPhoneNumber: boolean
   }
+  stories: {
+    isOpen: boolean
+  }
   notification: {
     title?: string
     isOpen: boolean

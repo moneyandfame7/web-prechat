@@ -22,8 +22,9 @@ interface PickedButtonProps
   > {}
 export interface IconButtonProps {
   icon: IconName
-  onClick?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
+  onClick?: (e: TargetedEvent<HTMLButtonElement, MouseEvent>) => void
   title?: SignalOr<string>
+  iconColor?: 'default' | 'secondary' | 'primary'
 }
 
 export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
@@ -36,18 +37,17 @@ export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
   variant = 'transparent',
   isDisabled,
   id,
+  iconColor = 'secondary',
   ...props
 }) => {
-  const buildedClass = clsx(`IconButton Button-${color} Button-${variant}`, className, {
-    disabled: isDisabled,
-  })
+  const buildedClass = clsx(`IconButton Button-${color} Button-${variant}`, className)
 
   const clickHandlers = useFastClick(onClick, withFastClick)
 
   return (
-    <div id={id} class={buildedClass} {...clickHandlers} disabled={isDisabled} {...props}>
-      <Icon name={icon} color="secondary" />
+    <button id={id} class={buildedClass} {...clickHandlers} disabled={isDisabled} {...props}>
+      <Icon name={icon} color={iconColor} />
       {ripple && <Ripple />}
-    </div>
+    </button>
   )
 }

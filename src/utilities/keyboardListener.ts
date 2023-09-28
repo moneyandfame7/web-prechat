@@ -121,7 +121,6 @@ function handleKeyDown(e: KeyboardEvent) {
     if (handler(e) !== false) {
       e.stopPropagation()
 
-      /* IF SAFARI AND ESCAPE - PREVENT DEFAULT */
       e.preventDefault()
       break
     }

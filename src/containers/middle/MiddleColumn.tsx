@@ -15,6 +15,7 @@ import {connectStateToNavigation} from 'utilities/routing'
 import type {OpenedChat} from 'types/state'
 
 import {Transition} from 'components/transitions'
+import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -113,7 +114,13 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
   return (
     <div class="MiddleColumn" id="middle-column">
       {/* {messagesIds && <InfiniteScroll messageIds={messagesIds} />} */}
-
+      <Button
+        onClick={() => {
+          global.stories.isOpen = !global.stories.isOpen
+        }}
+      >
+        Toggle stories
+      </Button>
       {isChatOpen && (
         <>
           <ChatHeader

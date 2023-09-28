@@ -15,7 +15,7 @@ export type IconName = keyof typeof icons
 interface IconProps {
   name: IconName
   className?: string
-  color?: 'default' | 'secondary'
+  color?: 'default' | 'secondary' | 'primary'
   title?: string
   onClick?: (e: TargetedEvent<SVGSVGElement, MouseEvent>) => void
   withFastClick?: boolean

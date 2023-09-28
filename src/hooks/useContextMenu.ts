@@ -37,7 +37,7 @@ export function useContextMenu(
   triggerRef: RefObject<HTMLElement>,
   getMenuElement: () => HTMLElement | null,
   getLimiterElement?: () => HTMLElement | null,
-  withPortal?: boolean,
+  withPortal = true,
   dynamicTransformOrigin?: boolean,
   disabled?: boolean
   // limiter?: 'trigger' | 'window' | 'custom' = 'trigger'

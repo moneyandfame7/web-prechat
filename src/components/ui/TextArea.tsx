@@ -23,8 +23,22 @@ interface TextAreaProps {
   inputRef: RefObject<HTMLDivElement>
   placeholder?: SignalOr<string>
   isFocused: Signal<boolean>
+  className?: string
+  wrapperClassName?: string
+  autoFocus?: boolean
+  tabIndex?: number
 }
-const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isFocused}) => {
+const TextArea: FC<TextAreaProps> = ({
+  onChange,
+  html,
+  inputRef,
+  placeholder,
+  isFocused,
+  className,
+  autoFocus = true,
+  tabIndex = 0,
+  wrapperClassName,
+}) => {
   const inputScrollRef = useRef<HTMLDivElement>(null)
 
   const {isMobile} = useLayout()
@@ -33,10 +47,16 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
   const updateHeight = () => {
     const textarea = inputRef.current
     const scroller = inputScrollRef.current
+    console.log('UPDATE HEIGHT??')
+
     if (!textarea || !scroller) {
+      console.log('NOoooo')
+
       return
     }
+
     const newHeight = Math.min(textarea.scrollHeight, maxInputHeight)
+    console.log(textarea.scrollHeight)
     scroller.style.height = `${newHeight}px`
   }
 
@@ -72,6 +92,7 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
     }
     if (html.value !== htmlRef.current) {
       htmlRef.current = html.value
+
       // if (html.value === '\n' || html.value === '\n\n') {
       //   html.value = ''
       //   console.log('А Я ХЗ ШО ЗА ХУЙНЯ ЦЕ')
@@ -79,11 +100,24 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
       updateHeight()
     }
   })
+  const isFocusedRef = useRef(isFocused.value)
 
+  useSignalEffect(() => {
+    if (isFocused.value !== isFocusedRef.current) {
+      isFocusedRef.current = isFocused.value
+      if (isFocused.value) {
+        inputRef.current?.focus()
+      } else {
+        inputRef.current?.blur()
+      }
+    }
+  })
   useLayoutEffect(() => {
-    setTimeout(() => {
-      inputRef.current?.focus()
-    }, 200)
+    if (autoFocus) {
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 200)
+    }
   }, [])
 
   // useSignalEffect(() => {
@@ -99,13 +133,13 @@ const TextArea: FC<TextAreaProps> = ({onChange, html, inputRef, placeholder, isF
   // })
   // useSignalEffect(() => {
   // })
-  const buildedClass = clsx('text-area scrollable scrollable-y scrollable-hidden', {
+  const buildedClass = clsx('text-area scrollable scrollable-y scrollable-hidden', className, {
     'is-empty': html.value.length === 0,
   })
   return (
-    <div class="text-area-wrapper" ref={inputScrollRef}>
+    <div class={`text-area-wrapper ${'' + wrapperClassName || ''}`} ref={inputScrollRef}>
       <div
-        tabIndex={0}
+        tabIndex={tabIndex}
         id="DALBAEB"
         contentEditable
         // autofocus

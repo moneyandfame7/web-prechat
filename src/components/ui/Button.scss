@@ -66,7 +66,7 @@
     &.Button-gray {
       // --c-ripple: var(--c-ripple); // IDK WHAT TO DO, NOT WORK HOVER
 
-      @include transparentBtn(var(--c-icon), var(--c-ripple));
+      // @include transparentBtn(var(--c-icon), var(--c-ripple));
     }
 
     &.Button-green {

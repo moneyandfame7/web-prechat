@@ -57,6 +57,7 @@ export interface SingleTransitionProps {
   onMouseEnter?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   onExited?: (node?: Element) => void
   onEntered?: (node?: Element) => void
+  onMouseDown?: (e: TargetedEvent<HTMLDivElement, MouseEvent>) => void
   key?: string | number
   elRef?: RefObject<HTMLDivElement>
   styles?: CSSProperties

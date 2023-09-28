@@ -85,8 +85,9 @@ export const INITIAL_STATE: GlobalState = {
     skin: 0,
   },
 
-  initialization: false,
+  initialization: true,
   isChatsFetching: true,
+  isContactsFetching: true,
   users: {
     byId: {},
     contactIds: [],
@@ -101,6 +102,9 @@ export const INITIAL_STATE: GlobalState = {
     chatId: undefined,
     username: undefined,
     isMessagesLoading: false,
+  },
+  stories: {
+    isOpen: false,
   },
   openedChats: [],
   rightColumn: {

@@ -150,6 +150,7 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
     onMouseEnter,
     visibilityHidden,
     easing,
+    onMouseDown,
   }) => {
     const {classNames, styles: buildedStyles} = buildProperties(
       name,
@@ -187,6 +188,7 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
           className={buildedClassname}
           style={buildedStyles}
           onClick={onClick}
+          onMouseDown={onMouseDown}
         >
           {children}
         </div>

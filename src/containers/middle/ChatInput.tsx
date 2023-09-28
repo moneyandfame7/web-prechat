@@ -7,8 +7,6 @@ import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {selectChat} from 'state/selectors/chats'
 
-import {useBoolean} from 'hooks/useFlag'
-
 import {debounce} from 'common/functions'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'

@@ -14,6 +14,11 @@ import {DEBUG} from 'common/environment'
 import './css/index.scss'
 
 /**
+ * Polls animations
+ * https://www.youtube.com/watch?v=kk3FcHCxi8Q
+ * https://www.youtube.com/watch?v=IDdmmsw4Eds
+ *
+ * -------
  * @todo - пошук і підсвічування повідомлень:
  * https://chat.openai.com/c/9eee1ed1-aa2d-41a7-9e96-c0a538c0aede
  * share state between tabs ( broadcast channel, check support )

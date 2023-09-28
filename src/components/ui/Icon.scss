@@ -4,12 +4,41 @@
 
   &-default {
     path {
-      fill: var(--c-icon);
+      fill: var(--c-font-primary) !important;
+    }
+    &.Icon-story {
+      path {
+        fill: none !important;
+      }
+      circle,
+      .story-play-path {
+        fill: var(--c-font-primary) !important;
+      }
+      // stroke: red;
+    }
+    &.Icon-key {
+      stroke: var(--c-font-primary);
+      path {
+        fill: unset !important;
+      }
     }
   }
   &-secondary {
     path {
       fill: var(--c-icon);
+    }
+
+    &.Icon-key {
+      stroke: var(--c-icon);
+      path {
+        fill: unset;
+      }
+    }
+  }
+
+  &-primary {
+    path {
+      fill: var(--c-primary) !important;
     }
   }
 }
@@ -22,13 +51,5 @@
   .story-play-path {
     fill: var(--c-font-primary) !important;
   }
-  .story-play-path {
-  }
   // stroke: red;
-}
-.Icon-key {
-  stroke: var(--c-icon);
-  path {
-    fill: unset;
-  }
 }

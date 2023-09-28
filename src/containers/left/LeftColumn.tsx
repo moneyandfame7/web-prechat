@@ -47,9 +47,6 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
     case LeftColumnScreen.Archived:
       activeGroup = LeftColumnGroup.Archived
       break
-    case LeftColumnScreen.MyStories:
-      activeGroup = LeftColumnGroup.MyStories
-      break
 
     case LeftColumnScreen.Chats:
     case LeftColumnScreen.Search:
@@ -97,12 +94,14 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
 
     setActiveScreen(LeftColumnScreen.Chats)
   }
-
+  const global = getGlobalState()
   useEffect(
     () =>
-      addEscapeListener(() => {
-        handleReset(false)
-      }),
+      !global.stories.isOpen
+        ? addEscapeListener(() => {
+            handleReset(false)
+          })
+        : undefined,
     [activeScreen]
   )
   useEffect(() => {
