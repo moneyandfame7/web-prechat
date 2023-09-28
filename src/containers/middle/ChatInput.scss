@@ -1,7 +1,5 @@
 .chat-input {
-  // --emoji-picker-height: 425px;
   position: relative;
-  // margin-block-end: 20px;
   @media only screen and (min-width: 1280px) {
     body.right-column-shown & {
       transform: translate3d(calc(var(--right-column-width) / -2), 0, 0);
@@ -29,17 +27,23 @@
 
   @include responsive(mobile) {
     // --emoji-picker-height: 350px;
-
+    .send-button {
+      height: 46px !important;
+      width: 46px !important;
+    }
     flex-direction: column;
     margin-inline: 0;
+    padding-inline: 10px;
     width: 100%;
-    margin-block-end: 0;
-    gap: 5px;
+    // margin-block-end: 0;
     .emoji-picker {
       position: unset;
       width: 100dvh;
       max-width: 100%;
       border-radius: 0;
+    }
+    .chat-input-container {
+      gap: 5px !important;
     }
   }
   display: flex;
@@ -63,18 +67,9 @@
 
   .send-button {
     border-radius: 50%;
-    width: max-content;
     height: 56px;
     width: 56px;
   }
-
-  // &.emoji-menu-shown {
-  //   .chat-input-container {
-  //     transform: translate3d(0, var(--emoji-picker-height) / -1, 0);
-  //   }
-  // }
-
-  // @include responsive(mobile) {
 
   .chat-input-container {
     display: flex;
@@ -102,33 +97,44 @@
   // margin-block-end: 10px;
 
   /* ARROW:  */
-  &::before,
-  &::after {
-    @include bgAndColorTransition(border-color);
+  // &::before,
+  // &::after {
+  //   @include bgAndColorTransition(border-color);
 
+  //   position: absolute;
+  //   content: '';
+  //   bottom: -0.1rem;
+  //   height: 1rem;
+  //   // border: 1px solid #e9e9ea;
+  // }
+  // &::before {
+  //   background-color: var(--c-surface);
+  //   // border-bottom-left-radius: 0.8rem 0.7rem; // or use it, just as u wish
+
+  //   border-right: var(--bubble-arrow-width) solid var(--c-surface);
+  //   // width: 1rem;
+  //   right: -0.35rem;
+  //   transform: translate(0, -0.1rem);
+  //   // box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
+  // }
+  // &::after {
+  //   background: var(--c-message-container-bg);
+  //   border-bottom-left-radius: 0.5rem;
+  //   // border-left: 1rem solid var(--c-message-bg);
+  //   right: -40px;
+  //   transform: translate(-30px, -2px);
+  //   width: 10px;
+  // }
+
+  border-bottom-right-radius: 0;
+
+  .bubble-arrow {
     position: absolute;
-    content: '';
-    bottom: -0.1rem;
-    height: 1rem;
-    // border: 1px solid #e9e9ea;
-  }
-  &::before {
-    background-color: var(--c-surface);
-    // border-bottom-left-radius: 0.8rem 0.7rem; // or use it, just as u wish
-
-    border-right: var(--bubble-arrow-width) solid var(--c-surface);
-    // width: 1rem;
-    right: -0.35rem;
-    transform: translate(0, -0.1rem);
-    // box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
-  }
-  &::after {
-    background: var(--c-message-container-bg);
-    border-bottom-left-radius: 0.5rem;
-    // border-left: 1rem solid var(--c-message-bg);
-    right: -40px;
-    transform: translate(-30px, -2px);
-    width: 10px;
+    @include defaultTransition(fill);
+    display: block;
+    fill: var(--c-surface);
+    right: -8.5px;
+    transform: translateY(1px) scaleX(-1);
   }
 
   .chat-input-inner {

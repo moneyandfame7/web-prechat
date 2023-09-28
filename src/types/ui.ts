@@ -8,18 +8,22 @@ export enum LeftColumnScreen {
   Chats,
   Search,
   Settings,
+  Archived,
   NewChannelStep1,
   NewChannelStep2,
   NewGroupStep1,
   NewGroupStep2,
   Contacts,
+  MyStories,
 }
 export enum LeftColumnGroup {
   Main,
   Settings,
   Contacts,
+  Archived,
   NewChannel,
   NewGroup,
+  MyStories,
 }
 export interface LeftColumnStore {
   resetScreen: (force?: boolean) => void

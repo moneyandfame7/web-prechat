@@ -2,6 +2,7 @@ import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
 import type {
   ApiChat,
+  ApiChatFolder,
   ApiChatFull,
   ApiPeer,
   CreateChannelInput,
@@ -189,4 +190,30 @@ export const SUBSCRIBE_ON_CHAT_CREATED: TypedDocumentNode<{
 
   ${FRAGMENT_CHAT}
   ${FRAGMENT_USER}
+`
+
+export const QUERY_GET_CHAT_FOLDERS: TypedDocumentNode<
+  {getChatFolders: {folders: ApiChatFolder[]; orderedIds: number[]}},
+  void
+> = gql`
+  query GetChatFolders {
+    getChatFolders {
+      folders {
+        orderId
+        icon
+        title
+        contacts
+        nonContacts
+        groups
+        channels
+        excludeMuted
+        excludeReaded
+        excludeArchived
+        pinnedChats
+        includedChats
+        excludedChats
+      }
+      orderedIds
+    }
+  }
 `

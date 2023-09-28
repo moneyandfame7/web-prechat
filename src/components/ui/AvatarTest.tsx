@@ -37,6 +37,7 @@ interface AvatarTestProps {
   peer?: ApiPeer
   withOnlineStatus?: boolean
   onClick?: VoidFunction
+  className?: string
 }
 
 // передавати просто тут одразу peer.
@@ -51,6 +52,7 @@ export const AvatarTest: FC<AvatarTestProps> = ({
   withOnlineStatus,
   text,
   onClick,
+  className,
 }) => {
   const isUser = peer && isUserId(peer.id)
   const user = isUser ? peer && (peer as ApiUser) : undefined
@@ -76,6 +78,7 @@ export const AvatarTest: FC<AvatarTestProps> = ({
   }
   const avatarVariant = user?.color || chat?.color || variant
   const buildedClassname = clsx(
+    className,
     `Avatar Avatar-${size} Avatar-${shape} Avatar-c-${avatarVariant}`,
     {
       'saved-messages': isSavedMessages,

@@ -7,7 +7,6 @@ import CSSTransition from 'react-transition-group/CSSTransition'
 
 import {usePrevious} from 'hooks'
 
-import {omit} from 'utilities/object/omit'
 import {joinStrings} from 'utilities/string/joinStrings'
 
 import {TRANSITION_CLASSES, buildProperties, getTransitionTimeout} from './helpers'
@@ -32,12 +31,13 @@ const Transition = <TKey extends number | string>({
   innerClassnames,
   shouldLockUI = name === 'zoomSlide' || name === 'slideDark',
   isLayout = name === 'zoomSlide' || name === 'slideDark',
+  elRef,
 }: TransitionProps<TKey>) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const prevActiveKey = usePrevious<any>(activeKey)
   // const forceUpdate = useForceUpdate()
   const elementsRef = useRef<Record<string | number, ComponentChildren>>({})
-  const containerRef = useRef<{base: HTMLDivElement}>(null)
+  // const containerRef = useRef<{base: HTMLDivElement}>(null)
   // const container = containerRef.current?.base
   // const childs = Array.from(container?.childNodes || [])
   const isAnimated = useRef(false)
@@ -99,7 +99,7 @@ const Transition = <TKey extends number | string>({
   return (
     // @ts-expect-error Preact types are confused
     <TransitionGroup
-      ref={containerRef}
+      ref={elRef}
       className={buildedContainerClass}
       /* react add to child component key prefix ".$" */
       childFactory={(c: VNode) =>

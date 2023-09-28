@@ -11,7 +11,7 @@ export function formatDate(date: Date, is24Hour: boolean, isFull = false): strin
     const todayOptions: Intl.DateTimeFormatOptions = {
       hour: 'numeric',
       minute: 'numeric',
-      second: 'numeric',
+      // second: 'numeric',
       hour12: !is24Hour,
       localeMatcher: 'best fit',
     }

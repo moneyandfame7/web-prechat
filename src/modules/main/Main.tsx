@@ -3,7 +3,6 @@ import {type FC, memo, useEffect, useRef} from 'preact/compat'
 import {getActions} from 'state/action'
 import 'state/actions/all'
 import {type MapState, connect} from 'state/connect'
-import {selectSelf} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
 import {destroySubscribeAll, subscribeToAll} from 'state/subscribe'
 
@@ -24,15 +23,15 @@ interface StateProps {
   isNewContactModalOpen: boolean
   newContactUserId?: string
   newContactByPhone?: boolean
-  shouldGetSelf: boolean
 }
-const Main: FC<StateProps> = ({isNewContactModalOpen, newContactUserId, shouldGetSelf}) => {
+const Main: FC<StateProps> = ({isNewContactModalOpen, newContactUserId}) => {
   const global = getGlobalState()
   const {getChats, getSelf, getContactList, updateUserStatus} = getActions()
   useEffect(() => {
-    if (shouldGetSelf) {
-      getSelf()
-    }
+    getSelf()
+
+    // if (shouldGetSelf) {
+    // }
     updateUserStatus({isOnline: true, isFirst: true, noDebounce: true})
 
     getChats()
@@ -74,7 +73,6 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (state) => {
     isNewContactModalOpen: Boolean(isByPhoneNumber || userId),
     newContactByPhone: isByPhoneNumber,
     newContactUserId: userId,
-    shouldGetSelf: !selectSelf(state),
   }
 }
 

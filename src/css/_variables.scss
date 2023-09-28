@@ -192,7 +192,8 @@ $theme-map-dark: (
   // }
 
   // --c-bubble-highlight: rgba(0, 0, 0, 0.381);
-  --c-bubble-highlight: hsl(202.5deg 18.03% 60.67% / 40%);
+  --c-bubble-highlight: hsla(0, 0%, 0%, 0.087); //#4a8e3a8c
+
   // --c-bubble-highlight: var(--c-ripple);
 
   --c-box-shadow-section: rgba(0, 0, 0, 0.06);
@@ -261,7 +262,8 @@ $theme-map-dark: (
   &.night {
     // &.bubble-mode {}
     // $c-primary: #888afd;
-    $c-primary: #8774e1;
+    $c-primary: #8572dd;
+    // $c-primary: #8774e1;
     $c-primary-light: #b2a6eb;
     $c-primary-dark: lighten($c-primary, 15%);
     $c-bg-surface: #212121;
@@ -286,7 +288,8 @@ $theme-map-dark: (
     --c-message-meta: #{$c-primary-dark};
     // --c-message-highlight: hsl(299.14deg 44.17% 37.47% / 40%);
     // --c-bubble-highlight: #0a0a0a8c;
-    --c-bubble-highlight: hsl(0deg 0% 100% / 40%);
+    // --c-bubble-highlight: hsl(0deg 0% 100% / 40%);
+    --c-bubble-highlight: hsl(0deg 0% 0% / 30%);
 
     // --c-message-highlight: hsl(299.14deg 44.17% 37.47% / 40%);
 

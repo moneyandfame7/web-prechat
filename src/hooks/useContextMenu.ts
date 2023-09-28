@@ -121,14 +121,14 @@ export function useContextMenu(
       if (limiterRect) {
         x = limiterRect.width - menuWidth - 5 /*  - (x - triggerRect.left) */
       } else {
-        x = window.innerWidth - menuWidth - 5
+        x = window.innerWidth - menuWidth - 10
       }
     }
     if (notInContainerY) {
       if (limiterRect) {
         y = limiterRect.height - menuHeight - 5
       } else {
-        y = window.innerHeight - menuHeight
+        y = window.innerHeight - menuHeight - 10
       }
     }
     // const notInContainerY = calculatedXYithPortal + menuHeight > container.offsetHeight

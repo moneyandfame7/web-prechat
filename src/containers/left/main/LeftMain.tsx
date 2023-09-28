@@ -3,6 +3,8 @@ import {useCallback, useEffect, useState} from 'preact/hooks'
 
 import {LeftColumnScreen} from 'types/ui'
 
+import {StoriesList} from 'containers/stories/list'
+
 import {ColumnHeader} from 'components/ColumnHeader'
 import {Transition} from 'components/transitions'
 import {SearchInput} from 'components/ui'
@@ -91,6 +93,8 @@ const LeftMain: FC = (props) => {
           onFocus={handleFocusInput}
         /> */}
       </ColumnHeader>
+      <StoriesList />
+
       <div class="LeftColumn-Main_inner scrollable">
         {/* <SwitchTransition
           classNames={classNames}

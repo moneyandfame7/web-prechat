@@ -32,3 +32,5 @@ export function createPluralize(locale: ApiLangCode) {
 
   return (count: number) => rules.select(count)
 }
+
+type Test = Intl.LDMLPluralRule

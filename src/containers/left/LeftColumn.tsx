@@ -11,8 +11,11 @@ import {SettingsScreens} from 'types/screens'
 import {PageAnimations} from 'types/state'
 import {LeftColumnGroup, LeftColumnScreen} from 'types/ui'
 
+import {MyStories} from 'containers/stories'
+
 import {Transition} from 'components/transitions'
 
+import {Archived} from './archived'
 import Contacts from './contacts/Contacts.async'
 import {LeftColumnProvider} from './context'
 import CreateChat from './create/CreateChat.async'
@@ -40,6 +43,12 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
   switch (activeScreen) {
     case LeftColumnScreen.Contacts:
       activeGroup = LeftColumnGroup.Contacts
+      break
+    case LeftColumnScreen.Archived:
+      activeGroup = LeftColumnGroup.Archived
+      break
+    case LeftColumnScreen.MyStories:
+      activeGroup = LeftColumnGroup.MyStories
       break
 
     case LeftColumnScreen.Chats:
@@ -116,6 +125,10 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
         return <CreateChat isGroup />
       case LeftColumnGroup.Settings:
         return <Settings currentScreen={settingsScreen} />
+      case LeftColumnGroup.Archived:
+        return <Archived />
+      case LeftColumnGroup.MyStories:
+        return <MyStories />
     }
   }
 

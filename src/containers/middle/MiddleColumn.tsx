@@ -2,14 +2,12 @@ import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
-import {changeTheme} from 'state/helpers/settings'
 import {selectOpenedChats} from 'state/selectors/chats'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
+import {useBoolean} from 'hooks/useFlag'
 import {useLayout} from 'hooks/useLayout'
-
-import {t} from 'lib/i18n'
 
 import {addEscapeListener} from 'utilities/keyboardListener'
 import {connectStateToNavigation} from 'utilities/routing'
@@ -17,7 +15,6 @@ import {connectStateToNavigation} from 'utilities/routing'
 import type {OpenedChat} from 'types/state'
 
 import {Transition} from 'components/transitions'
-import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -40,9 +37,16 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
   const global = getGlobalState()
   const actions = getActions()
   const {isSmall, isLaptop} = useLayout()
+
+  const {
+    value: isEmojiMenuOpen,
+    toggle: toggleEmojiMenu,
+    setFalse: closeEmojiMenu,
+  } = useBoolean()
   const closeChat = useCallback(() => {
     document.body.classList.toggle('has-chat', false)
     document.body.classList.toggle('left-column-shown', true)
+    closeEmojiMenu()
 
     /* if with animation - timeout, else just close...??? */
     if (isSmall && animationsEnabled) {
@@ -104,16 +108,12 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
 
   render.current += 1
 
+  // const {}=useBoo
+
   return (
     <div class="MiddleColumn" id="middle-column">
-      <Button
-        onClick={() => {
-          actions.changeTheme(global.settings.general.theme === 'dark' ? 'light' : 'dark')
-        }}
-      >
-        Toggle theme
-      </Button>
       {/* {messagesIds && <InfiniteScroll messageIds={messagesIds} />} */}
+
       {isChatOpen && (
         <>
           <ChatHeader
@@ -131,7 +131,12 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
           >
             <div class="future-transition-container">
               <MessagesList chatId={chatId} />
-              <ChatInput chatId={chatId} />
+              <ChatInput
+                emojiMenuOpen={isEmojiMenuOpen}
+                onToggleEmojiMenu={toggleEmojiMenu}
+                onCloseEmojiMenu={closeEmojiMenu}
+                chatId={chatId}
+              />
             </div>
           </Transition>
         </>

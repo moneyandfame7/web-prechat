@@ -9,12 +9,15 @@ import {buildRecord} from 'utilities/object/buildRecord'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
 createAction('getContactList', async (state) => {
+  state.isContactsFetching = true
   const users = await Api.contacts.getContacts()
   if (!users) {
     return
   }
 
   updateUsers(state, buildRecord(users, 'id'))
+
+  state.isContactsFetching = false
 
   // updateUserStatuses(state,buildRecord)
   // contactIds.map((id) => {

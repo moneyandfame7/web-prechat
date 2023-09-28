@@ -4,6 +4,31 @@
   transform-style: preserve-3d;
   // width: calc(100% + 400px);
 
+  @include whenDay {
+    background-image: url('/images/chat-bg.jpeg');
+    background-position: center center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: var(--c-bg);
+
+    // background-color: var(--c-surface);
+    // transition: background-image 0.5s ease;
+  }
+  @include whenNight {
+    background-image: url('/images/chat-bg-dark.png');
+    background-position: top right;
+    background-size: 510px auto;
+    background-repeat: repeat;
+    background-color: var(--c-bg);
+    // background-position: center center;
+    // background-attachment: fixed;
+    // background-repeat: no-repeat;
+    // background-size: cover;
+  }
+
+  // background: var(--c-message-container-bg);
+
   // transition: width 0.3s ease;
   // body.right-column-shown & {
   //   transform: translate3d(calc(400px * -1), 0, 0);
@@ -22,7 +47,6 @@
 
   // background: rgb(159, 196, 131);
   // background: linear-gradient(225deg, rgba(159, 196, 131, 1) 35%, rgba(122, 156, 97, 1) 100%);
-  background: var(--c-message-container-bg);
   // background: rgb(40, 40, 40);
   // background: linear-gradient(225deg, rgba(40, 40, 40, 1) 50%, rgba(0, 0, 0, 1) 100%);
   // background-color: #0f0f0f;

@@ -24,13 +24,22 @@ import './ChatInput.scss'
 
 interface OwnProps {
   chatId: string
+  emojiMenuOpen: boolean
+  onToggleEmojiMenu: VoidFunction
+  onCloseEmojiMenu: VoidFunction
 }
 
 interface StateProps {
   draft?: string
 }
 const debouncedSaveDraft = debounce((cb) => cb(), 5000, false)
-const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
+const ChatInputImpl: FC<OwnProps & StateProps> = ({
+  chatId,
+  draft,
+  emojiMenuOpen,
+  onCloseEmojiMenu,
+  onToggleEmojiMenu,
+}) => {
   const {sendMessage, saveDraft} = getActions()
   const inputRef = useRef<HTMLDivElement>(null)
 
@@ -67,19 +76,14 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
     insertTextAtCursor(replaced, inputRef)
   }
 
-  const {
-    value: isEmojiMenuOpen,
-    toggle: toggleEmojiMenu,
-    setFalse: closeEmojiMenu,
-  } = useBoolean()
   const inputFocused = useSignal(false)
 
   const handleToggleEmojiMenu = useCallback(() => {
-    toggleEmojiMenu()
+    onToggleEmojiMenu()
     inputRef.current?.focus()
   }, [])
   const buildedClass = clsx('chat-input', {
-    'emoji-menu-shown': isEmojiMenuOpen,
+    'emoji-menu-shown': emojiMenuOpen,
   })
   // useLayoutEffect(() => {
   //   inputFocused.value = true
@@ -155,7 +159,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
       <div class="chat-input-container">
         <div class="input-message">
           <IconButton
-            icon={isEmojiMenuOpen ? 'keyboard' : 'smile'}
+            icon={emojiMenuOpen ? 'keyboard' : 'smile'}
             onClick={handleToggleEmojiMenu}
           />
           <TextArea
@@ -177,6 +181,16 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
             <MenuItem icon="image">Photo or Video</MenuItem>
             <MenuItem icon="document">Document</MenuItem>
           </DropdownMenu>
+          <svg viewBox="0 0 11 20" width="11" height="20" class="bubble-arrow">
+            <g transform="translate(9 -14)" fill="inherit" fill-rule="evenodd">
+              <path
+                d="M-6 16h6v17c-.193-2.84-.876-5.767-2.05-8.782-.904-2.325-2.446-4.485-4.625-6.48A1 1 0 01-6 16z"
+                transform="matrix(1 0 0 -1 0 49)"
+                id="corner-fill"
+                fill="inherit"
+              />
+            </g>
+          </svg>
         </div>
         <Button onClick={handleSend} isDisabled={isSendDisabled} className="send-button">
           <Icon name="send" />
@@ -184,8 +198,8 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({chatId, draft}) => {
       </div>
 
       <EmojiPicker
-        onClose={closeEmojiMenu}
-        isOpen={isEmojiMenuOpen}
+        onClose={onCloseEmojiMenu}
+        isOpen={emojiMenuOpen}
         onSelectEmoji={(e) => {
           insertInCursor(e.native)
         }}

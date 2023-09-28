@@ -66,6 +66,12 @@
   }
 }
 
+@mixin whenDay() {
+  html:not(.night) & {
+    @content;
+  }
+}
+
 @mixin spread-map($map) {
   @each $key, $value in $map {
     #{$key}: $value;

@@ -10,6 +10,8 @@
 
   border-radius: 0.75rem;
   max-height: inherit;
+  overflow: hidden;
+  max-height: calc(100 * 1dvh - 4.75rem);
   // box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
 
   // box-shadow: var(--menu-shadow);
@@ -18,6 +20,7 @@
   background-color: var(--menu-bg) !important;
   // backdrop-filter: blur(50px);
   @include withBlur(var(--menu-blur));
+  // @include defaultTransition(box-shadow);
 
   html.no-menu-blur & {
     background-color: var(--c-surface) !important;
@@ -40,7 +43,13 @@
     &:hover {
       background-color: var(--c-surface-3-transparent);
     }
-
+    > .menu-badge {
+      color: var(--c-font-secondary);
+      font-size: 14px;
+    }
+    > .menu-title {
+      flex: 1;
+    }
     @include withAnimations {
       &:active {
         transform: scale(0.97);
@@ -72,7 +81,7 @@
 
     > .Icon {
       width: 20px;
-      margin-right: 15px;
+      margin-right: 10px; //15px
 
       path {
         // fill: #000;

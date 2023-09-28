@@ -28,6 +28,22 @@ export interface ApiChat {
   _id: string
 }
 
+export interface ApiChatFolder {
+  orderId: number
+  icon?: string
+  title: string
+  contacts?: true
+  nonContacts?: true
+  groups?: true
+  channels?: true
+  excludeMuted?: true
+  excludeReaded?: true
+  excludeArchived?: true
+  pinnedChats?: string[]
+  includedChats?: string[]
+  excludedChats?: string[]
+}
+
 export interface ApiInputChat {
   chatId: string
 }

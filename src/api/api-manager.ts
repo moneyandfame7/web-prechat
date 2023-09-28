@@ -43,6 +43,8 @@ export interface MethodsMap {
 
   /* MESSAGES */
   'messages.saveDraft': {variables: {input: ApiInputSaveDraft}; res?: true}
+
+  /* FOLDERS */
 }
 
 // export type GqlOptions = {

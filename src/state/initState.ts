@@ -86,14 +86,11 @@ export const INITIAL_STATE: GlobalState = {
   },
 
   initialization: false,
-  isChatsFetching: false,
+  isChatsFetching: true,
   users: {
     byId: {},
     contactIds: [],
     statusesByUserId: {},
-  },
-  drafts: {
-    byChatId: {},
   },
   messages: {
     byChatId: {},

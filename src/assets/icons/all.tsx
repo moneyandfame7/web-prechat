@@ -75,6 +75,8 @@ export {ReactComponent as document} from './document.svg'
 export {ReactComponent as tools} from './tools.svg'
 export {ReactComponent as stickers} from './stickers.svg'
 export {ReactComponent as rightColumn} from './rightpanel.svg'
+export {ReactComponent as archived} from './archive.svg'
+export {ReactComponent as story} from './story.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

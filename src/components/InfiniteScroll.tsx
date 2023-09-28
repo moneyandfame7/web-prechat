@@ -23,8 +23,7 @@ import {Loader} from './ui/Loader'
 
 import './InfiniteScroll.scss'
 
-/* 
-[12341234l1234123,34563456,123523452345]
+/* [12341234l1234123,34563456,123523452345]
 
 const newIds = need to sort
 можливо варто просто зробити айді через autoincrement?

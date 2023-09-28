@@ -7,3 +7,6 @@
 import {signal} from '@preact/signals'
 
 export const MOCK_TWO_FA = signal(true)
+
+export const MOCK_CHAT_FETCH = signal(false)
+export const FOLDER_ID_ALL = 0

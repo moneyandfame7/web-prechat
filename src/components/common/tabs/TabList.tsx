@@ -23,10 +23,6 @@ const TabList: FC<TabListProps> = memo(
     const tabListRef = useRef<HTMLDivElement>(null)
     const lineRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-      // const tab=
-    }, [])
-
     useLayoutEffect(() => {
       if (!tabListRef.current || !lineRef.current) {
         return
@@ -43,6 +39,8 @@ const TabList: FC<TabListProps> = memo(
       console.log('new tab:', tab)
 
       const linePosition = tab.offsetLeft
+      lineRef.current.style.transform = `translateX(${linePosition})`
+
       const isNotFullyVisible = tabListRef.current.offsetWidth < tabListRef.current.scrollWidth
 
       const scrollOffset = tabListRef.current.offsetWidth / tabs.length

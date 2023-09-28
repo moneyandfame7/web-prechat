@@ -2,19 +2,20 @@
   display: flex;
   align-items: center;
   position: relative;
-
+  background-color: var(--c-surface);
   @include withAnimations {
     scroll-behavior: smooth;
   }
   // margin-inline: 15px; // when use padding, line not under tab btn
   // padding-inline: 15px;
   // background-color: red;
-  &::before,
-  &::after {
-    content: '';
-    width: 15px;
-    flex: 0 0 auto;
-  }
+  // &::before,
+  // &::after {
+  //   content: '';
+  //   width: 15px;
+  //   flex: 0 0 auto;
+  // }
+
   .tab-btn {
     // flex-grow: 1;
     // margin-inline: 10px;
@@ -68,4 +69,13 @@
     }
     background-color: var(--c-primary);
   }
+  // &::after {
+  //   content: '';
+  //   position: absolute;
+  //   bottom: 0;
+  //   left: -50vw;
+  //   right: -50vw;
+  //   background-color: red;
+  //   height: 2px;
+  // }
 }

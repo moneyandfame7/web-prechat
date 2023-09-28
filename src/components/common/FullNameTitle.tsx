@@ -7,6 +7,8 @@ import type {ApiChat, ApiPeer, ApiUser} from 'api/types'
 import {getChatName} from 'state/helpers/chats'
 import {getUserName, isUserId} from 'state/helpers/users'
 
+import {TEST_translate} from 'lib/i18n'
+
 import styles from './FullNameTitle.module.scss'
 
 interface FullNameTitleProps {
@@ -21,7 +23,7 @@ export const FullNameTitle: FC<FullNameTitleProps> = memo(
 
     function renderTitle() {
       if (isSavedMessages) {
-        return 'Saved Messages_translate'
+        return TEST_translate('SavedMessages')
       }
 
       return title

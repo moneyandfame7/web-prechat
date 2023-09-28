@@ -9,7 +9,7 @@
     background-color: var(--c-bubble-highlight);
     color: #fff;
     margin: 10px;
-    border: 1px solid var(--c-border-input);
+    // border: 1px solid var(--c-border-input);
     @include bgAndColorTransition(border-color);
     padding-inline: 30px;
     padding-block: 20px;

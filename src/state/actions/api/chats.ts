@@ -74,7 +74,7 @@ createAction('getChats', async (state, actions) => {
 
   // setTimeout(() => {
   state.isChatsFetching = false
-  // }, 1000)
+  // }, 10000)
 })
 
 createAction('getChat', async (state, _, payload) => {
@@ -107,8 +107,11 @@ createAction('getChatFull', async (state, _, payload) => {
 })
 
 createAction('openChat', async (state, actions, payload) => {
-  const {id, shouldChangeHash, shouldReplaceHistory = true, username} = payload
-
+  const {shouldChangeHash, shouldReplaceHistory = true, username, type} = payload
+  let {id} = payload
+  if (type === 'self') {
+    id = state.auth.userId!
+  }
   if (!id || (!id && !username)) {
     changeHash({hash: undefined, silent: true})
     document.title = ''

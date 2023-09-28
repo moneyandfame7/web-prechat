@@ -147,6 +147,7 @@ export interface GlobalState {
   /* For TAB STATE: */
   initialization: boolean
   isChatsFetching: boolean
+  isContactsFetching: boolean
   rightColumn: {
     screen: RightColumnScreens
     isOpen: boolean

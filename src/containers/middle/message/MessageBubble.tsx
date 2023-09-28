@@ -1,4 +1,4 @@
-import {type FC, memo} from 'preact/compat'
+import {type FC, memo, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
 
@@ -6,7 +6,11 @@ import type {ApiMessage, ApiUser} from 'api/types'
 
 import {getUserName} from 'state/helpers/users'
 
+import {useContextMenu} from 'hooks/useContextMenu'
+
 import {TEST_translate} from 'lib/i18n'
+
+import {Menu, MenuItem} from 'components/popups/menu'
 
 import {MessageMeta} from './MessageMeta'
 
@@ -20,19 +24,31 @@ interface MessageBubbleProps {
   isLastInGroup: boolean
   isFirstInGroup: boolean
 }
+
+const getMenuElement = () =>
+  document
+    .querySelector('#portal')!
+    .querySelector('.message-context-menu') as HTMLElement | null
 const MessageBubble: FC<MessageBubbleProps> = memo(
   ({message, sender, withSenderName, withAvatar, isLastInGroup}) => {
     const isOutgoing = message?.isOutgoing && !message.action
+
+    const senderName = sender && getUserName(sender)
+    const messageText = message?.content.formattedText?.text
+
+    const menuRef = useRef<HTMLDivElement>(null)
+    const messageRef = useRef<HTMLDivElement>(null)
+    const {handleContextMenu, handleContextMenuClose, isContextMenuOpen, styles} =
+      useContextMenu(menuRef, messageRef, getMenuElement, undefined, true)
+
     const buildedClass = clsx('bubble', sender && `color-${sender.color.toLowerCase()}`, {
       outgoing: isOutgoing,
       incoming: !message?.isOutgoing && !message?.action,
       action: message?.action,
       'has-avatar': withAvatar,
       'last-in': isLastInGroup,
+      'has-menu-open': isContextMenuOpen,
     })
-
-    const senderName = sender && getUserName(sender)
-    const messageText = message?.content.formattedText?.text
     if (message.action) {
       return (
         <div data-mid={message.id} id={`message-${message.id}`} class={buildedClass}>
@@ -41,7 +57,12 @@ const MessageBubble: FC<MessageBubbleProps> = memo(
       )
     }
     return (
-      <div data-mid={message.id} class={buildedClass}>
+      <div
+        ref={messageRef}
+        data-mid={message.id}
+        class={buildedClass}
+        onContextMenu={handleContextMenu}
+      >
         <div class="bubble-content">
           {withSenderName && (
             <p class="bubble-content__sender">{senderName || 'USER NAME_UNDF'}</p>
@@ -66,6 +87,27 @@ const MessageBubble: FC<MessageBubbleProps> = memo(
             />
           </g>
         </svg>
+
+        <Menu
+          // easing={'cubic-bezier(0.2, 0, 0.2, 1)' as any}
+          // timeout={250}
+          elRef={menuRef}
+          withMount
+          withPortal
+          className="message-context-menu"
+          isOpen={isContextMenuOpen}
+          style={styles}
+          onClose={handleContextMenuClose}
+        >
+          <MenuItem icon="reply">Reply</MenuItem>
+          <MenuItem icon="edit">Edit</MenuItem>
+          <MenuItem icon="copy">Copy Text</MenuItem>
+          <MenuItem icon="forward">Forward</MenuItem>
+          <MenuItem icon="select">Select</MenuItem>
+          <MenuItem icon="delete" danger>
+            Delete
+          </MenuItem>
+        </Menu>
       </div>
     )
   }

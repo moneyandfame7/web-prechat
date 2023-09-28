@@ -16,6 +16,8 @@ const lang = {
   LastNameOptional: 'Last Name (optional)',
   Search: 'Search',
   SavedMessages: 'Saved Messages',
+  ArchivedChats: 'Archived Chats',
+  ArchiveSettings: 'Archive Settings',
   Contacts: 'Contacts',
   Settings: 'Settings',
   General: 'General',
@@ -30,6 +32,7 @@ const lang = {
   Delete: 'Delete',
   Disable: 'Disable',
   Add: 'Add',
+  MyStories: 'My Stories',
   IncorrectPassword: 'Incorrect password',
   'TwoFa.Title': 'Two-Step Verification',
   'TwoFa.SetPasswordInfo':
@@ -129,6 +132,15 @@ const lang = {
   GroupDescription2: 'Persistent chat history',
   GroupDescription3: 'Public links such as t.me/title',
   GroupDescription4: 'Admins with different rights',
+
+  // 'ChatList.Menu'
+  'ChatList.EmptyChatsTitle': 'Your chats will appear here',
+  'ChatList.EmptyChatsSubtitle': {
+    one: 'You have {{count}} contact on Prechat',
+    other: 'You have {{count}} contacts on Prechat',
+  },
+
+  'ChatInfo.YourChat': 'chat with yourself',
 } as const
 
 export default lang

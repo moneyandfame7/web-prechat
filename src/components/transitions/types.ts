@@ -17,6 +17,7 @@ export type TransitionName =
 export type TransitionEasing = 'ease' | 'ease-in' | 'ease-in-out' | 'ease-out' | 'linear'
 export type TransitionDirection = 'auto' | 'inverse' | 1 | -1
 export interface TransitionProps<TKey extends number | string> {
+  elRef?: RefObject<HTMLDivElement>
   activeKey: TKey
   appear?: boolean
   name: TransitionName

@@ -76,14 +76,18 @@ interface ActionPayloads {
   getChats: void
   getChat: {id: string}
   openChat: {
-    id: string | undefined
+    id?: string | undefined
     username?: string
+    type?: 'self'
     shouldChangeHash?: boolean
     shouldReplaceHistory?: boolean
   }
   openChatByUsername: {username: string}
   openPreviousChat: void
   getChatFull: {id: string}
+
+  /* ChatFolders */
+  getChatFolders: void
 
   /* Messages */
   sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}

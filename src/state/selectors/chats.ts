@@ -124,7 +124,10 @@ export function isChatGroup(chat: ApiChat) {
 }
 
 export function selectIsChatsFetching(global: SignalGlobalState) {
-  return global.isChatsFetching && selectChatsIds(global).length === 0
+  return (
+    (global.isChatsFetching && selectChatsIds(global).length === 0) ||
+    (global.isContactsFetching && global.users.contactIds.length === 0)
+  )
 }
 
 export function selectIsMessagesLoading(global: SignalGlobalState) {

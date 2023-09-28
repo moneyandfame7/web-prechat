@@ -200,7 +200,7 @@ export const Menu: FC<MenuProps> = memo(
 )
 
 interface MenuItemProps {
-  children: ComponentChildren
+  children?: ComponentChildren
   className?: string
   onClick?: (e: MouseEvent) => void | Promise<void>
   hidden?: boolean
@@ -209,6 +209,8 @@ interface MenuItemProps {
   icon?: IconName
   danger?: boolean
   autoClose?: boolean
+  title?: string
+  badge?: ComponentChildren
 }
 export const MenuItem: FC<MenuItemProps> = memo(
   ({
@@ -221,6 +223,8 @@ export const MenuItem: FC<MenuItemProps> = memo(
     icon,
     danger,
     autoClose = true,
+    badge,
+    title,
   }) => {
     const {onClose, autoClose: globalCloseMenu} = useMenuContext()
 
@@ -232,6 +236,9 @@ export const MenuItem: FC<MenuItemProps> = memo(
         onClick?.(e)
         if (globalCloseMenu && autoClose && !to) {
           onClose()
+        }
+        if (to) {
+          setTimeout(onClose, 100)
         }
       },
       [onClick, autoClose, onClose]
@@ -254,7 +261,9 @@ export const MenuItem: FC<MenuItemProps> = memo(
           {...(to && {target: '_blank', rel: 'noreferrer'})}
         >
           {icon && <Icon name={icon} />}
+          {title && <span class="menu-title">{title}</span>}
           {children}
+          {badge && <span class="menu-badge">{badge}</span>}
         </ItemEl>
       </>
     )
