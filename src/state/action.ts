@@ -1,11 +1,14 @@
-import type {SignalGlobalState, Theme} from 'types/state'
-import type {ApiLangCode} from 'types/lib'
-import type {SignInPayload, SignUpPayload} from 'types/action'
-import {DEBUG} from 'common/config'
-
-import type {ApiLangKey, ApiLanguage} from 'api/types/langPack'
+import {type ApiMessageEntity, type HistoryDirection} from 'api/types'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
-import type {SettingsScreens} from 'types/screens'
+import type {ApiLangKey} from 'api/types/langPack'
+
+import {DEBUG} from 'common/environment'
+
+import type {SignInPayload, SignUpPayload} from 'types/action'
+import type {DeepPartial} from 'types/common'
+import type {ApiLangCode} from 'types/lib'
+import type {RightColumnScreens, SettingsScreens} from 'types/screens'
+import type {SettingsState, SignalGlobalState, Theme} from 'types/state'
 
 import {getGlobalState} from './signal'
 
@@ -28,8 +31,15 @@ interface ActionPayloads {
   /** UI */
   reset: void
   init: void
+  authInit: void
+  openRightColumn: {screen?: RightColumnScreens}
+  closeRightColumn: void
+  changeSettings: DeepPartial<SettingsState>
 
   // Differents
+  openCommonModal: {title: string; body: string}
+  closeCommonModal: void
+
   openAddContactModal: {userId: string}
   closeAddContactModal: void
 
@@ -50,21 +60,60 @@ interface ActionPayloads {
 
   /* Api */
   getCountries: ApiLangCode | undefined
-  getContactList: void
-  getUser: string
 
   /* Contacts */
   addContact: {firstName: string; phone: string; lastName?: string; userId?: string}
+  getContactList: void
+
+  /* Users */
+  getSelf: void
+  getUser: string
+  resolveUsername: {username: string}
 
   /* Chats */
   createChannel: CreateChannelInput
   createGroup: CreateGroupInput
   getChats: void
+  getChat: {id: string}
+  openChat: {
+    id?: string | undefined
+    username?: string
+    type?: 'self'
+    shouldChangeHash?: boolean
+    shouldReplaceHistory?: boolean
+  }
+  openChatByUsername: {username: string}
+  openPreviousChat: void
+  getChatFull: {id: string}
+
+  /* ChatFolders */
+  getChatFolders: void
+
+  /* Messages */
+  sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}
+  getHistory: {
+    chatId: string
+    limit?: number
+    offsetId?: string
+    direction?: HistoryDirection
+    maxDate?: Date
+    includeOffset?: boolean
+  }
+  saveDraft: {
+    text: string | undefined
+    chatId: string
+  }
+
+  /* Account */
+  getAuthorizations: void
+  terminateAuthorization: {sessionId: string}
+  terminateAllAuthorizations: void
+  updateUserStatus: {isOnline: boolean; isFirst?: boolean; noDebounce?: boolean}
 
   // Localization
   getLangPack: ApiLangCode
   getLanguageString: {code: ApiLangCode; key: ApiLangKey}
-  getLanguages: ApiLanguage[]
+  getLanguages: void
 
   getConnection: void
   sendPhone: string

@@ -1,74 +1,157 @@
-import type {FC} from 'preact/compat'
-import {memo, useMemo} from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
+
+import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
+
+import {TEST_translate, t} from 'lib/i18n'
+
+import {GITHUB_SOURCE} from 'common/environment'
 
 import {LeftColumnScreen} from 'types/ui'
-import {useBoolean} from 'hooks/useFlag'
 
-import {Menu, MenuItem} from 'components/popups/menu'
+import {MenuItem} from 'components/popups/menu'
 import {Icon, IconButton} from 'components/ui'
+import {DropdownMenu} from 'components/ui/DropdownMenu'
+import {SwitchInput} from 'components/ui/SwitchInput'
 
 import {useLeftColumn} from '../context'
 
 import './MainMenu.scss'
-import {GITHUB_SOURCE} from 'common/config'
-import {t} from 'lib/i18n'
-import {getGlobalState} from 'state/signal'
+
+function isSwitchEl(e: MouseEvent) {
+  const target = e.target as HTMLElement
+  return (
+    target.classList.contains('switch-input-wrapper') ||
+    target.classList.contains('switch-input-label')
+  )
+}
 export const LeftMainMenu: FC = memo(() => {
-  const {setTrue, value, setFalse} = useBoolean(false)
   const {setScreen} = useLeftColumn()
-  const lang = getGlobalState((state) => state.settings.i18n.lang_code)
+  const global = getGlobalState()
+  const {changeSettings, openChat} = getActions()
+  const handleSwitchAnimations = (e: MouseEvent) => {
+    if (isSwitchEl(e)) {
+      return
+    }
 
-  const items = useMemo(
-    () => (
-      <>
-        <MenuItem>
-          <Icon name="savedMessages" />
-          {t('SavedMessages')}
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setScreen(LeftColumnScreen.Contacts)
-          }}
-        >
-          <Icon name="user" />
-          {t('Contacts')}
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            setScreen(LeftColumnScreen.Settings)
-          }}
-        >
-          <Icon name="settings" />
-          {t('Settings')}
-        </MenuItem>
+    changeSettings({
+      general: {
+        animationsEnabled: !global.settings.general.animationsEnabled,
+      },
+    })
+  }
 
-        <MenuItem>
-          <Icon name="animations" />
-          {t('Animations')}
-        </MenuItem>
-        <MenuItem>
-          <Icon name="darkMode" />
-          {t('DarkMode')}
-        </MenuItem>
-        <MenuItem>
-          <Icon name="download" />
-          {t('InstallApp')}
-        </MenuItem>
-        <MenuItem to={GITHUB_SOURCE}>
-          <Icon name="bug" />
-          {t('SourceCode')}
-        </MenuItem>
-      </>
-    ),
-    [lang]
+  const handleSwitchDarkMode = (e: MouseEvent) => {
+    if (isSwitchEl(e)) {
+      return
+    }
+    changeSettings({
+      general: {
+        theme: global.settings.general.theme === 'light' ? 'dark' : 'light',
+      },
+    })
+  }
+
+  const handleSavedMessages = () => {
+    openChat({type: 'self', shouldChangeHash: true})
+  }
+
+  const handleArchivedChats = () => {
+    setScreen(LeftColumnScreen.Archived)
+  }
+  const handleMyStories = () => {
+    setScreen(LeftColumnScreen.MyStories)
+  }
+
+  const items = () => (
+    <>
+      <MenuItem
+        title={TEST_translate('SavedMessages')}
+        icon="savedMessages"
+        onClick={handleSavedMessages}
+      />
+      <MenuItem
+        title={TEST_translate('ArchivedChats')}
+        icon="archived"
+        onClick={handleArchivedChats}
+        badge="3"
+      />
+      <MenuItem
+        title={TEST_translate('MyStories')}
+        icon="story"
+        onClick={handleMyStories}
+        badge="13"
+      />
+      <MenuItem
+        onClick={() => {
+          setScreen(LeftColumnScreen.Contacts)
+        }}
+        icon="user"
+        title={TEST_translate('Contacts')}
+      />
+      <MenuItem
+        onClick={() => {
+          setScreen(LeftColumnScreen.Settings)
+        }}
+        icon="settings"
+        title={TEST_translate('Settings')}
+      />
+
+      <MenuItem
+        title={TEST_translate('Animations')}
+        icon="animations"
+        autoClose={false}
+        onClick={handleSwitchAnimations}
+      >
+        <SwitchInput
+          onChange={() => {
+            changeSettings({
+              general: {
+                animationsEnabled: !global.settings.general.animationsEnabled,
+              },
+            })
+          }}
+          size="medium"
+          checked={global.settings.general.animationsEnabled}
+        />
+      </MenuItem>
+      <MenuItem
+        title={TEST_translate('DarkMode')}
+        icon="darkMode"
+        autoClose={false}
+        onClick={handleSwitchDarkMode}
+      >
+        <SwitchInput
+          onChange={() => {
+            changeSettings({
+              general: {
+                theme: global.settings.general.theme === 'light' ? 'dark' : 'light',
+              },
+            })
+          }}
+          size="medium"
+          checked={global.settings.general.theme === 'dark'}
+        />
+      </MenuItem>
+      <MenuItem title={TEST_translate('InstallApp')} icon="download" />
+      <MenuItem title={TEST_translate('SourceCode')} icon="bug" to={GITHUB_SOURCE} />
+    </>
   )
   return (
     <div class="LeftColumn-Main_Menu">
-      <IconButton onClick={setTrue} icon="menu" />
-
-      <Menu placement="top left" isOpen={value} withMount={false} onClose={setFalse}>
+      <DropdownMenu
+        placement={{
+          top: true,
+          left: true,
+        }}
+        transform="top left"
+        button={<IconButton ripple={false} icon="menu" />}
+      >
+        {items()}
+      </DropdownMenu>
+      {/* <Menu placement="top left" isOpen={value} withMount={false} onClose={setFalse}>
         {items}
-      </Menu>
+      </Menu> */}
     </div>
   )
 })

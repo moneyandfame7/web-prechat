@@ -1,16 +1,18 @@
 import type {ApiUser} from 'api/types/users'
-import type {GlobalState, SignalGlobalState} from 'types/state'
+
+import {selectUser} from 'state/selectors/users'
+import {storages} from 'state/storages'
 
 import {updateByKey} from 'utilities/object/updateByKey'
 
+import type {GlobalState, SignalGlobalState} from 'types/state'
+
+import {updateUsernamesFromPeers} from './chats'
+
 const initialNewContact: GlobalState['newContact'] = {
   userId: undefined,
-  isByPhoneNumber: false
+  isByPhoneNumber: false,
 }
-// const initialUsers: GlobalState['users'] = {
-//   byId: {},
-//   contactIds: []
-// }
 
 export function resetNewContactState(global: SignalGlobalState) {
   updateByKey(global.newContact, initialNewContact)
@@ -23,42 +25,44 @@ export function updateNewContactState(
   updateByKey(global.newContact, newContact)
 }
 
-export function updateUser(
-  global: SignalGlobalState,
-  id: string,
-  updUser: Partial<ApiUser>
-) {
-  const user = global.users.byId[id]
+export function updateUser(global: SignalGlobalState, id: string, updUser: Partial<ApiUser>) {
+  const user = selectUser(global, id)
   if (!user) {
     return
   }
 
   updateByKey(user, updUser)
 
+  /* OR JUST TAKE UPDATED USER BY ID?? */
+  storages.users.put({
+    [id]: user, // ???
+  })
+
+  // storages.users.
+
   updateContactList(global, [user])
 }
 
-export function updateUsers(
-  global: SignalGlobalState,
-  usersById: Record<string, ApiUser>,
-  shouldOverwrite = false
-) {
-  Object.keys(usersById).forEach((id) => {
-    if (!shouldOverwrite && global.chats.byId[id]) {
-      return
-    }
-    updateByKey(global.users.byId, {
-      [id]: usersById[id]
-    })
-  })
+export function updateUsers(global: SignalGlobalState, usersById: Record<string, ApiUser>) {
+  updateByKey(global.users.byId, usersById)
 
-  updateContactList(global, Object.values(usersById))
+  // storageManager.users.set(usersById)
+  storages.users.put(usersById)
+
+  const usersList = Object.values(usersById)
+
+  updateContactList(global, usersList)
+  updateUsernamesFromPeers(global, usersList)
 }
 
 export function updateContactList(global: SignalGlobalState, users: ApiUser[]) {
   const contactsList = global.users.contactIds
-
+  // if (users.length === 1 && users[0].isContact) {
+  //   // ??????
+  //   return
+  // }
   const updatedList = users
+    // filter by isContact from API, but not added local to list
     .filter((u) => u.isContact && !contactsList.includes(u.id))
     .map((u) => u.id)
 

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 /* eslint-disable no-console */
-import { DEBUG } from 'common/config'
+import {DEBUG} from 'common/environment'
 
 export function logDebugError(...error: any[]) {
   if (DEBUG) {

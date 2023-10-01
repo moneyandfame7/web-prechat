@@ -1,19 +1,15 @@
 import {type FC, memo} from 'preact/compat'
 
-import {IconButton} from 'components/ui'
-
 import {SettingsContext} from 'context/settings'
+
+import {ColumnWrapper} from 'components/ColumnWrapper'
 
 const SettingsEditProfile: FC = () => {
   const {resetScreen} = SettingsContext.useScreenContext()
   return (
-    <>
-      <div class="LeftColumn-Header">
-        <IconButton icon="arrowLeft" onClick={resetScreen} />
-        <p class="LeftColumn-Header_title">Edit Profile</p>
-      </div>
-      <h1>SettingsEditProfile</h1>
-    </>
+    <ColumnWrapper title="Edit profile" onGoBack={resetScreen}>
+      <h1>Edit profile</h1>
+    </ColumnWrapper>
   )
 }
 

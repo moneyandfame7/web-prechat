@@ -1,6 +1,8 @@
 import type {ApiUser} from 'api/types/users'
-import type {SignalGlobalState} from 'types/state'
+
 import type {BuildedRecord} from 'utilities/object/buildRecord'
+
+import type {SignalGlobalState} from 'types/state'
 
 export function selectContacts(global: SignalGlobalState): BuildedRecord<ApiUser> {
   return global.users.contactIds.reduce((byKey, id) => {
@@ -10,6 +12,31 @@ export function selectContacts(global: SignalGlobalState): BuildedRecord<ApiUser
   }, {} as BuildedRecord<ApiUser>)
 }
 
-export function selectUser(global: SignalGlobalState, userId: string) {
+export function selectUser(global: SignalGlobalState, userId: string): ApiUser | undefined {
   return global.users.byId[userId]
+}
+
+export function selectUserStatus(global: SignalGlobalState, userId: string) {
+  return global.users.statusesByUserId[userId]
+}
+
+export function isUserOnline(user: ApiUser) {
+  const status = user.status
+
+  if (user.isSelf) {
+    return false
+  }
+  if (status && status.type === 'userStatusOnline') {
+    return true
+  }
+
+  return false
+}
+
+export function selectSelf(global: SignalGlobalState): ApiUser | undefined {
+  return global.users.byId[global.auth.userId!]
+}
+
+export function selectIsSelf(global: SignalGlobalState, id: string) {
+  return global.auth.userId === id
 }

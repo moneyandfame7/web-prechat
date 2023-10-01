@@ -1,4 +1,4 @@
-import {DEBUG} from 'common/config'
+import {DEBUG} from 'common/environment'
 
 export const REG_PHONE = /^\+\d{1,4}\s?\d{10,}$/
 

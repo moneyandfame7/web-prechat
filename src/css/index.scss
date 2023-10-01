@@ -3,104 +3,107 @@
 @import 'variables';
 @import 'mixins';
 @import 'typography';
-@import '../assets/webfonts/fonts.css';
-
+@import 'partials'; // @import '../assets/webfonts/fonts.css';
 #app {
   height: 100%;
   width: 100%;
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
+.root {
+  &.night {
+    @include spread-map($theme-map-dark);
+  }
+}
+// .disabled-js-notify {
+//   background-color: red;
+// }
 html,
 body {
+  // overscroll-behavior: contain;
+  overflow: hidden; // disable overscroll behavior on macOS
+
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Apple Color Emoji',
-    'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Apple Color Emoji', 'Segoe UI',
+    Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   --font-family-monospace: 'Cascadia Mono', 'Roboto Mono', 'Droid Sans Mono', 'SF Mono',
     'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
-  html.is-mac & {
-    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Roboto',
-      'Apple Color Emoji', 'Helvetica Neue', sans-serif;
+  html.is-apple & {
+    --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Apple Color Emoji',
+      'Helvetica Neue', sans-serif;
   }
   line-height: 1.5;
-  background-color: var(--c-bg);
+  background-color: var(--c-bg-body);
   color: var(--c-font-primary);
-  // transition: color 0.1s ease, background-color 0.1s ease;
   @include bgAndColorTransition();
 }
 
-html:not(.is-safari) .scrollable {
-  &-x {
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 5px 0;
-  }
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100%;
-  // padding: 0 7px;
+.scrollable,
+.scrollable-x {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.3s ease;
 
-  &.scroll-hidden {
-    &::-webkit-scrollbar {
-      width: 0;
-    }
-  }
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
+  // : none;
+  -webkit-overflow-scrolling: touch;
 
-  /* Track */
-  & ::-webkit-scrollbar-track {
-    background-color: transparent;
-    border-radius: 0.75rem;
-    width: 5px;
-    transition-duration: 0.4s;
-  }
+  pointer-events: auto;
 
-  /* Handle */
   &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 12px;
     box-shadow: 0 0 1px rgba(255, 255, 255, 0.01);
-    display: none;
-    scrollbar-width: none;
-    border-radius: 0.75rem;
-    width: 5px;
-    transition-duration: 0.4s;
   }
-  &:hover {
+
+  &:hover,
+  &:focus,
+  &:focus-within {
     scrollbar-color: var(--c-scrollbar) transparent;
 
     &::-webkit-scrollbar-thumb {
       background-color: var(--c-scrollbar);
-      scrollbar-width: thin;
-      display: initial;
     }
   }
+}
+.scrollable-x {
+  overflow-x: auto;
+  overflow-y: hidden !important;
+}
+.scrollable-y {
+  overflow-y: auto;
+  padding-inline-start: 0.375rem;
+  // padding-inline-end: 10px;
 }
 .scrollable {
-  &-x {
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  &-hidden {
-    overflow-x: auto;
-    overflow-y: auto;
-    scrollbar-color: transparent !important;
+  overflow-y: auto;
+  height: 100%;
+  width: 100%;
+}
 
-    &::-webkit-scrollbar-thumb {
-      background-color: transparent !important;
-      scrollbar-width: thin !important;
-      display: none !important;
+html:not(.is-ios) {
+  .scrollable {
+    &::-webkit-scrollbar {
+      width: 0.375rem;
+    }
+    // padding-inline-start: 0.375rem;
+  }
+
+  .scrollable-x {
+    &::-webkit-scrollbar {
+      height: 0.375rem;
     }
   }
-  overflow-y: auto;
-  overflow-x: hidden;
-  height: 100%;
 }
-.text-center {
-  text-align: center;
+
+.scrollable-hidden {
+  scrollbar-width: none;
+  // padding-right: 0;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 html.hasOpenPopup {
@@ -130,5 +133,14 @@ html.hasOpenPopup {
   100% {
     transform: scale(0.5);
     opacity: 0;
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }

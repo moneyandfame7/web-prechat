@@ -1,4 +1,24 @@
+@mixin transparentBtn($color, $transparent) {
+  // --color-ripple: $transparent;
+  background-color: transparent;
+  color: $color;
+  &:hover {
+    background-color: $transparent !important;
+  }
+  &:disabled {
+    opacity: 0.8;
+    background-color: $transparent !important;
+  }
+
+  .Icon path {
+    fill: $color;
+  }
+}
+
 .Button {
+  user-select: none;
+  --c-ripple: var(--c-primary-transparent);
+  flex-shrink: 0;
   position: relative;
   overflow: hidden;
   background-color: var(--c-primary);
@@ -14,7 +34,7 @@
   align-items: center;
   gap: 15px;
   // transition: background-color 0.3s ease;
-  @include bgAndColorTransition();
+  @include bgAndColorTransition(opacity);
   body.animation-none {
     transition: none !important;
   }
@@ -24,31 +44,54 @@
   &-fullwidth {
     width: 100%;
   }
+  &-noTransform {
+    text-transform: initial;
+  }
   &-transparent {
-    --color-ripple: var(--c-primary-transparent);
-    background-color: transparent;
-    color: var(--c-primary);
-    &:hover {
-      background-color: var(--c-primary-transparent);
-    }
-    font-weight: 400;
+    background-color: transparent !important;
 
-    &:disabled {
-      opacity: 0.8;
-      background-color: transparent !important;
+    // font-weight: 400;
+
+    &.Button-red {
+      --c-ripple: var(--c-red-transparent);
+      @include transparentBtn(var(--c-red), var(--c-red-transparent));
     }
+
+    &.Button-primary {
+      --c-ripple: var(--c-primary-transparent);
+
+      @include transparentBtn(var(--c-primary), var(--c-primary-transparent));
+    }
+
+    &.Button-gray {
+      // --c-ripple: var(--c-ripple); // IDK WHAT TO DO, NOT WORK HOVER
+
+      @include transparentBtn(var(--c-icon), var(--c-ripple));
+    }
+
+    &.Button-green {
+      --c-ripple: var(--c-green-transparent);
+
+      @include transparentBtn(var(--c-green), var(--c-green-transparent));
+    }
+  }
+
+  &-rounded {
+    border-radius: 24px;
+    height: max-content;
+    padding-block: 8px;
   }
 
   &-loading {
     justify-content: center;
     > .loader {
-      position: absolute;
       right: 20px;
-      height: 24px;
     }
+
+    // padding-right: 24px;
   }
   &-loading.Button-transparent {
-    color: #fff;
+    // color: #fff;
     background-color: var(--c-primary-transparent);
   }
 
@@ -56,5 +99,44 @@
     pointer-events: none;
 
     opacity: 0.5;
+  }
+
+  &-red {
+    background-color: var(--c-red);
+
+    &:hover {
+      background-color: var(--c-red-hover);
+    }
+
+    .Icon path {
+      fill: var(--c-red);
+    }
+  }
+
+  &-gray {
+    background-color: transparent;
+
+    &:hover {
+      // &:hover,
+      // :focus {
+      background-color: red;
+    }
+
+    .Icon path {
+      fill: var(--c-icon);
+    }
+    color: var(--c-icon);
+  }
+
+  &-primary {
+    background-color: var(--c-primary);
+    color: #fff;
+
+    &:hover {
+      background-color: var(--c-primary-hover);
+    }
+    .Icon path {
+      fill: var(--c-white);
+    }
   }
 }

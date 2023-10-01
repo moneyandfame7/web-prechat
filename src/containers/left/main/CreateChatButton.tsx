@@ -1,13 +1,17 @@
-import {useMemo, type FC, useCallback} from 'preact/compat'
+import {type FC, useCallback, useMemo} from 'preact/compat'
+
 import clsx from 'clsx'
 
-import {t} from 'lib/i18n'
-import {LeftColumnScreen} from 'types/ui'
 import {getGlobalState} from 'state/signal'
+
 import {useBoolean} from 'hooks/useFlag'
 
+import {t} from 'lib/i18n'
+
+import {LeftColumnScreen} from 'types/ui'
+
 import {Menu, MenuItem} from 'components/popups/menu'
-import {Icon, FloatButton} from 'components/ui'
+import {FloatButton, Icon} from 'components/ui'
 
 import {useLeftColumn} from '../context'
 
@@ -45,33 +49,33 @@ export const CreateChatButton: FC = () => {
         </MenuItem>
       </>
     ),
-    [handleNewPrivateChat, lang]
+    [lang]
   )
   const renderIcon = useMemo(() => {
     return (
       <>
-        <Icon name="close" />
-        <Icon name="editFilled" />
+        <Icon name="close" color="white" />
+        <Icon name="editFilled" color="white" />
       </>
     )
   }, [])
 
   const buildedClass = clsx('CreateChat-Button', {
-    open: value
+    open: value,
   })
   return (
     <div class={buildedClass}>
-      <FloatButton
-        shown
-        aria-label={t('CreateChat')}
-        icon={renderIcon}
-        onClick={setTrue}
-      />
+      <FloatButton shown aria-label={t('CreateChat')} icon={renderIcon} onClick={setTrue} />
       <Menu
-        placement="bottom right"
+        transform="bottom right"
+        placement={{
+          bottom: true,
+          right: true,
+        }}
         className="CreateChat-Menu"
         isOpen={value}
         onClose={setFalse}
+        withBackdrop
       >
         {renderItems}
       </Menu>

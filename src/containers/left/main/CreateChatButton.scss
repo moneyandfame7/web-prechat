@@ -1,5 +1,7 @@
 .CreateChat {
   &-Button {
+    width: 54px;
+    height: 54px;
     position: absolute;
     right: 20px;
     bottom: 20px;
@@ -46,12 +48,16 @@
     }
   }
 
-  &-Menu {
-    &.zoomFade {
-      bottom: 60px;
-      top: auto;
-      left: auto;
-      right: 0;
-    }
-  }
+  // &-Menu {
+  //   &.transition-item {
+  //     bottom: calc(100% + 0.5rem);
+  //     right: 0;
+  //     top: auto;
+  //     left: auto;
+  //     // bottom: 60px !important;
+  //     // top: auto !important;
+  //     // left: auto !important;
+  //     // right: 0 !important;
+  //   }
+  // }
 }

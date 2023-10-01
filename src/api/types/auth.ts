@@ -9,18 +9,12 @@ export type AuthSendPhoneResponse = {
   hasActiveSession: boolean
 }
 export type AuthSignUpInput = {
-  input: {
-    silent: boolean
-    firstName: string
-    lastName?: string
-    phoneNumber: string
-    firebase_token: string
-    connection: AuthConnection
-  }
-  photo?: File
-}
-export type AuthSignUpResponse = {
-  sessionHash: string
+  silent: boolean
+  firstName: string
+  lastName?: string
+  phoneNumber: string
+  firebase_token: string
+  connection: AuthConnection
 }
 
 export type AuthSignInInput = {
@@ -28,6 +22,16 @@ export type AuthSignInInput = {
   connection: AuthConnection
   phoneNumber: string
 }
-export type AuthSignInResponse = {
-  sessionHash: string
+
+export interface ApiSession {
+  id: string
+  ip: string
+  region: string
+  country: string
+  platform: string
+  browser: string
+  createdAt: Date
+  activeAt: Date
+  userId: string
+  isCurrent?: boolean
 }

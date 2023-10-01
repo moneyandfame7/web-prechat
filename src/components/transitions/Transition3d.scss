@@ -1,0 +1,13 @@
+.card {
+  height: 400px;
+  width: 50%;
+  margin: 0 auto;
+  > .inner {
+    margin: 0 auto;
+
+    background-color: var(--c-primary);
+    width: 200px;
+    height: 100%;
+    border-radius: 12px;
+  }
+}

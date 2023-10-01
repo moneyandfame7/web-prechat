@@ -1,12 +1,13 @@
 import type {FunctionComponent} from 'preact'
+import type {FC, TargetedEvent} from 'preact/compat'
 import {useRef, useState} from 'preact/hooks'
-import type {TargetedEvent} from 'preact/compat'
+
+import Croppie from 'croppie'
 
 import {Icon} from './ui'
 
-import Croppie from 'croppie'
-import 'croppie/croppie.css'
 import './UploadPhoto.scss'
+import 'croppie/croppie.css'
 
 export const UploadPhoto: FunctionComponent = () => {
   return (
@@ -16,7 +17,7 @@ export const UploadPhoto: FunctionComponent = () => {
   )
 }
 
-export const ImageUpload: React.FC = () => {
+export const ImageUpload: FC = () => {
   const croppieRef = useRef<HTMLDivElement | null>(null)
   const [result, setResult] = useState<string | null>(null)
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
@@ -29,15 +30,14 @@ export const ImageUpload: React.FC = () => {
       initializeCroppie(file)
     }
   }
-  /* 
-коли будемо робити upload image, в cropp передаємо розмір зображення початковий, щоб від нього вже зробити boundary ????
-*/
+  /* коли будемо робити upload image, в cropp передаємо розмір зображення початковий, щоб від нього вже зробити boundary ????
+   */
   const initializeCroppie = (file: File) => {
     if (croppieRef.current) {
       const newCroppieInstance = new Croppie(croppieRef.current, {
         viewport: {width: 200, height: 200, type: 'circle'},
         boundary: {width: 300, height: 300},
-        showZoomer: true
+        showZoomer: true,
       })
       setCroppieInstance(newCroppieInstance)
 
@@ -46,7 +46,7 @@ export const ImageUpload: React.FC = () => {
         if (reader.result && newCroppieInstance) {
           await newCroppieInstance.bind({url: reader.result as string})
           const croppedResult = await newCroppieInstance.result({
-            type: 'base64'
+            type: 'base64',
           })
           setResult(croppedResult)
         }
@@ -60,12 +60,14 @@ export const ImageUpload: React.FC = () => {
       try {
         const croppedResult = await croppieInstance.result({
           type: 'base64',
-          circle: true
+          circle: true,
         })
 
+        // eslint-disable-next-line no-console
         console.log(croppieRef.current)
         setResult(croppedResult)
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Error cropping image:', error)
       }
     }

@@ -1,17 +1,19 @@
 import {
-  useRef,
   type FC,
-  useCallback,
-  type TargetedEvent,
   type PropsWithChildren,
-  useEffect
+  type TargetedEvent,
+  useCallback,
+  useEffect,
+  useRef,
 } from 'preact/compat'
 
-import {TransitionTest} from 'components/transitions'
-import {Portal} from 'components/ui/Portal'
-import {IconButton} from 'components/ui'
+import {addEscapeListener} from 'utilities/keyboardListener'
 
-import {ModalProvider, useModalContext} from '../modal'
+import {SingleTransition} from 'components/transitions'
+import {IconButton} from 'components/ui'
+import {Portal} from 'components/ui/Portal'
+
+import {ModalProvider, useModalContext} from './context'
 
 import './Modal.scss'
 
@@ -21,6 +23,8 @@ interface ModalProps extends PropsWithChildren {
   shouldCloseOnBackdrop?: boolean
   hasCloseButton?: boolean
   onExitTransition?: VoidFunction
+  className?: string
+  closeOnEsc?: boolean
 }
 
 export const Modal: FC<ModalProps> = ({
@@ -29,7 +33,9 @@ export const Modal: FC<ModalProps> = ({
   shouldCloseOnBackdrop,
   hasCloseButton = false,
   children,
-  onExitTransition
+  onExitTransition,
+  className,
+  closeOnEsc,
 }) => {
   useEffect(() => {
     if (isOpen) {
@@ -49,23 +55,31 @@ export const Modal: FC<ModalProps> = ({
     [shouldCloseOnBackdrop]
   )
 
+  useEffect(() => {
+    return isOpen && closeOnEsc
+      ? addEscapeListener(() => {
+          onClose()
+        })
+      : undefined
+  }, [isOpen, closeOnEsc])
+  const buildedClass = ['Modal-paper', className].filter(Boolean).join(' ')
   return (
     <ModalProvider value={{isOpen, hasCloseButton, onClose}}>
       <Portal>
-        <TransitionTest
+        <SingleTransition
           className="Modal"
           appear
           name="fade"
-          isMounted={isOpen}
-          alwaysMounted={false}
-          duration={300}
-          onExitTransition={onExitTransition}
+          in={isOpen}
+          unmount={true}
+          timeout={250}
+          onExited={onExitTransition}
           onClick={handleBackdropClick}
         >
-          <div class="Modal-paper" ref={modalRef}>
+          <div class={buildedClass} ref={modalRef}>
             {children}
           </div>
-        </TransitionTest>
+        </SingleTransition>
       </Portal>
     </ModalProvider>
   )
@@ -90,4 +104,18 @@ export const ModalActions: FC = ({children}) => {
 
 export const ModalContent: FC = ({children}) => {
   return <div class="Modal-content">{children}</div>
+}
+
+interface ModalHeaderProps {
+  hasCloseButton?: boolean
+}
+export const ModalHeader: FC<ModalHeaderProps> = ({children, hasCloseButton = false}) => {
+  const context = useModalContext()
+
+  return (
+    <div class="Modal-header">
+      {hasCloseButton && <IconButton withFastClick onClick={context.onClose} icon="close" />}
+      {children}
+    </div>
+  )
 }

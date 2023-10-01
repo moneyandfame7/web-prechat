@@ -1,9 +1,10 @@
 import {type FC, memo} from 'preact/compat'
 
-import type {NewContactModalProps} from './NewContactModal'
 import {useLazyComponent} from 'hooks/useLazy'
 
-const NewContactModalAsync: FC<NewContactModalProps> = (props) => {
+import type {NewContactModalProps} from './NewContactModal'
+
+const NewContactModalAsync: FC<NewContactModalProps> = props => {
   const NewContactModal = useLazyComponent('NewContactModal', !props.isOpen)
   // const Component = useLazyComponent('Notification', !props.isOpen)
 

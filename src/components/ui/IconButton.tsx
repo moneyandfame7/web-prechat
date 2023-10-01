@@ -1,46 +1,57 @@
-import type { FC, TargetedEvent } from 'preact/compat'
+import type {FC, TargetedEvent} from 'preact/compat'
 
-import { logDebugWarn } from 'lib/logger'
-import { IS_SENSOR } from 'common/config'
+import clsx from 'clsx'
 
-import type { ButtonProps } from './Button'
-import { Icon, type IconName } from './Icon'
-import { Ripple } from '../Ripple'
+import {useFastClick} from 'hooks/useFastClick'
+
+import type {SignalOr} from 'types/ui'
+
+import {Transition} from 'components/transitions'
+
+import {Ripple} from '../Ripple'
+import type {ButtonProps} from './Button'
+import {Icon, type IconColor, type IconName} from './Icon'
 
 import './IconButton.scss'
 
-interface IconButtonProps
-  extends Pick<ButtonProps, 'className' | 'onClick' | 'ripple' | 'withFastClick'> {
+/**
+ * використовувати кнопку замість діва?
+ */
+interface PickedButtonProps
+  extends Pick<
+    ButtonProps,
+    'className' | 'ripple' | 'withFastClick' | 'variant' | 'color' | 'isDisabled' | 'id'
+  > {}
+export interface IconButtonProps {
   icon: IconName
+  onClick?: (e: TargetedEvent<HTMLButtonElement, MouseEvent>) => void
+  title?: SignalOr<string>
+  iconColor?: IconColor
 }
-export const IconButton: FC<IconButtonProps> = ({
+
+export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
   icon,
   className,
   onClick,
-  withFastClick,
+  withFastClick = true,
   ripple = true,
+  color = 'gray',
+  variant = 'transparent',
+  isDisabled,
+  id,
+  iconColor = 'secondary',
   ...props
 }) => {
-  const buildedClass = `IconButton  ${className || ''}`.trim()
+  const buildedClass = clsx(`IconButton Button-${color} Button-${variant}`, className)
 
-  const handleMouseDown = (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
-    e.preventDefault()
-    if (e.button === 0) {
-      logDebugWarn('[UI]: IconButton click')
-
-      onClick?.()
-    }
-  }
+  const clickHandlers = useFastClick(onClick, withFastClick)
 
   return (
-    <div
-      class={buildedClass}
-      onMouseDown={withFastClick && !IS_SENSOR ? handleMouseDown : undefined}
-      onClick={IS_SENSOR || !withFastClick ? onClick : undefined}
-      {...props}
-    >
-      <Icon name={icon} color="secondary" />
+    <button id={id} class={buildedClass} {...clickHandlers} disabled={isDisabled} {...props}>
+      <Transition activeKey={icon} name="zoomIcon">
+        <Icon name={icon} color={iconColor} />
+      </Transition>
       {ripple && <Ripple />}
-    </div>
+    </button>
   )
 }

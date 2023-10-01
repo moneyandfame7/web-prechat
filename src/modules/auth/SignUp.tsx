@@ -1,16 +1,15 @@
-import type {FC, TargetedEvent} from 'preact/compat'
-import {memo, useCallback, useState} from 'preact/compat'
+import {type FC, type TargetedEvent, memo, useCallback, useState} from 'preact/compat'
 
 import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
 
 import {t} from 'lib/i18n'
 
+import {UploadPhoto} from 'components/UploadPhoto'
 import {Button, InputText} from 'components/ui'
 import {Checkbox} from 'components/ui/Checkbox'
-import {UploadPhoto} from 'components/UploadPhoto'
 
 import './SignUp.scss'
-import {getGlobalState} from 'state/signal'
 
 const SignUp: FC = () => {
   const {auth} = getGlobalState()
@@ -26,14 +25,11 @@ const SignUp: FC = () => {
 
     setFirstName(e.currentTarget.value)
   }, [])
-  const handleChangeLastName = useCallback(
-    (e: TargetedEvent<HTMLInputElement, Event>) => {
-      e.preventDefault()
+  const handleChangeLastName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    e.preventDefault()
 
-      setLastName(e.currentTarget.value)
-    },
-    []
-  )
+    setLastName(e.currentTarget.value)
+  }, [])
 
   const handleChangeSilentSignUp = useCallback(() => {
     setSilentSignUp((prev) => !prev)
@@ -46,14 +42,14 @@ const SignUp: FC = () => {
         firstName,
         lastName: lastName.length === 0 ? undefined : lastName,
         // photo,
-        silent: silentSignUp
+        silent: silentSignUp,
       })
     },
     [silentSignUp, lastName]
   )
 
   return (
-    <>
+    <div class="Auth_signup">
       <UploadPhoto />
       <h1 class="title">Sign up</h1>
       <p class="subtitle">{t('Auth.SignUp')}</p>
@@ -75,7 +71,7 @@ const SignUp: FC = () => {
           </Button>
         )}
       </form>
-    </>
+    </div>
   )
 }
 

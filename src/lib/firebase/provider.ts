@@ -5,10 +5,10 @@ import {RecaptchaVerifier, signInWithPhoneNumber} from 'firebase/auth'
 import {FirebaseError} from 'firebase/app'
 
 import type {ApiLangCode} from 'types/lib'
-import type {AuthState} from 'types/state'
 
 import {authentication} from './config'
 import {throwFirebaseError, getFirebaseErrorMessage} from './errors'
+import type {AuthState} from 'types/state'
 
 export async function generateRecaptcha(auth: DeepSignal<AuthState>) {
   // if (auth.captcha) {

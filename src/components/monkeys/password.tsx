@@ -1,7 +1,10 @@
 import type {Signal} from '@preact/signals'
+import {type FC, memo, useEffect, useRef} from 'preact/compat'
+
 import {LottiePlayer, type LottieRefCurrentProps} from 'lib/lottie'
-import {type FC, memo, useRef, useEffect} from 'preact/compat'
+
 import type {Size} from 'types/ui'
+
 import {MONKEY_PASS_SEE_FIRST_SEGMENT, MONKEY_PASS_SEE_LAST_SEGMENT} from './helpers'
 
 interface MonkeyPasswordProps {

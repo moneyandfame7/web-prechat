@@ -1,5 +1,6 @@
 import {type VNode} from 'preact'
 import {type FC} from 'preact/compat'
+
 import clsx from 'clsx'
 
 import type {SignalOrString} from 'types/ui'
@@ -8,12 +9,12 @@ import {Button, type ButtonProps} from './Button'
 
 import './FloatButton.scss'
 
-interface FloatButtonProps extends ButtonProps {
+interface FloatButtonProps {
   icon: VNode
   'aria-label': SignalOrString
   shown: boolean
 }
-export const FloatButton: FC<FloatButtonProps> = ({
+export const FloatButton: FC<FloatButtonProps & Omit<ButtonProps, 'icon'>> = ({
   icon,
   children,
   className,
@@ -21,7 +22,7 @@ export const FloatButton: FC<FloatButtonProps> = ({
   ...props
 }) => {
   const buildedClass = clsx('FloatButton', className, {
-    'shown': shown
+    shown,
   })
 
   return (

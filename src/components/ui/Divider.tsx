@@ -1,12 +1,26 @@
 import type {FC} from 'preact/compat'
 
-import './Divider.scss'
 import clsx from 'clsx'
+
+import './Divider.scss'
+
 interface DividerProps {
   textAlign?: 'left' | 'center' | 'right'
+  primary?: boolean
+  bold?: boolean
 }
-export const Divider: FC<DividerProps> = ({textAlign = 'center', children}) => {
-  const buildedClass = clsx('divider', `divider-${textAlign}`)
+export const Divider: FC<DividerProps> = ({
+  textAlign = 'center',
+  primary = false,
+  children,
+  bold,
+}) => {
+  const buildedClass = clsx(
+    'divider',
+    `divider-${textAlign}`,
+    primary && 'primary',
+    bold && 'bold'
+  )
 
   return (
     <div class={buildedClass} role="separator">

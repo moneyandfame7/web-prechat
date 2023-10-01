@@ -1,0 +1,40 @@
+.two-fa {
+  background-color: var(--c-surface) !important;
+  &-main {
+    z-index: 1; // in case, when user already has password and need to return to main screen
+  }
+  .column-section {
+    user-select: none;
+  }
+  .Lottie-player {
+    margin: auto;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .two-fa-info {
+    color: var(--c-font-secondary);
+    text-align: center;
+    margin-block: 15px 25px;
+    padding-inline: 10px;
+  }
+}
+
+.two-fa-enter-password {
+  .PasswordInput {
+    margin-block: 15px 30px;
+  }
+}
+
+.two-fa-hint,
+.two-fa-email {
+  .input-container {
+    margin-block-start: 10px;
+  }
+  .Button:nth-last-child(2) {
+    margin-block: 20px;
+  }
+}

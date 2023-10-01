@@ -5,7 +5,7 @@ interface ImportMetaEnv {
   readonly VITE_APP_IMAGE: string
 
   readonly VITE_API_URL: string
-
+  readonly NODE_ENV: 'production' | 'development' | 'staging'
   readonly VITE_FIREBASE_CREDENTIALS: string
 }
 interface ImportMeta {

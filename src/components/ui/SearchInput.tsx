@@ -1,10 +1,8 @@
-import {type RefObject} from 'preact'
-// import {useCallback} from 'preact/hooks'
-import {type FC, /* type TargetedEvent, */ memo} from 'preact/compat'
-
-import type {InputHandler} from 'types/ui'
+import {type FC, memo, useLayoutEffect, useRef} from 'preact/compat'
 
 import {t} from 'lib/i18n'
+
+import type {InputHandler} from 'types/ui'
 
 import {InputText} from './Input'
 
@@ -15,20 +13,29 @@ interface SearchInputProps {
   onInput: (value: string) => void
   onFocus?: InputHandler
   placeholder?: string
-  elRef: RefObject<HTMLInputElement>
+  isFocused: boolean
 }
 
 export const SearchInput: FC<SearchInputProps> = memo(
-  ({value, onInput, placeholder = 'Search', onFocus, elRef}) => {
+  ({value, onInput, placeholder = 'Search', onFocus, isFocused}) => {
     const handleOnInput: InputHandler = (e) => {
       e.preventDefault()
       onInput(e.currentTarget.value)
     }
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    useLayoutEffect(() => {
+      if (isFocused) {
+        inputRef.current?.focus()
+      } else {
+        inputRef.current?.blur()
+      }
+    }, [isFocused])
     return (
       <div class="SearchInput">
         <InputText
+          elRef={inputRef}
           aria-label={t('Search')}
-          elRef={elRef}
           value={value}
           onFocus={onFocus}
           onInput={handleOnInput}

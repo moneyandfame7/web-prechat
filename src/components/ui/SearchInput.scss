@@ -8,6 +8,7 @@
   input {
     border-radius: var(--input-search-radius);
     border-color: var(--c-border-input) !important;
+
     // border: none;
     // background-color: var(--color-gray);
     @include whenNight {

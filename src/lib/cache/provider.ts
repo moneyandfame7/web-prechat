@@ -1,4 +1,4 @@
-import type {CacheOptions, CacheResponse, CacheName} from './types'
+import type {CacheName, CacheOptions, CacheResponse} from './types'
 
 // eslint-disable-next-line no-restricted-globals
 const storageCache = self.caches || window.caches
@@ -13,10 +13,9 @@ export async function add({name, key, value, expiration}: CacheOptions) {
     return
   }
   const cache = await storageCache.open(name)
-
   const item: CacheResponse = {
     value: value instanceof Response ? await value.json() : value,
-    expiration: expiration ? Date.now() + expiration : undefined
+    expiration: expiration ? Date.now() + expiration : undefined,
   }
 
   const response = new Response(JSON.stringify(item))

@@ -1,18 +1,19 @@
 import {useSignal} from '@preact/signals'
-import {type FC, memo, useCallback, type TargetedEvent} from 'preact/compat'
+import {type FC, type TargetedEvent, memo, useCallback} from 'preact/compat'
 
-import {getDisplayedUserName} from 'state/helpers/users'
 import {getActions} from 'state/action'
+import {getUserName} from 'state/helpers/users'
 import {getGlobalState} from 'state/signal'
-
-import {FloatButton, Icon, InputText} from 'components/ui'
-import {UploadPhoto} from 'components/UploadPhoto'
-import {ListItem} from 'components/ChatItem'
 
 import {useBoolean} from 'hooks/useFlag'
 
-import {useLeftColumn} from '../context'
+import {ColumnHeader} from 'components/ColumnHeader'
+import {UploadPhoto} from 'components/UploadPhoto'
+import {FloatButton, Icon, InputText} from 'components/ui'
+
 import {LeftGoBack} from '../LeftGoBack'
+import {useLeftColumn} from '../context'
+
 import styles from './CreateChatStep2.module.scss'
 
 export interface CreateChatStep2Props {
@@ -31,40 +32,38 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
 
     title.value = value
   }, [])
-  const handleChangeDescription = useCallback(
-    (e: TargetedEvent<HTMLInputElement, Event>) => {
-      const {value} = e.currentTarget
+  const handleChangeDescription = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    const {value} = e.currentTarget
 
-      description.value = value
-    },
-    []
-  )
+    description.value = value
+  }, [])
 
   const handleNextStep = useCallback(async () => {
     setTrue()
     if (isGroup) {
       await createGroup({
         title: title.value,
-        users: selectedIds
+        users: selectedIds,
       })
     } else {
       await createChannel({
         title: title.value,
         users: selectedIds,
-        description: description.value
+        description: description.value,
       })
     }
+    resetScreen(true)
 
     setFalse()
-    resetScreen(true)
   }, [])
 
   return (
     <>
-      <div class="LeftColumn-Header">
+      <ColumnHeader>
         <LeftGoBack force={false} />
-        <p class="LeftColumn-Header_title">New {isGroup ? 'Group' : 'Channel'}</p>
-      </div>
+
+        <p class="column-header__title">New {isGroup ? 'Group' : 'Channel'}</p>
+      </ColumnHeader>
       <UploadPhoto />
       <div class={styles['chat-info']}>
         <InputText
@@ -92,7 +91,8 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
               {selectedIds.map((member) => {
                 const user = globalState.users.byId?.[member] || undefined
                 return (
-                  <ListItem
+                  <p key={member}>{user ? getUserName(user) : 'NOT SELECT USER'}</p>
+                  /*      <ListItem
                     userId={member}
                     key={member}
                     title={getDisplayedUserName(user)}
@@ -100,7 +100,7 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
 
                     // withCheckbox
                     // checked={selectedIds.includes(id)}
-                  />
+                  /> */
                 )
               })}
             </div>

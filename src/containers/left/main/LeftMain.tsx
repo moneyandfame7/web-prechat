@@ -1,34 +1,31 @@
-import {type FC, memo, Fragment} from 'preact/compat'
-import {useCallback, useState, useRef, useEffect} from 'preact/hooks'
-
-import {SearchInput} from 'components/ui'
-import {SwitchTransition} from 'components/transitions'
+import {type FC, Fragment, memo} from 'preact/compat'
+import {useCallback, useEffect, useState} from 'preact/hooks'
 
 import {LeftColumnScreen} from 'types/ui'
 
-import {Chats} from './chats/ChatList'
-import Search from './search/Search.async'
+import {StoriesList} from 'containers/stories/list'
+
+import {ColumnHeader} from 'components/ColumnHeader'
+import {Transition} from 'components/transitions'
+import {SearchInput} from 'components/ui'
 
 import {LeftGoBack} from '../LeftGoBack'
-import {LeftMainMenu} from './MainMenu'
-import {CreateChatButton} from './CreateChatButton'
-
 import {useLeftColumn} from '../context'
+import {CreateChatButton} from './CreateChatButton'
+import {LeftMainMenu} from './MainMenu'
+import {ChatFolders} from './chats/ChatFolders'
+import {ChatList} from './chats/ChatList'
+import Search from './search/Search.async'
 
 import './LeftMain.scss'
 
 enum LeftMainGroup {
-  Chats = 'Chats',
-  Search = 'Search'
-}
-const classNames: Record<LeftMainGroup, string> = {
-  [LeftMainGroup.Chats]: 'LeftColumn-Chats scrollable',
-  [LeftMainGroup.Search]: 'LeftColumn-Search'
+  Chats,
+  Search,
 }
 
 const LeftMain: FC = (props) => {
   const [search, setSearch] = useState('')
-  const inputRef = useRef<HTMLInputElement>(null)
 
   const {activeScreen, setScreen} = useLeftColumn()
   const [activeGroup, setActiveGroup] = useState(LeftMainGroup.Chats)
@@ -47,9 +44,9 @@ const LeftMain: FC = (props) => {
   const renderScreen = useCallback(() => {
     switch (activeGroup) {
       case LeftMainGroup.Chats:
-        return <Chats key={LeftMainGroup.Chats} />
+        return <ChatFolders />
       case LeftMainGroup.Search:
-        return <Search key={LeftMainGroup.Search} />
+        return <Search />
     }
   }, [activeGroup])
   const handleSearch = (value: string) => {
@@ -68,29 +65,55 @@ const LeftMain: FC = (props) => {
     }
   }, [activeGroup])
 
+  const isSearchInputFocused = activeGroup === LeftMainGroup.Search
+
   return (
     <Fragment {...props}>
-      <div class="LeftColumn-Header">
-        {renderButton()}
+      <ColumnHeader className="LeftColumn-Header">
+        <Transition
+          name="rotate"
+          activeKey={activeGroup}
+          shouldCleanup={false}
+          containerClassname="left-column-header__btn-container"
+        >
+          {renderButton()}
+        </Transition>
         {/* <InputText onFocus={handleFocusInput} elRef={inputRef} value={search} onInput={()=>)}/> */}
         <SearchInput
-          elRef={inputRef}
+          isFocused={isSearchInputFocused}
           value={search}
           onInput={handleSearch}
           onFocus={handleFocusInput}
         />
-      </div>
-      <div class="LeftColumn-Main_inner">
-        <SwitchTransition
+        {/* <InputText
+          value={search}
+          onInput={(v) => {
+            console.log(v)
+          }}
+          onFocus={handleFocusInput}
+        /> */}
+      </ColumnHeader>
+      {/* <StoriesList /> */}
+
+      <div class="LeftColumn-Main_inner scrollable">
+        {/* <SwitchTransition
           classNames={classNames}
           name="fade"
           activeKey={activeGroup}
           durations={350}
           // shouldCleanup={[LeftMainGroup.Search]}
+          cleanupException={[LeftMainGroup.Chats]}
           initial={false}
         >
           {renderScreen()}
-        </SwitchTransition>
+        </SwitchTransition> */}
+        <Transition
+          activeKey={activeGroup}
+          name="zoomFade"
+          cleanupException={LeftMainGroup.Chats}
+        >
+          {renderScreen()}
+        </Transition>
         <CreateChatButton />
       </div>
     </Fragment>

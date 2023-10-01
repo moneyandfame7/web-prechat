@@ -1,21 +1,24 @@
-import {type FC, memo} from 'preact/compat'
+import {type FC, Fragment, memo} from 'preact/compat'
 import {useCallback, useRef, useState} from 'preact/hooks'
+
+import {getUserName, getUserStatus} from 'state/helpers/users'
+import {selectContacts} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
-import {FloatButton, Icon, InputText, Divider} from 'components/ui'
-import {LeftColumnScreen} from 'types/ui'
 
 import {useInputValue} from 'hooks'
 
-import {ListItem} from 'components/ChatItem'
+import {fromRecord} from 'utilities/array/fromRecord'
 
-import {getDisplayedUserName} from 'state/helpers/users'
+import {LeftColumnScreen} from 'types/ui'
 
-import {LeftGoBack} from '../LeftGoBack'
+import {ColumnHeader} from 'components/ColumnHeader'
+import {Divider, FloatButton, Icon, IconButton, InputText} from 'components/ui'
+import {AvatarTest} from 'components/ui/AvatarTest'
+import {ListItem} from 'components/ui/ListItem'
+
 import {useLeftColumn} from '../context'
 
 import './CreateChatStep1.scss'
-import {fromRecord} from 'utilities/array/fromRecord'
-import {selectContacts} from 'state/selectors/users'
 
 export interface CreateChatStep1Props {
   isGroup: boolean
@@ -23,11 +26,7 @@ export interface CreateChatStep1Props {
   handleSelect: (id: string) => void
 }
 
-const CreateChatStep1: FC<CreateChatStep1Props> = ({
-  isGroup,
-  selectedIds,
-  handleSelect
-}) => {
+const CreateChatStep1: FC<CreateChatStep1Props> = ({isGroup, selectedIds, handleSelect}) => {
   const {setScreen} = useLeftColumn()
   const global = getGlobalState()
   const [filteredList, setFilteredList] = useState(fromRecord(selectContacts(global)))
@@ -44,7 +43,7 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
       } else {
         setFilteredList((prev) => prev.filter((u) => u.username?.includes(value)))
       }
-    }
+    },
   })
   const render = useRef(0)
   render.current += 1
@@ -53,18 +52,22 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
       <>
         {filteredList.map((user) => {
           return (
-            <ListItem
-              userId={user.id}
-              user={user}
-              key={user.id}
-              title={getDisplayedUserName(user)}
-              subtitle={user.username ? `@${user.username}` : undefined}
-              onClick={() => {
-                handleSelect(user.id)
-              }}
-              withCheckbox
-              checked={selectedIds.includes(user.id)}
-            />
+            <Fragment key={user.id}>
+              {/* якщо не працює - змінити onToggleCheckbox */}
+              <ListItem
+                withCheckbox
+                withContextMenuPortal
+                isChecked={selectedIds.includes(user.id)}
+                onClick={() => {
+                  handleSelect(user.id)
+                }}
+                // withRipple={false}
+                title={getUserName(user)}
+                subtitle={getUserStatus(user)}
+              >
+                <AvatarTest size="s" peer={user} />
+              </ListItem>
+            </Fragment>
           )
         })}
       </>
@@ -73,10 +76,15 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
 
   return (
     <>
-      <div class="LeftColumn-Header">
-        <LeftGoBack />
-        <p class="LeftColumn-Header_title">Add Members {render.current}</p>
-      </div>
+      <ColumnHeader>
+        <IconButton
+          icon="arrowLeft"
+          onClick={() => {
+            setScreen(LeftColumnScreen.Chats)
+          }}
+        />
+        <p class="column-header__title">Add Members</p>
+      </ColumnHeader>
       <InputText
         value={value}
         onInput={handleInput}
@@ -84,9 +92,9 @@ const CreateChatStep1: FC<CreateChatStep1Props> = ({
         placeholder="Add People..."
       />
       <Divider />
-      <div class="picker-list scrollable">{renderList()}</div>
+      <div class="picker-list scrollable scrollable-y">{renderList()}</div>
       {selectedIds.map((id) => (
-        <p>{global.users.byId[id].firstName}</p>
+        <p key={id}>{global.users.byId[id].firstName}</p>
       ))}
       <FloatButton
         shown

@@ -1,13 +1,13 @@
-import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
 import type {FC, TargetedEvent} from 'preact/compat'
+import {useCallback, useEffect, useLayoutEffect, useRef, useState} from 'preact/hooks'
 
-import Lottie from 'lottie-react'
 import clsx from 'clsx'
+import Lottie, {type LottieRefCurrentProps} from 'lottie-react'
 
 import {useInactivePage} from 'hooks'
 
-import type {LottiePlayerProps} from './types'
 import {getFallback} from './helpers'
+import type {LottiePlayerProps} from './types'
 
 import './LottiePlayer.scss'
 
@@ -21,39 +21,42 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
   className,
   size = 'medium',
   hidden,
-  isPausable
+  isPausable,
 }) => {
+  let _lottieRef = useRef<LottieRefCurrentProps>(null)
+  if (lottieRef) {
+    _lottieRef = lottieRef
+  }
+
   const [animationData, setAnimationData] = useState<unknown>()
-  const [isPaused, setIsPaused] = useState(lottieRef.current?.animationItem?.isPaused)
+  const [isPaused, setIsPaused] = useState(_lottieRef.current?.animationItem?.isPaused)
   const playerHidden = loading || !animationData /* || !lottieRef.current */
 
   useLayoutEffect(() => {
-    import(`../../assets/animations/${name}.json`).then((module) =>
-      setAnimationData(module.default)
-    )
+    // import(`../../assets/animations/${name}.json`).then((module) =>
+    //   setAnimationData(module.default)
+    // )
+    import(`../../assets/animations/${name}.json`).then((m) => setAnimationData(m.default))
   }, [])
 
   const stopAnimationOnBlur = useCallback(() => {
-    if (withBlur && !hidden) lottieRef.current?.pause()
+    if (withBlur && !hidden) _lottieRef.current?.pause()
   }, [])
   const playAnimationOnFocus = useCallback(() => {
-    if (withBlur && !hidden) lottieRef.current?.play()
+    if (withBlur && !hidden) _lottieRef.current?.play()
   }, [])
 
-  const pauseOnClick = useCallback(
-    (e: TargetedEvent<HTMLDivElement, Event>) => {
-      e.preventDefault()
-
-      if (isPaused) {
-        lottieRef.current?.play()
-        setIsPaused(false)
-      } else {
-        lottieRef.current?.pause()
-        setIsPaused(true)
-      }
-    },
-    [isPaused]
-  )
+  const pauseOnClick = (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault()
+    console.log('PAUSE???', isPaused)
+    if (isPaused) {
+      _lottieRef.current?.play()
+      setIsPaused(false)
+    } else {
+      _lottieRef.current?.pause()
+      setIsPaused(true)
+    }
+  }
 
   useInactivePage({onBlur: stopAnimationOnBlur, onFocus: playAnimationOnFocus})
 
@@ -65,7 +68,7 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
     `Lottie-player_${name}`,
     {
       'Lottie-player_hidden': playerHidden || hidden,
-      'Lottie-player_pausable': isPausable
+      'Lottie-player_pausable': isPausable,
     },
     className
   )
@@ -75,21 +78,27 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
       return
     }
     if (playerHidden) {
-      lottieRef.current?.pause()
+      _lottieRef.current?.pause()
     } else {
-      lottieRef.current?.play()
+      _lottieRef.current?.play()
     }
   }, [playerHidden])
   // const elRef = useRef<{base: HTMLDivElement}>(null)
 
   return (
     <>
-      {playerHidden && !hidden && <div class={fallbackClass}>{getFallback(name)}</div>}
+      {playerHidden && !hidden && (
+        <div class={fallbackClass}>
+          <img src={getFallback(name)} alt="Fallback player" />
+        </div>
+      )}
 
+      {/* @ts-expect-error Preact types confused */}
       <Lottie
         // ref={elRef}
-        onClick={isPausable ? pauseOnClick : undefined}
-        lottieRef={lottieRef}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onClick={isPausable ? (pauseOnClick as any) : undefined}
+        lottieRef={_lottieRef}
         loop={loop}
         autoplay={false}
         className={playerClass}

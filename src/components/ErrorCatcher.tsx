@@ -1,9 +1,9 @@
-import type {VNode} from 'preact'
+import type {ComponentChildren} from 'preact'
 import type {FC} from 'preact/compat'
 import {useErrorBoundary} from 'preact/hooks'
 
 interface ErrorCatcherProps {
-  children: VNode
+  children: ComponentChildren
 }
 export const ErrorCatcher: FC<ErrorCatcherProps> = ({children}) => {
   const [error, resetError] = useErrorBoundary()

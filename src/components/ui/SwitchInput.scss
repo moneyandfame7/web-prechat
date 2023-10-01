@@ -1,0 +1,90 @@
+.switch-input-wrapper {
+  pointer-events: none; // to allow onChange on input
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 24px;
+  // margin: 10px;
+
+  > .switch-input {
+    display: none;
+  }
+
+  > .switch-input-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    // width: 40px;
+    // height: 24px;
+
+    width: inherit;
+    height: inherit;
+
+    background-color: var(--c-gray);
+    border-radius: 34px;
+    cursor: pointer;
+    // transition: background-color 0.3s;
+    @include bgAndColorTransition();
+    &::before {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      background-color: #fff;
+      box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+      @include bgAndColorTransition(transform);
+    }
+  }
+
+  > .switch-input:checked + .switch-input-label {
+    background-color: var(--c-primary);
+
+    &::before {
+      transform: translateX(16px);
+    }
+  }
+
+  &.small {
+    height: 10px;
+    width: 20px;
+    > .switch-input-label {
+      height: inherit;
+      border-radius: 15px;
+      &::before {
+        width: 8px;
+        height: 8px;
+        top: 1px;
+        left: 1px;
+      }
+    }
+    > .switch-input:checked + .switch-input-label {
+      &::before {
+        transform: translateX(10px);
+      }
+    }
+  }
+
+  &.medium {
+    height: 15px;
+    width: 30px;
+
+    > .switch-input-label {
+      height: inherit;
+      border-radius: 15px;
+      &::before {
+        width: 13px;
+        height: 13px;
+        top: 1px;
+        left: 2px;
+      }
+    }
+    > .switch-input:checked + .switch-input-label {
+      &::before {
+        transform: translateX(13px);
+      }
+    }
+  }
+}

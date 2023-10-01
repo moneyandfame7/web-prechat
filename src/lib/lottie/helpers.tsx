@@ -1,14 +1,12 @@
-import type {VNode} from 'preact'
-
-import {ReactComponent as MonkeyFallback} from 'assets/monkey.svg'
-import {ReactComponent as EmptyFolderFallback} from 'assets/skeletons/empty-folder.svg'
-
 import type {LottieAnimations} from './types'
 
-export function getFallback(name: LottieAnimations): VNode | undefined {
+export function getFallback(name: LottieAnimations): string | undefined {
   if (name.includes('Monkey-')) {
-    return <MonkeyFallback />
+    return 'images/monkey.svg'
   } else if (name === 'Empty-folder') {
-    return <EmptyFolderFallback />
+    return 'images/empty-folder-skeleton.svg'
+  } else if (name.includes('Device')) {
+    const device = name.split('Device-')[1]
+    return `devices/${device}.svg`
   }
 }

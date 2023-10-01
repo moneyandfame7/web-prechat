@@ -3,22 +3,22 @@ import {
   type TargetedEvent,
   memo,
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
-  useEffect
 } from 'preact/compat'
+
+import type {ApiCountry} from 'api/types/langPack'
 
 import {t} from 'lib/i18n'
 
+import {TRANSITION_DURATION_ZOOM_FADE} from 'common/environment'
+
+import {Menu, MenuItem} from 'components/popups/menu'
 import {Icon, InputText} from 'components/ui'
-import {MenuItem, Menu} from 'components/popups/menu'
 
-import {TRANSITION_DURATION_ZOOM_FADE} from 'common/config'
-
-import type {ApiCountry} from 'api/types/langPack'
 // import {parseEmoji} from 'utilities/parseEmoji'
-
 import './SelectCountryInput.scss'
 
 interface SelectCountryInputProps {
@@ -88,9 +88,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
             !country.name.toLowerCase().includes(stringName.toLowerCase())
           }
         >
-          <span class="country-emoji">
-            {/* parseEmoji(country.emoji) */ country.emoji}
-          </span>
+          <span class="country-emoji">{country.emoji}</span>
           <span class="country-name">{country.name}</span>
           <span class="country-code">{country.dial_code}</span>
         </MenuItem>
@@ -113,7 +111,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
             endIcon={<Icon name="chevronDown" color="secondary" />}
           />
           <Menu
-            placement="top"
+            transform="top"
             containerRef={containerRef}
             withBackdrop={false}
             isOpen={isOpen}

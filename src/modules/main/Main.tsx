@@ -1,46 +1,94 @@
-import {type FC, memo, useEffect} from 'preact/compat'
+import {type FC, memo, useEffect, useRef} from 'preact/compat'
 
-import 'state/actions/all'
+import {MOCK_STORIES} from 'api/types/stories'
+
 import {getActions} from 'state/action'
+import 'state/actions/all'
+import {type MapState, connect} from 'state/connect'
 import {getGlobalState} from 'state/signal'
+import {destroySubscribeAll, subscribeToAll} from 'state/subscribe'
 
-import {MiddleColumn} from 'containers/middle'
+import {useEventListener} from 'hooks/useEventListener'
+
+// import {useBoolean} from 'hooks/useFlag'
 import LeftColumn from 'containers/left/LeftColumn'
-import RightColumn from 'containers/right/RightColumn'
+import MiddleColumn from 'containers/middle/MiddleColumn'
+import {RightColumn} from 'containers/right/RightColumn'
+import {StoryViewer} from 'containers/stories/viewer'
 
-import Notification from 'components/popups/Notification.async'
+// import {StoryViewer} from 'containers/stories/viewer'
+import CommonModal from 'components/popups/CommonModal.async'
 import NewContactModal from 'components/popups/NewContactModal.async'
-
-import {destroySubscribe, getSubscriptions} from 'state/subscribe'
+import Notification from 'components/popups/Notification.async'
 
 import './Main.scss'
 
-const Main: FC = () => {
+interface OwnProps {}
+interface StateProps {
+  isNewContactModalOpen: boolean
+  newContactUserId?: string
+  newContactByPhone?: boolean
+}
+const Main: FC<StateProps> = ({isNewContactModalOpen, newContactUserId}) => {
   const global = getGlobalState()
-  const {getContactList, getChats} = getActions()
-  const subscriptions = getSubscriptions()
+  const {getChats, getSelf, getContactList, updateUserStatus} = getActions()
   useEffect(() => {
-    getContactList()
+    getSelf()
+
+    // if (shouldGetSelf) {
+    // }
+    updateUserStatus({isOnline: true, isFirst: true, noDebounce: true})
+
     getChats()
+    getContactList()
 
-    subscriptions.onChatCreated()
-
+    subscribeToAll()
     return () => {
-      destroySubscribe('onChatCreated')
+      destroySubscribeAll()
     }
   }, [])
+  const documentRef = useRef<Document>(document)
+
+  useEventListener(
+    'visibilitychange',
+    () => {
+      updateUserStatus({isOnline: !document.hidden})
+    },
+    documentRef
+  )
+  // const {value, toggle} = useBoolean()
   return (
     <div class="Main">
       <LeftColumn />
       <MiddleColumn />
       <RightColumn />
-      <NewContactModal
-        isOpen={Boolean(global.newContact.userId) || global.newContact.isByPhoneNumber}
-        userId={global.newContact.userId}
-      />
+      <NewContactModal isOpen={isNewContactModalOpen} userId={newContactUserId} />
       <Notification isOpen={global.notification.isOpen} />
+      <CommonModal isOpen={global.commonModal.isOpen} />
+      <StoryViewer
+        isOpen={global.stories.isOpen}
+        onClose={() => {
+          global.stories.isOpen = false
+        }}
+        stories={MOCK_STORIES}
+        onAllStoriesEnd={() => {
+          console.log('STORIES ALL END')
+        }}
+      />
     </div>
   )
 }
 
-export default memo(Main)
+// export default memo(Main)
+
+const mapStateToProps: MapState<OwnProps, StateProps> = (state) => {
+  const {isByPhoneNumber, userId} = state.newContact
+
+  return {
+    isNewContactModalOpen: Boolean(isByPhoneNumber || userId),
+    newContactByPhone: isByPhoneNumber,
+    newContactUserId: userId,
+  }
+}
+
+export default memo(connect(mapStateToProps)(Main))

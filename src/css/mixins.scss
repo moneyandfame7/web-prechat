@@ -22,10 +22,24 @@
 }
 
 @mixin bgAndColorTransition($properties...) {
-  transition-duration: 0.2s;
-  transition-timing-function: ease;
+  @include withAnimations {
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
 
-  transition-property: background-color, color, $properties;
+    transition-property: background-color, $properties;
+  }
+}
+
+@mixin defaultTransition($propertie) {
+  @include withAnimations {
+    transition: $propertie 0.2s ease;
+  }
+}
+
+@mixin withBubbles() {
+  body.bubble-mode & {
+    @content;
+  }
 }
 
 @mixin withAnimations() {
@@ -33,9 +47,33 @@
     @content;
   }
 }
+@mixin withoutAnimations() {
+  html.animation-none & {
+    @content;
+  }
+}
+@mixin withBlur($amount) {
+  @supports (backdrop-filter: blur($amount)) {
+    html:not(.no-menu-blur) & {
+      backdrop-filter: blur($amount);
+    }
+  }
+}
 
 @mixin whenNight() {
   html.night & {
     @content;
+  }
+}
+
+@mixin whenDay() {
+  html:not(.night) & {
+    @content;
+  }
+}
+
+@mixin spread-map($map) {
+  @each $key, $value in $map {
+    #{$key}: $value;
   }
 }

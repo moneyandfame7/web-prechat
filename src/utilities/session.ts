@@ -1,28 +1,24 @@
-import ls from 'localstorage-slim'
-import {forcePersist} from 'state/persist'
-
 export function removeSession() {
-  const result = ls.remove('prechat-session')
+  const result = localStorage.removeItem('prechat-session')
 
   if (typeof result !== 'undefined') {
-    console.error('REMOVE SESION ERROR')
+    /* ERRoR */
   }
 }
 
 export function saveSession(session: string) {
-  const result = ls.set('prechat-session', session)
+  const result = localStorage.setItem('prechat-session', session)
 
   if (typeof result !== 'undefined') {
-    console.error('SET PERSIST ERROR')
+    /* ERROR */
+    return
   } /* else {
     startPersist()
   } */
-
-  forcePersist()
 }
 
 export function hasActiveSession() {
-  const stored = ls.get('prechat-session') as string
+  const stored = localStorage.getItem('prechat-session') as string
 
   return Boolean(stored)
 }

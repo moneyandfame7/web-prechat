@@ -1,0 +1,60 @@
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.primary-font {
+  color: var(--c-font-primary) !important;
+}
+.text-secondary {
+  color: var(--c-font-secondary);
+  // font-size: 14px;
+}
+.text-small {
+  font-size: 14px;
+}
+.hide {
+  display: none !important;
+}
+.text-bold {
+  font-weight: 500;
+}
+.text-center {
+  text-align: center;
+}
+
+.primary-color {
+  color: var(--c-primary);
+}
+
+.emoji-native {
+  display: inline !important;
+
+  font-family: apple color emoji, segoe ui emoji, noto color emoji, android emoji, emojisymbols,
+    emojione mozilla, twemoji mozilla, segoe ui symbol;
+  vertical-align: unset !important;
+  line-height: 1 !important;
+}
+
+.emoji-image {
+  width: 18px;
+  height: 18px;
+
+  display: inline-block;
+  max-width: 100%;
+  max-height: 100%;
+  vertical-align: middle;
+}
+
+@each $abbr, $name in ('t': 'top', 'r': 'right', 'b': 'bottom', 'l': 'left') {
+  @each $prop, $prop-name in ('m': 'margin', 'p': 'padding') {
+    @for $i from 0 through 50 {
+      .#{$prop}#{$abbr}-#{$i} {
+        #{$prop-name}-#{$name}: 1px * $i;
+      }
+    }
+    .#{$prop}#{$abbr}-0 {
+      #{$prop-name}-#{$name}: 0px !important;
+    }
+  }
+}

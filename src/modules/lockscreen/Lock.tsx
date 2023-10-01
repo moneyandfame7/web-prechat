@@ -1,9 +1,8 @@
-import type { FC} from 'preact/compat';
-import { memo } from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
 const Lock: FC = () => {
   return (
-    <div style={{ width: 300, height: 300 }}>
+    <div style={{width: 300, height: 300}}>
       <p>lorem ipsum dorem</p>
       <p>lorem ipsum dorem</p>
       <p>lorem ipsum dorem</p>

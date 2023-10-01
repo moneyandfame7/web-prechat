@@ -9,11 +9,16 @@ export interface ApiCountry {
 
 export type ApiLangCode = 'uk' | 'en' | 'de' | 'pl'
 export type ApiLangKey = keyof typeof lang
-export type ApiLanguagePack = typeof lang
-export interface ApiLanguage {
-  name: string
+export type ApiLangPack = {
   langCode: ApiLangCode
+  strings: typeof lang
+}
+export interface ApiLanguage {
+  langCode: ApiLangCode
+  name: string
   nativeName: string
+  stringsCount: number
+  translatedCount: number
 }
 
 export interface GetLangStringInput {

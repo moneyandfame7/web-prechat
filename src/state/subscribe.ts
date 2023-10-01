@@ -1,19 +1,39 @@
 import type {DocumentNode} from '@apollo/client'
 
-import type {ApiChatSub} from 'api/types/subscriptions'
+import {
+  SUBSCRIBE_ON_AUTHORIZATION_CREATED,
+  SUBSCRIBE_ON_AUTHORIZATION_TERMINATED,
+  SUBSCRIBE_ON_AUTHORIZATION_UPDATED,
+  SUBSCRIBE_ON_CHAT_CREATED,
+  SUBSCRIBE_ON_USER_STATUS_UPDATED,
+} from 'api/graphql'
+import {SUBSCRIBE_ON_DRAFT_UPDATE} from 'api/graphql/messages'
+import {SUBSCRIBE_ON_NEW_MESSAGE} from 'api/graphql/subscription'
 import {ApolloClient} from 'api/manager'
-import {SUBSCRIBE_ON_CHAT_CREATED} from 'api/graphql/chats'
+import type {
+  ApiChatSub,
+  ApiDraftUpdateSub,
+  ApiNewMessageSub,
+  ApiSession,
+  ApiUserStatusSub,
+} from 'api/types'
+
+import {cleanTypename} from 'utilities/cleanTypename'
+import {logger} from 'utilities/logger'
 
 import type {SignalGlobalState} from 'types/state'
 
-import {logger} from 'utilities/logger'
-import {cleanTypename} from 'utilities/cleanTypename'
-
+import {type Actions, getActions} from './action'
 import {getGlobalState} from './signal'
-import {getActions, type Actions} from './action'
 
 interface SubscribeResult {
-  'onChatCreated': ApiChatSub
+  onChatCreated: ApiChatSub
+  onAuthorizationCreated: ApiSession
+  onAuthorizationUpdated: ApiSession
+  onAuthorizationTerminated: ApiSession[]
+  onUserStatusUpdated: ApiUserStatusSub
+  onNewMessage: ApiNewMessageSub
+  onDraftUpdate: ApiDraftUpdateSub
 }
 type SubscribeName = keyof SubscribeResult
 export interface Subscription {
@@ -21,15 +41,21 @@ export interface Subscription {
   unsubscribe(): void
 }
 const SUBSCRIBE_QUERY: Record<SubscribeName, DocumentNode> = {
-  'onChatCreated': SUBSCRIBE_ON_CHAT_CREATED
+  onChatCreated: SUBSCRIBE_ON_CHAT_CREATED,
+  onAuthorizationCreated: SUBSCRIBE_ON_AUTHORIZATION_CREATED,
+  onAuthorizationTerminated: SUBSCRIBE_ON_AUTHORIZATION_TERMINATED,
+  onAuthorizationUpdated: SUBSCRIBE_ON_AUTHORIZATION_UPDATED,
+  onUserStatusUpdated: SUBSCRIBE_ON_USER_STATUS_UPDATED,
+  onNewMessage: SUBSCRIBE_ON_NEW_MESSAGE,
+  onDraftUpdate: SUBSCRIBE_ON_DRAFT_UPDATE,
 }
-type Subscribes = {
+export type Subscribes = {
   [key in SubscribeName]: () => void
 }
 
 const subscriptions = {} as Subscribes
 
-const unsubscribers = {} as Partial<Record<SubscribeName, Subscription>>
+const destroyers = {} as Partial<Record<SubscribeName, Subscription>>
 
 const subscribeHandler = <N extends SubscribeName, TData extends SubscribeResult[N]>(
   name: N,
@@ -49,8 +75,9 @@ const subscribeHandler = <N extends SubscribeName, TData extends SubscribeResult
       handler(nestedObj /* unsubscribe */)
     },
     error(err) {
+      // eslint-disable-next-line no-console
       console.error(err)
-    }
+    },
   })
 }
 
@@ -69,13 +96,13 @@ export function createSubscribe<N extends SubscribeName>(
       const actions = getActions()
       handler(global, actions, data)
     })
-    unsubscribers[name] = sub
+    destroyers[name] = sub
   }
 }
 
 export function destroySubscribe<N extends SubscribeName>(name: N) {
-  if (unsubscribers[name]) {
-    unsubscribers[name]?.unsubscribe()
+  if (destroyers[name]) {
+    destroyers[name]?.unsubscribe()
   } else {
     logger.error('UNSUBSCRIBE NOT FOUNDED')
   }
@@ -83,4 +110,25 @@ export function destroySubscribe<N extends SubscribeName>(name: N) {
 
 export function getSubscriptions() {
   return subscriptions
+}
+
+export function getActiveSubscriptions() {
+  return destroyers
+}
+
+export function subscribeToAll() {
+  Object.values(subscriptions).forEach((cb) => {
+    cb()
+  })
+}
+
+export function destroySubscribeAll() {
+  Object.values(destroyers).forEach((d) => {
+    d.unsubscribe()
+  })
+  // for (const cb in subscriptions) {
+  //   if (cb in subscriptions) {
+  //     destroySubscribe(cb as keyof Subscribes)
+  //   }
+  // }
 }

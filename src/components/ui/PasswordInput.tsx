@@ -1,10 +1,10 @@
-import {useCallback, type FC, type TargetedEvent} from 'preact/compat'
 import {type Signal} from '@preact/signals'
+import {type FC, RefObject, type TargetedEvent, useCallback} from 'preact/compat'
 
 import type {InputHandlerValue, SignalOr} from 'types/ui'
 
-import {InputText} from './Input'
 import {Icon} from './Icon'
+import {InputText} from './Input'
 
 import './PasswordInput.scss'
 
@@ -14,14 +14,11 @@ interface PasswordInputProps {
   label?: SignalOr<string>
   showPassword: Signal<boolean>
   disabled?: SignalOr<boolean>
+  error?: SignalOr<string | undefined>
+  autoFocus?: boolean
+  elRef?: RefObject<HTMLInputElement>
 }
-export const PasswordInput: FC<PasswordInputProps> = ({
-  onInput,
-  value,
-  label,
-  showPassword,
-  disabled
-}) => {
+export const PasswordInput: FC<PasswordInputProps> = ({onInput, showPassword, ...props}) => {
   const iconName = showPassword.value ? 'eyeOpen' : 'eyeClose'
   const changeInputType = () => {
     showPassword.value = !showPassword.value
@@ -36,11 +33,9 @@ export const PasswordInput: FC<PasswordInputProps> = ({
 
   return (
     <InputText
-      disabled={disabled}
+      {...props}
       className="PasswordInput"
-      label={label}
       onInput={handleChange}
-      value={value}
       endIcon={<Icon name={iconName} color="secondary" onClick={changeInputType} />}
       type={showPassword.value ? 'text' : 'password'}
     />

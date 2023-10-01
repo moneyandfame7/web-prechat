@@ -1,21 +1,27 @@
 import {
-  type NormalizedCacheObject,
   ApolloClient,
   ApolloLink,
   InMemoryCache,
+  type NormalizedCacheObject,
   createHttpLink,
   split,
-  ApolloError
 } from '@apollo/client'
-import {RetryLink} from '@apollo/client/link/retry'
 import {setContext} from '@apollo/client/link/context'
 import {onError} from '@apollo/client/link/error'
+// import {RetryLink} from '@apollo/client/link/retry'
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions'
 import {getMainDefinition} from '@apollo/client/utilities'
+
+import {createUploadLink} from 'apollo-upload-client'
 import {createClient} from 'graphql-ws'
 
+import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
-import {logDebugWarn} from 'lib/logger'
+
+import {DEBUG} from 'common/environment'
+
+import {customFetch, customFetch2} from './helpers/customFetch'
+import type {ApiError} from './types/diff'
 
 export type GqlDoc = {
   __typename: string
@@ -33,7 +39,8 @@ export class ApolloClientWrapper {
   private readonly _headersLink: ApolloLink
   private readonly _splittedLinks: ApolloLink
   private readonly _errorLink: ApolloLink = this.getErrorLink()
-  private readonly _retryLink: ApolloLink = this.getRetryLink()
+  private readonly _uploadLink: ApolloLink
+  // private readonly _retryLink: ApolloLink = this.getRetryLink()
   public constructor(connection: {httpUrl: string; wsUrl: string}) {
     const {httpUrl, wsUrl} = connection
 
@@ -41,14 +48,15 @@ export class ApolloClientWrapper {
     this._httpLink = this.getHttpLink(httpUrl)
     this._wsLink = this.getWsLink(wsUrl)
     this._splittedLinks = this.getSplittedLinks(this._wsLink, this._httpLink)
+
     this.client = new ApolloClient({
       link: ApolloLink.from([
-        this._retryLink,
+        // this._retryLink,
         this._errorLink,
         this._headersLink,
-        this._splittedLinks
+        this._splittedLinks,
       ]),
-      cache: new InMemoryCache()
+      cache: new InMemoryCache(),
     })
   }
 
@@ -60,24 +68,36 @@ export class ApolloClientWrapper {
    * {@link https://www.apollographql.com/docs/react/api/link/introduction/ Apollo Link}
    */
   private getHttpLink(uri: string) {
-    return createHttpLink({
-      uri
-      /* headers?? */
+    // return createHttpLink({
+    //   uri,
+    //   fetch: customFetch2 as any,
+    //   /* headers?? */
+    // })
+    return createUploadLink({
+      uri,
+      fetch: customFetch2 as any,
+      headers: {
+        'apollo-require-preflight': 'true',
+      },
     })
   }
+
   /**
    * {@link https://www.apollographql.com/docs/react/networking/authentication/#header Apollo Header link}
    */
   private getHeadersLink() {
     return setContext(async (_, {headers}) => {
-      const {auth, settings} = getGlobalState()
+      const {
+        auth,
+        settings: {i18n},
+      } = getGlobalState()
 
       return {
         headers: {
           ...headers,
-          'prechat-language': settings.i18n.lang_code,
-          'prechat-session': auth.session || ''
-        }
+          'prechat-language': i18n.lang_code,
+          'prechat-session': auth.session,
+        },
       }
     })
   }
@@ -85,6 +105,7 @@ export class ApolloClientWrapper {
    * {@link https://www.apollographql.com/docs/react/api/link/apollo-link-error/ Apollo Error Link}
    */
   private getErrorLink() {
+    const actions = getActions()
     return onError(({graphQLErrors, networkError}) => {
       if (networkError) {
         // eslint-disable-next-line no-console
@@ -92,10 +113,17 @@ export class ApolloClientWrapper {
       }
 
       if (graphQLErrors) {
-        graphQLErrors.forEach(({message}) =>
+        graphQLErrors.forEach((error) => {
+          const apiError = error as unknown as ApiError | undefined
+
+          switch (apiError?.code) {
+            case 'AUTH_SESSION_INVALID':
+            case 'AUTH_SESSION_EXPIRED':
+              actions.reset()
+          }
           // eslint-disable-next-line no-console
-          console.error(`[GraphQL error]: Message: ${message}`)
-        )
+          // console.error(`[GraphQL error]: Message: ${message}`, path)
+        })
       }
     })
   }
@@ -111,9 +139,12 @@ export class ApolloClientWrapper {
         connectionParams: async () => ({
           isWebsocket: true,
           headers: {
-            'prechat-session': auth.session || ''
-          }
-        })
+            'prechat-session': auth.session || '',
+          },
+        }),
+        shouldRetry: (/* err */) => {
+          return false
+        },
       })
     )
   }
@@ -126,8 +157,7 @@ export class ApolloClientWrapper {
         const definition = getMainDefinition(query)
 
         return (
-          definition.kind === 'OperationDefinition' &&
-          definition.operation === 'subscription'
+          definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
         )
       },
       wsLink,
@@ -135,46 +165,35 @@ export class ApolloClientWrapper {
     )
   }
 
-  private getRetryLink() {
-    return new RetryLink({
-      attempts: {
-        max: 3,
-        retryIf: (error: ApolloError) => {
-          return error.message === 'Failed to fetch'
-        }
-      },
-      delay: (count /* operation, error */) => {
-        return count * 5000 * Math.random()
-      }
-    })
-  }
+  // private getRetryLink() {
+  //   return new RetryLink({
+  //     attempts: {
+  //       max: 3,
+  //       retryIf: (error: ApolloError) => {
+  //         return error.message === 'Failed to fetch'
+  //       },
+  //     },
+  //     delay: (count /* operation, error */) => {
+  //       return count * 5000 * Math.random()
+  //     },
+  //   })
+  // }
 }
 
 /**
  * @returns instanceof {@link ApolloClientWrapper}
  */
 export function createApolloClientWrapper(): ApolloClientWrapper {
+  const httpUrl = import.meta.env.VITE_API_URL
+  // eslint-disable-next-line prefer-template
+  const wsUrl =
+    httpUrl.replace(DEBUG ? 'http://' : 'https://', DEBUG ? 'ws://' : 'wss://') +
+    '/subscriptions'
+
   const client = new ApolloClientWrapper({
-    httpUrl: import.meta.env.VITE_API_URL,
-    wsUrl: 'ws://localhost:8001/graphql/subscriptions'
+    httpUrl,
+    wsUrl,
   })
-
+  // client.client.
   return client
-}
-
-/**
- * Just format if it's instance of ApolloError and log error, otherwise just log error
- */
-export function handleApolloError(e: unknown) {
-  if (e instanceof ApolloError) {
-    const error = {
-      message: e.message,
-      stack: e.stack,
-      name: e.name
-    }
-
-    logDebugWarn(error)
-  } else {
-    logDebugWarn(e)
-  }
 }

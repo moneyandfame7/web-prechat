@@ -1,6 +1,5 @@
-import { useSignal } from '@preact/signals'
-import type { FC} from 'preact/compat';
-import { useRef } from 'preact/compat'
+import {useSignal} from '@preact/signals'
+import {type FC, useRef} from 'preact/compat'
 
 export const StateRenderTest: FC = () => {
   const render = useRef(0)

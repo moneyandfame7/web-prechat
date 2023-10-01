@@ -1,3 +1,4 @@
+import {useComputed, useSignal} from '@preact/signals'
 import {
   type FC,
   type TargetedEvent,
@@ -6,68 +7,68 @@ import {
   useEffect,
   useRef,
   useState,
-  useLayoutEffect
 } from 'preact/compat'
 
-import type {ApiCountry} from 'api/types/langPack'
+import type {ApiCountry} from 'api/types'
+
+import {getActions} from 'state/action'
+import {selectSuggestedCountry} from 'state/selectors/auth'
+import {selectLanguage} from 'state/selectors/settings'
+import {getGlobalState} from 'state/signal'
 
 import {changeLanguage, t, useTranslateString} from 'lib/i18n'
-import {getActions} from 'state/action'
-import {getGlobalState} from 'state/signal'
-import {selectCountryByPhone, selectSuggestedCountry} from 'state/selectors/auth'
-import {initializeAuth} from 'state/initialize'
 
-import {Button, Checkbox} from 'components/ui'
+import {validatePhone} from 'utilities/phone/validatePhone'
+import {unformatStr} from 'utilities/string/stringRemoveSpacing'
+
 import {Logo} from 'components/Logo'
+import {Button, Checkbox} from 'components/ui'
 
 import {PhoneNumberInput} from './PhoneNumberInput'
 import {SelectCountryInput} from './SelectCountryInput'
 
-// import {updateGlobalState} from 'state/persist'
 import './AuthPhoneNumber.scss'
-import {useComputed, useSignal} from '@preact/signals'
-import {unformatStr} from 'utilities/string/stringRemoveSpacing'
-import {validatePhone} from 'utilities/phone/validatePhone'
 
 const AuthPhoneNumber: FC = () => {
-  const {sendPhone, getCountries} = getActions()
-  const state = getGlobalState()
+  const global = getGlobalState()
+  const {authInit, getCountries, sendPhone} = getActions()
+  const language = selectLanguage(global)
+  // const {getCountries} = getActions()
   const phoneInputRef = useRef<HTMLInputElement>(null)
 
   const phone = useSignal('')
   const isFormDisabled = useComputed(() => !validatePhone(unformatStr(phone.value)))
 
-  const [country, setCountry] = useState<ApiCountry | undefined>(
-    selectCountryByPhone(state)
-  )
-  const translateLoading = useSignal(false)
+  const [country, setCountry] = useState<ApiCountry | undefined>()
+  const [translateLoading, setTranslateLoading] = useState(false)
   const translateString = useTranslateString(
     'Auth.ContinueOnLanguage',
-    state.settings.suggestedLanguage
+    global.settings.suggestedLanguage
   )
-  useLayoutEffect(() => {
-    initializeAuth()
+  useEffect(() => {
+    authInit()
   }, [])
   useEffect(() => {
-    getCountries(state.settings.language)
-  }, [state.settings.language])
+    getCountries(language)
+  }, [language])
 
   useEffect(() => {
-    setCountry(state.countryList.find((c) => c.dial_code === country?.dial_code))
-  }, [state.countryList])
+    const suggested = global.countryList.find((c) => c.dial_code === country?.dial_code)
+    setCountry(suggested)
+  }, [global.countryList])
   useEffect(() => {
-    if (state.auth.connection && state.countryList.length) {
-      const suggestedCountry = selectSuggestedCountry(state)
+    if (global.auth.connection && global.countryList.length) {
+      const suggestedCountry = selectSuggestedCountry(global)
       if (suggestedCountry && !country && !phone.value.length) {
         setCountry(suggestedCountry)
         phone.value = suggestedCountry.dial_code
       }
     }
-  }, [state.auth.connection, state.countryList])
+  }, [global.auth.connection, global.countryList])
 
   const handleChangePhone = useCallback(
     (value: string) => {
-      const foundedCountry = state.countryList.find(
+      const foundedCountry = global.countryList.find(
         (country) => country.dial_code === value.trim()
       )
 
@@ -76,46 +77,50 @@ const AuthPhoneNumber: FC = () => {
       }
       phone.value = value /* .replace(/\s/g, '') */
     },
-    [state.countryList, country]
+    [global.countryList, country]
   )
 
-  const handleSelectCountry = useCallback(
-    (country: ApiCountry) => {
-      setCountry(country)
-      phone.value = country.dial_code
-      phoneInputRef.current?.focus()
-    },
-    [phoneInputRef]
-  )
+  const handleSelectCountry = useCallback((country: ApiCountry) => {
+    setCountry(country)
+    phone.value = country.dial_code
+    phoneInputRef.current?.focus()
+  }, [])
   const handleChangeLanguage = useCallback(async () => {
-    const suggestedLng = state.settings.suggestedLanguage
+    setTranslateLoading((prev) => !prev)
+    const suggestedLng = global.settings.suggestedLanguage
     if (suggestedLng) {
-      translateLoading.value = true
+      // setTimeout(async () => {
       await changeLanguage(suggestedLng)
-
-      translateLoading.value = false
+      // }, 5000)
     }
-  }, [state.settings.suggestedLanguage])
+
+    setTimeout(() => {
+      setTranslateLoading((prev) => !prev)
+    }, 1000)
+  }, [])
 
   const handleChangeRememberMe = useCallback((checked: boolean) => {
-    state.auth.rememberMe = checked
+    // state.auth.rememberMe = checked
+    global.auth.rememberMe = checked
   }, [])
 
   const handleSubmit = (e: TargetedEvent<HTMLFormElement, Event>) => {
     e.preventDefault()
 
+    // console.log(phone.value)
     sendPhone(phone.value)
+    // appActions.auth.sendPhone(phone.value)
   }
 
   return (
-    <>
+    <div class="Auth_phone">
       <Logo />
       <h1 class="title">{t('Auth.Signin')}</h1>
       <p class="subtitle">{t('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>
         <SelectCountryInput
-          loading={!state.countryList.length || !state.auth.connection}
-          countryList={state.countryList}
+          loading={/* !state.countryList.length || */ !global.auth.connection}
+          countryList={global.countryList}
           handleSelect={handleSelectCountry}
           selectedCountry={country}
         />
@@ -130,24 +135,20 @@ const AuthPhoneNumber: FC = () => {
           id="remember-me"
           label={t('RememberMe')}
           onToggle={handleChangeRememberMe}
-          disabled={state.auth.isLoading}
+          disabled={global.auth.isLoading}
           /* якщо тут передати не сигнал, буде ререндер всього компоненту */
-          checked={state.auth.$rememberMe!}
+          checked={global.auth.$rememberMe!}
         />
-        <Button
-          type="submit"
-          isLoading={state.auth.isLoading}
-          isDisabled={isFormDisabled}
-        >
-          {state.auth.error || t('Next')}
+        <Button type="submit" isLoading={global.auth.isLoading} isDisabled={isFormDisabled}>
+          {global.auth.error || t('Next')}
         </Button>
 
-        {state.settings.suggestedLanguage !== state.settings.i18n.lang_code && (
+        {global.settings.suggestedLanguage !== global.settings.i18n.lang_code && (
           <Button
             variant="transparent"
             onClick={handleChangeLanguage}
-            isLoading={translateLoading.value}
-            isDisabled={state.auth.$isLoading}
+            isLoading={translateLoading}
+            isDisabled={translateLoading}
           >
             {translateString}
           </Button>
@@ -156,7 +157,7 @@ const AuthPhoneNumber: FC = () => {
       <div id="auth-recaptcha-wrapper">
         <div id="auth-recaptcha" />
       </div>
-    </>
+    </div>
   )
 }
 

@@ -1,15 +1,15 @@
-import {useCallback, type FC, memo, useEffect} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
-import {NOTIFICATION_TRANSITION} from 'common/config'
+import {NOTIFICATION_TRANSITION} from 'common/environment'
 
-import {TransitionTest} from 'components/transitions'
+import {SingleTransition} from 'components/transitions'
+import {Icon} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
 
 import './Notification.scss'
-import {Icon} from 'components/ui'
 
 export interface NotificationProps {
   isOpen: boolean
@@ -31,19 +31,19 @@ const Notification: FC<NotificationProps> = ({isOpen}) => {
 
   return (
     <Portal>
-      <TransitionTest
+      <SingleTransition
         appear
-        className="Notification"
+        className="notification"
         name="fade"
-        isMounted={isOpen}
-        alwaysMounted={false}
-        duration={NOTIFICATION_TRANSITION}
+        in={isOpen}
+        unmount
+        timeout={NOTIFICATION_TRANSITION}
       >
-        <div class="Notification-container" onMouseDown={handleBackdropClick}>
+        <div class="notification-container" onMouseDown={handleBackdropClick}>
           <Icon name="info" />
           {notification.$title}
         </div>
-      </TransitionTest>
+      </SingleTransition>
     </Portal>
   )
 }

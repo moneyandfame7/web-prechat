@@ -1,15 +1,37 @@
 import {createAction} from 'state/action'
-// import {PREFERRED_THEME} from 'state/helpers/settings'
+import {changeMessageSize, toggleAnimations, toggleBlur} from 'state/helpers/settings'
+import {storages} from 'state/storages'
+import {updateSettingsState} from 'state/updates'
+
+import {changeTheme} from 'utilities/changeTheme'
+import {updateByKey} from 'utilities/object/updateByKey'
 
 createAction('changeTheme', (state, _, payload) => {
-  switch (payload) {
-    case 'dark':
-      state.settings.theme = payload
-      document.documentElement.classList.add('dark')
-      break
-    case 'light':
-      state.settings.theme = payload
-      document.documentElement.classList.remove('dark')
-      break
+  changeTheme(payload)
+
+  updateSettingsState(state, {
+    general: {
+      theme: payload,
+    },
+  })
+})
+
+createAction('changeSettings', (state, _, payload) => {
+  const {general, passcode, i18n} = payload
+
+  /* DOM helpers */
+  if (general?.animationsEnabled !== undefined) {
+    toggleAnimations(general.animationsEnabled)
   }
+  if (general?.theme) {
+    changeTheme(general.theme)
+  }
+  if (general?.messageTextSize) {
+    changeMessageSize(general.messageTextSize)
+  }
+  if (general?.blur) {
+    toggleBlur(general.blur)
+  }
+
+  updateSettingsState(state, payload)
 })

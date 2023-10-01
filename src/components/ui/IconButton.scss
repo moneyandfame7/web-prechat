@@ -1,16 +1,26 @@
 .IconButton {
-  --color-ripple: var(--c-ripple);
-  width: max-content;
+  width: 40px;
+  height: 40px;
   position: relative;
+  justify-content: center;
   border-radius: 50%;
   padding: 8px;
   overflow: hidden;
-  transition: background-color 0.3s ease;
-  // background-color: rgb(from var(--c-icon) / 0.5);
+  @include bgAndColorTransition(opacity);
+  flex-shrink: 0;
   cursor: pointer;
   display: flex;
-  &:hover,
-  :focus {
-    background-color: var(--c-surface-3);
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .Icon path {
+    transition: fill 0.3s ease;
+  }
+  &:hover {
+    .Icon path {
+      fill: var(--c-white);
+    }
   }
 }

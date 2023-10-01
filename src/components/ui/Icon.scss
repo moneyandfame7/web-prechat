@@ -1,32 +1,63 @@
 .Icon {
   height: 24px;
   width: 24px;
+
   &-default {
     path {
-      fill: var(--c-icon);
+      fill: var(--c-font-primary) !important; // ??
     }
-    // &:hover {
-    //   path {
-    //     fill: var(--c-icon);
-    //   }
-    // }
+    &.Icon-story {
+      path {
+        fill: none !important;
+      }
+      circle,
+      .story-play-path {
+        fill: var(--c-font-primary) !important;
+      }
+      // stroke: red;
+    }
+    &.Icon-key {
+      stroke: var(--c-font-primary);
+      path {
+        fill: unset !important;
+      }
+    }
+  }
+  &-white {
+    path {
+      fill: var(--c-white) !important;
+    }
+    &.Icon-arrowRight {
+      stroke: var(--c-white);
+    }
   }
   &-secondary {
     path {
       fill: var(--c-icon);
     }
-    // &:hover {
-    //   path {
-    //     fill: var(--c-icon);
-    //   }
-    // }
+
+    &.Icon-key {
+      stroke: var(--c-icon);
+      path {
+        fill: unset;
+      }
+    }
   }
+
+  &-primary {
+    path {
+      fill: var(--c-primary) !important;
+    }
+  }
+}
+
+.Icon-story {
   path {
-    transition: all 0.2s ease !important;
+    fill: none !important;
   }
-  // &:hover {
-  //   path {
-  //     fill: var(--c-icon-2);
-  //   }
-  // }
+  circle,
+  .story-play-path {
+    fill: var(--c-font-primary) !important;
+  }
+  // stroke: red;
 }

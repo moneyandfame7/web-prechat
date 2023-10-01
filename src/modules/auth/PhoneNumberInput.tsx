@@ -1,12 +1,13 @@
 import {useSignal} from '@preact/signals'
-
 import type {FC, RefObject, TargetedEvent} from 'preact/compat'
 
-import type {SignalOr} from 'types/ui'
+import {t} from 'lib/i18n'
+
 import {formatPhone} from 'utilities/phone/formatPhone'
 
+import type {SignalOr} from 'types/ui'
+
 import {InputText} from 'components/ui'
-import {t} from 'lib/i18n'
 
 import './PhoneNumberInput.scss'
 
@@ -21,7 +22,7 @@ export const PhoneNumberInput: FC<PhoneNumberInputProps> = ({
   elRef,
   onInput,
   value,
-  autoFocus = true
+  autoFocus = true,
 }) => {
   const pattern = useSignal('')
   const handleOnInput = (e: TargetedEvent<HTMLInputElement, Event>) => {
@@ -49,7 +50,9 @@ export const PhoneNumberInput: FC<PhoneNumberInputProps> = ({
       autoFocus={autoFocus}
       elRef={elRef}
       label={t('PhoneNumber')}
-      inputMode="numeric"
+      inputMode="tel"
+      autoCorrect="off"
+      autoComplete="tel"
       type="tel"
       value={value}
       onInput={handleOnInput}

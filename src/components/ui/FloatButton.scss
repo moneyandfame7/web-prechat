@@ -14,25 +14,15 @@
   svg path {
     fill: #fff;
   }
-  // &_icon {
-  //   height: 24px !important; /* @todo avoid hardcode ( 24px - height of icons ) */
-  //   top: auto !important;
-  //   transition: 0.35s ease all;
-  // }
 
   transform: translateY(100px);
   &.shown {
     transform: translateY(0);
   }
 
-  // & .Icon {
-  //   position: absolute;
-  //   animation: hide-icon 0.3s ease;
-  // }
   .loader {
     right: auto;
     top: 16px;
-    // transform: translateY(-50%);
   }
 
   @include withAnimations {

@@ -1,27 +1,24 @@
-import type {FC} from 'preact/compat'
-import {memo, useCallback, useRef} from 'preact/compat'
 import {useSignal} from '@preact/signals'
+import {type FC, memo, useCallback, useRef} from 'preact/compat'
 
-import {getGlobalState} from 'state/signal'
 import {getActions} from 'state/action'
-import {AuthScreens} from 'types/screens'
-
-import {t} from 'lib/i18n'
-
-import {Icon} from 'components/ui'
-import {MonkeyTrack} from 'components/monkeys'
+import {getGlobalState} from 'state/signal'
 
 import {generateRecaptcha} from 'lib/firebase'
+import {t} from 'lib/i18n'
+
+import {AuthScreens} from 'types/screens'
+
+import {MonkeyTrack} from 'components/monkeys'
+import {CodeInput, Icon} from 'components/ui'
 
 import './AuthCode.scss'
-import {CodeInput} from 'components/ui/CodeInput'
 
 const CODE_LENGTH = 6
 const AuthCode: FC = () => {
   const {auth} = getGlobalState()
   const {verifyCode} = getActions()
 
-  // const [code, setCode] = useState('')
   const code = useSignal('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -31,11 +28,6 @@ const AuthCode: FC = () => {
       if (auth.error) {
         auth.error = undefined
       }
-
-      // if (value.length === 6) {
-      //   // inputRef.current?.blur()  @commented to avoid flick monkey
-      //   verifyCode(value)
-      // }
     },
     [auth.error]
   )
@@ -43,10 +35,11 @@ const AuthCode: FC = () => {
   const handleEditPhone = () => {
     code.value = ''
     generateRecaptcha(auth)
+
     auth.screen = AuthScreens.PhoneNumber
   }
   return (
-    <>
+    <div class="Auth_code">
       <MonkeyTrack
         inputRef={inputRef}
         size="medium"
@@ -76,7 +69,7 @@ const AuthCode: FC = () => {
         cb={verifyCode}
         elRef={inputRef}
       />
-    </>
+    </div>
   )
 }
 

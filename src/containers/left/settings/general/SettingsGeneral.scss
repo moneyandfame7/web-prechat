@@ -1,0 +1,36 @@
+.settings-general {
+  .settings-message-size {
+    padding-block-end: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    .message-size-details {
+      display: flex;
+      justify-content: space-between;
+      .message-size__value {
+        color: var(--c-font-secondary);
+      }
+    }
+    .input-slider-wrapper {
+      width: 100%;
+    }
+
+    .reset-to-default {
+      margin-block-start: 20px;
+    }
+  }
+
+  .reset-to-default {
+    margin-block-start: 20px;
+  }
+
+  &__animations {
+    > h2 {
+      margin-inline-start: 15px;
+      margin-block-start: 20px;
+    }
+    // > h2:nth-last-child(2) {
+    //   // color: red;
+    // }
+  }
+}

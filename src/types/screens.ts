@@ -1,58 +1,88 @@
 export enum AuthScreens {
-  PhoneNumber = 'PhoneNumber',
-  Password = 'AuthPassword',
-  Code = 'Code',
-  SignUp = 'SignUp'
+  PhoneNumber,
+  Password,
+  Code,
+  SignUp,
 }
 
 export enum SettingsScreens {
-  Main = 'Main',
-  EditProfile = 'EditProfile',
-  Notifications = 'Notifications',
-  DataAndStorage = 'DataAndStorage',
+  Main,
+  EditProfile,
+  Notifications,
+  DataAndStorage,
   /* DataAndStoragePhoto, Video... */
 
   /* PRIVACY */
-  Privacy = 'Privacy',
-  PrivacyBlockedUsers = 'PrivacyBlockedUsers',
-
+  Privacy,
+  PrivacyBlockedUsers,
+  BlockedUsers,
   /* PRIVACY--TWO FA */
-  PrivacyTwoFaSetPassword = 'PrivacySetPassword',
 
-  PrivacyActiveSessions = 'PrivacyActiveSessions',
-  PrivacyPhone = 'PrivacyPhone',
-  PrivacyLastSeen = 'PrivacyLastSeen',
-  PrivacyProfilePhoto = 'PrivacyProfilePhoto',
-  PrivacyAddForwardLink = 'PrivacyAddForwardLink',
-  PrivacyAddByPhone = 'PrivacyAddByPhone',
-  PrivacyChatInvite = 'PrivacyChatInvite',
-  PrivacyRuleSection = 'PrivacyRuleSection',
+  PrivacyActiveSessions,
+  PrivacyPhone,
+  PrivacyLastSeen,
+  PrivacyProfilePhoto,
+  PrivacyAddForwardLink,
+  PrivacyAddByPhone,
+  PrivacyChatInvite,
+  PrivacySendMessage,
+  PrivacyRuleSection,
 
-  General = 'General',
-  Appearance = 'Appearance',
-  AppearanceChatBackground = 'AppearanceChatBackground',
+  General,
+  Wallpapers,
 
   /* CHAT FOLDERS */
-  ChatFolders = 'ChatFolders',
-  ChatFoldersNew = 'ChatFoldersNew',
-  ChatFoldersNewIncludes = 'ChatFoldersNewIncludes',
-  ChatFoldersNewExcludes = 'ChatFoldersNewExcludes',
+  ChatFolders,
+  ChatFoldersEdit,
+  ChatFoldersNew,
+  ChatFoldersNewIncludes,
+  ChatFoldersNewExcludes,
 
-  Devices = 'Devices',
-  Language = 'Language'
+  Devices,
+  Language,
+
+  /* Two Fa */
+  TwoFa,
+  TwoFaEnterPassword,
+  TwoFaReEnterPassword,
+  TwoFaPasswordHint,
+  TwoFaEmail,
+  TwoFaEmailConfirmation,
+  TwoFaPasswordSet,
+}
+
+export enum RightColumnScreens {
+  ChatProfile,
+  ChatEdit,
+  Search,
+}
+
+export enum ChatEditScreens {
+  Main,
+  ChatType,
+  InviteLinks,
+  NewLink,
+  Admins,
+  AdminPermissions,
+  UserPermissions,
+  Members,
+  Permissions,
+  RemovedUsers,
 }
 
 export enum SettingsGroup {
-  Main = 'Main',
-  EditProfile = 'EditProfile',
-  Notifications = 'Notifications',
-  DataAndStorage = 'DataAndStorage',
-  Appearance = 'Appearance',
-  Privacy = 'Privacy',
-  General = 'General',
-  ChatFolders = 'ChatFolders',
-  Devices = 'Devices',
-  Language = 'Language'
+  Main,
+  EditProfile,
+  Notifications,
+  DataAndStorage,
+  Privacy,
+  BlockedUsers,
+  General,
+  ChatFolders,
+  ChatFoldersEdit,
+  Devices,
+  Language,
+  TwoFa,
 }
 
 export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
@@ -69,28 +99,33 @@ export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
     SettingsScreens.PrivacyAddForwardLink,
     SettingsScreens.PrivacyAddByPhone,
     SettingsScreens.PrivacyChatInvite,
-    SettingsScreens.PrivacyRuleSection
+    SettingsScreens.PrivacyRuleSection,
   ],
   [SettingsGroup.General]: [SettingsScreens.General],
-  [SettingsGroup.ChatFolders]: [
-    SettingsScreens.ChatFolders,
-    SettingsScreens.ChatFoldersNew,
-    SettingsScreens.ChatFoldersNewExcludes,
-    SettingsScreens.ChatFoldersNewIncludes
-  ],
+  [SettingsGroup.ChatFolders]: [SettingsScreens.ChatFolders],
+  [SettingsGroup.ChatFoldersEdit]: [SettingsScreens.ChatFoldersEdit],
   [SettingsGroup.Devices]: [SettingsScreens.Devices],
-  [SettingsGroup.Appearance]: [
-    SettingsScreens.Appearance,
-    SettingsScreens.AppearanceChatBackground
+
+  [SettingsGroup.Language]: [SettingsScreens.Language],
+  [SettingsGroup.BlockedUsers]: [SettingsScreens.BlockedUsers],
+  [SettingsGroup.TwoFa]: [
+    SettingsScreens.TwoFaEnterPassword,
+    SettingsScreens.TwoFaReEnterPassword,
+    SettingsScreens.TwoFaPasswordHint,
+    SettingsScreens.TwoFaEmail,
+    SettingsScreens.TwoFaEmailConfirmation,
+    SettingsScreens.TwoFaPasswordSet,
   ],
-  [SettingsGroup.Language]: [SettingsScreens.Language]
 }
 
 export const getSettingsActiveGroup = (screen: SettingsScreens): SettingsGroup => {
   for (const [group, screens] of Object.entries(SETTINGS_SCREENS)) {
     if (screens.includes(screen)) {
-      return group as SettingsGroup
+      return Number(group) as SettingsGroup
     }
   }
   return SettingsGroup.Main
 }
+
+export const isTwoFaScreen = (screen: SettingsScreens) =>
+  SETTINGS_SCREENS[SettingsGroup.TwoFa].includes(screen)

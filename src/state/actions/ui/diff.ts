@@ -1,7 +1,9 @@
 import {createAction} from 'state/action'
-import {updateNotificationState} from 'state/updates/diff'
 
-import {NOTIFICATION_TRANSITION} from 'common/config'
+import {MODAL_TRANSITION_MS, NOTIFICATION_TRANSITION} from 'common/environment'
+import {updateByKey} from 'utilities/object/updateByKey'
+
+import {RightColumnScreens} from 'types/screens'
 
 createAction('showNotification', (state, actions, payload) => {
   const {title} = payload
@@ -9,9 +11,9 @@ createAction('showNotification', (state, actions, payload) => {
     return
   }
 
-  updateNotificationState(state, {
+  updateByKey(state.notification, {
     title,
-    isOpen: true
+    isOpen: true,
   })
   // fix transition on notification
   setTimeout(() => {
@@ -20,11 +22,23 @@ createAction('showNotification', (state, actions, payload) => {
 })
 
 createAction('closeNotification', (state) => {
-  updateNotificationState(state, {isOpen: false})
+  updateByKey(state.notification, {isOpen: false})
 
   setTimeout(() => {
     state.notification.title = undefined
   }, NOTIFICATION_TRANSITION)
+})
+
+createAction('openCommonModal', (state, _actions, payload) => {
+  updateByKey(state.commonModal, {...payload, isOpen: true})
+})
+
+createAction('closeCommonModal', (state) => {
+  updateByKey(state.commonModal, {isOpen: false})
+
+  setTimeout(() => {
+    updateByKey(state.commonModal, {title: undefined, body: undefined})
+  }, MODAL_TRANSITION_MS)
 })
 
 createAction('changeSettingsScreen', (state, _, payload) => {
@@ -38,6 +52,18 @@ createAction('copyToClipboard', (_, actions, payload) => {
   navigator.clipboard.writeText(toCopy)
 
   actions.showNotification({
-    title
+    title,
   })
+})
+
+createAction('openRightColumn', (state, _, payload) => {
+  const {screen} = payload
+  state.rightColumn = {
+    isOpen: true,
+    screen: screen || RightColumnScreens.ChatProfile,
+  }
+})
+
+createAction('closeRightColumn', (state) => {
+  state.rightColumn.isOpen = false
 })

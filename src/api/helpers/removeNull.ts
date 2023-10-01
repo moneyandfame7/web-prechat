@@ -1,5 +1,6 @@
 export function removeNull<T extends object>(obj: T): T {
   for (const key in obj) {
+    // eslint-disable-next-line no-prototype-builtins
     if (obj.hasOwnProperty(key)) {
       const value = obj[key]
       if (value === null) {

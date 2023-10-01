@@ -1,46 +1,51 @@
+import {useComputed, useSignal} from '@preact/signals'
 import {
   type FC,
-  memo,
-  useRef,
   type TargetedEvent,
-  useEffect,
+  memo,
   useCallback,
-  useMemo
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
 } from 'preact/compat'
-import {useComputed, useSignal} from '@preact/signals'
-
-import {Button, InputText} from 'components/ui'
-
-import {validatePhone} from 'utilities/phone/validatePhone'
-
-import {getActions} from 'state/action'
 
 import {PhoneNumberInput} from 'modules/auth/PhoneNumberInput'
 
-import {unformatStr} from 'utilities/string/stringRemoveSpacing'
-import {getRandomAvatarVariant} from 'utilities/avatar'
-import {useEventListener} from 'hooks/useEventListener'
+import type {ApiUser} from 'api/types/users'
 
-import {Modal, ModalActions, ModalContent, ModalTitle} from './modal'
+import {getActions} from 'state/action'
+
+import {getRandomAvatarVariant} from 'utilities/avatar'
+import {addKeyboardListeners} from 'utilities/keyboardListener'
+import {validatePhone} from 'utilities/phone/validatePhone'
+import {unformatStr} from 'utilities/string/stringRemoveSpacing'
+
+import {Button, InputText} from 'components/ui'
+import {AvatarTest} from 'components/ui/AvatarTest'
+
+import {Modal, ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
 
 import './NewContactModal.scss'
-import {AvatarTest} from 'components/ui/AvatarTest'
-import type {ApiUser} from 'api/types/users'
 
 export interface NewContactModalProps {
   isOpen: boolean
   userId?: string
+  isByPhoneNumber?: boolean
 }
 /**
- * сам компонент Modal робити не асинхроним, і там буде transition і все таке, а інші модалки - асінхронні
+ * сам компонент Modal робити не асинхроним ???, і там буде transition і все таке, а інші модалки - асінхронні
  */
 const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose */}) => {
   const actions = getActions()
   const firstName = useSignal('')
   const lastName = useSignal('')
   const contactPhone = useSignal('')
+  // const {value: isLoading, setValue: setLoading} = useBoolean()
+  const [isLoading, setIsLoading] = useState(false)
   const userToAdding = {} as ApiUser | undefined
 
+  // eslint-disable-next-line prefer-template
   const fullName = useComputed(() => firstName.value.trim() + ' ' + lastName.value.trim())
 
   const isDisabledBtn = useComputed(
@@ -57,41 +62,40 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
     }
   }, [isOpen])
 
-  const handleChangeFirstName = useCallback(
-    (e: TargetedEvent<HTMLInputElement, Event>) => {
-      firstName.value = e.currentTarget.value
-    },
-    []
-  )
+  const handleChangeFirstName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    firstName.value = e.currentTarget.value
+  }, [])
 
-  const handleChangeLastName = useCallback(
-    (e: TargetedEvent<HTMLInputElement, Event>) => {
-      lastName.value = e.currentTarget.value
-    },
-    []
-  )
+  const handleChangeLastName = useCallback((e: TargetedEvent<HTMLInputElement, Event>) => {
+    lastName.value = e.currentTarget.value
+  }, [])
 
   const handleClose = useCallback(() => {
     actions.closeAddContactModal()
   }, [])
 
-  const handleEnter = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      handleSubmit()
-    }
-  }, [])
+  // const handleEnter = useCallback((e: KeyboardEvent) => {
+  //   if (e.key === 'Enter') {
+  //     e.preventDefault()
+  //     handleSubmit()
+  //   }
+  //   /* if e.key==='Escape' close */
+  // }, [])
+
   const clearForm = useCallback(() => {
     firstName.value = ''
     lastName.value = ''
     contactPhone.value = ''
   }, [])
-  const handleSubmit = useCallback(() => {
-    actions.addContact({
+  const handleSubmit = useCallback(async () => {
+    setIsLoading(true)
+    await actions.addContact({
       firstName: firstName.value,
       lastName: lastName.value,
-      phone: contactPhone.value
+      phone: contactPhone.value,
     })
+
+    setIsLoading(false)
   }, [])
 
   const randomAvatarVariant = useMemo(() => getRandomAvatarVariant(), [])
@@ -99,19 +103,24 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
   const render = useRef(0)
   render.current += 1
   const phoneInputRef = useRef<HTMLInputElement>(null)
-  useEventListener('keydown', handleEnter)
+
+  useEffect(() => {
+    return isOpen ? addKeyboardListeners({onEnter: handleSubmit}) : undefined
+  }, [])
   return (
     <Modal
       onExitTransition={clearForm}
-      hasCloseButton
       onClose={handleClose}
       isOpen={isOpen}
       shouldCloseOnBackdrop
+      closeOnEsc
     >
-      <ModalTitle>New Contact {render.current}</ModalTitle>
+      <ModalHeader hasCloseButton>
+        <ModalTitle>New Contact</ModalTitle>
+      </ModalHeader>
       <ModalContent>
         <form class="form-row">
-          <AvatarTest size="xl" fullName={fullName.value} variant={randomAvatarVariant} />
+          <AvatarTest size="xl" fullName={fullName} variant={randomAvatarVariant} />
           <div class="form-fields">
             <InputText
               autoFocus
@@ -135,40 +144,11 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
         />
       </ModalContent>
       <ModalActions>
-        <Button onClick={handleSubmit} isDisabled={isDisabledBtn}>
+        <Button onClick={handleSubmit} isDisabled={isDisabledBtn} isLoading={isLoading}>
           Add
         </Button>
       </ModalActions>
     </Modal>
-    // <Portal>
-    //   <TransitionTest
-    //     className="Modal NewContactModal"
-    //     appear
-    //     name="fade"
-    //     isMounted={isOpen}
-    //     alwaysMounted={false}
-    //     duration={300}
-    //     // onClick={handleClose}
-    //   >
-    //     {/* <div class="Modal NewContactModal"> */}
-    //     <div class="Modal-content" ref={modalRef}>
-    //       <div class="Modal-header">
-    //         {render.current}
-    //         {userId}
-    //         <IconButton withFastClick onClick={handleClose} icon="close" />
-    //         <h5 class="title">New contact</h5>
-    //         <Button isDisabled={isDisabledBtn}>Add</Button>
-    //       </div>
-
-    //       <div class="Modal-body">
-    //
-    //       </div>
-
-    //       <div class="Modal-footer">{}</div>
-    //     </div>
-    //     {/* </div> */}
-    //   </TransitionTest>
-    // </Portal>
   )
 }
 

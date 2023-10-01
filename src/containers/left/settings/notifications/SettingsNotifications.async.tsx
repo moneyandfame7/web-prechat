@@ -6,7 +6,7 @@ const SettingsNotificationsAsync: FC = (props) => {
   const SettingsNotifications = lazy(() => import('./SettingsNotifications'))
 
   return (
-    <Suspense fallback={<ScreenLoader />}>
+    <Suspense fallback={null}>
       <SettingsNotifications {...props} />
     </Suspense>
   )

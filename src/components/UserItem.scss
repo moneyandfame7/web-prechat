@@ -1,0 +1,10 @@
+.user-item {
+  .list-item__title {
+    font-weight: 500;
+  }
+  &.is-online {
+    .list-item__subtitle {
+      color: var(--c-primary);
+    }
+  }
+}

@@ -1,12 +1,13 @@
-import { type FC, type TargetedEvent, memo, useCallback, useMemo, useState } from 'preact/compat'
-import { debounce } from 'common/functions'
+import {type FC, type TargetedEvent, memo, useCallback, useMemo, useState} from 'preact/compat'
+
+import {debounce} from 'common/functions'
 
 import './Ripple.scss'
 
 const ANIMATION_DURATION_MS = 700
 
 export const Ripple: FC = memo(() => {
-  const [ripples, setRipples] = useState<{ x: number; y: number; size: number }[]>([])
+  const [ripples, setRipples] = useState<{x: number; y: number; size: number}[]>([])
   const cleanUpDebounced = useMemo(() => {
     return debounce(
       () => {
@@ -18,7 +19,7 @@ export const Ripple: FC = memo(() => {
   }, [])
   const handleMouseDown = useCallback(
     (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
-      if (e.button !== 0) {
+      if (e.button !== 0 && e.button !== 2) {
         return
       }
 
@@ -26,14 +27,16 @@ export const Ripple: FC = memo(() => {
       const position = container.getBoundingClientRect()
       const rippleSize = container.offsetWidth / 2
 
-      setRipples([
+      setRipples((ripples) => [
         ...ripples,
         {
           x: e.clientX - position.x - rippleSize / 2,
           y: e.clientY - position.y - rippleSize / 2,
-          size: rippleSize
-        }
+          size: rippleSize,
+        },
       ])
+
+      // setLastRippleIdx(ripples.length) // оновити індекс
 
       cleanUpDebounced()
     },
@@ -42,8 +45,11 @@ export const Ripple: FC = memo(() => {
 
   return (
     <div class="ripple-container" onMouseDown={handleMouseDown}>
-      {ripples.map(({ x, y, size }) => (
-        <span style={`left: ${x}px; top: ${y}px; width: ${size}px; height: ${size}px;`} />
+      {ripples.map(({x, y, size}, idx) => (
+        <span
+          key={idx}
+          style={`left: ${x}px; top: ${y}px; width: ${size}px; height: ${size}px;`}
+        />
       ))}
     </div>
   )

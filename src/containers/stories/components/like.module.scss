@@ -1,0 +1,23 @@
+.story-like {
+  cursor: pointer;
+  height: 50px;
+  width: 50px;
+  // background-image:url( 'https://abs.twimg.com/a/1446542199/img/t1/web_heart_animation.png');
+  background-image: url('/images/heart.png');
+  background-position: left;
+  background-repeat: no-repeat;
+  background-size: 2900%;
+
+  &.isLiked {
+    animation: heart-burst 0.7s steps(28) forwards;
+  }
+  // &:hover {
+  //   background-color: red;
+  // }
+}
+
+@keyframes heart-burst {
+  to {
+    background-position: right;
+  }
+}

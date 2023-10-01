@@ -1,4 +1,5 @@
 import * as LangPack from 'api/graphql/langPack'
+import {cleanTypename} from 'api/helpers/cleanupTypename'
 import type {ApiLangCode, GetLangStringInput} from 'api/types/langPack'
 
 import {ApiBaseMethod} from '../base'
@@ -9,14 +10,14 @@ export class ApiLangPack extends ApiBaseMethod {
       query: LangPack.QUERY_LANG_GET_PACK,
       fetchPolicy: 'cache-first',
       variables: {
-        code
-      }
+        code,
+      },
     })
     if (!data.getLangPack) {
       throw new Error('MMMMM')
     }
 
-    return data.getLangPack
+    return cleanTypename(data.getLangPack)
   }
 
   public async getLangString(input: GetLangStringInput) {
@@ -24,14 +25,14 @@ export class ApiLangPack extends ApiBaseMethod {
       query: LangPack.QUERY_LANG_GET_STRING,
       fetchPolicy: 'cache-first',
       variables: {
-        input
-      }
+        input,
+      },
     })
     if (!data.getLangString) {
       throw new Error('ALLALALALALA')
     }
 
-    return data.getLangString
+    return cleanTypename(data.getLangString)
   }
 
   public async getCountriesList(code: ApiLangCode) {
@@ -39,8 +40,8 @@ export class ApiLangPack extends ApiBaseMethod {
       query: LangPack.QUERY_GET_COUNTRIES_LIST,
       fetchPolicy: 'cache-first',
       variables: {
-        code
-      }
+        code,
+      },
     })
 
     if (!data.getCountriesList) {
@@ -55,8 +56,8 @@ export class ApiLangPack extends ApiBaseMethod {
       query: LangPack.QUERY_LANG_GET,
       fetchPolicy: 'cache-first',
       variables: {
-        code
-      }
+        code,
+      },
     })
     if (!data.getLanguage) {
       return undefined
@@ -68,13 +69,13 @@ export class ApiLangPack extends ApiBaseMethod {
   public async getLanguages() {
     const {data} = await this.client.query({
       query: LangPack.QUERY_LANG_GET_ALL,
-      fetchPolicy: 'cache-first'
+      fetchPolicy: 'cache-first',
     })
 
     if (!data.getLanguages || data.getLanguages.length === 0) {
       return undefined
     }
 
-    return data.getLanguages
+    return cleanTypename(data.getLanguages)
   }
 }

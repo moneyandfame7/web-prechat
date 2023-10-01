@@ -1,5 +1,4 @@
-import {API_AVATAR_VARIANTS} from './../common/config'
-
+import {API_AVATAR_VARIANTS} from '../common/environment'
 import {getRandom} from './number/getRandom'
 
 export function getRandomAvatarVariant() {

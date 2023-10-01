@@ -1,21 +1,30 @@
 .Menu {
-  &.zoomFade {
-    --transform-zoom-fade-init: scale(0.85) !important;
-  }
-  // position: fixed !important;
   user-select: none;
   z-index: var(--z-menu);
   left: 0;
   right: 0;
   height: max-content !important;
-  min-width: 180px;
+  min-width: 200px;
   width: max-content !important;
   padding: 5px;
-  background-color: var(--c-surface-transparent);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
+
+  border-radius: 0.75rem;
   max-height: inherit;
-  box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
+  overflow: hidden;
+  max-height: calc(100 * 1dvh - 4.75rem);
+  // box-shadow: rgba(0, 0, 0, 0.2) 0px 7px 29px 0px;
+
+  // box-shadow: var(--menu-shadow);
+
+  box-shadow: 0 0.25rem 0.5rem 0.125rem var(--c-shadow-default);
+  background-color: var(--menu-bg) !important;
+  // backdrop-filter: blur(50px);
+  @include withBlur(var(--menu-blur));
+  // @include defaultTransition(box-shadow);
+
+  html.no-menu-blur & {
+    background-color: var(--c-surface) !important;
+  }
   &_item {
     width: 100%;
     font-size: 14px;
@@ -27,15 +36,25 @@
     align-items: center;
     transition: transform 0.15s ease-in-out;
     cursor: pointer;
+    gap: 10px;
     &:focus-within {
-      background-color: var(--c-surface-3);
+      background-color: var(--c-surface-3-transparent);
     }
     &:hover {
-      background-color: var(--c-surface-3);
+      background-color: var(--c-surface-3-transparent);
     }
-    &:active {
-      transform: scale(0.97);
-      transition: transform 0.15s ease-in-out;
+    > .menu-badge {
+      color: var(--c-font-secondary);
+      font-size: 14px;
+    }
+    > .menu-title {
+      flex: 1;
+    }
+    @include withAnimations {
+      &:active {
+        transform: scale(0.97);
+        transition: transform 0.15s ease-in-out;
+      }
     }
     &.no-results {
       color: var(--c-font-secondary);
@@ -47,12 +66,62 @@
       background-color: red !important;
     }
 
-    svg {
-      width: 18px;
-      margin-right: 15px;
+    > .switch-input-wrapper {
+      margin-left: 10px;
+    }
+
+    &.danger {
+      color: var(--c-danger);
+      > .Icon {
+        path {
+          fill: var(--c-danger);
+        }
+      }
+    }
+
+    > .Icon {
+      width: 20px;
+      margin-right: 10px; //15px
 
       path {
         // fill: #000;
+        fill: var(--c-font-primary);
+      }
+    }
+  }
+
+  &--top {
+    top: calc(100% + 0.5rem);
+    bottom: auto;
+  }
+  &--bottom {
+    bottom: calc(100% + 0.5rem);
+    top: auto;
+  }
+  &--right {
+    right: 0;
+    left: auto;
+  }
+  &--left {
+    left: 0;
+    right: auto;
+  }
+
+  @include responsive(tablet) {
+    padding: 10px;
+    background-color: var(--c-surface) !important;
+    &_item {
+      font-size: 16px;
+      // padding: 8px 16px;
+      padding-inline: 20px;
+      padding-block: 15px;
+      font-weight: 400;
+      > .Icon {
+        width: 24px !important;
+        height: 24px !important;
+        path {
+          fill: var(--c-icon);
+        }
       }
     }
   }

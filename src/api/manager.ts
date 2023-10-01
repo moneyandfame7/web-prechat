@@ -1,14 +1,13 @@
+import {type ApolloClientWrapper, createApolloClientWrapper} from './apollo'
 import {ServiceFactory} from './factory'
-
+import type {ApiChatFolders, ApiMessages} from './methods'
+import type {ApiAccount} from './methods/account'
 import type {ApiAuth} from './methods/auth'
+import type {ApiChats} from './methods/chats'
+import type {ApiContacts} from './methods/contacts'
 import type {ApiLangPack} from './methods/langPack'
 import type {ApiSettings} from './methods/settings'
-import type {ApiContacts} from './methods/contacts'
 import type {ApiUsers} from './methods/users'
-import type {ApiAccount} from './methods/account'
-import type {ApiChats} from './methods/chats'
-
-import {type ApolloClientWrapper, createApolloClientWrapper} from './apollo'
 
 export interface ApiMethods {
   auth: ApiAuth
@@ -18,6 +17,8 @@ export interface ApiMethods {
   contacts: ApiContacts
   users: ApiUsers
   chats: ApiChats
+  messages: ApiMessages
+  folders: ApiChatFolders
 }
 
 /**
@@ -27,6 +28,7 @@ class ApiManager implements ApiMethods {
   /**
    * Constructor accepts all  instances with api methods
    */
+  // eslint-disable-next-line no-useless-constructor
   public constructor(
     public readonly auth: ApiAuth,
     public readonly langPack: ApiLangPack,
@@ -34,7 +36,9 @@ class ApiManager implements ApiMethods {
     public readonly settings: ApiSettings,
     public readonly contacts: ApiContacts,
     public readonly users: ApiUsers,
-    public readonly chats: ApiChats
+    public readonly chats: ApiChats,
+    public readonly messages: ApiMessages,
+    public readonly folders: ApiChatFolders
   ) {}
 }
 
@@ -48,6 +52,8 @@ function createApiManager(apolloWrapper: ApolloClientWrapper): ApiMethods {
   const contacts = factory.createContacts()
   const users = factory.createUsers()
   const chats = factory.createChats()
+  const messages = factory.createMessages()
+  const folders = factory.createChatFolders()
   const apiClient = new ApiManager(
     auth,
     langPack,
@@ -55,7 +61,9 @@ function createApiManager(apolloWrapper: ApolloClientWrapper): ApiMethods {
     settings,
     contacts,
     users,
-    chats
+    chats,
+    messages,
+    folders
   )
 
   return apiClient

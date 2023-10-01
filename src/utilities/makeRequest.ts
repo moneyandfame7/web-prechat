@@ -1,5 +1,3 @@
-import {logDebugInfo} from 'lib/logger'
-
 import type {UserConnection} from 'types/request'
 import {fetchJson} from 'utilities/fetchJson'
 
@@ -15,7 +13,6 @@ const requests: Record<RequestName, string> = {
 export async function makeRequest<T extends RequestName>(name: T) {
   try {
     const url = requests[name]
-    logDebugInfo(`[GET REQUEST]: ${name}`)
     return fetchJson<RequestResponse[T]>(url)
   } catch (e) {
     throw new Error(`[${name}] Request Error `)

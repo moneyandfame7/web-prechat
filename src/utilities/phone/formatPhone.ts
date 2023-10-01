@@ -3,7 +3,7 @@ const patterns = {
   '+1': '### ### ####',
   '+44': '## #### ####',
   '+48': '## ### ## ##',
-  '+81': '## #### ####'
+  '+81': '## #### ####',
 }
 
 export const formatPhone = (phone: string) => {
@@ -22,9 +22,10 @@ export const formatPhone = (phone: string) => {
         const digit = testPhone[digitIndex]
         digitIndex++
 
-        return digitRegex.test(digit) ? digit : '#' // Замінити символ "#" на цифру або зберегти "-", якщо цифра відсутня
+        return digitRegex.test(digit) ? digit : '#' // Замінити символ "#" на цифру або зберегти "#", якщо цифра відсутня
       })
 
+      // eslint-disable-next-line prefer-template
       const formattedWithPattern = code + ' ' + formattedPhoneNumber
       const formatted = formattedWithPattern.replace(/#+.*$/, '')
       /* .trim(); */ /* replace(/\s+$/, ''); */

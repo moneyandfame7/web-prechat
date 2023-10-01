@@ -1,32 +1,41 @@
-import lang from 'lib/i18n/lang'
-import type {SettingsState, SignalGlobalState} from 'types/state'
+import {storages} from 'state/storages'
+
 import {updateByKey} from 'utilities/object/updateByKey'
 
-const initialSettings: SettingsState = {
-  animationLevel: 2,
-  language: 'en',
-  showTranslate: false,
-  suggestedLanguage: 'en',
-  theme: 'light',
-  isCacheSupported: true,
-  i18n: {
-    lang_code: 'en',
-    pack: lang
-  }
-}
+import type {DeepPartial} from 'types/common'
+import type {SettingsState, SignalGlobalState} from 'types/state'
 
-export function resetSettingsState(global: SignalGlobalState) {
-  updateSettingsState(global, initialSettings)
-}
+// export function updateSettings(global:SignalGlobalState,){}
 
 export function updateSettingsState(
   global: SignalGlobalState,
-  settings: Partial<Omit<SettingsState, 'i18n'>>
+  settings: DeepPartial<SettingsState>
 ) {
-  updateByKey(global.settings, settings)
-}
+  const {general, passcode, i18n, ...justToUpdate} = settings
 
-export function updateI18nState(global: SignalGlobalState, i18n: SettingsState['i18n']) {
-  updateByKey(global.settings.i18n.pack, i18n.pack)
-  global.settings.i18n.lang_code = i18n.lang_code
+  /* DOM helpers */
+
+  /* UPDATES  */
+  if (general) {
+    updateByKey(global.settings.general, {
+      ...general,
+      animations: {
+        ...global.settings.general.animations,
+        ...general.animations,
+      },
+    })
+  }
+  if (passcode) {
+    updateByKey(global.settings.passcode, passcode)
+  }
+  if (i18n) {
+    updateByKey(global.settings.i18n, i18n.pack as any)
+    global.settings.i18n.lang_code = i18n.lang_code!
+  }
+
+  updateByKey(global.settings, {
+    ...justToUpdate,
+    languages: [...global.settings.languages, ...((justToUpdate.languages || []) as any)],
+  })
+  storages.settings.put(global.settings) // ???? global.settings ???
 }
