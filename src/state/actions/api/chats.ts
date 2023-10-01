@@ -3,7 +3,6 @@ import {getApiError} from 'api/helpers/getApiError'
 import {Api} from 'api/manager'
 
 import {createAction} from 'state/action'
-import {getChatUsername} from 'state/helpers/chats'
 import {isUserId} from 'state/helpers/users'
 import {selectChat, selectChatByUsername, selectChatFull} from 'state/selectors/chats'
 import {selectUser} from 'state/selectors/users'
@@ -54,6 +53,8 @@ createAction('getChats', async (state, actions) => {
   state.isChatsFetching = true
   const chats = await Api.chats.getChats()
   if (!chats) {
+    state.isChatsFetching = false
+
     return
   }
 

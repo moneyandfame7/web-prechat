@@ -8,7 +8,7 @@ import {getGlobalState} from 'state/signal'
 import {useBoolean} from 'hooks/useFlag'
 
 import {ColumnHeader} from 'components/ColumnHeader'
-import {UploadPhoto} from 'components/UploadPhoto'
+import {UploadProfilePhoto} from 'components/UploadPhoto'
 import {FloatButton, Icon, InputText} from 'components/ui'
 
 import {LeftGoBack} from '../LeftGoBack'
@@ -64,7 +64,7 @@ const CreateChatStep2: FC<CreateChatStep2Props> = ({isGroup, selectedIds}) => {
 
         <p class="column-header__title">New {isGroup ? 'Group' : 'Channel'}</p>
       </ColumnHeader>
-      <UploadPhoto />
+      <UploadProfilePhoto />
       <div class={styles['chat-info']}>
         <InputText
           label={isGroup ? 'Group Name' : 'Channel Name'}

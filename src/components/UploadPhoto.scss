@@ -1,14 +1,22 @@
+@import 'croppie/croppie.css';
+
 .UploadPhoto {
-  width: 110px;
-  height: 110px;
   border-radius: 50%;
   background-color: var(--c-primary);
+  position: relative;
   flex-shrink: 0;
   display: flex;
   margin: 0px auto;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
   cursor: pointer;
+
+  background-position: center center;
+  // background-attachment: fixed;
+  background-repeat: no-repeat;
+  // background-size: cover;
+  // background-color: var(--c-bg);
   &:hover {
     .Icon {
       transform: scale(1.2);
@@ -17,20 +25,53 @@
 
   .Icon {
     transition: transform 0.3s ease;
+    position: absolute;
+    z-index: 1;
+    // z-index: 5;
     path {
       fill: #fff !important;
     }
   }
+  > img {
+    filter: brightness(0.5);
+  }
+  &.large {
+    width: 150px;
+    height: 150px;
+    .Icon {
+      width: 50px;
+      height: 50px;
+    }
+  }
+  > input {
+    z-index: 2;
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    border-radius: 50%;
+    height: 100%;
+    width: 100%;
+  }
 }
 .croppie-container {
   position: relative;
+  overflow: hidden;
+  border-radius: 12px;
   .cr-viewport {
-    box-shadow: 0 0 2000px 2000px rgb(var(--c-bg-rgb) / 0.75);
+    // box-shadow: 0 0 2000px 2000px rgba(var(--c-bg-rgb) / 0.75);
+    box-shadow: 0 0 2000px 2000px rgb(255 255 255 / 75%);
     border: none;
     position: absolute;
   }
+  .cr-image {
+    border-radius: 12px;
+  }
   .cr-boundary {
     position: relative;
+    border-radius: 12px;
+
+    // width: 400px;
+    // height: 400px;
 
     // --- BLUR EFFECT ---
     // &::before {
@@ -51,6 +92,8 @@
 
 .cr-slider {
   border: none;
+  // border-color: blue;
+
   @include bgAndColorTransition(border-color, scale);
   &::-webkit-slider-thumb {
     background-color: var(--c-primary);
@@ -70,4 +113,6 @@
 
     background-color: var(--c-border-input);
   }
+
+  // background-color: red;
 }

@@ -58,6 +58,7 @@ export const customFetch = (uri: any, options: any) => {
 }
 
 export function customFetch2(url: string, opts: any = {}) {
+  console.log({opts})
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
 

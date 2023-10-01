@@ -1,20 +1,9 @@
 import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
-import type {
-  ApiInputSaveDraft,
-  ApiMessage,
-  GetHistoryInput,
-  SendMessageInput,
-} from 'api/types/messages'
+import type {ApiMessage, GetHistoryInput, SendMessageInput} from 'api/types/messages'
 
-export const FRAGMENT_PHOTO: DocumentNode = gql`
-  fragment AllPhotoFields on Photo {
-    id
-    date
-    blurHash
-    url
-  }
-`
+import {FRAGMENT_PHOTO} from './media'
+
 export const FRAGMENT_MESSAGE_ACTION: DocumentNode = gql`
   fragment AllMessageActionFields on MessageAction {
     text

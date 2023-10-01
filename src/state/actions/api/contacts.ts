@@ -12,6 +12,8 @@ createAction('getContactList', async (state) => {
   state.isContactsFetching = true
   const users = await Api.contacts.getContacts()
   if (!users) {
+    state.isContactsFetching = false
+
     return
   }
 

@@ -35,6 +35,8 @@ export interface ApiPhoto {
   date: Date
   blurHash: string
   url: string
+  width: number
+  height: number
 }
 
 export type ResolvedPeer =

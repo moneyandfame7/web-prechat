@@ -27,6 +27,7 @@ export interface IconButtonProps {
   onClick?: (e: TargetedEvent<HTMLButtonElement, MouseEvent>) => void
   title?: SignalOr<string>
   iconColor?: IconColor
+  withIconAnimation?: boolean
 }
 
 export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
@@ -40,6 +41,7 @@ export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
   isDisabled,
   id,
   iconColor = 'secondary',
+  withIconAnimation = false,
   ...props
 }) => {
   const buildedClass = clsx(`IconButton Button-${color} Button-${variant}`, className)

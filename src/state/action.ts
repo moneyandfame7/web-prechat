@@ -70,6 +70,9 @@ interface ActionPayloads {
   getUser: string
   resolveUsername: {username: string}
 
+  /* Media */
+  uploadProfilePhoto: File
+
   /* Chats */
   createChannel: CreateChannelInput
   createGroup: CreateGroupInput

@@ -1,7 +1,7 @@
 import {
-  ChangeEvent,
+  type ChangeEvent,
   type FC,
-  TargetedEvent,
+  type TargetedEvent,
   memo,
   useCallback,
   useEffect,
@@ -9,11 +9,14 @@ import {
   useState,
 } from 'preact/compat'
 
+import {Blurhash} from 'react-blurhash'
+
 import {Api} from 'api/manager'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {selectOpenedChats} from 'state/selectors/chats'
+import {selectUser} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
@@ -25,6 +28,7 @@ import {connectStateToNavigation} from 'utilities/routing'
 
 import type {OpenedChat} from 'types/state'
 
+import {Photo} from 'components/common/Photo'
 import {Transition} from 'components/transitions'
 import {Transition3d} from 'components/transitions/Transition3d'
 import {Button} from 'components/ui'
@@ -120,31 +124,10 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
   const render = useRef(0)
 
   render.current += 1
-  const [imgUrl, setImgUrl] = useState<string | null>(null)
+  const self = selectUser(global, global.auth.userId!)
 
-  // const {}=useBoo
-  const handleChangeInput = async (e: TargetedEvent<HTMLInputElement, ChangeEvent>) => {
-    const file = e.currentTarget?.files?.[0]
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader()
-
-      reader.onloadend = () => {
-        setImgUrl(reader.result as any)
-      }
-
-      reader.readAsDataURL(file)
-
-      const data = await Api.account.uploadProfilePhoto(file)
-
-      console.log({data})
-    }
-  }
-  const handleSendTest = () => {}
   return (
     <div class="MiddleColumn" id="middle-column">
-      <input type="file" onChange={handleChangeInput} />
-      {imgUrl && <img src={imgUrl} />}
-      {/* {messagesIds && <InfiniteScroll messageIds={messagesIds} />} */}
       <Button
         onClick={() => {
           global.stories.isOpen = !global.stories.isOpen
@@ -152,7 +135,7 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
       >
         Toggle stories
       </Button>
-      <Transition3d />
+      {/* <Transition3d /> */}
       {isChatOpen && (
         <>
           <ChatHeader

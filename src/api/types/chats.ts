@@ -24,6 +24,9 @@ export interface ApiChat {
   photo?: ApiPhoto
   // color:
   // lastMessage?: any
+  /**
+   * @todo rewrite on string
+   */
   createdAt: Date
   _id: string
 }

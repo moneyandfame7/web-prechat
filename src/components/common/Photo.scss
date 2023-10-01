@@ -1,0 +1,12 @@
+.media-photo-container {
+  position: relative;
+
+  > .media-photo {
+    position: absolute;
+    object-fit: cover;
+    pointer-events: none;
+    top: 0;
+    left: 0;
+    transition: opacity 0.2s ease;
+  }
+}

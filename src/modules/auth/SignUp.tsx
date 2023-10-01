@@ -5,7 +5,7 @@ import {getGlobalState} from 'state/signal'
 
 import {t} from 'lib/i18n'
 
-import {UploadPhoto} from 'components/UploadPhoto'
+import {UploadProfilePhoto} from 'components/UploadPhoto'
 import {Button, InputText} from 'components/ui'
 import {Checkbox} from 'components/ui/Checkbox'
 
@@ -13,9 +13,10 @@ import './SignUp.scss'
 
 const SignUp: FC = () => {
   const {auth} = getGlobalState()
-  const {signUp} = getActions()
+  const {signUp, uploadProfilePhoto} = getActions()
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
+  const [photo, setPhoto] = useState<File | null>(null)
   /**
    * @todo переробити на signal?
    */
@@ -36,21 +37,31 @@ const SignUp: FC = () => {
   }, [])
 
   const handleSubmit = useCallback(
-    (e: TargetedEvent<HTMLFormElement, Event>) => {
+    async (e: TargetedEvent<HTMLFormElement, Event>) => {
       e.preventDefault()
-      signUp({
+      console.log({photo})
+      await signUp({
         firstName,
         lastName: lastName.length === 0 ? undefined : lastName,
         // photo,
         silent: silentSignUp,
       })
+      if (photo) {
+        uploadProfilePhoto(photo)
+      }
+      /* then upload photo???? */
+
+      console.log('THEN I NEED TO UPLOAD PHOTO')
     },
-    [silentSignUp, lastName]
+    [silentSignUp, lastName, photo]
   )
+  const handleSubmitPhoto = (file: File) => {
+    setPhoto(file)
+  }
 
   return (
     <div class="Auth_signup">
-      <UploadPhoto />
+      <UploadProfilePhoto size="large" onSubmit={handleSubmitPhoto} />
       <h1 class="title">Sign up</h1>
       <p class="subtitle">{t('Auth.SignUp')}</p>
       <form onSubmit={handleSubmit}>

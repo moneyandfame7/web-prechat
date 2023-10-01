@@ -1,5 +1,5 @@
 import type {ApolloClientWrapper} from './apollo'
-import {ApiChatFolders, ApiMessages} from './methods'
+import {ApiChatFolders, ApiMedia, ApiMessages} from './methods'
 import {ApiAccount} from './methods/account'
 import {ApiAuth} from './methods/auth'
 import {ApiChats} from './methods/chats'
@@ -46,5 +46,9 @@ export class ServiceFactory {
 
   public createChatFolders() {
     return new ApiChatFolders(this.apolloClient.getClient())
+  }
+
+  public createMedia() {
+    return new ApiMedia(this.apolloClient.getClient())
   }
 }

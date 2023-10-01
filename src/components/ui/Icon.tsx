@@ -29,7 +29,15 @@ interface IconProps {
   width?: number
 }
 export const Icon: FC<IconProps> = memo(
-  ({name, className, color = 'default', onClick, withFastClick = false, title, ...props}) => {
+  ({
+    name,
+    className,
+    color = 'secondary',
+    onClick,
+    withFastClick = false,
+    title,
+    ...props
+  }) => {
     const ComputedIcon = icons[name] as FC<SVGIconProps>
 
     const buildedClass = `Icon Icon-${name} Icon-${color} ${className || ''}`.trim()

@@ -5,7 +5,7 @@ import clsx from 'clsx'
 import type {ApiChat, ApiUser} from 'api/types'
 
 import {connect} from 'state/connect'
-import {getChatName_deprecated, getChatRoute} from 'state/helpers/chats'
+import {getChatName_deprecated, getPeerRoute} from 'state/helpers/chats'
 import {isUserId} from 'state/helpers/users'
 import {selectChat} from 'state/selectors/chats'
 import {isUserOnline, selectUser} from 'state/selectors/users'
@@ -43,7 +43,7 @@ const ChatItemImpl: FC<OwnProps & StateProps> = ({
   currentChatId,
 }) => {
   const global = getGlobalState()
-  const chatRoute = getChatRoute(isPrivate ? user : chat)
+  const chatRoute = getPeerRoute(isPrivate ? user : chat)
   const chatDate = useMemo(
     () => chat && formatDate(new Date(chat?.createdAt), true, false),
     [chat?.createdAt]

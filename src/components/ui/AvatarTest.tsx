@@ -15,6 +15,7 @@ import {getInitials} from 'utilities/string/getInitials'
 
 import type {SignalOr} from 'types/ui'
 
+import {Photo} from 'components/common/Photo'
 import {SingleTransition} from 'components/transitions'
 
 import {Icon} from '.'
@@ -64,6 +65,15 @@ export const AvatarTest: FC<AvatarTestProps> = ({
 
     if (isSavedMessages) {
       return <Icon name="savedMessages" />
+    } else if (peer?.photo) {
+      return (
+        <Photo
+          url={peer.photo.url}
+          blurHash={peer.photo.blurHash}
+          width="100%"
+          height="100%"
+        />
+      )
     } else if (chat) {
       textAvatar = getChatName(chat)
 
@@ -82,6 +92,7 @@ export const AvatarTest: FC<AvatarTestProps> = ({
     `Avatar Avatar-${size} Avatar-${shape} Avatar-c-${avatarVariant}`,
     {
       'saved-messages': isSavedMessages,
+      'with-photo': !!peer?.photo,
     }
   )
 

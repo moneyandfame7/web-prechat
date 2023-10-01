@@ -209,7 +209,8 @@ $theme-map-dark: (
   --c-border-hover: #{$c-border-hover};
 
   // --c-primary: #{$c-primary};
-  --c-primary: #50a2e9;
+  // --c-primary: #50a2e9;
+  --c-primary: #4da4f5;
   --c-primary-hover: #{$c-primary-hover};
   --c-primary-light: #{$c-primary-light};
 
@@ -233,7 +234,7 @@ $theme-map-dark: (
   --c-blue: #{$c-blue};
   --c-orange: #{$c-orange};
   --c-white: #{$c-white};
-
+  --c-white-secondary: rgb(201, 199, 199);
   --c-font-primary: #{$c-font-primary};
   --c-font-primary-rgb: 0, 0, 0;
   --c-font-secondary: #{$c-font-secondary};

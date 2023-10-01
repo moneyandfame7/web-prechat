@@ -88,7 +88,7 @@ const ChatFolders: FC = memo(() => {
       />
 
       <Transition
-        // innerClassnames="chat-list scrollable scrollable-y"
+        innerClassnames="chat-folder-tab"
         // timeout={0}
         name={getPreferredAnimations().chatFolders}
         activeKey={chatFolder}
