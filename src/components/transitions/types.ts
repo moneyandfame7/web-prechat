@@ -1,5 +1,5 @@
 import type {ComponentChildren, RefObject} from 'preact'
-import type {CSSProperties, TargetedEvent} from 'preact/compat'
+import type {CSSProperties, HTMLAttributes, TargetedEvent} from 'preact/compat'
 
 import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition'
 
@@ -33,6 +33,7 @@ export interface TransitionProps<TKey extends number | string> {
   innerClassnames?: string | Partial<{[key in TKey]: string}>
   timeout?: number
   onExitEnd?: VoidFunction
+  innerAttributes?: Partial<{[key in TKey]: HTMLAttributes<HTMLDivElement>}>
 }
 export interface SingleTransitionProps {
   name: TransitionName
@@ -62,4 +63,5 @@ export interface SingleTransitionProps {
   key?: string | number
   elRef?: RefObject<HTMLDivElement>
   styles?: CSSProperties
+  divAttributes?: HTMLAttributes<HTMLDivElement>
 }

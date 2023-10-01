@@ -5,7 +5,8 @@ import {getActions} from 'state/action'
 import {TEST_translate} from 'lib/i18n'
 
 import {ColumnWrapper} from 'components/ColumnWrapper'
-import {Button, FloatButton, Icon} from 'components/ui'
+import {ContactsList} from 'components/common/ContactsList'
+import {FloatButton, Icon} from 'components/ui'
 
 import {useLeftColumn} from '../context'
 
@@ -22,7 +23,7 @@ const Contacts: FC = () => {
   return (
     <ColumnWrapper onGoBack={resetScreen} title={TEST_translate('Contacts')}>
       {/* Contacts */}
-      <Button onClick={() => resetScreen()}>Reset</Button>
+      <ContactsList />
       <FloatButton
         shown
         onClick={handleClickButton}

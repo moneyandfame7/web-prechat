@@ -151,6 +151,9 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
           direction={isChatOpen ? -1 : 1}
         > */}
         <Transition
+          innerAttributes={{
+            [LeftColumnGroup.Contacts]: {id: 'contacts-container'},
+          }}
           cleanupException={LeftColumnGroup.Main}
           activeKey={activeGroup}
           name={getPreferredAnimations().page}

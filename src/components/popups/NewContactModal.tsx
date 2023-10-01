@@ -15,9 +15,11 @@ import {PhoneNumberInput} from 'modules/auth/PhoneNumberInput'
 import type {ApiUser} from 'api/types/users'
 
 import {getActions} from 'state/action'
+import {getGlobalState} from 'state/signal'
 
 import {getRandomAvatarVariant} from 'utilities/avatar'
 import {addKeyboardListeners} from 'utilities/keyboardListener'
+import {extractPhoneCode} from 'utilities/phone/formatPhone'
 import {validatePhone} from 'utilities/phone/validatePhone'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
@@ -37,10 +39,11 @@ export interface NewContactModalProps {
  * сам компонент Modal робити не асинхроним ???, і там буде transition і все таке, а інші модалки - асінхронні
  */
 const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose */}) => {
+  const global = getGlobalState()
   const actions = getActions()
   const firstName = useSignal('')
   const lastName = useSignal('')
-  const contactPhone = useSignal('')
+  const contactPhone = useSignal(extractPhoneCode(global.auth.phoneNumber!) || '')
   // const {value: isLoading, setValue: setLoading} = useBoolean()
   const [isLoading, setIsLoading] = useState(false)
   const userToAdding = {} as ApiUser | undefined

@@ -1,2 +1,5 @@
-.CreateNewContact {
+#contacts-container {
+  > .column-content {
+    padding: 10px;
+  }
 }
