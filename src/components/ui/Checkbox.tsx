@@ -49,7 +49,7 @@ export const Checkbox: FC<CheckboxProps> = ({
         type="zoomFade"
         isVisible={checked instanceof Signal ? checked.value : checked}
       > */}
-        <Icon name="check" width={15} height={15} />
+        <Icon name="check" width={15} height={15} color="white" />
       </div>
       {label}
 

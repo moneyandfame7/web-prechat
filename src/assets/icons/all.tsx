@@ -80,6 +80,9 @@ export {ReactComponent as archive2} from './archive2.svg'
 export {ReactComponent as story} from './story.svg'
 export {ReactComponent as attach2} from './attach2.svg'
 export {ReactComponent as reactions} from './reactions.svg'
+export {ReactComponent as moreRounded} from './more-rounded.svg'
+export {ReactComponent as pause} from './pause.svg'
+export {ReactComponent as play} from './play.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

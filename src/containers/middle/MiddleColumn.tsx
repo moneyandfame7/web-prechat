@@ -1,4 +1,15 @@
-import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
+import {
+  ChangeEvent,
+  type FC,
+  TargetedEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'preact/compat'
+
+import {Api} from 'api/manager'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
@@ -15,6 +26,7 @@ import {connectStateToNavigation} from 'utilities/routing'
 import type {OpenedChat} from 'types/state'
 
 import {Transition} from 'components/transitions'
+import {Transition3d} from 'components/transitions/Transition3d'
 import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
@@ -108,11 +120,30 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
   const render = useRef(0)
 
   render.current += 1
+  const [imgUrl, setImgUrl] = useState<string | null>(null)
 
   // const {}=useBoo
+  const handleChangeInput = async (e: TargetedEvent<HTMLInputElement, ChangeEvent>) => {
+    const file = e.currentTarget?.files?.[0]
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader()
 
+      reader.onloadend = () => {
+        setImgUrl(reader.result as any)
+      }
+
+      reader.readAsDataURL(file)
+
+      const data = await Api.account.uploadProfilePhoto(file)
+
+      console.log({data})
+    }
+  }
+  const handleSendTest = () => {}
   return (
     <div class="MiddleColumn" id="middle-column">
+      <input type="file" onChange={handleChangeInput} />
+      {imgUrl && <img src={imgUrl} />}
       {/* {messagesIds && <InfiniteScroll messageIds={messagesIds} />} */}
       <Button
         onClick={() => {
@@ -121,6 +152,7 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
       >
         Toggle stories
       </Button>
+      <Transition3d />
       {isChatOpen && (
         <>
           <ChatHeader

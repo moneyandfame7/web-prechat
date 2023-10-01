@@ -23,6 +23,9 @@ interface DropdownMenuProps {
   mount?: boolean
   transform?: MenuTransform
   placement?: MenuPlacement
+  className?: string
+  onOpen?: VoidFunction
+  onClose?: VoidFunction
   /* якщо в нас є компонент з модалкою - то потрібно не робити unmount  */
 }
 export const DropdownMenu: FC<DropdownMenuProps> = ({
@@ -31,20 +34,33 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({
   transform,
   placement,
   mount = false,
+  onClose,
+  onOpen,
+  className,
 }) => {
   const {value: isMenuOpen, setTrue: openMenu, setFalse: closeMenu} = useBoolean(false)
 
+  const handleOpen = () => {
+    onOpen?.()
+    openMenu()
+  }
+  const handleClose = () => {
+    onClose?.()
+    closeMenu()
+  }
   const cloned = cloneElement(button, {
-    onClick: openMenu,
+    onClick: handleOpen,
   })
 
   return (
     <div class={`DropdownMenu ${isMenuOpen ? 'open' : ''}`}>
       {cloned}
       <Menu
+        // withPortal
+        className={className}
         autoClose
         isOpen={isMenuOpen}
-        onClose={closeMenu}
+        onClose={handleClose}
         transform={transform}
         withMount={mount}
         placement={placement}

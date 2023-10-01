@@ -13,6 +13,7 @@ export type TransitionName =
   | 'fade'
   | 'slideDark'
   | 'rotate'
+  | 'rotate3d'
   | 'zoomIcon'
 export type TransitionEasing = 'ease' | 'ease-in' | 'ease-in-out' | 'ease-out' | 'linear'
 export type TransitionDirection = 'auto' | 'inverse' | 1 | -1

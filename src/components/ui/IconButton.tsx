@@ -6,9 +6,11 @@ import {useFastClick} from 'hooks/useFastClick'
 
 import type {SignalOr} from 'types/ui'
 
+import {Transition} from 'components/transitions'
+
 import {Ripple} from '../Ripple'
 import type {ButtonProps} from './Button'
-import {Icon, type IconName} from './Icon'
+import {Icon, type IconColor, type IconName} from './Icon'
 
 import './IconButton.scss'
 
@@ -24,7 +26,7 @@ export interface IconButtonProps {
   icon: IconName
   onClick?: (e: TargetedEvent<HTMLButtonElement, MouseEvent>) => void
   title?: SignalOr<string>
-  iconColor?: 'default' | 'secondary' | 'primary'
+  iconColor?: IconColor
 }
 
 export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
@@ -46,7 +48,9 @@ export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
 
   return (
     <button id={id} class={buildedClass} {...clickHandlers} disabled={isDisabled} {...props}>
-      <Icon name={icon} color={iconColor} />
+      <Transition activeKey={icon} name="zoomIcon">
+        <Icon name={icon} color={iconColor} />
+      </Transition>
       {ripple && <Ripple />}
     </button>
   )

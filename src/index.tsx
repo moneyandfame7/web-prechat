@@ -70,7 +70,7 @@ import './css/index.scss'
  *  > Blurhash.
  *    > for video - need to get first frame and blur hash it??
  *    > for photo - just get hash
- *
+ *https://firebasestorage.googleapis.com/v0/b/nestjs-chat-a42f4.appspot.com/o/sosi%2Fhui
  */
 async function init() {
   // eslint-disable-next-line no-console

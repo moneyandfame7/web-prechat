@@ -11,11 +11,11 @@ import './Icon.scss'
 type SVGIconProps = JSX.SVGAttributes<SVGSVGElement>
 
 export type IconName = keyof typeof icons
-
+export type IconColor = 'default' | 'secondary' | 'primary' | 'white'
 interface IconProps {
   name: IconName
   className?: string
-  color?: 'default' | 'secondary' | 'primary'
+  color?: IconColor
   title?: string
   onClick?: (e: TargetedEvent<SVGSVGElement, MouseEvent>) => void
   withFastClick?: boolean

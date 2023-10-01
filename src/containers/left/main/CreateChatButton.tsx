@@ -54,8 +54,8 @@ export const CreateChatButton: FC = () => {
   const renderIcon = useMemo(() => {
     return (
       <>
-        <Icon name="close" />
-        <Icon name="editFilled" />
+        <Icon name="close" color="white" />
+        <Icon name="editFilled" color="white" />
       </>
     )
   }, [])

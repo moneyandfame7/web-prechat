@@ -93,7 +93,7 @@ const LeftMain: FC = (props) => {
           onFocus={handleFocusInput}
         /> */}
       </ColumnHeader>
-      <StoriesList />
+      {/* <StoriesList /> */}
 
       <div class="LeftColumn-Main_inner scrollable">
         {/* <SwitchTransition

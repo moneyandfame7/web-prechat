@@ -12,17 +12,21 @@ import {StoriesProvider} from 'context/stories'
 
 import type {ApiStory} from 'api/types/stories'
 
+import {useBoolean} from 'hooks/useFlag'
 import {useIsMounted} from 'hooks/useIsMounted'
 
 import {addEscapeListener} from 'utilities/keyboardListener'
 import {stopEvent} from 'utilities/stopEvent'
 
+import {Menu, MenuItem} from 'components/popups/menu'
 import {SingleTransition} from 'components/transitions'
 import {Icon, IconButton} from 'components/ui'
 import {AvatarTest} from 'components/ui/AvatarTest'
+import {DropdownMenu} from 'components/ui/DropdownMenu'
 import {Portal} from 'components/ui/Portal'
 import {TextArea} from 'components/ui/TextArea'
 
+import {StoryLike} from './components/like'
 import {StoryProgressList} from './components/progressList'
 import {Story} from './story'
 
@@ -56,7 +60,7 @@ const StoryViewer: FC<StoryViewerProps> = ({
   useEffect(() => {
     if (typeof currentIndex === 'number') {
       if (currentIndex >= 0 && currentIndex < stories.length) {
-        setCurrentIdWrapper(() => currentIndex)
+        setStoryId(() => currentIndex)
       } else {
         console.error(
           'Index out of bounds. Current index was set to value more than the length of stories array.',
@@ -81,7 +85,9 @@ const StoryViewer: FC<StoryViewerProps> = ({
         handleNext()
         break
       case 'Space':
-        setIsPaused((prev) => !prev)
+        if (!isFocused.value) {
+          setIsPaused((prev) => !prev)
+        }
         break
     }
   }
@@ -95,14 +101,20 @@ const StoryViewer: FC<StoryViewerProps> = ({
   }
 
   function handleNext() {
-    if (!isMounted()) {
+    /*    if (!isMounted()) { // ??
       return
+    } */
+    if (isPaused) {
+      setIsPaused(false)
     }
     onNext?.()
     handleNextStoryId()
   }
 
   function handlePrev() {
+    if (isPaused) {
+      setIsPaused(false)
+    }
     onPrev?.()
     setStoryId((prev) => (prev > 0 ? prev - 1 : prev))
   }
@@ -183,8 +195,12 @@ const StoryViewer: FC<StoryViewerProps> = ({
       setIsPaused(true)
     }
   })
+  function handleTogglePause() {
+    setIsPaused((prev) => !prev)
+  }
   // console.log(html.value.length)
   const isSendDisabled = useComputed(() => html.value.length === 0)
+  const {value: isMenuOpen, setFalse: closeMenu, setTrue: openMenu} = useBoolean()
 
   return (
     <StoriesProvider
@@ -220,7 +236,7 @@ const StoryViewer: FC<StoryViewerProps> = ({
           in={isOpen}
         >
           <div class="story-btn-container">
-            <Icon className="story-btn story-btn-prev" name="arrowLeft" />
+            <Icon color="white" className="story-btn story-btn-prev" name="arrowLeft" />
           </div>
           <IconButton className="stories-viewer-close" icon="close" onClick={onClose} />
           <div
@@ -237,7 +253,39 @@ const StoryViewer: FC<StoryViewerProps> = ({
                     <p class="author-date">date</p>
                   </div>
                 </div>
-                <IconButton icon="more" />
+                <div class="stories-header__btns">
+                  {/* <StoryLike isLiked={value} onToggle={toggle} /> */}
+
+                  <IconButton
+                    onClick={() => {
+                      setIsPaused((prev) => !prev)
+                    }}
+                    icon={isPaused ? 'play' : 'pause'}
+                    iconColor="white"
+                  />
+                  <IconButton
+                    onClick={() => {
+                      openMenu()
+                      setIsPaused(true)
+                    }}
+                    icon="moreRounded"
+                    iconColor="white"
+                  />
+                  <Menu
+                    className="story-menu"
+                    autoClose
+                    isOpen={isMenuOpen}
+                    onClose={closeMenu}
+                    transform="top right"
+                    withMount={false}
+                    withPortal={false}
+                    placement={{top: true, right: true}}
+                  >
+                    <MenuItem icon="forward" title="Share" />
+                    <MenuItem icon="archived" title="Hide stories" />
+                  </Menu>
+                  <IconButton className="btn-close" icon="close" iconColor="white" />
+                </div>
               </div>
               {html}
               <Story story={stories[storyId]} />
@@ -291,7 +339,7 @@ const StoryViewer: FC<StoryViewerProps> = ({
             {/* TransitionGroup here */}
           </div>
           <div class="story-btn-container">
-            <Icon className="story-btn story-btn-next" name="arrowRight" />
+            <Icon color="white" className="story-btn story-btn-next" name="arrowRight" />
           </div>
         </SingleTransition>
       </Portal>

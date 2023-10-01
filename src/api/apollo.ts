@@ -12,6 +12,7 @@ import {onError} from '@apollo/client/link/error'
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions'
 import {getMainDefinition} from '@apollo/client/utilities'
 
+import {createUploadLink} from 'apollo-upload-client'
 import {createClient} from 'graphql-ws'
 
 import {getActions} from 'state/action'
@@ -19,6 +20,7 @@ import {getGlobalState} from 'state/signal'
 
 import {DEBUG} from 'common/environment'
 
+import {customFetch, customFetch2} from './helpers/customFetch'
 import type {ApiError} from './types/diff'
 
 export type GqlDoc = {
@@ -37,6 +39,7 @@ export class ApolloClientWrapper {
   private readonly _headersLink: ApolloLink
   private readonly _splittedLinks: ApolloLink
   private readonly _errorLink: ApolloLink = this.getErrorLink()
+  private readonly _uploadLink: ApolloLink
   // private readonly _retryLink: ApolloLink = this.getRetryLink()
   public constructor(connection: {httpUrl: string; wsUrl: string}) {
     const {httpUrl, wsUrl} = connection
@@ -45,6 +48,7 @@ export class ApolloClientWrapper {
     this._httpLink = this.getHttpLink(httpUrl)
     this._wsLink = this.getWsLink(wsUrl)
     this._splittedLinks = this.getSplittedLinks(this._wsLink, this._httpLink)
+
     this.client = new ApolloClient({
       link: ApolloLink.from([
         // this._retryLink,
@@ -64,9 +68,17 @@ export class ApolloClientWrapper {
    * {@link https://www.apollographql.com/docs/react/api/link/introduction/ Apollo Link}
    */
   private getHttpLink(uri: string) {
-    return createHttpLink({
+    // return createHttpLink({
+    //   uri,
+    //   fetch: customFetch2 as any,
+    //   /* headers?? */
+    // })
+    return createUploadLink({
       uri,
-      /* headers?? */
+      fetch: customFetch2 as any,
+      headers: {
+        'apollo-require-preflight': 'true',
+      },
     })
   }
 

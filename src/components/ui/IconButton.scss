@@ -15,4 +15,12 @@
     opacity: 0.5;
     pointer-events: none;
   }
+  .Icon path {
+    transition: fill 0.3s ease;
+  }
+  &:hover {
+    .Icon path {
+      fill: var(--c-white);
+    }
+  }
 }

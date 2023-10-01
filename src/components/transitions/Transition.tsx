@@ -37,7 +37,7 @@ const Transition = <TKey extends number | string>({
   const prevActiveKey = usePrevious<any>(activeKey)
   // const forceUpdate = useForceUpdate()
   const elementsRef = useRef<Record<string | number, ComponentChildren>>({})
-  // const containerRef = useRef<{base: HTMLDivElement}>(null)
+  const containerRef = useRef<{base: HTMLDivElement}>(null)
   // const container = containerRef.current?.base
   // const childs = Array.from(container?.childNodes || [])
   const isAnimated = useRef(false)
@@ -99,7 +99,7 @@ const Transition = <TKey extends number | string>({
   return (
     // @ts-expect-error Preact types are confused
     <TransitionGroup
-      ref={elRef}
+      // ref={containerRef}
       className={buildedContainerClass}
       /* react add to child component key prefix ".$" */
       childFactory={(c: VNode) =>
@@ -150,7 +150,7 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
     onMouseEnter,
     visibilityHidden,
     easing,
-    onMouseDown,
+    // onMouseDown,
   }) => {
     const {classNames, styles: buildedStyles} = buildProperties(
       name,
@@ -188,7 +188,7 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
           className={buildedClassname}
           style={buildedStyles}
           onClick={onClick}
-          onMouseDown={onMouseDown}
+          // onMouseDown={onMouseDown}
         >
           {children}
         </div>

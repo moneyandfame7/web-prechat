@@ -4,7 +4,7 @@
 
   &-default {
     path {
-      fill: var(--c-font-primary) !important;
+      fill: var(--c-font-primary) !important; // ??
     }
     &.Icon-story {
       path {
@@ -21,6 +21,14 @@
       path {
         fill: unset !important;
       }
+    }
+  }
+  &-white {
+    path {
+      fill: var(--c-white) !important;
+    }
+    &.Icon-arrowRight {
+      stroke: var(--c-white);
     }
   }
   &-secondary {

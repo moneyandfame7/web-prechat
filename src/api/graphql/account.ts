@@ -125,6 +125,12 @@ export const SUBSCRIBE_ON_USER_STATUS_UPDATED: TypedDocumentNode<
     }
   }
 `
+
+export const MUTATION_UPLOAD_PROFILE_PHOTO = gql`
+  mutation UploadProfilePhoto($file: Upload!) {
+    uploadPhoto(file: $file)
+  }
+`
 // export const MUTATION_ACCOUNT_UPDATE_PASSWORD: TypedDocumentNode<
 //   {updatePassword: ''},
 //   void

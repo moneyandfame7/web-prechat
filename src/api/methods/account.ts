@@ -3,6 +3,7 @@ import {
   MUTATION_TERMINATE_ALL_AUTHORIZATIONS,
   MUTATION_TERMINATE_AUTHORIZATION,
   MUTATION_UPDATE_AUTHORIZATION_ACTIVITY,
+  MUTATION_UPLOAD_PROFILE_PHOTO,
   QUERY_ACCOUNT_GET_AUTHORIZATIONS,
   QUERY_ACCOUNT_GET_PASSWORD,
 } from 'api/graphql'
@@ -72,6 +73,16 @@ export class ApiAccount extends ApiBaseMethod {
     })
 
     return cleanTypename(data?.updateUserStatus)
+  }
+
+  public async uploadProfilePhoto(file: File) {
+    const {data} = await this.client.mutate({
+      mutation: MUTATION_UPLOAD_PROFILE_PHOTO,
+      variables: {
+        file,
+      },
+    })
+    return data.uploadPhoto
   }
 
   public async updatePassword() {

@@ -66,6 +66,9 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
     case LeftColumnScreen.Settings:
       activeGroup = LeftColumnGroup.Settings
       break
+    case LeftColumnScreen.MyStories:
+      activeGroup = LeftColumnGroup.MyStories
+      break
   }
   const handleReset = (force?: boolean) => {
     if (force || activeScreen === LeftColumnScreen.Search) {
