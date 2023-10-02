@@ -1,6 +1,8 @@
 import type {RefObject} from 'preact'
 import {type CSSProperties, type TargetedEvent} from 'preact/compat'
-import {useCallback, useEffect, useState} from 'preact/hooks'
+import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
+
+import {TRANSITION_DURATION_MENU} from 'common/environment'
 
 import {useBoolean} from './useFlag'
 
@@ -57,6 +59,7 @@ export function useContextMenu(
     const menuEl = getMenuElement()
     if (position || menuRef.current || menuEl) {
       setPosition(undefined)
+      setStyles({})
       setFalse()
       return
     }
@@ -74,7 +77,7 @@ export function useContextMenu(
     // setContainerPosition({})
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (disabled) {
       return
     }
