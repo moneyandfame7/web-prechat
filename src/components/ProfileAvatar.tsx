@@ -4,6 +4,9 @@ import type {ApiChat, ApiUser} from 'api/types'
 
 import {getPeerName} from 'state/helpers/chats'
 import {getUserStatus, isUserId} from 'state/helpers/users'
+import {isChatChannel} from 'state/selectors/chats'
+
+import {TEST_translate} from 'lib/i18n'
 
 import {getInitials} from 'utilities/string/getInitials'
 
@@ -18,6 +21,18 @@ export const ProfileAvatar: FC<ProfileAvatarProps> = memo(({peer}) => {
   const isUser = isUserId(peer.id)
   const user = isUser ? (peer as ApiUser) : undefined
   const chat = !isUser ? (peer as ApiChat) : undefined
+  const isChannel = chat && isChatChannel(chat)
+
+  function renderPeerStatus() {
+    if (isUser) {
+      return getUserStatus(user!)
+    }
+    return chat?.membersCount
+      ? TEST_translate(isChannel ? 'SubscribersCount' : 'MembersCount', {
+          count: chat?.membersCount,
+        })
+      : undefined
+  }
   const renderPhoto = () => {
     if (peer?.photo) {
       return (
@@ -31,9 +46,7 @@ export const ProfileAvatar: FC<ProfileAvatarProps> = memo(({peer}) => {
           />
           <div class="profile-avatar-info">
             <span class="peer-title">{getPeerName(peer)}</span>
-            <span class="peer-subtitle">
-              {isUser ? getUserStatus(user!) : chat?.membersCount}
-            </span>
+            <span class="peer-subtitle">{renderPeerStatus()}</span>
           </div>
         </div>
       )

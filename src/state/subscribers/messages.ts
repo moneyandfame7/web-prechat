@@ -1,7 +1,9 @@
+import {batch} from '@preact/signals'
+
 import {selectChat} from 'state/selectors/chats'
 import {createSubscribe} from 'state/subscribe'
 import {updateChat, updateChats} from 'state/updates'
-import {updateMessages} from 'state/updates/messages'
+import {deleteMessage, updateMessages} from 'state/updates/messages'
 
 createSubscribe('onNewMessage', (state, _, data) => {
   const {chat, message} = data
@@ -21,6 +23,23 @@ createSubscribe('onNewMessage', (state, _, data) => {
 
   updateMessages(state, chat.id, {
     [message.id]: message,
+  })
+})
+
+createSubscribe('onDeleteMessages', (state, _, data) => {
+  const {chatId, ids} = data
+  const chat = selectChat(state, chatId)
+  if (!chat) {
+    return
+  }
+
+  console.log('DELETED MESSAGES:', {chatId, ids})
+
+  batch(() => {
+    ids.forEach((id) => {
+      deleteMessage(state, chatId, id)
+      console.log('message deleted:', id)
+    })
   })
 })
 

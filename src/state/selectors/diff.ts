@@ -17,3 +17,18 @@ export const selectCurrentSessionId = (state: SignalGlobalState): string | undef
 // or select by id
 export const selectCurrentSession2 = (state: SignalGlobalState) =>
   selectAllSessions(state).find((s) => s?.isCurrent)!
+
+export const selectHasMessageSelection = (state: SignalGlobalState): boolean =>
+  // state.selection.messageIds.length > 0
+  state.selection.hasSelection
+
+export const selectIsMessageSelected = (
+  state: SignalGlobalState,
+  messageId: string
+): boolean => state.selection.messageIds.includes(messageId)
+
+export const selectHasTextSelection = (state: SignalGlobalState): boolean =>
+  state.selection.selectedText.length > 0
+
+export const selectMessagesSelectionCount = (state: SignalGlobalState): number =>
+  state.selection.messageIds.length

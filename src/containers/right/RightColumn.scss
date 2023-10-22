@@ -7,6 +7,7 @@
   right: 0;
   left: auto;
   z-index: var(--z-right-column);
+  background-color: var(--c-surface);
   display: flex;
   flex-direction: column;
   transform-style: preserve-3d;
@@ -19,7 +20,7 @@
     // z-index: 1;
 
     --right-column-width: 100dvw;
-    background-color: blue;
+    // background-color: blue;
   }
   @include responsive(laptop) {
     box-shadow: 0 0.25rem 0.5rem 0.1rem #0003;
@@ -34,11 +35,71 @@
 
     > .transition-item {
       @include bgAndColorTransition();
+      display: flex;
+      flex-direction: column;
       background-color: var(--c-surface);
     }
   }
 
   .column-content {
+    // important for chat-profile-container
     position: relative;
+  }
+
+  .chat-profile-container {
+    // overflow-x: hidden;
+    .tab-list {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .shared-media {
+      background-color: var(--c-surface);
+      // padding-block-start: 42px;
+      // 42px it's height of tab
+      min-height: calc(1vh * 100 - var(--column-header-height) - 42px);
+      height: max-content;
+      // > .transition-item {
+      //   top: 42px;
+      // }
+      .screen-loader {
+        margin-top: 5rem;
+      }
+    }
+    .column-content {
+      overflow-x: hidden;
+      background-color: var(--c-bg);
+      position: relative;
+      @include withAnimations {
+        scroll-behavior: smooth;
+      }
+      // display: flex;
+      // flex-direction: column;
+    }
+  }
+
+  .chat-edit-container {
+    > .column-content {
+      background-color: var(--c-bg);
+      @include bgAndColorTransition();
+      > .column-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        user-select: none;
+      }
+
+      .input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-block: 10px;
+        width: 100%;
+      }
+    }
+
+    .chat-edit-btn {
+      // bottom: 0;
+    }
   }
 }

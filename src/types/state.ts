@@ -104,6 +104,8 @@ export interface OpenedChat {
   chatId?: string
   username?: string
   isMessagesLoading: boolean
+  isPinnedList: boolean
+  /* isDiscussion */
 }
 export interface GlobalState {
   // recentEmojis: string[]
@@ -132,6 +134,20 @@ export interface GlobalState {
   messages: {
     byChatId: Record<string, {byId: Record<string, ApiMessage>}>
     idsByChatId: Record<string, string[]>
+    pinnedIdsByChatId: Record<string, string[]>
+  }
+  selection: {
+    hasSelection: boolean
+    selectedText: string
+    messageIds: string[]
+    chat: {
+      active: boolean
+      messageIds: string[]
+    }
+    sharedMedia: {
+      // active: boolean
+      messageIds: string[]
+    }
   }
   activeSessions: {
     byId: Record<string, ApiSession>
@@ -153,6 +169,7 @@ export interface GlobalState {
     isOpen: boolean
   }
   newContact: {
+    isOpen: boolean
     userId?: string
     isByPhoneNumber: boolean
   }

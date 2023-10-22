@@ -28,6 +28,8 @@ export interface IconButtonProps {
   title?: SignalOr<string>
   iconColor?: IconColor
   withIconAnimation?: boolean
+  animation?: 'rotate' | 'zoomIcon'
+  animationTimeout?: number
 }
 
 export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
@@ -42,17 +44,31 @@ export const IconButton: FC<IconButtonProps & PickedButtonProps> = ({
   id,
   iconColor = 'secondary',
   withIconAnimation = false,
+  animation,
+  animationTimeout,
   ...props
 }) => {
-  const buildedClass = clsx(`IconButton Button-${color} Button-${variant}`, className)
+  const buildedClass = clsx(
+    `IconButton IconButton-${icon} Button-${color} Button-${variant}`,
+    className,
+    {
+      'without-animate': !withIconAnimation && !animation,
+    }
+  )
+
+  const shouldAnimate = withIconAnimation || !!animation || !!animationTimeout
 
   const clickHandlers = useFastClick(onClick, withFastClick)
 
   return (
     <button id={id} class={buildedClass} {...clickHandlers} disabled={isDisabled} {...props}>
-      <Transition activeKey={icon} name="zoomIcon">
+      {shouldAnimate ? (
+        <Transition timeout={animationTimeout} activeKey={icon} name={animation || 'zoomIcon'}>
+          <Icon name={icon} color={iconColor} />
+        </Transition>
+      ) : (
         <Icon name={icon} color={iconColor} />
-      </Transition>
+      )}
       {ripple && <Ripple />}
     </button>
   )

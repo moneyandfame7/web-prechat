@@ -116,25 +116,34 @@ export function updateOpenedChats(
   global: SignalGlobalState,
   chatId?: string,
   username?: string,
-  replaceHistory?: boolean
+  replaceHistory?: boolean,
+  isPinnedList?: boolean
 ) {
   const openedChats = selectOpenedChats(global)
 
   let newOpenedChats = openedChats
   if (replaceHistory) {
-    newOpenedChats = chatId ? [{chatId, username, isMessagesLoading: false}] : []
+    newOpenedChats = chatId
+      ? [{chatId, username, isPinnedList: Boolean(isPinnedList), isMessagesLoading: false}]
+      : []
   } else if (chatId) {
     const currentOpened = openedChats[openedChats.length - 1]
     if (
       !currentOpened ||
       currentOpened.chatId !== chatId ||
-      currentOpened.chatId !== username
+      currentOpened.username !== username ||
+      currentOpened.isPinnedList !== isPinnedList
     ) {
-      newOpenedChats = [...newOpenedChats, {chatId, username, isMessagesLoading: false}]
+      console.log({currentOpened}, 'LIST PINNED?')
+      newOpenedChats = [
+        ...newOpenedChats,
+        {chatId, username, isPinnedList: Boolean(isPinnedList), isMessagesLoading: false},
+      ]
     }
   } else {
     newOpenedChats = openedChats.slice(0, -1)
   }
+  console.log({newOpenedChats})
   global.openedChats = newOpenedChats
 }
 export function updateUsernamesFromPeers(global: SignalGlobalState, peers: ApiPeer[]) {

@@ -10,21 +10,29 @@ import {
   useState,
 } from 'preact/compat'
 
+import clsx from 'clsx'
 import {PhoneNumberInput} from 'modules/auth/PhoneNumberInput'
 
 import type {ApiUser} from 'api/types/users'
 
 import {getActions} from 'state/action'
+import {connect} from 'state/connect'
+import {getUserStatus} from 'state/helpers/users'
+import {selectUser} from 'state/selectors/users'
 import {getGlobalState} from 'state/signal'
+
+import {TEST_translate} from 'lib/i18n'
 
 import {getRandomAvatarVariant} from 'utilities/avatar'
 import {addKeyboardListeners} from 'utilities/keyboardListener'
+import {renderText} from 'utilities/parse/render'
 import {extractPhoneCode} from 'utilities/phone/formatPhone'
 import {validatePhone} from 'utilities/phone/validatePhone'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
 import {Button, InputText} from 'components/ui'
 import {AvatarTest} from 'components/ui/AvatarTest'
+import {ListItem} from 'components/ui/ListItem'
 
 import {Modal, ModalActions, ModalContent, ModalHeader, ModalTitle} from './modal/Modal'
 
@@ -35,10 +43,16 @@ export interface NewContactModalProps {
   userId?: string
   isByPhoneNumber?: boolean
 }
-/**
- * сам компонент Modal робити не асинхроним ???, і там буде transition і все таке, а інші модалки - асінхронні
- */
-const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose */}) => {
+interface StateProps {
+  user: ApiUser | undefined
+  userStatus: string | undefined
+}
+
+const NewContactModal: FC<NewContactModalProps & StateProps> = ({
+  isOpen,
+  user /*  userId, onClose */,
+  userStatus,
+}) => {
   const global = getGlobalState()
   const actions = getActions()
   const firstName = useSignal('')
@@ -46,7 +60,6 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
   const contactPhone = useSignal(extractPhoneCode(global.auth.phoneNumber!) || '')
   // const {value: isLoading, setValue: setLoading} = useBoolean()
   const [isLoading, setIsLoading] = useState(false)
-  const userToAdding = {} as ApiUser | undefined
 
   // eslint-disable-next-line prefer-template
   const fullName = useComputed(() => firstName.value.trim() + ' ' + lastName.value.trim())
@@ -60,8 +73,8 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
 
   useEffect(() => {
     if (isOpen) {
-      firstName.value = userToAdding?.firstName ?? ''
-      lastName.value = userToAdding?.lastName ?? ''
+      firstName.value = user?.firstName ?? ''
+      lastName.value = user?.lastName ?? ''
     }
   }, [isOpen])
 
@@ -110,8 +123,13 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
   useEffect(() => {
     return isOpen ? addKeyboardListeners({onEnter: handleSubmit}) : undefined
   }, [])
+
+  const buildedClass = clsx('new-contact-modal', {
+    'exist-user': !!user,
+  })
   return (
     <Modal
+      className={buildedClass}
       onExitTransition={clearForm}
       onClose={handleClose}
       isOpen={isOpen}
@@ -123,7 +141,23 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
       </ModalHeader>
       <ModalContent>
         <form class="form-row">
-          <AvatarTest size="xl" fullName={fullName} variant={randomAvatarVariant} />
+          <div class="user-info-container">
+            {user ? (
+              <AvatarTest peer={user} size="xxl" />
+            ) : (
+              <AvatarTest size="xxl" fullName={fullName} variant={randomAvatarVariant} />
+            )}
+            {user && (
+              <div class="user-info">
+                <p class="user-info__phone">
+                  {user?.phoneNumber || TEST_translate('NewContact.MobileHidden')}
+                </p>
+                {/* {user} */}
+
+                <span class="user-info__status">{userStatus}</span>
+              </div>
+            )}
+          </div>
           <div class="form-fields">
             <InputText
               autoFocus
@@ -139,12 +173,40 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
           </div>
         </form>
 
-        <PhoneNumberInput
-          autoFocus={false}
-          elRef={phoneInputRef}
-          onInput={handleChangePhone}
-          value={contactPhone}
+        {!user && (
+          <PhoneNumberInput
+            autoFocus={false}
+            elRef={phoneInputRef}
+            onInput={handleChangePhone}
+            value={contactPhone}
+          />
+        )}
+        <ListItem
+          wrap
+          icon="phone"
+          title={TEST_translate('NewContact.MobileHidden')}
+          subtitle={renderText(
+            TEST_translate('NewContact.MobileHiddenInfo', {
+              fullName: fullName.value,
+            }),
+            ['markdown']
+          )}
         />
+        {user && (
+          <>
+            <ListItem
+              className="share-phone-btn"
+              withCheckbox
+              title={TEST_translate('NewContact.ShareMyPhone')}
+            />
+            <p class="text-secondary text-center text-small">
+              {renderText(
+                TEST_translate('NewContact.MakePhoneVisible', {fullName: fullName.value}),
+                ['markdown']
+              )}
+            </p>
+          </>
+        )}
       </ModalContent>
       <ModalActions>
         <Button onClick={handleSubmit} isDisabled={isDisabledBtn} isLoading={isLoading}>
@@ -155,4 +217,13 @@ const NewContactModal: FC<NewContactModalProps> = ({isOpen /*  userId, onClose *
   )
 }
 
-export default memo(NewContactModal)
+export default memo(
+  connect<NewContactModalProps, StateProps>((state, ownProps) => {
+    const user = ownProps.userId ? selectUser(state, ownProps.userId) : undefined
+
+    return {
+      user,
+      userStatus: user ? getUserStatus(user) : undefined,
+    }
+  })(NewContactModal)
+)

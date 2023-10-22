@@ -1,10 +1,12 @@
 .screen-loader {
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 
   &.with-bg {
     background-color: var(--c-surface);
+  }
+  &.full-height {
+    height: 100%;
   }
 }

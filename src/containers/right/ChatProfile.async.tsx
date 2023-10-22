@@ -1,15 +1,15 @@
-import {type FC, Suspense, lazy, memo} from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
+
+import {useLazyComponent} from 'hooks/useLazy'
+
+import {ScreenLoader} from 'components/ScreenLoader'
 
 import type {ChatProfileProps} from './ChatProfile'
 
 const ChatProfileAsync: FC<ChatProfileProps> = (props) => {
-  const ChatProfile = lazy(() => import('./ChatProfile'))
+  const ChatProfile = useLazyComponent('ChatProfile')
 
-  return (
-    <Suspense fallback={undefined}>
-      <ChatProfile {...props} />
-    </Suspense>
-  )
+  return ChatProfile ? <ChatProfile {...props} /> : <ScreenLoader />
 }
 
 export default memo(ChatProfileAsync)

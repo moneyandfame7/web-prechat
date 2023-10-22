@@ -22,6 +22,12 @@
   .transition-item {
     background-color: unset !important;
   }
+  &.without-animate {
+    .transition-item {
+      animation-duration: 0ms !important;
+      transition: none !important;
+    }
+  }
   &.Button-primary {
     &:hover {
       .Icon path {

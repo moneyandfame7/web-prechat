@@ -1,22 +1,10 @@
-import {
-  type ChangeEvent,
-  type FC,
-  type TargetedEvent,
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'preact/compat'
-
-import {Blurhash} from 'react-blurhash'
-
-import {Api} from 'api/manager'
+import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {selectOpenedChats} from 'state/selectors/chats'
-import {selectUser} from 'state/selectors/users'
+import {selectHasMessageSelection} from 'state/selectors/diff'
+import {selectPinnedMessageIds} from 'state/selectors/messages'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
@@ -28,9 +16,7 @@ import {connectStateToNavigation} from 'utilities/routing'
 
 import type {OpenedChat} from 'types/state'
 
-import {Photo} from 'components/common/Photo'
 import {Transition} from 'components/transitions'
-import {Transition3d} from 'components/transitions/Transition3d'
 import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
@@ -46,11 +32,21 @@ interface StateProps {
   chatId?: string
   activeTransitionKey: number
   animationsEnabled: boolean
+  isPinnedList: boolean | undefined
+  pinnedMessagesCount: number | undefined
+  hasMessageSelection: boolean
 }
 
 type InjectedProps = OwnProps & StateProps
 
-const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animationsEnabled}) => {
+const MiddleColumn: FC<InjectedProps> = ({
+  chatId,
+  activeTransitionKey,
+  animationsEnabled,
+  isPinnedList,
+  pinnedMessagesCount,
+  hasMessageSelection,
+}) => {
   const global = getGlobalState()
   const actions = getActions()
   const {isSmall, isLaptop} = useLayout()
@@ -69,9 +65,11 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
     if (isSmall && animationsEnabled) {
       setTimeout(() => {
         actions.openChat({id: undefined})
+        actions.toggleMessageSelection({active: false})
       }, 300)
     } else {
       actions.openChat({id: undefined})
+      actions.toggleMessageSelection({active: false})
     }
   }, [isSmall, animationsEnabled])
   useEffect(() => {
@@ -108,11 +106,20 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
     () =>
       isChatOpen
         ? addEscapeListener(() => {
-            closeChat()
+            if (hasMessageSelection) {
+              actions.toggleMessageSelection({active: false})
+            } else {
+              closeChat()
+            }
           })
         : undefined,
-    [isChatOpen]
+    [isChatOpen, hasMessageSelection]
   )
+
+  useEffect(() => {
+    // if(has)
+    actions.toggleMessageSelection({active: false})
+  }, [chatId])
 
   // const isNext = useRef(false)
   const prevTransitionKey = usePrevious(activeTransitionKey)
@@ -120,12 +127,8 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
   // const cleanupExceptionKey = (
   //   prevTransitionKey !== undefined && prevTransitionKey < currentTransitionKey ? prevTransitionKey : undefined
   // );
-
   const render = useRef(0)
-
   render.current += 1
-  const self = selectUser(global, global.auth.userId!)
-
   return (
     <div class="MiddleColumn" id="middle-column">
       <Button
@@ -134,11 +137,14 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
         }}
       >
         Toggle stories
+        {render.current}
       </Button>
       {/* <Transition3d /> */}
       {isChatOpen && (
         <>
           <ChatHeader
+            pinnedMessagesCount={pinnedMessagesCount}
+            isPinnedList={isPinnedList}
             activeTransitionKey={activeTransitionKey}
             chatId={chatId}
             onCloseChat={closeChat}
@@ -152,8 +158,10 @@ const MiddleColumn: FC<InjectedProps> = ({chatId, activeTransitionKey, animation
             shouldCleanup
           >
             <div class="future-transition-container">
-              <MessagesList chatId={chatId} />
+              <MessagesList chatId={chatId} isPinnedList={isPinnedList} />
               <ChatInput
+                hasPinnedMessages={!!pinnedMessagesCount}
+                isPinnedList={isPinnedList}
                 emojiMenuOpen={isEmojiMenuOpen}
                 onToggleEmojiMenu={toggleEmojiMenu}
                 onCloseEmojiMenu={closeEmojiMenu}
@@ -171,12 +179,18 @@ export default memo(
   connect<OwnProps, StateProps>((state) => {
     const openedChats = selectOpenedChats(state)
 
-    const openedChat: OpenedChat | undefined = openedChats[openedChats.length - 1]
+    const openedChat = openedChats[openedChats.length - 1] as OpenedChat | undefined
     const animationsEnabled = state.settings.general.animationsEnabled
+    const pinnedMessagesCount = openedChat?.chatId
+      ? selectPinnedMessageIds(state, openedChat?.chatId)?.length
+      : undefined
     return {
       chatId: openedChat?.chatId,
       activeTransitionKey: Math.max(0, openedChats.length - 1),
       animationsEnabled,
+      isPinnedList: openedChat?.isPinnedList,
+      pinnedMessagesCount,
+      hasMessageSelection: selectHasMessageSelection(state),
     }
   })(MiddleColumn)
 )

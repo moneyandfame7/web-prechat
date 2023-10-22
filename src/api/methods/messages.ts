@@ -1,7 +1,18 @@
 import {ApiBaseMethod} from 'api/base'
-import {MUTATION_SEND_MESSAGE, QUERY_GET_HISTORY} from 'api/graphql/messages'
+import {
+  MUTATION_DELETE_MESSAGES,
+  MUTATION_SEND_MESSAGE,
+  QUERY_GET_HISTORY,
+  QUERY_GET_PINNED,
+} from 'api/graphql/messages'
+import {cleanupResponse} from 'api/helpers/cleanupResponse'
 import {cleanTypename} from 'api/helpers/cleanupTypename'
-import type {GetHistoryInput, SendMessageInput} from 'api/types/messages'
+import type {
+  DeleteMessagesInput,
+  GetHistoryInput,
+  GetPinnedMessagesInput,
+  SendMessageInput,
+} from 'api/types/messages'
 
 // import {timeout} from 'utilities/schedulers/timeout'
 
@@ -26,6 +37,14 @@ export class ApiMessages extends ApiBaseMethod {
     return cleanTypename(data.sendMessage)
   }
 
+  public async deleteMessages(input: DeleteMessagesInput) {
+    const {data} = await this.client.mutate({
+      mutation: MUTATION_DELETE_MESSAGES,
+      variables: {input},
+    })
+    return Boolean(data?.deleteMessages)
+  }
+
   public async getHistory(input: GetHistoryInput) {
     const {data} = await this.client.query({
       query: QUERY_GET_HISTORY,
@@ -36,6 +55,17 @@ export class ApiMessages extends ApiBaseMethod {
     })
 
     return cleanTypename(data.getHistory)
+  }
+
+  public async getPinnedMessages(input: GetPinnedMessagesInput) {
+    const {data} = await this.client.query({
+      query: QUERY_GET_PINNED,
+      variables: {
+        input,
+      },
+    })
+
+    return cleanupResponse(data.getPinnedMessages)
   }
 
   // public async getMessages(input: GetMessagesInput) {}

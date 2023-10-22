@@ -1,5 +1,6 @@
 .messages-list {
-  overflow: hidden;
+  // user-select: none;
+  overflow-x: hidden; // ??
   > .messages-loading-transition {
     bottom: 0;
     top: auto;
@@ -17,7 +18,8 @@
       transition: transform var(--slide-dark-transition);
     }
     .messages-container {
-      max-width: calc(100% - var(--right-column-width));
+      width: calc(100% - var(--right-column-width));
+      // max-width: min(var(--messages-container-width), calc(100% - var(--right-column-width)));
     }
   }
 
@@ -35,10 +37,11 @@
   .messages-container {
     // body.right-column-shown & {
     // }
+    // max-width: var(--messages-container-width);
     padding-block: 10px;
     padding-inline: 10px;
     margin: 0 auto;
-    width: 100%;
+    // width: 100%;
     min-height: 100%;
 
     // мейбі теж зайве?
@@ -52,11 +55,49 @@
 
     // max-width: calc(100% - var(--right-column-width));
   }
+
+  &.is-selecting {
+    .bubble.incoming > .bubble-content {
+      transform: translate3d(2rem, 0, 0);
+    }
+    .bubbles-group-avatar {
+      transform: translate3d(2.5rem, 0, 0) scale3d(0.8, 0.8, 1);
+    }
+
+    .bubble:not(.action) {
+      cursor: pointer;
+      // background-color: green;
+    }
+
+    ~ .chat-input {
+      // transform: scaleX(0.98);
+      .chat-input-container > .transition {
+        // @include withLargeScreen {
+        transform: translate3d(25px, 0, 0);
+        // width: calc(100% + 50px);
+        // }
+      }
+      .send-button {
+        @include withAnimations {
+          animation: hide-icon 0.2s ease forwards;
+        }
+        @include withoutAnimations {
+          visibility: hidden;
+        }
+      }
+    }
+  }
+
+  &.is-pinned {
+    ~ .chat-input {
+      background-color: green;
+    }
+  }
 }
 
 .message-meta {
   @include bgAndColorTransition();
-
+  user-select: none;
   float: right;
   font-size: 12px;
   color: var(--c-message-meta);
@@ -121,10 +162,10 @@
 .bubble {
   /* Message Selection. */
   &:not(.action) {
-    &::after {
+    &::before {
       content: '';
-      height: 100%;
-      padding-block: 20px;
+      height: calc(100% + 5px); // 5px it's message margin??
+      // padding-block: 15px;
       z-index: -1;
       display: block;
       position: absolute;
@@ -141,9 +182,29 @@
       transform: translateY(-50%);
       // width: 120%;
     }
-    &.has-menu-open {
-      &::after {
+
+    &.has-menu-open,
+    &.is-selected {
+      &::before {
         opacity: 1;
+      }
+    }
+
+    &.is-selected {
+      .bubble-select-checkbox {
+        > .Icon-check {
+          @include withAnimations {
+            animation: show-icon 0.3s forwards ease;
+          }
+          @include withoutAnimations {
+            display: block;
+          }
+        }
+
+        background-color: var(--c-primary);
+        @include whenDay {
+          background-color: var(--c-green);
+        }
       }
     }
   }
@@ -155,6 +216,14 @@
     // box-shadow: 0 1px 2px var(--c-shadow-default);
     animation: msg-appear 0.2s ease forwards;
   }
+
+  &.delete-local {
+    display: none;
+    // animation: msg-deleting 0.2s ease forwards !important;
+    // display: none;
+    // opacity: 0 !important;
+  }
+
   display: flex;
   align-items: flex-end;
   position: relative;
@@ -165,9 +234,11 @@
 
   .bubble-arrow {
     position: absolute;
+    bottom: 0;
     display: none;
     @include defaultTransition(fill);
   }
+
   &.outgoing {
     justify-content: flex-end;
     margin-block: 5px;
@@ -178,22 +249,6 @@
     &.last-in {
       .bubble-content {
         border-bottom-right-radius: 0;
-
-        // &::before {
-        //   background-color: var(--c-bubble-bg);
-        //   border-bottom-left-radius: 0.8rem 0.7rem; // or without it
-
-        //   border-right: var(--bubble-arrow-width) solid var(--c-bubble-bg);
-        //   right: -0.35rem;
-        //   transform: translate(0, -0.1rem);
-        // }
-        // &::after {
-        //   background: var(--c-message-container-bg);
-        //   border-bottom-left-radius: 0.5rem;
-        //   right: -40px;
-        //   transform: translate(-30px, -2px);
-        //   width: 10px;
-        // }
       }
 
       .bubble-arrow {
@@ -205,7 +260,6 @@
     }
     .bubble-content {
       background-color: var(--c-bubble-bg);
-      // border-bottom-right-radius: 0;
     }
   }
   &.incoming {
@@ -219,25 +273,12 @@
     }
     &.last-in {
       .bubble-content {
-        // &::before {
-        //   border-bottom-right-radius: 0.8rem 0.7rem; // or without it
-        //   border-left: 1rem solid var(--c-surface);
-        //   left: -0.35rem;
-        //   transform: translate(0, -0.1rem);
-        // }
-        // &::after {
-        //   background: var(--c-message-container-bg);
-        //   border-bottom-right-radius: 0.5rem;
-        //   left: 20px;
-        //   transform: translate(-30px, -2px);
-        //   width: 10px;
-        // }
         border-bottom-left-radius: 0;
       }
       .bubble-arrow {
         display: block;
         fill: var(--c-surface);
-        left: 1px;
+        left: -8px;
         transform: translateY(1px);
       }
     }
@@ -253,8 +294,10 @@
 
   &.action {
     justify-content: center;
-
+    // user-select: none;
     .bubble-content {
+      user-select: none;
+
       // backdrop-filter: blur(50px);
       // background-color: rgba(#212121, 0.15); // light theme
       // background-color: rgba(0, 0, 0, 0.15); // light theme
@@ -290,14 +333,53 @@
 
   @each $color in $colors {
     &.color-#{$color} {
-      .message-content__sender {
+      .bubble-content__sender {
         color: var(--c-user-#{$color});
       }
     }
   }
 }
 
+.bubble-select-checkbox {
+  inset: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  position: absolute;
+
+  // min-height: max-content;
+  padding: 0;
+  z-index: 1;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #fff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > .Icon-check {
+    width: 14px;
+    height: 14px;
+    // path {}
+    @include withAnimations {
+      animation: hide-icon 0.3s forwards ease;
+    }
+    @include withoutAnimations {
+      display: none;
+    }
+  }
+  // border-width: 2px;
+
+  // @include whenDay {
+  //   &:checked {
+  //     background-color: var(--c-green);
+  //   }
+  // }
+}
+
 .bubble-content {
+  user-select: text;
+
   max-width: 85%;
   text-wrap: balance;
   word-break: break-word;
@@ -308,17 +390,20 @@
   margin-inline-start: 10px;
   // box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
   position: relative;
-  @include bgAndColorTransition(box-shadow);
+  @include bgAndColorTransition(box-shadow, transform, color);
 
-  &::before,
-  &::after {
-    @include bgAndColorTransition(border-color);
-    position: absolute;
-    content: '';
-    bottom: -0.1rem;
-    height: 1rem;
-    // border: 1px solid #e9e9ea;
+  @include responsive(mobile) {
+    max-width: calc(100% - var(--message-responsive-margin));
   }
+  // &::before,
+  // &::after {
+  //   @include bgAndColorTransition(border-color);
+  //   position: absolute;
+  //   content: '';
+  //   bottom: -0.1rem;
+  //   height: 1rem;
+  //   // border: 1px solid #e9e9ea;
+  // }
 
   &__text {
     font-size: var(--message-text-size);
@@ -334,7 +419,7 @@
     font-weight: 500;
     font-size: 14px;
     cursor: pointer;
-    // color: var(--c-user-yellow);
+    @include defaultTransition(color); // color: var(--c-user-yellow);
   }
 }
 
@@ -346,6 +431,16 @@
   100% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+@keyframes msg-deleting {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
   }
 }
 /* Groups ( by sender and time ~10 minutes) */
@@ -363,9 +458,13 @@
 }
 
 .bubbles-group-avatar {
+  // width: max-content;
   position: sticky;
   top: 0;
+  z-index: -1;
   bottom: 0.25rem;
   cursor: pointer;
   pointer-events: all;
+
+  @include defaultTransition(transform);
 }

@@ -96,8 +96,20 @@ export const INITIAL_STATE: GlobalState = {
   messages: {
     byChatId: {},
     idsByChatId: {},
+    pinnedIdsByChatId: {},
   },
-
+  selection: {
+    selectedText: '',
+    messageIds: [],
+    hasSelection: false,
+    chat: {
+      active: false,
+      messageIds: [],
+    },
+    sharedMedia: {
+      messageIds: [],
+    },
+  },
   currentChat: {
     chatId: undefined,
     username: undefined,

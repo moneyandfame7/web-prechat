@@ -116,15 +116,38 @@ export function updateMessage(
   }
 }
 
+export function deleteMessageLocal(
+  global: SignalGlobalState,
+  chatId: string,
+  messageId: string
+) {
+  const chatMessages = selectMessages(global, chatId)
+
+  const affectedMessage = chatMessages?.[messageId]
+  if (!affectedMessage) {
+    return
+  }
+  affectedMessage.deleteLocal = true
+}
+export function cancelMessageDeleting(
+  global: SignalGlobalState,
+  chatId: string,
+  messageId: string
+) {
+  const chatMessages = selectMessages(global, chatId)
+
+  const affectedMessage = chatMessages?.[messageId]
+  if (!affectedMessage) {
+    return
+  }
+  affectedMessage.deleteLocal = undefined
+}
 export function deleteMessage(global: SignalGlobalState, chatId: string, messageId: string) {
   const messages = selectMessages(global, chatId)
   const messageIds = selectChatMessageIds(global, chatId)
-  if (!messages || !messageIds) {
+  if (!messages || !messageIds || !messages?.[messageId]) {
     return
   }
-  // const {...rest,[deleted:]}=messages
-
-  // const {[messageId]: deleted, ...rest} = messages
 
   delete messages[messageId]
 
@@ -133,7 +156,10 @@ export function deleteMessage(global: SignalGlobalState, chatId: string, message
     messageIds.splice(index, 1)
   }
 
-  // delete
+  const lastMessageId = messageIds[messageIds.length - 1]
 
-  // replaceMessages(global, chatId, rest)
+  const lastMessage = selectMessage(global, chatId, lastMessageId)
+  if (lastMessage) {
+    updateLastMessage(global, chatId, lastMessage)
+  }
 }

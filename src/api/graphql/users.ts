@@ -20,6 +20,8 @@ export const FRAGMENT_USER: DocumentNode = gql`
     isSelf
     isContact
     isMutualContact
+    isBlocked
+    bio
     status {
       ...AllUserStatusFields
     }

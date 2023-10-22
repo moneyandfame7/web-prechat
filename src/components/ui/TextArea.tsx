@@ -47,16 +47,12 @@ const TextArea: FC<TextAreaProps> = ({
   const updateHeight = () => {
     const textarea = inputRef.current
     const scroller = inputScrollRef.current
-    console.log('UPDATE HEIGHT??')
 
     if (!textarea || !scroller) {
-      console.log('NOoooo')
-
       return
     }
 
     const newHeight = Math.min(textarea.scrollHeight, maxInputHeight)
-    console.log(textarea.scrollHeight)
     scroller.style.height = `${newHeight}px`
   }
 

@@ -72,7 +72,7 @@ export const Modal: FC<ModalProps> = ({
           name="fade"
           in={isOpen}
           unmount={true}
-          timeout={250}
+          timeout={200}
           onExited={onExitTransition}
           onClick={handleBackdropClick}
         >

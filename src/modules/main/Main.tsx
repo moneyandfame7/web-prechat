@@ -27,7 +27,7 @@ interface OwnProps {}
 interface StateProps {
   isNewContactModalOpen: boolean
   newContactUserId?: string
-  newContactByPhone?: boolean
+  isNewContactByPhone?: boolean
 }
 const Main: FC<StateProps> = ({isNewContactModalOpen, newContactUserId}) => {
   const global = getGlobalState()
@@ -57,10 +57,21 @@ const Main: FC<StateProps> = ({isNewContactModalOpen, newContactUserId}) => {
     documentRef
   )
   // const {value, toggle} = useBoolean()
+  const render = useRef(0)
+  render.current += 1
   return (
     <div class="Main">
       <LeftColumn />
       <MiddleColumn />
+
+      {/* <div>
+        RIGHT COLUMN?
+        {render.current}
+          <ProfileAvatar
+          peer={selectChat(global, global.openedChats[global.openedChats.length - 1].chatId!)!}
+        />
+         <Photo />
+      </div> */}
       <RightColumn />
       <NewContactModal isOpen={isNewContactModalOpen} userId={newContactUserId} />
       <Notification isOpen={global.notification.isOpen} />
@@ -82,11 +93,11 @@ const Main: FC<StateProps> = ({isNewContactModalOpen, newContactUserId}) => {
 // export default memo(Main)
 
 const mapStateToProps: MapState<OwnProps, StateProps> = (state) => {
-  const {isByPhoneNumber, userId} = state.newContact
+  const {isByPhoneNumber, userId, isOpen} = state.newContact
 
   return {
-    isNewContactModalOpen: Boolean(isByPhoneNumber || userId),
-    newContactByPhone: isByPhoneNumber,
+    isNewContactModalOpen: isOpen,
+    isNewContactByPhone: isByPhoneNumber,
     newContactUserId: userId,
   }
 }

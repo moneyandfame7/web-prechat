@@ -83,6 +83,12 @@ export {ReactComponent as reactions} from './reactions.svg'
 export {ReactComponent as moreRounded} from './more-rounded.svg'
 export {ReactComponent as pause} from './pause.svg'
 export {ReactComponent as play} from './play.svg'
+export {ReactComponent as mute} from './mute.svg'
+export {ReactComponent as pinlist} from './pinlist.svg'
+export {ReactComponent as addUser} from './adduser.svg'
+export {ReactComponent as pin} from './pin.svg'
+export {ReactComponent as unpin} from './unpin.svg'
+export {ReactComponent as pinnedChat} from './pinnedchat.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

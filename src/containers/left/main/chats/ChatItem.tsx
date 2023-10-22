@@ -73,14 +73,14 @@ const ChatItemImpl: FC<OwnProps & StateProps> = ({
       // right="3"
       badge={chat?.unreadCount || undefined}
     >
-      <div class="status">
-        <AvatarTest peer={chat} isSavedMessages={isSavedMessages} withOnlineStatus />
-        {isPrivate && !isSavedMessages && (
+      {/* <div class="status"> */}
+      <AvatarTest peer={user || chat} isSavedMessages={isSavedMessages} withOnlineStatus />
+      {/* {isPrivate && !isSavedMessages && (
           <SingleTransition in={isOnline} name="zoomFade" className="online-badge-transition">
             <span class="online-badge" />
           </SingleTransition>
-        )}
-      </div>
+        )} */}
+      {/* </div> */}
     </ListItem>
   )
 }

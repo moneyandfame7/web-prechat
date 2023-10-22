@@ -2,6 +2,7 @@ import type {ApiChat, ApiChatFull} from 'api/types'
 import type {ApiChatId} from 'api/types/diff'
 
 import {getChatUsername_deprecated, isPrivateChat2} from 'state/helpers/chats'
+import {isUserId} from 'state/helpers/users'
 
 import type {OpenedChat, SignalGlobalState} from 'types/state'
 
@@ -97,7 +98,7 @@ export function selectUsernameByChatId(global: SignalGlobalState, chatId: string
   return getChatUsername_deprecated(chat)
 }
 
-export function selectCurrentChat(global: SignalGlobalState): ApiChat | undefined {
+export function selectCurrentChat_deprecated(global: SignalGlobalState): ApiChat | undefined {
   const currentChatId = global.currentChat.chatId
   return currentChatId ? global.chats.byId[currentChatId] : undefined
 }
@@ -105,7 +106,7 @@ export function selectCurrentChat(global: SignalGlobalState): ApiChat | undefine
 export function selectOpenedChats(global: SignalGlobalState): OpenedChat[] {
   return global.openedChats
 }
-export function selectCurrentOpenedChat(global: SignalGlobalState): OpenedChat | undefined {
+export function selectCurrentChat(global: SignalGlobalState): OpenedChat | undefined {
   return global.openedChats[global.openedChats.length - 1]
 }
 
@@ -131,7 +132,7 @@ export function selectIsChatsFetching(global: SignalGlobalState) {
 }
 
 export function selectIsMessagesLoading(global: SignalGlobalState) {
-  return selectCurrentOpenedChat(global)?.isMessagesLoading
+  return selectCurrentChat(global)?.isMessagesLoading
 }
 
 export function selectAllChats(global: SignalGlobalState) {
@@ -151,29 +152,34 @@ export function selectChatFull(
 
 export function selectCanEditChat(global: SignalGlobalState, chatId: string) {
   const myId = global.auth.userId!
-  const chat = selectChat(global, chatId)
-  if (!chat) {
-    return false
-  }
+
   const isSaved = isSavedMessages(global, chatId)
-  const isPrivate = isPrivateChat2(chat)
-  const isChannel = isChatChannel(chat)
+  const isPrivate = isUserId(chatId)
+  /** якщо це юзер, то full info не буде */
   const full = selectChatFull(global, chatId)
-  if (!full) {
-    return false
-  }
-  const member = getChatMember(full, myId)
+  const member = full ? getChatMember(full, myId) : undefined
+
   return (
     (!isSaved && isPrivate) ||
-    (!isChannel &&
+    (!isPrivate &&
       (member?.isOwner || (member?.isAdmin && member?.adminPermissions?.canChangeInfo)))
   )
+}
+
+export function selectCanAddToContact(global: SignalGlobalState, chatId: string) {
+  const user = isUserId(chatId) ? selectUser(global, chatId) : undefined
+
+  if (!user) {
+    return
+  }
+
+  return !user.isContact
 }
 
 export function getChatMember(chatFull: ApiChatFull, userId: string) {
   return chatFull.members?.find((m) => m.userId === userId)
 }
-export function selectChatMemberIds(chatFull: ApiChatFull) {
+export function getChatMemberIds(chatFull: ApiChatFull) {
   return chatFull.members?.map((m) => m.userId)
 }
 // export function getChatMembers(chatFull:ApiChatFull){

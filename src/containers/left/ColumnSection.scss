@@ -8,6 +8,31 @@
     // font-weight: 600;
     margin-block-end: 15px;
   }
+  box-shadow: 0 1px 3px 0 var(--c-shadow-section);
 
-  @include bgAndColorTransition();
+  @include bgAndColorTransition(box-shadow);
+
+  &.with-border {
+    position: relative;
+    overflow-y: unset;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    // align-items: center;
+    &::after {
+      bottom: -10px;
+      left: 0;
+      z-index: 1;
+      position: absolute;
+      content: '';
+      display: block;
+      // background-;
+      @include bgAndColorTransition(box-shadow);
+      background-color: var(--c-bg);
+      width: 100%;
+      height: 15px;
+      box-shadow: 0 1px 3px 0 var(--c-shadow-section);
+      // box-shadow: 0 0 3px var(--c-shadow-default);
+    }
+  }
 }

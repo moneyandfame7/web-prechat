@@ -66,6 +66,10 @@
   }
 
   .send-button {
+    // transform: scale(1);
+    // opacity: 1;
+    // animation: show-icon 0.2s ease;
+    // transition: transform 0.2s ease, opacity 0.2s ease;
     border-radius: 50%;
     height: 56px;
     width: 56px;
@@ -76,12 +80,62 @@
     align-items: flex-end;
     width: 100%;
     gap: 15px;
+    // position: relative;
+    // @include bgAndColorTransition();
+
+    > .transition {
+      min-height: 54px;
+      width: 100%;
+      @include defaultTransition(transform);
+    }
+    .selection-wrapper {
+      // width: 100%;
+      // left: 50%;
+      // width: 70%;
+      // left: calc(100% - 65vh); // @todo avoid hardcode
+      width: 100%;
+      // @include responsive(mobile) {
+      //   width: 100%;
+      //   left: 0;
+      // }
+      display: flex;
+      align-items: center;
+      background-color: var(--c-surface);
+      border-radius: 12px;
+      padding-inline: 10px;
+      @include bgAndColorTransition();
+      > .selection-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        font-weight: 500;
+        > .selection-container-left,
+        > .selection-container-right {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          .Button {
+            font-size: 14px;
+            @media only screen and (max-width: 992px) {
+              font-size: 0;
+              gap: 0;
+              padding: 5px;
+            }
+            // @include withSmallScreen {
+
+            // }
+          }
+        }
+      }
+    }
   }
 }
 
 .input-message {
   position: relative;
-  width: 85%;
+  // width: 85%;
+  width: 100%;
   background-color: var(--c-surface);
 
   @include bgAndColorTransition();

@@ -45,6 +45,8 @@ interface ActionPayloads {
 
   openCreateContactModal: void
 
+  toggleMessageSelection: {id?: string; active?: boolean}
+
   showNotification: {title: string}
   closeNotification: void
 
@@ -63,6 +65,8 @@ interface ActionPayloads {
 
   /* Contacts */
   addContact: {firstName: string; phone: string; lastName?: string; userId?: string}
+  updateContact: {userId: string; firstName?: string; lastName?: string}
+  deleteContact: {userId: string}
   getContactList: void
 
   /* Users */
@@ -76,6 +80,7 @@ interface ActionPayloads {
   /* Chats */
   createChannel: CreateChannelInput
   createGroup: CreateGroupInput
+  updateChat: {chatId: string; title?: string; description?: string}
   getChats: void
   getChat: {id: string}
   openChat: {
@@ -87,6 +92,7 @@ interface ActionPayloads {
   }
   openChatByUsername: {username: string}
   openPreviousChat: void
+  openPinnedMessages: {id: string | undefined}
   getChatFull: {id: string}
 
   /* ChatFolders */
@@ -94,6 +100,7 @@ interface ActionPayloads {
 
   /* Messages */
   sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}
+  deleteMessages: {ids: string[]; deleteForAll: boolean; chatId: string}
   getHistory: {
     chatId: string
     limit?: number
@@ -101,6 +108,11 @@ interface ActionPayloads {
     direction?: HistoryDirection
     maxDate?: Date
     includeOffset?: boolean
+  }
+  getPinnedMessages: {
+    chatId: string
+    offsetId?: string
+    // direction?:Hist
   }
   saveDraft: {
     text: string | undefined

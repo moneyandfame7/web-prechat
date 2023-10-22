@@ -30,9 +30,22 @@
   font-size: 16px;
   font-weight: 500;
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 15px;
+
+  &.content-center {
+    justify-content: center;
+  }
+  &.content-end {
+    justify-content: flex-end;
+  }
+  &.content-start {
+    justify-content: flex-start;
+  }
+
+  &.no-bold {
+    font-weight: 400;
+  }
   // transition: background-color 0.3s ease;
   @include bgAndColorTransition(opacity);
   body.animation-none {
@@ -52,11 +65,6 @@
 
     // font-weight: 400;
 
-    &.Button-red {
-      --c-ripple: var(--c-red-transparent);
-      @include transparentBtn(var(--c-red), var(--c-red-transparent));
-    }
-
     &.Button-primary {
       --c-ripple: var(--c-primary-transparent);
 
@@ -65,8 +73,13 @@
 
     &.Button-gray {
       // --c-ripple: var(--c-ripple); // IDK WHAT TO DO, NOT WORK HOVER
-
+      --c-ripple: unset;
       @include transparentBtn(var(--c-icon), var(--c-ripple));
+    }
+
+    &.Button-red {
+      --c-ripple: var(--c-red-transparent);
+      @include transparentBtn(var(--c-red), var(--c-red-transparent));
     }
 
     &.Button-green {
@@ -116,16 +129,16 @@
   &-gray {
     background-color: transparent;
 
-    &:hover {
-      // &:hover,
-      // :focus {
-      background-color: red;
-    }
+    // &:hover {
+    //   // &:hover,
+    //   // :focus {
+    //   background-color: red !important;
+    // }
 
-    .Icon path {
-      fill: var(--c-icon);
-    }
-    color: var(--c-icon);
+    // .Icon path {
+    //   fill: var(--c-icon);
+    // }
+    // color: var(--c-icon);
   }
 
   &-primary {

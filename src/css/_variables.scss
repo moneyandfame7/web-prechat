@@ -123,6 +123,9 @@ $theme-map-dark: (
   --left-column-width: 420px;
   --emoji-picker-height: 425px;
   --chat-input-height: 54px;
+  --messages-container-width: 728px;
+  --message-responsive-margin: 80px; // for selection margin
+  --column-header-height: 60px;
   @include responsive(mobile) {
     --right-column-width: 100dvw;
     --left-column-width: 100%;
@@ -196,9 +199,10 @@ $theme-map-dark: (
 
   // --c-bubble-highlight: var(--c-ripple);
 
-  --c-box-shadow-section: rgba(0, 0, 0, 0.06);
+  --c-shadow-section: rgba(0, 0, 0, 0.06);
   --c-shadow-light: rgb(114, 114, 114, 0.169);
   --c-shadow-default: rgb(114, 114, 114, 0.251);
+
   --c-surface: #{$c-surface};
   --c-surface-2: #{$c-surface-2};
   --c-surface-3: #{$c-surface-3};
@@ -308,6 +312,7 @@ $theme-map-dark: (
     --c-surface-transparent: #{rgba($c-bg-surface, 80%)};
     --c-surface-3-transparent: #{rgba(0, 0, 0, 0.3)};
 
+    --c-shadow-section: rgba(0, 0, 0, 0.12);
     --c-shadow-light: rgb(0, 0, 0, 0.251);
     --c-shadow-default: rgb(16 16 16 / 61%);
     --c-border: #{$c-border};

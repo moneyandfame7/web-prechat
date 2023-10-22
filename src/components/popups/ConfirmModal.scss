@@ -1,12 +1,23 @@
 .ConfirmModal {
+  .Modal-header {
+    gap: 15px;
+  }
   .Modal-title {
     margin: 0;
   }
   .Modal-content {
     line-height: 1.3;
   }
+
+  .Checkbox {
+    padding-block: 5px;
+    margin-block-start: 10px;
+  }
   min-height: 100px;
-  max-width: 250px;
+  width: min-content;
+  // max-width: 400px;
+  max-width: 325px;
+  min-width: 300px;
   @include responsive(mobile) {
     min-width: 90%;
   }

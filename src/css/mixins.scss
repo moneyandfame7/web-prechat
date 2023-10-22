@@ -21,6 +21,16 @@
   }
 }
 
+@mixin withSmallScreen() {
+  @media only screen and (max-width: 768px) {
+    @content;
+  }
+}
+@mixin withLargeScreen() {
+  @media only screen and (min-width: 768.1px) {
+    @content;
+  }
+}
 @mixin bgAndColorTransition($properties...) {
   @include withAnimations {
     transition-duration: 0.2s;

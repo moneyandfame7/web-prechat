@@ -97,7 +97,11 @@ html:not(.is-ios) {
     }
   }
 }
-
+html.is-ios {
+  // ios longtap
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
 .scrollable-hidden {
   scrollbar-width: none;
   // padding-right: 0;

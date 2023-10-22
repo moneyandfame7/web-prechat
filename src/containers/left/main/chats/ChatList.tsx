@@ -38,6 +38,9 @@ const Skeleton = () => {
   )
 }
 
+/**
+ * @todo refactor
+ */
 const EmptyChats = () => {
   const global = getGlobalState()
 
@@ -55,7 +58,7 @@ const EmptyChats = () => {
       {contacts.length > 0 && (
         <ColumnSection className="contacts-list" title="Contacts">
           {/* <ChatListTest> */}
-          <ContactsList />
+          <ContactsList withUrl />
           {/* </ChatListTest> */}
         </ColumnSection>
       )}

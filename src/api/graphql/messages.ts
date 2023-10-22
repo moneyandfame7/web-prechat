@@ -1,6 +1,12 @@
 import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
-import type {ApiMessage, GetHistoryInput, SendMessageInput} from 'api/types/messages'
+import type {
+  ApiMessage,
+  DeleteMessagesInput,
+  GetHistoryInput,
+  GetPinnedMessagesInput,
+  SendMessageInput,
+} from 'api/types/messages'
 
 import {FRAGMENT_PHOTO} from './media'
 
@@ -19,6 +25,7 @@ export const FRAGMENT_MESSAGE_ACTION: DocumentNode = gql`
 export const FRAGMENT_MESSAGE: DocumentNode = gql`
   fragment AllMessageFields on Message {
     id
+    orderedId
     senderId
     chatId
     isOutgoing
@@ -65,6 +72,14 @@ export const MUTATION_SEND_MESSAGE: TypedDocumentNode<
 
   ${FRAGMENT_MESSAGE}
 `
+export const MUTATION_DELETE_MESSAGES: TypedDocumentNode<
+  {deleteMessages: boolean},
+  {input: DeleteMessagesInput}
+> = gql`
+  mutation DeleteMessages($input: DeleteMessagesInput!) {
+    deleteMessages(input: $input)
+  }
+`
 
 export const QUERY_GET_HISTORY: TypedDocumentNode<
   {getHistory: ApiMessage[]},
@@ -78,7 +93,18 @@ export const QUERY_GET_HISTORY: TypedDocumentNode<
 
   ${FRAGMENT_MESSAGE}
 `
+export const QUERY_GET_PINNED: TypedDocumentNode<
+  {getPinnedMessages: ApiMessage[]},
+  {input: GetPinnedMessagesInput}
+> = gql`
+  query GetPinnedMessages($input: GetPinnedMessagesInput!) {
+    getPinnedMessages(input: $input) {
+      ...AllMessageFields
+    }
+  }
 
+  ${FRAGMENT_MESSAGE}
+`
 export const MUTATION_SAVE_DRAFT: DocumentNode = gql`
   mutation SaveDraft($input: SaveDraftInput!) {
     saveDraft(input: $input)

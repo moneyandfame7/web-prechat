@@ -1,11 +1,12 @@
-import {type FC, memo} from 'preact/compat'
+import {type FC, memo, useEffect} from 'preact/compat'
 
 import type {ApiMessage, ApiUser} from 'api/types'
 
+import {getActions} from 'state/action'
 import {type MapState, connect} from 'state/connect'
 import {isUserId} from 'state/helpers/users'
 import {selectIsChannel} from 'state/selectors/chats'
-import {selectMessageSender, selectMessages} from 'state/selectors/messages'
+import {selectMessage, selectMessageSender, selectMessages} from 'state/selectors/messages'
 
 import {AvatarTest} from 'components/ui/AvatarTest'
 
@@ -17,6 +18,7 @@ interface MessageBubblesGroupProps {
   chatId: string
 }
 interface StateProps {
+  senderId: string | undefined
   groupSender?: ApiUser
   messagesById?: Record<string, ApiMessage>
   withAvatar?: boolean
@@ -29,14 +31,20 @@ const MessageBubblesGroupImpl: FC<MessageBubblesGroupProps & StateProps> = ({
   groupSender,
   messagesById,
   withAvatar,
+  senderId,
 }) => {
+  const {getUser} = getActions()
+
+  useEffect(() => {
+    if (!groupSender && senderId) {
+      getUser(senderId)
+    }
+  }, [groupSender, senderId])
   return (
     <div class="bubbles-group">
       {withAvatar && (
         <div class="bubbles-group-avatar-container">
-          <div class="bubbles-group-avatar">
-            <AvatarTest peer={groupSender} size="xs" />
-          </div>
+          <AvatarTest className="bubbles-group-avatar" peer={groupSender} size="xs" />
           {/* Avatar here */}
         </div>
       )}
@@ -47,6 +55,7 @@ const MessageBubblesGroupImpl: FC<MessageBubblesGroupProps & StateProps> = ({
           const message = messagesById?.[messageId]
 
           const isLastInGroup = idx === groupIds.length - 1
+          // const sender=selectUser()
           return (
             message && (
               <MessageBubble
@@ -65,16 +74,24 @@ const MessageBubblesGroupImpl: FC<MessageBubblesGroupProps & StateProps> = ({
 }
 
 const mapStateToProps: MapState<MessageBubblesGroupProps, StateProps> = (state, ownProps) => {
+  const senderId = selectMessage(state, ownProps.chatId, ownProps.groupIds[0])?.senderId
   const groupSender = selectMessageSender(state, ownProps.chatId, ownProps.groupIds[0])
   const messagesById = selectMessages(state, ownProps.chatId)
+  const lastMessage = messagesById?.[ownProps.groupIds[ownProps.groupIds.length - 1]]
 
   const withAvatar =
     /* хз, треба переробити адже  */
     !messagesById?.[ownProps.groupIds[0]].action &&
     !groupSender?.isSelf &&
-    (isUserId(ownProps.chatId) || !selectIsChannel(state, ownProps.chatId))
+    (isUserId(ownProps.chatId) || !selectIsChannel(state, ownProps.chatId)) &&
+    !lastMessage?.deleteLocal
+
+  // const withSenderName=!groupSender.isS
+
+  // без аватарки ще буде тоді, коли кількість повідомлень - 1 і це повідомлення видалене ?
 
   return {
+    senderId,
     groupSender,
     messagesById,
     withAvatar,

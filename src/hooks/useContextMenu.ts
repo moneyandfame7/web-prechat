@@ -59,7 +59,6 @@ export function useContextMenu(
     const menuEl = getMenuElement()
     if (position || menuRef.current || menuEl) {
       setPosition(undefined)
-      setStyles({})
       setFalse()
       return
     }

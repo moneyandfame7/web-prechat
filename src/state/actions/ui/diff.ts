@@ -67,3 +67,39 @@ createAction('openRightColumn', (state, _, payload) => {
 createAction('closeRightColumn', (state) => {
   state.rightColumn.isOpen = false
 })
+
+createAction('toggleMessageSelection', (state, _, payload) => {
+  const {active, id} = payload
+  const selected = state.selection.messageIds
+
+  if (typeof active === 'boolean') {
+    state.selection.hasSelection = active
+  }
+  if (!id) {
+    if (state.selection.hasSelection === false) {
+      console.log('CLEAR SELECTION!!!')
+      state.selection.messageIds = []
+    }
+    return
+  }
+  // if (selected.includes(id)) {
+  //   console.log('SHOULD REMOVE!!!!')
+  //   state.selection.messageIds.filter
+  // } else {
+  //   selected.push(id)
+  //   state.selection.hasSelection = true
+  // }
+  if (selected.includes(id)) {
+    if (selected.length === 1) {
+      state.selection.messageIds = []
+      state.selection.hasSelection = false
+    } else {
+      state.selection.messageIds = state.selection.messageIds.filter(
+        (existingId) => existingId !== id
+      )
+    }
+  } else {
+    selected.push(id)
+    state.selection.hasSelection = true
+  }
+})

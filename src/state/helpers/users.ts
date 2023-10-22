@@ -1,6 +1,6 @@
 import type {ApiUser} from 'api/types'
 
-import {formatDate} from 'utilities/date/convert'
+import {formatDate, formatMessageTime} from 'utilities/date/convert'
 import {isYesterday} from 'utilities/date/isYesterday'
 import {milliseconds} from 'utilities/date/ms'
 
@@ -27,10 +27,9 @@ export function getUserStatus(u: ApiUser) {
         const hours = Math.round(timeDelta / (1000 * 60 * 60))
         return `last seen ${hours} hours ago`
       } else if (isYesterday(new Date(now))) {
-        return `last seen yesterday at ${formatDate(
+        return `last seen yesterday at ${formatMessageTime(
           new Date(u.status.wasOnline),
-          true,
-          false
+          true
         )}`
       }
       return formatDate(new Date(u.status.wasOnline), true, true)

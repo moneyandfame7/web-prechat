@@ -1,3 +1,6 @@
+.list-item-container {
+  width: 100%;
+}
 .list-item {
   width: 100%;
   display: flex;
@@ -49,6 +52,20 @@
     font-weight: 500;
     &:hover {
       background-color: var(--c-danger-transparent);
+    }
+  }
+
+  &.wrap {
+    .list-item__subtitle,
+    .list-item__title {
+      // @include defaultTransition(color);
+      // width: 85%;
+      white-space: wrap;
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+    }
+    .list-item__subtitle {
+      line-height: 1.2;
     }
   }
 

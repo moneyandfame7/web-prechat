@@ -6,9 +6,11 @@ import {UserItem} from 'components/UserItem'
 
 interface StateProps {
   contactIds: string[]
+}
+interface OwnProps {
   withUrl?: boolean
 }
-const ContactsListImpl: FC<StateProps> = ({contactIds, withUrl}) => {
+const ContactsListImpl: FC<StateProps & OwnProps> = ({contactIds, withUrl}) => {
   return (
     <>
       {contactIds.map((c) => (
@@ -19,9 +21,7 @@ const ContactsListImpl: FC<StateProps> = ({contactIds, withUrl}) => {
 }
 
 export const ContactsList = memo(
-  connect(
-    (state): StateProps => ({
-      contactIds: state.users.contactIds,
-    })
-  )(ContactsListImpl)
+  connect<OwnProps, StateProps>((state) => ({
+    contactIds: state.users.contactIds,
+  }))(ContactsListImpl)
 )

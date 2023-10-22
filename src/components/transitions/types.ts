@@ -3,6 +3,8 @@ import type {CSSProperties, HTMLAttributes, TargetedEvent} from 'preact/compat'
 
 import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition'
 
+import {ObjectOrValue} from 'types/common'
+
 export type TransitionName =
   | 'slide'
   | 'slideY'
@@ -30,7 +32,7 @@ export interface TransitionProps<TKey extends number | string> {
   cleanupElements?: TKey[]
   shouldLockUI?: boolean
   containerClassname?: string
-  innerClassnames?: string | Partial<{[key in TKey]: string}>
+  innerClassnames?: Partial<ObjectOrValue<TKey, string>>
   timeout?: number
   onExitEnd?: VoidFunction
   innerAttributes?: Partial<{[key in TKey]: HTMLAttributes<HTMLDivElement>}>

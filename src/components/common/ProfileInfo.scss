@@ -1,0 +1,18 @@
+.profile-info {
+  .profile-avatar {
+    // margin-block-end: 10px;
+  }
+  .list-item-container {
+    // margin-inline: 10px;
+  }
+
+  .list-item__title {
+    // text-wrap: wrap
+    white-space: pre-wrap;
+    word-break: break-word;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    // width: 70ch;
+  }
+  // margin-block-end: 10px;
+}

@@ -1,4 +1,4 @@
-import {type FC, memo, useEffect, useLayoutEffect, useRef} from 'preact/compat'
+import {type FC, RefObject, memo, useEffect, useLayoutEffect, useRef} from 'preact/compat'
 
 import type {MenuContextActions} from 'components/ui/ListItem'
 
@@ -17,12 +17,15 @@ interface TabListProps {
   activeTab: number
   tabs: TabItem[]
   onChange: (index: number) => void
+  tabListRef?: RefObject<HTMLDivElement>
 }
 const TabList: FC<TabListProps> = memo(
-  ({tabs, activeTab, onChange, contextLimiterSelector}) => {
-    const tabListRef = useRef<HTMLDivElement>(null)
+  ({tabs, activeTab, onChange, contextLimiterSelector, tabListRef: customTabListRef}) => {
+    let tabListRef = useRef<HTMLDivElement>(null)
     const lineRef = useRef<HTMLDivElement>(null)
-
+    if (customTabListRef) {
+      tabListRef = customTabListRef
+    }
     useLayoutEffect(() => {
       if (!tabListRef.current || !lineRef.current) {
         return
@@ -37,7 +40,10 @@ const TabList: FC<TabListProps> = memo(
       }
 
       console.log('new tab:', tab)
-
+      // tabListRef.current.scrollIntoView({
+      //   block: 'start',
+      //   behavior: 'smooth',
+      // })
       const linePosition = tab.offsetLeft
       lineRef.current.style.transform = `translateX(${linePosition})`
 

@@ -53,6 +53,12 @@
   &_layout {
     transform-style: preserve-3d;
   }
+  &-item {
+    @include withoutAnimations {
+      animation-duration: 0ms !important;
+      transition: none !important;
+    }
+  }
 
   // overflow: hidden;
 
@@ -195,6 +201,12 @@
     }
   }
   &-slideBackwards {
+    > .transition-item {
+      @include withoutAnimations {
+        animation-duration: 0ms !important;
+        transition: none !important;
+      }
+    }
     > .transition-item_from,
     &_from {
       animation: slide-in-backwards var(--slide-transition);
@@ -234,24 +246,36 @@
   }
 
   &-slideFade {
+    > .transition-item {
+      @include withoutAnimations {
+        animation-duration: 0ms !important;
+        transition: none !important;
+      }
+    }
     > .transition-item_from,
     &_from {
       animation: slide-move-out var(--slide-transition), fade-out 150ms ease;
     }
     > .transition-item_to,
     &_to {
-      transform: translate3d(1.5rem, 0, 0);
+      transform: translate3d(2rem, 0, 0);
       animation: slide-move-in var(--slide-transition), fade-in 150ms ease;
     }
   }
   &-slideFadeBackwards {
+    > .transition-item {
+      @include withoutAnimations {
+        animation-duration: 0ms !important;
+        transition: none !important;
+      }
+    }
     > .transition-item_from,
     &_from {
       animation: slide-move-in-backwards var(--slide-transition), fade-in-backwards 150ms ease;
     }
     > .transition-item_to,
     &_to {
-      transform: translate3d(-1.5rem, 0, 0);
+      transform: translate3d(-2rem, 0, 0);
       animation: slide-move-out-backwards var(--slide-transition),
         fade-out-backwards 150ms ease;
     }
@@ -577,7 +601,7 @@
 
 @keyframes slide-move-in {
   0% {
-    transform: translate3d(1.5rem, 0, 0);
+    transform: translate3d(2rem, 0, 0);
   }
   100% {
     transform: translate3d(0, 0, 0);
@@ -588,7 +612,7 @@
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(-1.5rem, 0, 0);
+    transform: translate3d(-2rem, 0, 0);
   }
 }
 @keyframes slide-move-in-backwards {
@@ -596,12 +620,12 @@
     transform: translate3d(0, 0, 0);
   }
   100% {
-    transform: translate3d(1.5rem, 0, 0);
+    transform: translate3d(2rem, 0, 0);
   }
 }
 @keyframes slide-move-out-backwards {
   0% {
-    transform: translate3d(-1.5rem, 0, 0);
+    transform: translate3d(-2rem, 0, 0);
   }
   100% {
     transform: translate3d(0, 0, 0);

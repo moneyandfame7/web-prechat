@@ -55,6 +55,7 @@ export enum RightColumnScreens {
   ChatProfile,
   ChatEdit,
   Search,
+  // EditContact,
 }
 
 export enum ChatEditScreens {
@@ -68,6 +69,15 @@ export enum ChatEditScreens {
   Members,
   Permissions,
   RemovedUsers,
+}
+
+/**
+ * It's not really a "screen"
+ */
+export enum ChatProfileScreens {
+  Profile,
+  Members,
+  SharedMedia,
 }
 
 export enum SettingsGroup {

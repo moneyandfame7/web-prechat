@@ -8,10 +8,11 @@ import {
   SUBSCRIBE_ON_USER_STATUS_UPDATED,
 } from 'api/graphql'
 import {SUBSCRIBE_ON_DRAFT_UPDATE} from 'api/graphql/messages'
-import {SUBSCRIBE_ON_NEW_MESSAGE} from 'api/graphql/subscription'
+import {SUBSCRIBE_ON_DELETE_MESSAGES, SUBSCRIBE_ON_NEW_MESSAGE} from 'api/graphql/subscription'
 import {ApolloClient} from 'api/manager'
 import type {
   ApiChatSub,
+  ApiDeleteMessagesSub,
   ApiDraftUpdateSub,
   ApiNewMessageSub,
   ApiSession,
@@ -33,6 +34,7 @@ interface SubscribeResult {
   onAuthorizationTerminated: ApiSession[]
   onUserStatusUpdated: ApiUserStatusSub
   onNewMessage: ApiNewMessageSub
+  onDeleteMessages: ApiDeleteMessagesSub
   onDraftUpdate: ApiDraftUpdateSub
 }
 type SubscribeName = keyof SubscribeResult
@@ -48,6 +50,7 @@ const SUBSCRIBE_QUERY: Record<SubscribeName, DocumentNode> = {
   onUserStatusUpdated: SUBSCRIBE_ON_USER_STATUS_UPDATED,
   onNewMessage: SUBSCRIBE_ON_NEW_MESSAGE,
   onDraftUpdate: SUBSCRIBE_ON_DRAFT_UPDATE,
+  onDeleteMessages: SUBSCRIBE_ON_DELETE_MESSAGES,
 }
 export type Subscribes = {
   [key in SubscribeName]: () => void

@@ -23,7 +23,7 @@ const Contacts: FC = () => {
   return (
     <ColumnWrapper onGoBack={resetScreen} title={TEST_translate('Contacts')}>
       {/* Contacts */}
-      <ContactsList />
+      <ContactsList withUrl />
       <FloatButton
         shown
         onClick={handleClickButton}

@@ -1,4 +1,4 @@
-import type {ComponentChildren, VNode} from 'preact'
+import type {ComponentChildren, RefObject, VNode} from 'preact'
 import {type FC, memo, useEffect, useRef, useState} from 'preact/compat'
 
 import clsx from 'clsx'
@@ -14,10 +14,28 @@ interface ColumnWrapperProps {
   children: ComponentChildren
   headerContent?: VNode
   contentClassname?: string
+  contentRef?: RefObject<HTMLDivElement>
+  onScroll?: (e: Event) => void
+  withHeaderBorder?: boolean
+  replaceHeader?: boolean
 }
 const ColumnWrapper: FC<ColumnWrapperProps> = memo(
-  ({title, children, onGoBack, headerContent, goBackIcon: icon, contentClassname}) => {
-    const contentColumnRef = useRef<HTMLDivElement>(null)
+  ({
+    title,
+    children,
+    onGoBack,
+    headerContent,
+    goBackIcon: icon,
+    contentClassname,
+    contentRef,
+    onScroll,
+    withHeaderBorder = true,
+    replaceHeader = false,
+  }) => {
+    let contentColumnRef = useRef<HTMLDivElement>(null)
+    if (contentRef) {
+      contentColumnRef = contentRef
+    }
     const [isScrolled, setIsScrolled] = useState(false)
 
     const headerClass = clsx('column-header', {
@@ -25,24 +43,34 @@ const ColumnWrapper: FC<ColumnWrapperProps> = memo(
     })
 
     useEffect(() => {
-      const handleScroll = () => {
+      if (!withHeaderBorder && !onScroll) {
+        return
+      }
+      const handleScroll = (e: Event) => {
         if (!contentColumnRef.current) {
           return
         }
-
-        setIsScrolled(contentColumnRef.current.scrollTop > 0)
+        onScroll?.(e)
+        if (withHeaderBorder) {
+          setIsScrolled(contentColumnRef.current.scrollTop > 0)
+        }
       }
 
       contentColumnRef.current?.addEventListener('scroll', handleScroll)
 
       return () => contentColumnRef.current?.removeEventListener('scroll', handleScroll)
-    }, [])
+    }, [onScroll])
 
     return (
       <>
         <div class={headerClass}>
-          <IconButton icon={icon || 'arrowLeft'} onClick={onGoBack} />
-          {title && <p class="column-header__title">{title}</p>}
+          {!replaceHeader && (
+            <>
+              <IconButton icon={icon || 'arrowLeft'} onClick={onGoBack} />
+              {title && <p class="column-header__title">{title}</p>}
+            </>
+          )}
+
           {headerContent}
 
           {/* {actions && <div class="column-header__actions">{actions}</div>} */}

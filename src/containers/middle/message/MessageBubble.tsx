@@ -1,16 +1,35 @@
-import {type FC, memo, useRef} from 'preact/compat'
+import {
+  type FC,
+  TargetedEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import type {ApiMessage, ApiUser} from 'api/types'
+import type {ApiChat, ApiMessage, ApiUser} from 'api/types'
 
-import {getUserName} from 'state/helpers/users'
+import {getActions} from 'state/action'
+import {connect} from 'state/connect'
+import {getUserName, isUserId} from 'state/helpers/users'
+import {selectChat} from 'state/selectors/chats'
+import {selectHasMessageSelection, selectIsMessageSelected} from 'state/selectors/diff'
+import {selectUser} from 'state/selectors/users'
 
 import {useContextMenu} from 'hooks/useContextMenu'
+import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
 
+// import {stopEvent} from 'utilities/stopEvent'
+// import ConfirmModalAsync from 'components/popups/ConfirmModal.async'
+import DeleteMessagesModalAsync from 'components/popups/DeleteMessagesModal.async'
 import {Menu, MenuItem} from 'components/popups/menu'
+import {MenuDivider} from 'components/popups/menu/Menu'
+import {Icon} from 'components/ui'
 
 import {MessageMeta} from './MessageMeta'
 
@@ -18,28 +37,93 @@ import './MessageBubble.scss'
 
 interface MessageBubbleProps {
   message: ApiMessage
-  sender?: ApiUser
-  withSenderName?: boolean
   withAvatar?: boolean
   isLastInGroup: boolean
   isFirstInGroup: boolean
 }
-
+interface StateProps {
+  chat: ApiChat | undefined
+  hasMessageSelection: boolean
+  isSelected: boolean
+  showSenderName: boolean
+  sender?: ApiUser
+}
 const getMenuElement = () =>
   document
     .querySelector('#portal')!
     .querySelector('.message-context-menu') as HTMLElement | null
-const MessageBubble: FC<MessageBubbleProps> = memo(
-  ({message, sender, withSenderName, withAvatar, isLastInGroup}) => {
+const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
+  ({
+    message,
+    chat,
+    sender,
+    showSenderName,
+    withAvatar,
+    isLastInGroup,
+    hasMessageSelection,
+    // isFirstInGroup,
+    isSelected,
+  }) => {
+    const messageRef = useRef<HTMLDivElement>(null)
+    const menuRef = useRef<HTMLDivElement>(null)
+
+    const {deleteMessages, toggleMessageSelection} = getActions()
     const isOutgoing = message?.isOutgoing && !message.action
 
     const senderName = sender && getUserName(sender)
     const messageText = message?.content.formattedText?.text
 
-    const menuRef = useRef<HTMLDivElement>(null)
-    const messageRef = useRef<HTMLDivElement>(null)
     const {handleContextMenu, handleContextMenuClose, isContextMenuOpen, styles} =
       useContextMenu(menuRef, messageRef, getMenuElement, undefined, true)
+    // messageRef.current.sele
+    const {
+      value: isDeleteModalOpen,
+      setTrue: openDeleteModal,
+      setFalse: closeDeleteModal,
+    } = useBoolean()
+
+    // const [hasSelectedText, setHasSelectedText] = useState(false)
+
+    const [selectedText, setSelectedText] = useState('')
+
+    useEffect(() => {
+      const handleSelectionChange = () => {
+        const selection = window.getSelection()
+        if (selection && messageRef.current?.contains(selection.anchorNode)) {
+          // selection.
+          setSelectedText(selection.toString())
+        } else {
+          setSelectedText('')
+        }
+      }
+
+      document.addEventListener('selectionchange', handleSelectionChange)
+
+      return () => {
+        document.removeEventListener('selectionchange', handleSelectionChange)
+      }
+    }, [])
+    // useEffect(() => {
+    //   const handleSelectionChange = () => {
+    //     const selectedText = window.getSelection()?.toString()
+    //     const elementText = messageRef.current?.innerText
+
+    //     setIsTextSelected(
+    //       selectedText && selectedText.length > 0 && selectedText === elementText
+    //     )
+    //   }
+
+    //   elementRef.current.addEventListener('mouseup', handleSelectionChange)
+
+    //   return () => {
+    //     elementRef.current.removeEventListener('mouseup', handleSelectionChange)
+    //   }
+    // }, [])
+    // const {value}=useBoolean()
+    // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    // useEffect(() => {
+    //   console.log({styles, isContextMenuOpen})
+    // }, [isContextMenuOpen])
 
     const buildedClass = clsx('bubble', sender && `color-${sender.color.toLowerCase()}`, {
       outgoing: isOutgoing,
@@ -48,7 +132,30 @@ const MessageBubble: FC<MessageBubbleProps> = memo(
       'has-avatar': withAvatar,
       'last-in': isLastInGroup,
       'has-menu-open': isContextMenuOpen,
+      'delete-local': message.deleteLocal,
+      'is-selected': isSelected,
     })
+
+    const imageRef = useRef<HTMLImageElement>(null)
+    // imageRef.current
+
+    const handleToggleSelection = () => {
+      // updateMessageSelection(getGlobalState(), message.id)
+      toggleMessageSelection({id: message.id})
+    }
+
+    const handleCopySelectedText = useCallback(() => {
+      navigator.clipboard.writeText(selectedText)
+    }, [selectedText])
+
+    const handleCopyMessage = useCallback(() => {
+      const content = message.content
+
+      if (content.formattedText) {
+        navigator.clipboard.writeText(content.formattedText.text)
+      }
+    }, [])
+
     if (message.action) {
       return (
         <div data-mid={message.id} id={`message-${message.id}`} class={buildedClass}>
@@ -62,31 +169,67 @@ const MessageBubble: FC<MessageBubbleProps> = memo(
         data-mid={message.id}
         class={buildedClass}
         onContextMenu={handleContextMenu}
+        onClick={
+          hasMessageSelection
+            ? (e) => {
+                handleToggleSelection()
+              }
+            : undefined
+        }
+        // onClick={
+        //   hasMessageSelection
+        //     ? (e) => {
+        //         console.log('CLICK ON DIV')
+        //         // console.log(e.currentTarget.childNodes.)
+        //         // stopEvent(e)
+        //         handleToggleSelection()
+        //       }
+        //     : undefined
+        // }
       >
+        {hasMessageSelection && (
+          <div class="bubble-select-checkbox">
+            <Icon name="check" color="white" />
+            {/* <Checkbox
+              fullWidth={false}
+              // onToggle={handleToggleSelection}
+              checked={isSelected}
+              withRipple={false}
+              className="bubble-select-checkbox"
+            /> */}
+          </div>
+        )}
         <div class="bubble-content">
-          {withSenderName && (
+          {showSenderName && (
             <p class="bubble-content__sender">{senderName || 'USER NAME_UNDF'}</p>
           )}
           <p class="bubble-content__text">
             {messageText}
             {message && (
               <MessageMeta
+                hasMessageSelection={hasMessageSelection}
                 message={message}
                 sendingStatus={message.sendingStatus || 'unread'}
               />
             )}
           </p>
+          <svg viewBox="0 0 11 20" width="11" height="20" class="bubble-arrow">
+            <g transform="translate(9 -14)" fill="inherit" fill-rule="evenodd">
+              <path
+                d="M-6 16h6v17c-.193-2.84-.876-5.767-2.05-8.782-.904-2.325-2.446-4.485-4.625-6.48A1 1 0 01-6 16z"
+                transform="matrix(1 0 0 -1 0 49)"
+                id="corner-fill"
+                fill="inherit"
+              />
+            </g>
+          </svg>
         </div>
-        <svg viewBox="0 0 11 20" width="11" height="20" class="bubble-arrow">
-          <g transform="translate(9 -14)" fill="inherit" fill-rule="evenodd">
-            <path
-              d="M-6 16h6v17c-.193-2.84-.876-5.767-2.05-8.782-.904-2.325-2.446-4.485-4.625-6.48A1 1 0 01-6 16z"
-              transform="matrix(1 0 0 -1 0 49)"
-              id="corner-fill"
-              fill="inherit"
-            />
-          </g>
-        </svg>
+        {/* <MessageContextMenu
+          styles={styles}
+          isOpen={isContextMenuOpen}
+          onClose={handleContextMenuClose}
+          menuRef={menuRef}
+        /> */}
 
         <Menu
           // easing={'cubic-bezier(0.2, 0, 0.2, 1)' as any}
@@ -99,18 +242,75 @@ const MessageBubble: FC<MessageBubbleProps> = memo(
           style={styles}
           onClose={handleContextMenuClose}
         >
-          <MenuItem icon="reply">Reply</MenuItem>
-          <MenuItem icon="edit">Edit</MenuItem>
-          <MenuItem icon="copy">Copy Text</MenuItem>
-          <MenuItem icon="forward">Forward</MenuItem>
-          <MenuItem icon="select">Select</MenuItem>
-          <MenuItem icon="delete" danger>
-            Delete
+          {selectedText && (
+            <MenuItem
+              onClick={handleCopySelectedText}
+              icon="copy"
+              title={TEST_translate('Chat.CopySelectedText')}
+            />
+          )}
+          <MenuDivider />
+
+          <MenuItem icon="reply">{TEST_translate('Reply')}</MenuItem>
+          <MenuItem icon="pin">{TEST_translate('Pin')}</MenuItem>
+          <MenuItem icon="edit">{TEST_translate('Edit')}</MenuItem>
+          {/* hasText &&  */}
+          {!selectedText && (
+            <MenuItem onClick={handleCopyMessage} icon="copy">
+              {TEST_translate('Copy')}
+            </MenuItem>
+          )}
+          <MenuItem icon="forward">{TEST_translate('Forward')}</MenuItem>
+          <MenuItem icon="select" onClick={handleToggleSelection}>
+            {TEST_translate('Select')}
+          </MenuItem>
+          <MenuItem icon="delete" danger onClick={openDeleteModal}>
+            {TEST_translate('Delete')}
           </MenuItem>
         </Menu>
+        <DeleteMessagesModalAsync
+          chat={chat}
+          isOpen={isDeleteModalOpen}
+          onClose={closeDeleteModal}
+          message={message}
+        />
+        {/* <ConfirmModalAsync
+          chat={chat}
+          title={TEST_translate('DeleteMessages', {count: 2})}
+          action="Delete"
+          content={
+            <>
+              {TEST_translate('AreYouSureDeleteMessages', {count: 2})}
+
+              <Checkbox label={TEST_translate('AlsoDeleteFor', {name: 'павапепе гемабоді'})} />
+            </>
+          }
+          callback={() => {}}
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            closeDeleteModal()
+          }}
+        /> */}
       </div>
     )
   }
 )
 
-export {MessageBubble}
+export const MessageBubble = memo(
+  connect<MessageBubbleProps, StateProps>((state, ownProps) => {
+    const sender = ownProps.message.senderId
+      ? selectUser(state, ownProps.message.senderId)
+      : undefined
+
+    const chat = selectChat(state, ownProps.message.chatId)
+    const isPrivateChat = isUserId(ownProps.message.chatId)
+    const showSenderName = Boolean(sender) && !ownProps.message?.isOutgoing && !isPrivateChat
+    return {
+      chat,
+      sender,
+      hasMessageSelection: selectHasMessageSelection(state),
+      isSelected: selectIsMessageSelected(state, ownProps.message.id),
+      showSenderName,
+    }
+  })(MessageBubbleImpl)
+)

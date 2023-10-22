@@ -11,7 +11,7 @@ export function getChatPreview(chat: ApiChat, sender?: ApiUser) {
   if (chat.draft) {
     return (
       <>
-        <b>Draft: </b>
+        <b class="danger">Draft: </b>
         {chat.draft}
       </>
     )
