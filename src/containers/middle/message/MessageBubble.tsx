@@ -1,12 +1,4 @@
-import {
-  type FC,
-  TargetedEvent,
-  memo,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useRef, useState} from 'preact/compat'
 
 import clsx from 'clsx'
 
@@ -24,9 +16,7 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
 
-// import {stopEvent} from 'utilities/stopEvent'
-// import ConfirmModalAsync from 'components/popups/ConfirmModal.async'
-import DeleteMessagesModalAsync from 'components/popups/DeleteMessagesModal.async'
+import DeleteMessagesModal from 'components/popups/DeleteMessagesModal.async'
 import {Menu, MenuItem} from 'components/popups/menu'
 import {MenuDivider} from 'components/popups/menu/Menu'
 import {Icon} from 'components/ui'
@@ -67,7 +57,7 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
     const messageRef = useRef<HTMLDivElement>(null)
     const menuRef = useRef<HTMLDivElement>(null)
 
-    const {deleteMessages, toggleMessageSelection} = getActions()
+    const {deleteMessages, toggleMessageSelection, toggleMessageEditing} = getActions()
     const isOutgoing = message?.isOutgoing && !message.action
 
     const senderName = sender && getUserName(sender)
@@ -143,18 +133,25 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
       // updateMessageSelection(getGlobalState(), message.id)
       toggleMessageSelection({id: message.id})
     }
+    const handleToggleEditing = () => {
+      toggleMessageEditing({id: message.id, active: true})
+    }
 
-    const handleCopySelectedText = useCallback(() => {
-      navigator.clipboard.writeText(selectedText)
-    }, [selectedText])
+    const handleCopyMessageText = () => {
+      if (selectedText) {
+        navigator.clipboard.writeText(selectedText)
+      } else {
+        const content = message.content
 
-    const handleCopyMessage = useCallback(() => {
-      const content = message.content
-
-      if (content.formattedText) {
-        navigator.clipboard.writeText(content.formattedText.text)
+        if (content.formattedText) {
+          navigator.clipboard.writeText(content.formattedText.text)
+        }
       }
-    }, [])
+    }
+    const handleCopyMessageMedia = () => {}
+
+    const hasCopyMessageGroup =
+      !!selectedText || !!message.content.photo || !!message.content.formattedText?.text
 
     if (message.action) {
       return (
@@ -242,24 +239,22 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
           style={styles}
           onClose={handleContextMenuClose}
         >
-          {selectedText && (
+          {(selectedText || !!message.content.formattedText?.text) && (
             <MenuItem
-              onClick={handleCopySelectedText}
+              onClick={handleCopyMessageText}
               icon="copy"
-              title={TEST_translate('Chat.CopySelectedText')}
+              title={TEST_translate(
+                selectedText ? 'Message.CopySelectedText' : 'Message.CopyText'
+              )}
             />
           )}
-          <MenuDivider />
+          {hasCopyMessageGroup && <MenuDivider />}
 
           <MenuItem icon="reply">{TEST_translate('Reply')}</MenuItem>
           <MenuItem icon="pin">{TEST_translate('Pin')}</MenuItem>
-          <MenuItem icon="edit">{TEST_translate('Edit')}</MenuItem>
+          <MenuItem onClick={handleToggleEditing} icon="edit" title={TEST_translate('Edit')} />
           {/* hasText &&  */}
-          {!selectedText && (
-            <MenuItem onClick={handleCopyMessage} icon="copy">
-              {TEST_translate('Copy')}
-            </MenuItem>
-          )}
+
           <MenuItem icon="forward">{TEST_translate('Forward')}</MenuItem>
           <MenuItem icon="select" onClick={handleToggleSelection}>
             {TEST_translate('Select')}
@@ -268,7 +263,7 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
             {TEST_translate('Delete')}
           </MenuItem>
         </Menu>
-        <DeleteMessagesModalAsync
+        <DeleteMessagesModal
           chat={chat}
           isOpen={isDeleteModalOpen}
           onClose={closeDeleteModal}

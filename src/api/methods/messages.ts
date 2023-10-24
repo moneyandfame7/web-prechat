@@ -1,6 +1,7 @@
 import {ApiBaseMethod} from 'api/base'
 import {
   MUTATION_DELETE_MESSAGES,
+  MUTATION_EDIT_MESSAGE,
   MUTATION_SEND_MESSAGE,
   QUERY_GET_HISTORY,
   QUERY_GET_PINNED,
@@ -9,6 +10,7 @@ import {cleanupResponse} from 'api/helpers/cleanupResponse'
 import {cleanTypename} from 'api/helpers/cleanupTypename'
 import type {
   DeleteMessagesInput,
+  EditMessageInput,
   GetHistoryInput,
   GetPinnedMessagesInput,
   SendMessageInput,
@@ -43,6 +45,18 @@ export class ApiMessages extends ApiBaseMethod {
       variables: {input},
     })
     return Boolean(data?.deleteMessages)
+  }
+
+  public async editMessage(input: EditMessageInput) {
+    const {data} = await this.client.mutate({
+      mutation: MUTATION_EDIT_MESSAGE,
+      variables: {input},
+    })
+    if (!data?.editMessage) {
+      return undefined
+    }
+
+    return cleanupResponse(data.editMessage)
   }
 
   public async getHistory(input: GetHistoryInput) {

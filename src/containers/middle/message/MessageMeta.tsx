@@ -1,11 +1,15 @@
 import {type FC, memo} from 'preact/compat'
 
-import type {ApiMessage, ApiMessageSendingStatus} from 'api/types'
+import type {ApiLangCode, ApiMessage, ApiMessageSendingStatus} from 'api/types'
 
 import {getActions} from 'state/action'
+import {connect} from 'state/connect'
+import {selectGeneralSettings} from 'state/selectors/settings'
 
-import {formatMessageTime} from 'utilities/date/convert'
+import {formatDate, formatMessageTime} from 'utilities/date/convert'
 import {stopEvent} from 'utilities/stopEvent'
+
+import type {TimeFormat} from 'types/state'
 
 import {Icon} from 'components/ui'
 
@@ -16,11 +20,16 @@ interface MessageMetaProps {
   sendingStatus: ApiMessageSendingStatus
   hasMessageSelection: boolean
 }
-const MessageMeta: FC<MessageMetaProps> = memo(
-  ({message, sendingStatus, hasMessageSelection}) => {
+interface StateProps {
+  timeFormat: TimeFormat
+  language: ApiLangCode
+}
+const MessageMetaImpl: FC<MessageMetaProps & StateProps> = memo(
+  ({message, sendingStatus, /* hasMessageSelection */ timeFormat, language}) => {
     const messageSendDate = message
       ? formatMessageTime(new Date(message?.createdAt))
       : undefined
+    const isEdited = Boolean(message.editedAt)
     const {toggleMessageSelection} = getActions()
     function renderStatus() {
       switch (sendingStatus) {
@@ -34,16 +43,41 @@ const MessageMeta: FC<MessageMetaProps> = memo(
           return <Icon className="message-meta__icon" name="checks2" />
       }
     }
+
+    const handleDisplayTitle = () => {
+      const sendedDate = formatDate(
+        new Date(message.createdAt),
+        timeFormat === '24h',
+        true,
+        true,
+        true,
+        language
+      )
+      if (isEdited) {
+        return `${sendedDate}
+Edited: ${formatDate(
+          new Date(message.editedAt!),
+          timeFormat === '24h',
+          true,
+          true,
+          true,
+          language
+        )}`
+      }
+      return sendedDate
+    }
     return (
       <span
+        title={handleDisplayTitle()}
         class="message-meta"
         onClick={(e) => {
           stopEvent(e)
           toggleMessageSelection({id: message.id})
         }}
       >
-        {/* <i class="message-meta__item">edited</i> */}
+        {isEdited && <i class="message-meta__item">edited</i>}
 
+        {/* it's a «fake» element */}
         <span class="message-meta__item">{messageSendDate}</span>
 
         {message?.isOutgoing && (
@@ -54,6 +88,7 @@ const MessageMeta: FC<MessageMetaProps> = memo(
         )}
         <div class="message-meta__container">
           {/* <i class="message-meta__item">edited</i> */}
+          {isEdited && <i class="message-meta__item">edited</i>}
 
           <span class="message-meta__item message-meta__date">{messageSendDate}</span>
           {message?.isOutgoing && <MessageSendingStatus status={sendingStatus} />}
@@ -63,4 +98,11 @@ const MessageMeta: FC<MessageMetaProps> = memo(
   }
 )
 
-export {MessageMeta}
+export const MessageMeta = memo(
+  connect<MessageMetaProps, StateProps>((state) => {
+    return {
+      timeFormat: selectGeneralSettings(state, 'timeFormat'),
+      language: state.settings.language,
+    }
+  })(MessageMetaImpl)
+)

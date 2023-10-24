@@ -2,8 +2,6 @@ import type {CSSProperties} from 'preact/compat'
 
 import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition'
 
-import {getGlobalState} from 'state/signal'
-
 import type {TransitionDirection, TransitionEasing, TransitionName} from './types'
 
 export const TRANSITION_CLASSES = {
@@ -55,6 +53,7 @@ export function buildProperties(
   easing?: TransitionEasing
 ) {
   const isBackwards = direction === -1 || direction === 'inverse'
+  // eslint-disable-next-line no-nested-ternary
   const shouldToggle = toggle ? (isBackwards ? animateIn : !animateIn) : isBackwards
 
   const computedName = `${name}${shouldToggle ? 'Backwards' : ''}`

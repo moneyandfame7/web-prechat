@@ -1,4 +1,8 @@
+import {batch} from '@preact/signals'
+
 import {createAction} from 'state/action'
+import {selectCurrentChat} from 'state/selectors/chats'
+import {selectMessage} from 'state/selectors/messages'
 
 import {MODAL_TRANSITION_MS, NOTIFICATION_TRANSITION} from 'common/environment'
 import {updateByKey} from 'utilities/object/updateByKey'
@@ -101,5 +105,32 @@ createAction('toggleMessageSelection', (state, _, payload) => {
   } else {
     selected.push(id)
     state.selection.hasSelection = true
+  }
+})
+
+createAction('toggleMessageEditing', (state, _, payload) => {
+  const {id, active} = payload
+  const currentChat = selectCurrentChat(state)
+  if (!currentChat?.chatId) {
+    return
+  }
+  if (!active) {
+    batch(() => {
+      updateByKey(state.messageEditing, {
+        isActive: false,
+        messageId: undefined,
+      })
+    })
+  } else if (id) {
+    const message = selectMessage(state, currentChat.chatId, id)
+    if (!message) {
+      return
+    }
+    batch(() => {
+      updateByKey(state.messageEditing, {
+        isActive: true,
+        messageId: id,
+      })
+    })
   }
 })

@@ -100,3 +100,4 @@ export const NOTIFICATION_TRANSITION = 300
 export const MODAL_TRANSITION_MS = 300
 
 export const FONT_PX = 16
+export const INPUT_HELPER_HEIGHT = 45

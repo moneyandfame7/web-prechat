@@ -46,6 +46,7 @@ interface ActionPayloads {
   openCreateContactModal: void
 
   toggleMessageSelection: {id?: string; active?: boolean}
+  toggleMessageEditing: {id?: string; active?: boolean}
 
   showNotification: {title: string}
   closeNotification: void
@@ -100,6 +101,7 @@ interface ActionPayloads {
 
   /* Messages */
   sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}
+  editMessage: {text: string; chatId: string; messageId: string}
   deleteMessages: {ids: string[]; deleteForAll: boolean; chatId: string}
   getHistory: {
     chatId: string

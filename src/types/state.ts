@@ -104,8 +104,13 @@ export interface OpenedChat {
   chatId?: string
   username?: string
   isMessagesLoading: boolean
+  // isMessageEditing: boolean
   isPinnedList: boolean
   /* isDiscussion */
+}
+export interface MessageEditing {
+  messageId: string
+  text?: string
 }
 export interface GlobalState {
   // recentEmojis: string[]
@@ -141,6 +146,7 @@ export interface GlobalState {
     selectedText: string
     messageIds: string[]
     chat: {
+      //  will rewrite in the future, because selection also can be in right column
       active: boolean
       messageIds: string[]
     }
@@ -148,6 +154,10 @@ export interface GlobalState {
       // active: boolean
       messageIds: string[]
     }
+  }
+  messageEditing: {
+    messageId?: string
+    isActive: boolean
   }
   activeSessions: {
     byId: Record<string, ApiSession>

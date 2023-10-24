@@ -10,13 +10,21 @@ export interface ApiMessage {
   isOutgoing?: boolean
   text?: string
   createdAt: Date
-  sendingStatus?: ApiMessageSendingStatus // only in Client
+  sendingStatus?: ApiMessageSendingStatus // only on Client
   deleteLocal?: true
   content: {
     formattedText?: ApiFormattedText
+    photo?: ApiPhoto
+    contact?: ApiContact
   }
-  editedAt?: Date
+  editedAt?: string
   action?: ApiMessageAction
+}
+export interface ApiContact {
+  userId: string
+  firstName: string
+  lastName: string
+  phoneNumber: string
 }
 export interface ApiDraft {
   text: string
@@ -46,6 +54,11 @@ export interface SendMessageInput {
   text: string
   entities?: ApiMessageEntity[]
   sendAs?: ApiInputPeer
+}
+export interface EditMessageInput {
+  chatId: string
+  messageId: string
+  text: string
 }
 export interface DeleteMessagesInput {
   ids: string[]

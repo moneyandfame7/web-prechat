@@ -3,7 +3,8 @@ import type {CSSProperties, HTMLAttributes, TargetedEvent} from 'preact/compat'
 
 import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition'
 
-import {ObjectOrValue} from 'types/common'
+import type {ObjectOrValue} from 'types/common'
+import type {PreactNode} from 'types/ui'
 
 export type TransitionName =
   | 'slide'
@@ -17,6 +18,7 @@ export type TransitionName =
   | 'rotate'
   | 'rotate3d'
   | 'zoomIcon'
+  | 'collapseY'
 export type TransitionEasing = 'ease' | 'ease-in' | 'ease-in-out' | 'ease-out' | 'linear'
 export type TransitionDirection = 'auto' | 'inverse' | 1 | -1
 export interface TransitionProps<TKey extends number | string> {
@@ -36,6 +38,7 @@ export interface TransitionProps<TKey extends number | string> {
   timeout?: number
   onExitEnd?: VoidFunction
   innerAttributes?: Partial<{[key in TKey]: HTMLAttributes<HTMLDivElement>}>
+  additionalChildren?: PreactNode
 }
 export interface SingleTransitionProps {
   name: TransitionName

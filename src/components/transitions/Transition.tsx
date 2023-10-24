@@ -32,6 +32,7 @@ const Transition = <TKey extends number | string>({
   shouldLockUI = name === 'zoomSlide' || name === 'slideDark',
   isLayout = name === 'zoomSlide' || name === 'slideDark',
   elRef,
+  additionalChildren,
   innerAttributes,
 }: TransitionProps<TKey>) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,6 +122,7 @@ const Transition = <TKey extends number | string>({
       }
     >
       {elements}
+      {additionalChildren}
     </TransitionGroup>
   )
 }

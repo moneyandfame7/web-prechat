@@ -120,7 +120,12 @@ createAction('openChat', async (state, actions, payload) => {
       chatId: undefined,
       username: undefined,
     })
-    updateOpenedChats(state, undefined, undefined, shouldReplaceHistory)
+    // undefined, undefined, shouldReplaceHistory
+    updateOpenedChats(state, {
+      chatId: undefined,
+      username: undefined,
+      replaceHistory: shouldReplaceHistory,
+    })
 
     return
   }
@@ -157,17 +162,27 @@ createAction('openChat', async (state, actions, payload) => {
     chatId: id,
     username,
   })
-  updateOpenedChats(state, id, username, shouldReplaceHistory) // for test false
+  updateOpenedChats(state, {chatId: id, username, replaceHistory: shouldReplaceHistory}) // for test false
 })
 
 createAction('openPinnedMessages', async (state, actions, payload) => {
   const {id} = payload
   /* Call api for get all pinned messages? */
-
+  // id, undefined, false, true
   if (id) {
-    updateOpenedChats(state, id, undefined, false, true)
+    updateOpenedChats(state, {
+      chatId: id,
+      username: undefined,
+      replaceHistory: false,
+      isPinnedList: true,
+    })
   } else {
-    updateOpenedChats(state, id, undefined, true, false)
+    updateOpenedChats(state, {
+      chatId: id,
+      username: undefined,
+      replaceHistory: true,
+      isPinnedList: false,
+    })
   }
 })
 

@@ -1,14 +1,19 @@
-import {type FC, memo} from 'preact/compat'
+import {useSignal} from '@preact/signals'
+import {type FC, memo, useMemo} from 'preact/compat'
 
 import type {ApiChat, ApiMessage, ApiUser} from 'api/types'
 
+import {getActions} from 'state/action'
 import {type MapState, connect} from 'state/connect'
 import {getUserName, isUserId} from 'state/helpers/users'
-import {selectMessagesSelectionCount} from 'state/selectors/diff'
+import {selectSelectedMessageIds} from 'state/selectors/diff'
 import {selectUser} from 'state/selectors/users'
+
+import {useScreenManager} from 'hooks'
 
 import {TEST_translate} from 'lib/i18n'
 
+import {filterUnique} from 'utilities/array/filterUnique'
 import {renderText} from 'utilities/parse/render'
 
 import {Checkbox} from 'components/ui'
@@ -23,34 +28,54 @@ export interface OwnProps {
 }
 
 interface StateProps {
-  selectedMessagesCount: number
+  selectedMessageIds: string[]
   partner: ApiUser | undefined
 }
 const DeleteMessagesModalImpl: FC<OwnProps & StateProps> = ({
   isOpen,
   onClose,
   chat,
-  selectedMessagesCount,
+  selectedMessageIds,
   message,
   partner,
 }) => {
+  const {deleteMessages, toggleMessageSelection} = getActions()
+
+  const shouldDeleteForAll = useSignal(false)
+  const toggleDeleteForAll = () => {
+    shouldDeleteForAll.value = !shouldDeleteForAll.peek()
+  }
   /**
    * Selected messages, sort, якщо є моє повідомлення і я можу його видалити для всіх - показувати повідомлення і ляля тополя
    */
-  const handleDeleteMessages = () => {}
+  const idsToDelete = useMemo(
+    () => filterUnique([...selectedMessageIds, message?.id]).filter(Boolean) as string[],
+    [message, selectSelectedMessageIds]
+  )
+  const handleDeleteMessages = () => {
+    if (!chat) {
+      return
+    }
+    deleteMessages({ids: idsToDelete, chatId: chat.id, deleteForAll: shouldDeleteForAll.value})
+    toggleMessageSelection({active: false})
+  }
+
+  const selectedCount = selectedMessageIds.length
   return (
     <ConfirmModalAsync
       chat={chat}
       user={partner}
-      title={TEST_translate('DeleteMessages', {count: message ? 1 : selectedMessagesCount})}
+      title={TEST_translate('DeleteMessages', {count: message ? 1 : selectedCount})}
       action="Delete"
       content={
         <>
           {TEST_translate('AreYouSureDeleteMessages', {
-            count: message ? 1 : selectedMessagesCount,
+            count: message ? 1 : selectedCount,
           })}
           {partner && (
             <Checkbox
+              onToggle={toggleDeleteForAll}
+              checked={shouldDeleteForAll}
               label={renderText(
                 TEST_translate('AlsoDeleteFor', {name: getUserName(partner)}),
                 ['markdown']
@@ -70,7 +95,7 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
   // chat: selectChat(state, ownProps.chatId),
   const isPrivate = ownProps.chat && isUserId(ownProps.chat.id)
   return {
-    selectedMessagesCount: selectMessagesSelectionCount(state),
+    selectedMessageIds: selectSelectedMessageIds(state),
     partner: isPrivate ? selectUser(state, ownProps.chat!.id) : undefined,
   }
 }

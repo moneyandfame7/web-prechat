@@ -152,4 +152,10 @@
       fill: var(--c-white);
     }
   }
+
+  > .transition-zoomIcon,
+  > .transition-zoomIconBackwards {
+    height: 24px;
+    width: 24px;
+  }
 }

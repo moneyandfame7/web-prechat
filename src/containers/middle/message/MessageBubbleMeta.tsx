@@ -42,7 +42,9 @@ const MessageMeta: FC<MessageMetaProps> = memo(({message, sendingStatus}) => {
       <div class="message-meta__container">
         {/* <i class="message-meta__item">edited</i> */}
 
-        <span class="message-meta__item message-meta__date">{messageSendDate}</span>
+        <span class="message-meta__item message-meta__date" title="DOLBAEB AHHAHA">
+          {messageSendDate}
+        </span>
         {message?.isOutgoing && <MessageSendingStatus status={sendingStatus} />}
       </div>
     </span>

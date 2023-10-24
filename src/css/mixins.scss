@@ -40,9 +40,12 @@
   }
 }
 
-@mixin defaultTransition($propertie) {
+@mixin defaultTransition($properties...) {
   @include withAnimations {
-    transition: $propertie 0.2s ease;
+    // transition: $propertie 0.2s ease;
+    transition-duration: 0.2s;
+    transition-timing-function: ease;
+    transition-property: $properties;
   }
 }
 

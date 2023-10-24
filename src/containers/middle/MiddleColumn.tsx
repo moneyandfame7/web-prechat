@@ -3,7 +3,7 @@ import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {selectOpenedChats} from 'state/selectors/chats'
-import {selectHasMessageSelection} from 'state/selectors/diff'
+import {selectHasMessageEditing, selectHasMessageSelection} from 'state/selectors/diff'
 import {selectPinnedMessageIds} from 'state/selectors/messages'
 import {getGlobalState} from 'state/signal'
 
@@ -35,6 +35,7 @@ interface StateProps {
   isPinnedList: boolean | undefined
   pinnedMessagesCount: number | undefined
   hasMessageSelection: boolean
+  hasMessageEditing: boolean
 }
 
 type InjectedProps = OwnProps & StateProps
@@ -46,6 +47,7 @@ const MiddleColumn: FC<InjectedProps> = ({
   isPinnedList,
   pinnedMessagesCount,
   hasMessageSelection,
+  hasMessageEditing,
 }) => {
   const global = getGlobalState()
   const actions = getActions()
@@ -70,6 +72,7 @@ const MiddleColumn: FC<InjectedProps> = ({
     } else {
       actions.openChat({id: undefined})
       actions.toggleMessageSelection({active: false})
+      actions.toggleMessageEditing({active: false})
     }
   }, [isSmall, animationsEnabled])
   useEffect(() => {
@@ -106,19 +109,21 @@ const MiddleColumn: FC<InjectedProps> = ({
     () =>
       isChatOpen
         ? addEscapeListener(() => {
-            if (hasMessageSelection) {
+            if (hasMessageSelection || hasMessageEditing) {
               actions.toggleMessageSelection({active: false})
+              actions.toggleMessageEditing({active: false})
             } else {
               closeChat()
             }
           })
         : undefined,
-    [isChatOpen, hasMessageSelection]
+    [isChatOpen, hasMessageSelection, hasMessageEditing]
   )
 
   useEffect(() => {
     // if(has)
     actions.toggleMessageSelection({active: false})
+    actions.toggleMessageEditing({active: false})
   }, [chatId])
 
   // const isNext = useRef(false)
@@ -191,6 +196,7 @@ export default memo(
       isPinnedList: openedChat?.isPinnedList,
       pinnedMessagesCount,
       hasMessageSelection: selectHasMessageSelection(state),
+      hasMessageEditing: selectHasMessageEditing(state),
     }
   })(MiddleColumn)
 )

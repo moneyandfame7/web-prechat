@@ -110,6 +110,10 @@ export const INITIAL_STATE: GlobalState = {
       messageIds: [],
     },
   },
+  messageEditing: {
+    messageId: undefined,
+    isActive: false,
+  },
   currentChat: {
     chatId: undefined,
     username: undefined,

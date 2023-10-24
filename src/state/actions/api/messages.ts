@@ -11,7 +11,7 @@ import {buildLocalPrivateChat} from 'state/helpers/chats'
 import {buildLocalMessage, orderHistory} from 'state/helpers/messages'
 import {isUserId} from 'state/helpers/users'
 import {selectChat} from 'state/selectors/chats'
-import {selectMessages} from 'state/selectors/messages'
+import {selectMessage, selectMessages} from 'state/selectors/messages'
 import {selectUser} from 'state/selectors/users'
 import {updateChat, updateChats} from 'state/updates'
 import {
@@ -102,6 +102,23 @@ createAction('sendMessage', async (state, _, payload) => {
   // })
 })
 
+createAction('editMessage', async (state, actions, payload) => {
+  const message = selectMessage(state, payload.chatId, payload.messageId)
+
+  if (!message) {
+    return
+  }
+  actions.toggleMessageEditing({active: false})
+
+  const edited = await Api.messages.editMessage(payload)
+  if (!edited) {
+    actions.toggleMessageEditing({active: true, id: payload.messageId})
+
+    return
+  }
+  updateMessage(state, payload.chatId, payload.messageId, edited, false)
+})
+
 createAction('deleteMessages', async (state, _actns, payload) => {
   const {ids, deleteForAll, chatId} = payload
   /* ???? ahahahah */
@@ -112,11 +129,11 @@ createAction('deleteMessages', async (state, _actns, payload) => {
   const result = await Api.messages.deleteMessages({ids, deleteForAll})
 
   if (result) {
-    batch(() => {
-      ids.forEach((id) => {
-        deleteMessage(state, chatId, id)
-      })
+    // batch(() => {
+    ids.forEach((id) => {
+      deleteMessage(state, chatId, id)
     })
+    // })
   } else {
     ids.forEach((id) => {
       cancelMessageDeleting(state, chatId, id)

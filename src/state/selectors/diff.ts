@@ -1,6 +1,10 @@
-import type {ApiSession} from 'api/types'
+import {ApiMedia} from 'api/methods'
+import type {ApiMessage, ApiSession} from 'api/types'
 
 import type {SignalGlobalState} from 'types/state'
+
+import {selectCurrentChat} from './chats'
+import {selectMessage} from './messages'
 
 export const selectAllSessions = (state: SignalGlobalState) =>
   state.activeSessions.ids.map((id) => state.activeSessions.byId[id])
@@ -22,6 +26,19 @@ export const selectHasMessageSelection = (state: SignalGlobalState): boolean =>
   // state.selection.messageIds.length > 0
   state.selection.hasSelection
 
+export const selectEditableMessage = (state: SignalGlobalState): ApiMessage | undefined => {
+  const messageId = state.messageEditing.messageId
+  const currentChat = selectCurrentChat(state)
+  if (!messageId || !currentChat?.chatId) {
+    return undefined
+  }
+
+  return selectMessage(state, currentChat.chatId, messageId)
+}
+
+export const selectHasMessageEditing = (state: SignalGlobalState): boolean =>
+  state.messageEditing.isActive && !!state.messageEditing.messageId
+
 export const selectIsMessageSelected = (
   state: SignalGlobalState,
   messageId: string
@@ -32,3 +49,8 @@ export const selectHasTextSelection = (state: SignalGlobalState): boolean =>
 
 export const selectMessagesSelectionCount = (state: SignalGlobalState): number =>
   state.selection.messageIds.length
+
+export const selectSelectedMessageIds = (state: SignalGlobalState) =>
+  state.selection.messageIds
+
+// export const selectIsMessageEditing=(state:SignalGlobalState,chatId:string)=>

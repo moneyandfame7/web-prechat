@@ -38,6 +38,9 @@ export interface ButtonProps {
   bold?: boolean
 }
 
+/**
+ * @todo isLoading - signal, and then useComputed???
+ */
 export const Button: FC<ButtonProps> = ({
   isLoading = false,
   loadingText = 'Please wait...',

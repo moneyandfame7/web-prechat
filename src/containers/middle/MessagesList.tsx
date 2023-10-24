@@ -2,7 +2,7 @@ import {type FC, memo, useEffect, useLayoutEffect, useMemo, useRef} from 'preact
 
 import clsx from 'clsx'
 
-import type {ApiChat} from 'api/types'
+import type {ApiChat, ApiLangCode} from 'api/types'
 import {type ApiMessage} from 'api/types/messages'
 
 import {getActions} from 'state/action'
@@ -49,6 +49,7 @@ type StateProps = {
   isChannel?: boolean
   isGroup?: boolean
   hasMessageSelection: boolean
+  language: ApiLangCode
 }
 interface MessageGroup {
   date: string
@@ -77,6 +78,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   isPrivateChat,
   isPinnedList,
   hasMessageSelection,
+  language,
 }) => {
   const {getHistory, getPinnedMessages} = getActions()
   const listRef = useRef<HTMLDivElement>(null)
@@ -137,7 +139,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
       }
     })
 
-    return groups
+    return groups.filter((group) => group.ids.length > 0)
   }, [messageIds, chatId])
 
   // const groups = useMemo(() => {
@@ -229,6 +231,10 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
     return grouped
   }, [dateGroup])
 
+  useEffect(() => {
+    console.log('NEW MESSAGE IDS STATE')
+  }, [messageIds])
+
   const emptyList = messageIds?.length === 0
   const shouldRenderNoMessage =
     messageIds?.length === 0 ||
@@ -281,7 +287,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
           })} */}
 
           {combined.map((group) => {
-            const groupDate = formatMessageGroupDate(new Date(group.date))
+            const groupDate = formatMessageGroupDate(new Date(group.date), language)
 
             return (
               <div key={`${groupDate}${chatId}`} class="message-date-group">
@@ -342,6 +348,7 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
   const isChannel = chat && isChatChannel(chat)
   const isGroup = chat && isChatGroup(chat)
   const hasMessageSelection = selectHasMessageSelection(state)
+  const language = state.settings.language
   return {
     messagesById,
     messageIds,
@@ -352,6 +359,7 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
     isChannel,
     isGroup,
     hasMessageSelection,
+    language,
   }
 }
 

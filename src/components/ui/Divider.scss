@@ -1,9 +1,9 @@
 .divider {
-  width: 100%;
   display: flex;
   white-space: nowrap;
   align-items: center;
   user-select: none;
+  width: 100%;
   &::after,
   &::before {
     content: '';
@@ -11,6 +11,13 @@
     width: 100%;
     border-top: thin solid var(--c-border-input);
     @include defaultTransition(border-color);
+  }
+
+  &.primary {
+    &::after,
+    &::before {
+      border-color: var(--c-primary);
+    }
   }
 
   &-left {

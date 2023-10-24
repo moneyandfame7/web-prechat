@@ -3,6 +3,7 @@ import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 import type {
   ApiMessage,
   DeleteMessagesInput,
+  EditMessageInput,
   GetHistoryInput,
   GetPinnedMessagesInput,
   SendMessageInput,
@@ -30,6 +31,7 @@ export const FRAGMENT_MESSAGE: DocumentNode = gql`
     chatId
     isOutgoing
     isPost
+    editedAt
     media {
       __typename
     }
@@ -79,6 +81,18 @@ export const MUTATION_DELETE_MESSAGES: TypedDocumentNode<
   mutation DeleteMessages($input: DeleteMessagesInput!) {
     deleteMessages(input: $input)
   }
+`
+export const MUTATION_EDIT_MESSAGE: TypedDocumentNode<
+  {editMessage: ApiMessage},
+  {input: EditMessageInput}
+> = gql`
+  mutation EditMessage($input: EditMessageInput!) {
+    editMessage(input: $input) {
+      ...AllMessageFields
+    }
+  }
+
+  ${FRAGMENT_MESSAGE}
 `
 
 export const QUERY_GET_HISTORY: TypedDocumentNode<

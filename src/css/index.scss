@@ -22,7 +22,7 @@
 html,
 body {
   // overscroll-behavior: contain;
-  overflow: hidden; // disable overscroll behavior on macOS
+  // overflow: hidden; // disable overscroll behavior on macOS (присутні якісь мерехтіння коли намагаюсь поскроллити, тому вимкнув)
 
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;

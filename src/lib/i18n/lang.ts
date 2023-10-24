@@ -41,6 +41,7 @@ const lang = {
   Add: 'Add',
   MyStories: 'My Stories',
   Reply: 'Reply',
+  EditMessage: 'Edit Message',
   Forward: 'Forward',
   Copy: 'Copy',
   Edit: 'Edit',
@@ -223,7 +224,9 @@ const lang = {
   'NewContact.MakePhoneVisible': `You can make your phone visible to **{{fullName}}**.`,
   'NewContact.ShareMyPhone': 'Share my phone number',
 
-  'Chat.CopySelectedText': 'Copy Selected Text',
+  'Message.CopySelectedText': 'Copy Selected Text',
+  'Message.CopyText': 'Copy Text',
+  'Message.Edited': 'edited',
 } as const satisfies Keyset
 
 export default lang

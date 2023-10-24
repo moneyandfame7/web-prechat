@@ -53,9 +53,14 @@ const MessageBubblesGroupImpl: FC<MessageBubblesGroupProps & StateProps> = ({
       {groupIds
         .map((messageId, idx) => {
           const message = messagesById?.[messageId]
+          const nextMessage = messagesById?.[groupIds[idx + 1]]
+          /**
+           * потрібно перевіряти на наступне повідомлення, бо деякий час воно залишатиметься в масиві, проте візуально буде захованне при видаленні
+           */
+          const isLastInGroup =
+            (!message?.deleteLocal && idx === groupIds.length - 1) ||
+            Boolean(nextMessage?.deleteLocal)
 
-          const isLastInGroup = idx === groupIds.length - 1
-          // const sender=selectUser()
           return (
             message && (
               <MessageBubble
@@ -80,11 +85,11 @@ const mapStateToProps: MapState<MessageBubblesGroupProps, StateProps> = (state, 
   const lastMessage = messagesById?.[ownProps.groupIds[ownProps.groupIds.length - 1]]
 
   const withAvatar =
-    /* хз, треба переробити адже  */
-    !messagesById?.[ownProps.groupIds[0]].action &&
+    !messagesById?.[ownProps.groupIds[0]]?.action &&
     !groupSender?.isSelf &&
-    (isUserId(ownProps.chatId) || !selectIsChannel(state, ownProps.chatId)) &&
-    !lastMessage?.deleteLocal
+    (isUserId(ownProps.chatId) || !selectIsChannel(state, ownProps.chatId)) /*  &&
+    !lastMessage?.deleteLocal */ &&
+    !(ownProps.groupIds.length === 1 && lastMessage?.deleteLocal)
 
   // const withSenderName=!groupSender.isS
 

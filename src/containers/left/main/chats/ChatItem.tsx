@@ -13,7 +13,6 @@ import {getGlobalState} from 'state/signal'
 
 import {formatDate} from 'utilities/date/convert'
 
-import {SingleTransition} from 'components/transitions'
 import {AvatarTest} from 'components/ui/AvatarTest'
 import {ListItem} from 'components/ui/ListItem'
 

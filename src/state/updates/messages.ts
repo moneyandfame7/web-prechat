@@ -148,13 +148,23 @@ export function deleteMessage(global: SignalGlobalState, chatId: string, message
   if (!messages || !messageIds || !messages?.[messageId]) {
     return
   }
-
+  // const isLastMessage=messages[messageId].
   delete messages[messageId]
 
-  const index = messageIds.indexOf(messageId)
-  if (index !== -1) {
-    messageIds.splice(index, 1)
-  }
+  /**
+   * @todo при видаленні, треба якось на бекенді змінювати останнє повідомлення.
+   *
+   * ( як варік, просто передавати при видаленні айді останнього попереднього повідомлення, ну тобто те, яке треба робити останнім )
+   */
+  const newIds = messageIds.filter((id) => id !== messageId)
+  global.messages.idsByChatId[chatId] = newIds
+  // const index = messageIds.indexOf(messageId)
+  // if (index !== -1) {
+  //   console.log('ЗАМІНИВ СПИСОК АЙДІШНІКІВ СУКА!', messageIds)
+  //   /* global.messages.idsByChatId[chatId] = */ messageIds.splice(index, 1)
+
+  //   console.log({messageIds})
+  // }
 
   const lastMessageId = messageIds[messageIds.length - 1]
 
