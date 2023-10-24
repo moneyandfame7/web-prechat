@@ -1,4 +1,15 @@
-export function formatDate(date: Date, is24Hour: boolean, isFull = false): string {
+import type {ApiLangCode} from 'api/types'
+
+import {TEST_translate} from 'lib/i18n'
+
+export function formatDate(
+  date: Date,
+  is24Hour: boolean,
+  isFull = false,
+  withSeconds = false,
+  withToday = true,
+  language: ApiLangCode = 'en'
+): string {
   const now = new Date() // Поточна дата
   // console.log('FORMAT_DATE')
   // Опції для форматування дня тижня
@@ -11,12 +22,15 @@ export function formatDate(date: Date, is24Hour: boolean, isFull = false): strin
     const todayOptions: Intl.DateTimeFormatOptions = {
       hour: 'numeric',
       minute: 'numeric',
-      // second: 'numeric',
+      second: withSeconds ? 'numeric' : undefined,
       hour12: !is24Hour,
       localeMatcher: 'best fit',
     }
-    if (isToday) {
-      return `Today — ${new Intl.DateTimeFormat('uk', todayOptions).format(date)}`
+    if (isToday && withToday) {
+      return `${TEST_translate('Today')} — ${new Intl.DateTimeFormat(
+        language,
+        todayOptions
+      ).format(date)}`
     }
 
     const options: Intl.DateTimeFormatOptions = {
@@ -26,24 +40,24 @@ export function formatDate(date: Date, is24Hour: boolean, isFull = false): strin
       ...todayOptions,
     }
 
-    return new Intl.DateTimeFormat('uk', options).format(date)
+    return new Intl.DateTimeFormat(language, options).format(date)
   }
 
   // Перевірка, чи дата сьогодні
   if (isToday) {
     // Якщо сьогодні, форматуємо час
     return is24Hour
-      ? date.toLocaleTimeString('en', {hour12: false, timeStyle: 'short'})
-      : date.toLocaleTimeString('en', {hour12: true, timeStyle: 'short'})
+      ? date.toLocaleTimeString(language, {hour12: false, timeStyle: 'short'})
+      : date.toLocaleTimeString(language, {hour12: true, timeStyle: 'short'})
 
     // Перевірка, чи цей тиждень // але ж тут перевіряю лише рік? перевіри потім ще раз
   } else if (date.getFullYear() === now.getFullYear()) {
     // Якщо цей тиждень, форматуємо день тижня
-    return new Intl.DateTimeFormat('en', weekdayOptions).format(date)
+    return new Intl.DateTimeFormat(language, weekdayOptions).format(date)
 
     // Інакше форматуємо повну дату
   }
-  return date.toLocaleDateString('en')
+  return date.toLocaleDateString(language)
 }
 
 export function formatTime(hour: string, minute: string, is12HourFormat: boolean) {
@@ -77,18 +91,18 @@ export function formatMessageTime(date: Date, hour12 = false) {
   })
 }
 
-export function formatMessageGroupDate(date: Date, locale?: Intl.LocalesArgument) {
+export function formatMessageGroupDate(date: Date, lang: ApiLangCode) {
   const today = new Date()
 
   if (sameDay(date, today)) {
-    return 'Today'
+    return TEST_translate('Today')
   } else if (sameYear(date, today)) {
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString(lang, {
       month: 'long',
       day: 'numeric',
     })
   }
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(lang, {
     month: 'long',
     day: 'numeric',
     year: 'numeric',

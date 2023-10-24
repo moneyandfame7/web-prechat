@@ -27,6 +27,7 @@ interface TextAreaProps {
   wrapperClassName?: string
   autoFocus?: boolean
   tabIndex?: number
+  isInputHelperActive?: boolean
 }
 const TextArea: FC<TextAreaProps> = ({
   onChange,
@@ -38,6 +39,7 @@ const TextArea: FC<TextAreaProps> = ({
   autoFocus = true,
   tabIndex = 0,
   wrapperClassName,
+  isInputHelperActive,
 }) => {
   const inputScrollRef = useRef<HTMLDivElement>(null)
 
@@ -47,19 +49,18 @@ const TextArea: FC<TextAreaProps> = ({
   const updateHeight = () => {
     const textarea = inputRef.current
     const scroller = inputScrollRef.current
-    console.log('UPDATE HEIGHT??')
 
     if (!textarea || !scroller) {
-      console.log('NOoooo')
-
       return
     }
 
     const newHeight = Math.min(textarea.scrollHeight, maxInputHeight)
-    console.log(textarea.scrollHeight)
     scroller.style.height = `${newHeight}px`
   }
 
+  // useEffect(() => {
+  //   updateHeight()
+  // }, [isInputHelperActive])
   const htmlRef = useRef(html.value)
   // const focusedRef = useRef(isFocused.value)
   const handleChange = useCallback(
@@ -71,8 +72,10 @@ const TextArea: FC<TextAreaProps> = ({
       }
       e.preventDefault()
       const {innerHTML} = textarea
-
-      onChange(innerHTML === '<br>' || innerHTML === '&nbsp;' ? '' : innerHTML)
+      console.log({innerHTML})
+      onChange(
+        innerHTML === '<br>' || innerHTML === '&nbsp;' || innerHTML === '\n' ? '' : innerHTML
+      )
     },
     [onChange]
   )
@@ -100,6 +103,7 @@ const TextArea: FC<TextAreaProps> = ({
       updateHeight()
     }
   })
+
   const isFocusedRef = useRef(isFocused.value)
 
   useSignalEffect(() => {

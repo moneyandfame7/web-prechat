@@ -6,12 +6,22 @@
 .primary-font {
   color: var(--c-font-primary) !important;
 }
+.danger {
+  color: var(--c-danger) !important;
+}
 .text-secondary {
   color: var(--c-font-secondary);
   // font-size: 14px;
 }
 .text-small {
   font-size: 14px;
+}
+
+.text-medium {
+  font-size: 16px;
+}
+.text-large {
+  font-size: 24px;
 }
 .hide {
   display: none !important;

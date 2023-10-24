@@ -1,7 +1,12 @@
+import {batch} from '@preact/signals'
+
 import {selectChat} from 'state/selectors/chats'
+import {selectMessage} from 'state/selectors/messages'
 import {createSubscribe} from 'state/subscribe'
 import {updateChat, updateChats} from 'state/updates'
-import {updateMessages} from 'state/updates/messages'
+import {deleteMessage, updateMessage, updateMessages} from 'state/updates/messages'
+
+import {logger} from 'utilities/logger'
 
 createSubscribe('onNewMessage', (state, _, data) => {
   const {chat, message} = data
@@ -22,6 +27,52 @@ createSubscribe('onNewMessage', (state, _, data) => {
   updateMessages(state, chat.id, {
     [message.id]: message,
   })
+})
+
+createSubscribe('onDeleteMessages', (state, _, data) => {
+  const {chatId, ids} = data
+  const chat = selectChat(state, chatId)
+  if (!chat) {
+    return
+  }
+
+  console.log('DELETED MESSAGES:', {chatId, ids})
+
+  batch(() => {
+    ids.forEach((id) => {
+      deleteMessage(state, chatId, id)
+      console.log('message deleted:', id)
+    })
+  })
+})
+
+createSubscribe('onEditMessage', (state, _, data) => {
+  const {message: editedMessage} = data
+
+  const message = selectMessage(state, editedMessage.chatId, editedMessage.id)
+  if (!message) {
+    console.log('NO MESSAGE SELCTED AHHASHDHASDKJASD')
+    return
+  }
+  logger.info('EDITED MESSAGE: ', editedMessage)
+  // updateMessages(
+  //   state,
+  //   editedMessage.chatId,
+  //   {[editedMessage.id]: editedMessage},
+  //   false,
+  //   false
+  // )
+  updateMessage(
+    state,
+    editedMessage.chatId,
+    editedMessage.id,
+    {
+      text: editedMessage.text,
+      editedAt: editedMessage.editedAt,
+      content: editedMessage.content,
+    },
+    false
+  )
 })
 
 createSubscribe('onDraftUpdate', (state, _, data) => {

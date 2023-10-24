@@ -6,6 +6,9 @@ const patterns = {
   '+81': '## #### ####',
 }
 
+export const extractPhoneCode = (phone: string) => {
+  return Object.keys(patterns).find((code) => phone.startsWith(code))
+}
 export const formatPhone = (phone: string) => {
   if (phone.length < 2) {
     return {formatted: phone}

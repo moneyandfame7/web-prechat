@@ -17,5 +17,5 @@ createAction('openPreviousChat', (state) => {
 
   // console.log({prevChat})
 
-  updateOpenedChats(state, undefined, undefined, undefined)
+  updateOpenedChats(state, {chatId: undefined, username: undefined, replaceHistory: undefined})
 })

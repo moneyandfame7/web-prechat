@@ -110,6 +110,8 @@ export default ({mode}) => {
         managers: '/src/managers',
         storages: '/src/storages',
         store: '/src/store',
+
+        // '@path':'/src/path'
       },
     },
     server: {

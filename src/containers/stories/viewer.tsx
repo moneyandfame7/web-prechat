@@ -41,6 +41,11 @@ interface StoryViewerProps {
   onPrev?: VoidFunction
   onAllStoriesEnd?: (idx: number) => void
 }
+
+/**
+ * removed unused
+ * https://github.com/mohitk05/react-insta-stories
+ */
 const StoryViewer: FC<StoryViewerProps> = ({
   currentIndex,
   stories,

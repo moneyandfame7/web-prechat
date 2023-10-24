@@ -71,6 +71,42 @@
   }
 }
 
+.new-contact-modal {
+  // min-width: 17rem;
+  &.exist-user {
+    min-width: 27rem;
+    .form-row {
+      flex-direction: column;
+      > .user-info-container {
+        margin-block-end: 20px;
+        display: flex;
+        align-items: center;
+        @include withSmallScreen {
+          flex-direction: column;
+        }
+      }
+      .form-fields {
+        gap: 20px;
+      }
+
+      .user-info {
+        margin-inline-start: 20px;
+        // padding-inline-end: 40px;
+      }
+      .user-info__phone {
+        font-size: 24px;
+      }
+      .user-info__status {
+        font-size: 16px;
+        color: var(--c-font-secondary);
+      }
+    }
+    .share-phone-btn {
+      margin-block: 10px;
+    }
+  }
+}
+
 @keyframes modal-open {
   from {
     transform: translate3d(0, 15%, 0);

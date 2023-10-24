@@ -5,28 +5,70 @@
   // padding-inline: 20px;
   // padding-block: 5px;
   justify-content: flex-start;
+
+  @media only screen and (min-width: 1280px) {
+    // max-width: calc(100% - var(--right-column-width));
+  }
   .chat-info {
     height: 100%; // for transition position absoluted
     display: flex;
     align-items: center;
     gap: 10px;
     flex: 1 1 auto;
-    margin-left: 10px;
+    overflow: hidden; // без цього не працює text overflow
     &__container {
       flex: 1;
-    }
-    &__title {
-      font-weight: 600;
-    }
-    &__subtitle {
-      color: var(--c-font-secondary);
-      font-size: 14px;
+      overflow: hidden;
+
+      .list-item__title {
+        font-weight: 500;
+      }
     }
   }
   .chat-info-wrapper {
+    margin-inline-start: 10px;
     cursor: pointer;
     flex: 1 1 auto;
     position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .chat-utils {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    @media only screen and (min-width: 1280px) {
+      body.right-column-shown & {
+        transform: translate3d(calc(var(--right-column-width) / -1), 0, 0);
+      }
+
+      @include withAnimations {
+        transition: transform var(--slide-dark-transition);
+      }
+      // .messages-container {
+      // }
+    }
+
+    > .IconButton-mute,
+    .IconButton-unmute {
+      // @include responsive()
+
+      @media only screen and (max-width: 1280px) {
+        display: none;
+      }
+    }
+    > .IconButton-search,
+    .IconButton-pinlist {
+      @include responsive(mobile) {
+        display: none;
+      }
+    }
+    > .Button {
+      font-size: 14px;
+    }
   }
 
   > .transition {

@@ -11,6 +11,11 @@ export type AddContactInput = {
       phoneNumber: string
     }
 )
+export interface UpdateContactInput {
+  userId: string
+  firstName?: string
+  lastName?: string
+}
 
 export interface AddContactResponse {
   user: ApiUser

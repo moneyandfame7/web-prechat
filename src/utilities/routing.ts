@@ -8,19 +8,23 @@ import {isValidId} from './isValidId'
 
 function parseHash(hash: string): string | undefined {
   const splitted: string | undefined = hash.split('#')[1]
-  if (!splitted) {
-    return undefined
-  }
+  // if (!splitted) {
+  //   return undefined
+  // }
+
+  return splitted
   /**
    * We do not remove the "@" from the hash for further handling (switch case)
    */
-  return isValidHash(splitted) ? splitted : undefined
+  // return isValidHash(splitted) ? splitted : undefined
 }
 
 function goToPrev(event?: HashChangeEvent) {
   const parsedOld = event ? parseHash(event?.oldURL) : undefined
 
-  return changeHash({hash: parsedOld, silent: true})
+  return parsedOld && isValidHash(parsedOld)
+    ? changeHash({hash: parsedOld, silent: true})
+    : undefined
 }
 
 function isValidHash(hash: string) {

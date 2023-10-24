@@ -1,3 +1,5 @@
+import {batch} from '@preact/signals'
+
 import type {DeepSignal} from 'deepsignal'
 
 import {apiManager} from 'api/api-manager'
@@ -9,14 +11,21 @@ import {buildLocalPrivateChat} from 'state/helpers/chats'
 import {buildLocalMessage, orderHistory} from 'state/helpers/messages'
 import {isUserId} from 'state/helpers/users'
 import {selectChat} from 'state/selectors/chats'
-import {selectMessages} from 'state/selectors/messages'
+import {selectMessage, selectMessages} from 'state/selectors/messages'
 import {selectUser} from 'state/selectors/users'
 import {updateChat, updateChats} from 'state/updates'
-import {updateMessage, updateMessages} from 'state/updates/messages'
+import {
+  cancelMessageDeleting,
+  deleteMessage,
+  deleteMessageLocal,
+  updateMessage,
+  updateMessages,
+} from 'state/updates/messages'
 
 import {filterUnique} from 'utilities/array/filterUnique'
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
+import {timeout} from 'utilities/schedulers/timeout'
 
 createAction('sendMessage', async (state, _, payload) => {
   const {currentChat} = state
@@ -38,6 +47,7 @@ createAction('sendMessage', async (state, _, payload) => {
     return
   }
   const localMessage = buildLocalMessage({
+    orderedId: chat.lastMessage ? chat.lastMessage.orderedId + 1 : 1,
     chatId,
     text,
     entities,
@@ -54,6 +64,7 @@ createAction('sendMessage', async (state, _, payload) => {
   try {
     const sended = await Api.messages.sendMessage({
       id: localMessage.id,
+      orderedId: localMessage.orderedId,
       chatId,
       text,
       entities,
@@ -61,7 +72,7 @@ createAction('sendMessage', async (state, _, payload) => {
     if (!sended) {
       updateMessage(state, chatId, localMessage.id, {sendingStatus: 'failed'}, false)
     } else {
-      updateMessage(state, chatId, sended.message.id, {sendingStatus: undefined}, true)
+      updateMessage(state, chatId, sended.message.id, {sendingStatus: undefined}, false)
     }
   } catch (e) {
     updateMessage(state, chatId, localMessage.id, {sendingStatus: 'failed'}, false)
@@ -91,6 +102,45 @@ createAction('sendMessage', async (state, _, payload) => {
   // })
 })
 
+createAction('editMessage', async (state, actions, payload) => {
+  const message = selectMessage(state, payload.chatId, payload.messageId)
+
+  if (!message) {
+    return
+  }
+  actions.toggleMessageEditing({active: false})
+
+  const edited = await Api.messages.editMessage(payload)
+  if (!edited) {
+    actions.toggleMessageEditing({active: true, id: payload.messageId})
+
+    return
+  }
+  updateMessage(state, payload.chatId, payload.messageId, edited, false)
+})
+
+createAction('deleteMessages', async (state, _actns, payload) => {
+  const {ids, deleteForAll, chatId} = payload
+  /* ???? ahahahah */
+  ids.forEach((id) => {
+    deleteMessageLocal(state, chatId, id)
+  })
+
+  const result = await Api.messages.deleteMessages({ids, deleteForAll})
+
+  if (result) {
+    // batch(() => {
+    ids.forEach((id) => {
+      deleteMessage(state, chatId, id)
+    })
+    // })
+  } else {
+    ids.forEach((id) => {
+      cancelMessageDeleting(state, chatId, id)
+    })
+  }
+})
+
 createAction('getHistory', async (state, _actions, payload) => {
   const {
     chatId,
@@ -116,12 +166,9 @@ createAction('getHistory', async (state, _actions, payload) => {
     maxDate,
     includeOffset,
   })
+  console.log({HISTORY: result})
   const oldMessages = selectMessages(state, chatId)
-  // const newMessages = result.map((m, idx) => ({
-  //   id: m.id,
-  //   idx,
-  //   text: m.content.formattedText?.text,
-  // }))
+
   const merged = [...Object.values(oldMessages || []), ...Object.values(result)]
 
   const orderedHistory = orderHistory(merged)
@@ -152,20 +199,44 @@ createAction('getHistory', async (state, _actions, payload) => {
   state.messages.idsByChatId[chatId] = [...orderedIds]
 
   console.log({orderedIds})
-  // console.log(
-  //   merged.map((m) => m.id),
-  //   ids
-  // )
-  // console.log(filterUnique([...newMessages, ...(oldMessages || [])]))
+})
 
-  // currentOpenedChat.isMessagesLoading = false
-  // console.log()
-  // updateMessages(state, currentOpenedChat.chatId, buildRecord(result, 'id'))
+createAction('getPinnedMessages', async (state, _actions, payload) => {
+  const {chatId, offsetId} = payload
 
-  // const {chatId, limit, offset} = payload
+  const chat = selectChat(state, chatId)
+  /**
+   * @todo зробити щоб був айді в повідомленнях orderId ( increment,idx і т.д )
+   */
+  /* If it user - we may not have chat */
+  if (!isUserId(chatId) && !chat) {
+    return
+  }
+  // Api.messages.getPinnedMessages({chatId, offsetId})
+  const result = await timeout<ApiMessage[]>(5000)([])
 
-  // await Api.messages.getMessages(payload)
-  // const ids=
+  const oldMessages = selectMessages(state, chatId)
+
+  const merged = filterUnique([...Object.values(oldMessages || []), ...Object.values(result)])
+
+  const orderedIds = orderHistory(merged).map((m) => m.id)
+  if (
+    oldMessages &&
+    Object.keys(result).every((newId) => Boolean(oldMessages[String(newId)]))
+  ) {
+    /* do nothing */
+  } else {
+    const record = buildRecord(result, 'id') as DeepSignal<Record<string, ApiMessage>>
+    if (!oldMessages) {
+      state.messages.byChatId[chatId] = {
+        byId: record,
+      }
+    } else {
+      updateByKey(oldMessages, record)
+    }
+  }
+
+  state.messages.pinnedIdsByChatId[chatId] = [...orderedIds]
 })
 
 createAction('saveDraft', async (state, _actions, payload) => {

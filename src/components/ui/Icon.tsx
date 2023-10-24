@@ -6,6 +6,8 @@ import {logDebugWarn} from 'lib/logger'
 
 import {IS_SENSOR} from 'common/environment'
 
+import type {Size} from 'types/ui'
+
 import './Icon.scss'
 
 type SVGIconProps = JSX.SVGAttributes<SVGSVGElement>
@@ -27,12 +29,24 @@ interface IconProps {
    * @default 24
    */
   width?: number
+  size?: Size
 }
 export const Icon: FC<IconProps> = memo(
-  ({name, className, color = 'default', onClick, withFastClick = false, title, ...props}) => {
+  ({
+    name,
+    className,
+    color = 'secondary',
+    onClick,
+    withFastClick = false,
+    title,
+    size = 'medium',
+    ...props
+  }) => {
     const ComputedIcon = icons[name] as FC<SVGIconProps>
 
-    const buildedClass = `Icon Icon-${name} Icon-${color} ${className || ''}`.trim()
+    const buildedClass = `Icon Icon-${name} Icon-${color} Icon-${size} ${
+      className || ''
+    }`.trim()
 
     const handleMouseDown = useCallback(
       (e: TargetedEvent<SVGSVGElement, MouseEvent>) => {

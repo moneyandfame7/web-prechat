@@ -10,6 +10,7 @@ import type {GlobalState, SignalGlobalState} from 'types/state'
 import {updateUsernamesFromPeers} from './chats'
 
 const initialNewContact: GlobalState['newContact'] = {
+  isOpen: false,
   userId: undefined,
   isByPhoneNumber: false,
 }

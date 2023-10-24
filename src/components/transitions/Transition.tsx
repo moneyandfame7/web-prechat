@@ -32,6 +32,8 @@ const Transition = <TKey extends number | string>({
   shouldLockUI = name === 'zoomSlide' || name === 'slideDark',
   isLayout = name === 'zoomSlide' || name === 'slideDark',
   elRef,
+  additionalChildren,
+  innerAttributes,
 }: TransitionProps<TKey>) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const prevActiveKey = usePrevious<any>(activeKey)
@@ -73,7 +75,7 @@ const Transition = <TKey extends number | string>({
         ? innerClassnames?.[key as TKey]
         : innerClassnames
       : undefined
-
+    const attributes = innerAttributes?.[key as TKey]
     return (
       <SingleTransition
         appear={appear}
@@ -82,6 +84,7 @@ const Transition = <TKey extends number | string>({
         key={key}
         transitionClassnames={TRANSITION_CLASSES}
         timeout={timeout}
+        divAttributes={attributes}
       >
         {element}
       </SingleTransition>
@@ -119,6 +122,7 @@ const Transition = <TKey extends number | string>({
       }
     >
       {elements}
+      {additionalChildren}
     </TransitionGroup>
   )
 }
@@ -150,6 +154,7 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
     onMouseEnter,
     visibilityHidden,
     easing,
+    divAttributes,
     // onMouseDown,
   }) => {
     const {classNames, styles: buildedStyles} = buildProperties(
@@ -188,6 +193,7 @@ export const SingleTransition: FC<SingleTransitionProps> = memo(
           className={buildedClassname}
           style={buildedStyles}
           onClick={onClick}
+          {...divAttributes}
           // onMouseDown={onMouseDown}
         >
           {children}

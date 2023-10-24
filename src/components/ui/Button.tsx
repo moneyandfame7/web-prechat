@@ -30,9 +30,17 @@ export interface ButtonProps {
   uppercase?: boolean
   icon?: IconName
   rounded?: boolean
+  /**
+   * @default "end"
+   */
   iconPosition?: 'start' | 'end'
+  contentPosition?: 'start' | 'center' | 'end'
+  bold?: boolean
 }
 
+/**
+ * @todo isLoading - signal, and then useComputed???
+ */
 export const Button: FC<ButtonProps> = ({
   isLoading = false,
   loadingText = 'Please wait...',
@@ -51,16 +59,21 @@ export const Button: FC<ButtonProps> = ({
   uppercase = true,
   'aria-label': ariaLabel,
   iconPosition = 'end',
+  bold = true,
+  contentPosition = 'center',
 }) => {
   const buildClass = clsx(
     'Button',
     `Button-${variant}`,
     `Button-${color}`,
+    `content-${contentPosition}`,
+
     {
       'Button-loading': isLoading,
       'Button-fullwidth': fullWidth,
       'Button-noTransform': !uppercase,
       'Button-rounded': shape === 'rounded',
+      'no-bold': !bold,
     },
     className
   )

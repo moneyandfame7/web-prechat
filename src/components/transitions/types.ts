@@ -1,7 +1,10 @@
 import type {ComponentChildren, RefObject} from 'preact'
-import type {CSSProperties, TargetedEvent} from 'preact/compat'
+import type {CSSProperties, HTMLAttributes, TargetedEvent} from 'preact/compat'
 
 import type {CSSTransitionClassNames} from 'react-transition-group/CSSTransition'
+
+import type {ObjectOrValue} from 'types/common'
+import type {PreactNode} from 'types/ui'
 
 export type TransitionName =
   | 'slide'
@@ -15,6 +18,7 @@ export type TransitionName =
   | 'rotate'
   | 'rotate3d'
   | 'zoomIcon'
+  | 'collapseY'
 export type TransitionEasing = 'ease' | 'ease-in' | 'ease-in-out' | 'ease-out' | 'linear'
 export type TransitionDirection = 'auto' | 'inverse' | 1 | -1
 export interface TransitionProps<TKey extends number | string> {
@@ -30,9 +34,11 @@ export interface TransitionProps<TKey extends number | string> {
   cleanupElements?: TKey[]
   shouldLockUI?: boolean
   containerClassname?: string
-  innerClassnames?: string | Partial<{[key in TKey]: string}>
+  innerClassnames?: Partial<ObjectOrValue<TKey, string>>
   timeout?: number
   onExitEnd?: VoidFunction
+  innerAttributes?: Partial<{[key in TKey]: HTMLAttributes<HTMLDivElement>}>
+  additionalChildren?: PreactNode
 }
 export interface SingleTransitionProps {
   name: TransitionName
@@ -62,4 +68,5 @@ export interface SingleTransitionProps {
   key?: string | number
   elRef?: RefObject<HTMLDivElement>
   styles?: CSSProperties
+  divAttributes?: HTMLAttributes<HTMLDivElement>
 }

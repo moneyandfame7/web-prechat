@@ -3,6 +3,9 @@
   align-items: center;
   position: relative;
   background-color: var(--c-surface);
+
+  border-bottom: 1px solid var(--c-border);
+  padding-inline: 5px;
   @include withAnimations {
     scroll-behavior: smooth;
   }

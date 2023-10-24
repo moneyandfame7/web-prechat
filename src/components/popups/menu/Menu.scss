@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   height: max-content !important;
-  min-width: 200px;
+  min-width: 180px;
   width: max-content !important;
   padding: 5px;
 
@@ -107,6 +107,10 @@
     right: auto;
   }
 
+  > .menu-divider {
+    margin-block: 5px;
+    // background-color: red;
+  }
   @include responsive(tablet) {
     padding: 10px;
     background-color: var(--c-surface) !important;
@@ -121,6 +125,15 @@
         height: 24px !important;
         path {
           fill: var(--c-icon);
+        }
+        &-story {
+          path:not(.story-play-path) {
+            stroke: var(--c-icon);
+          }
+          circle,
+          .story-play-path {
+            fill: var(--c-icon) !important;
+          }
         }
       }
     }

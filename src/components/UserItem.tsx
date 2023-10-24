@@ -5,6 +5,7 @@ import clsx from 'clsx'
 import type {ApiUser} from 'api/types'
 
 import {connect} from 'state/connect'
+import {getPeerRoute} from 'state/helpers/chats'
 import {getUserName, getUserStatus} from 'state/helpers/users'
 import {selectUser} from 'state/selectors/users'
 
@@ -18,9 +19,11 @@ interface StateProps {
 }
 interface OwnProps {
   userId: string
+  isContactList?: boolean
+  withUrl?: boolean
 }
 
-const UserItemImpl: FC<StateProps & OwnProps> = ({user}) => {
+const UserItemImpl: FC<StateProps & OwnProps> = ({user, withUrl}) => {
   // const userStatus=useMemo(()=>getUserStatus(user))
 
   const buildedClass = clsx('user-item', {
@@ -28,6 +31,7 @@ const UserItemImpl: FC<StateProps & OwnProps> = ({user}) => {
   })
   return user ? (
     <ListItem
+      href={withUrl ? getPeerRoute(user) : undefined}
       className={buildedClass}
       title={getUserName(user)}
       subtitle={getUserStatus(user)}

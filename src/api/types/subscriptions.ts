@@ -14,6 +14,13 @@ export interface ApiNewMessageSub {
   chat: ApiChat
   message: ApiMessage
 }
+export interface ApiEditMessageSub {
+  message: ApiMessage
+}
+export interface ApiDeleteMessagesSub {
+  chatId: string
+  ids: string[]
+}
 
 export interface ApiDraftUpdateSub {
   chatId: string

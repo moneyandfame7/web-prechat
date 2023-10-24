@@ -1,86 +1,74 @@
-import type {FunctionComponent} from 'preact'
-import type {FC, TargetedEvent} from 'preact/compat'
-import {useRef, useState} from 'preact/hooks'
+import {useSignal} from '@preact/signals'
+import type {FC} from 'preact/compat'
+import {useEffect, useRef, useState} from 'preact/hooks'
 
-import Croppie from 'croppie'
+import {useBoolean} from 'hooks/useFlag'
 
+import CropPhotoModal from './popups/CropPhotoModal.async'
+// import 'croppie/croppie.css'
 import {Icon} from './ui'
 
 import './UploadPhoto.scss'
-import 'croppie/croppie.css'
 
-export const UploadPhoto: FunctionComponent = () => {
-  return (
-    <div class="UploadPhoto">
-      <Icon name="cameraAdd" width={40} height={40} />
-    </div>
-  )
+interface UploadProfilePhotoProps {
+  size?: 'large' | 'small'
+  onSubmit: (file: File) => void
 }
 
-export const ImageUpload: FC = () => {
-  const croppieRef = useRef<HTMLDivElement | null>(null)
-  const [result, setResult] = useState<string | null>(null)
+export const UploadProfilePhoto: FC<UploadProfilePhotoProps> = ({size, onSubmit}) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
-  const [croppieInstance, setCroppieInstance] = useState<Croppie | null>(null)
-
-  const handleImageChange = (event: TargetedEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0]
-    if (file) {
-      setSelectedImage(file)
-      initializeCroppie(file)
-    }
-  }
-  /* коли будемо робити upload image, в cropp передаємо розмір зображення початковий, щоб від нього вже зробити boundary ????
-   */
-  const initializeCroppie = (file: File) => {
-    if (croppieRef.current) {
-      const newCroppieInstance = new Croppie(croppieRef.current, {
-        viewport: {width: 200, height: 200, type: 'circle'},
-        boundary: {width: 300, height: 300},
-        showZoomer: true,
-      })
-      setCroppieInstance(newCroppieInstance)
-
-      const reader = new FileReader()
-      reader.onload = async () => {
-        if (reader.result && newCroppieInstance) {
-          await newCroppieInstance.bind({url: reader.result as string})
-          const croppedResult = await newCroppieInstance.result({
-            type: 'base64',
-          })
-          setResult(croppedResult)
-        }
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  useEffect(() => {
+    // console.log({selectedImage})
+    if (selectedImage) {
+      openModal()
+    } /* else {
+      closeModal()
+      if (inputRef.current) {
+        inputRef.current.files = null
       }
-      reader.readAsDataURL(file)
-    }
+    } */
+  }, [selectedImage])
+
+  const {value: isModalOpen, setFalse: closeModal, setTrue: openModal} = useBoolean()
+  const previewUrl = useSignal('')
+  const handleSubmit = ({url, file}: {url: string; file: File}) => {
+    previewUrl.value = url
+    onSubmit(file)
+    closeModal()
   }
-
-  const handleCrop = async () => {
-    if (selectedImage && croppieInstance) {
-      try {
-        const croppedResult = await croppieInstance.result({
-          type: 'base64',
-          circle: true,
-        })
-
-        // eslint-disable-next-line no-console
-        console.log(croppieRef.current)
-        setResult(croppedResult)
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error cropping image:', error)
-      }
-    }
-  }
-
   return (
     <div>
-      <input type="file" accept="image/*" onChange={handleImageChange} />
-      <div ref={croppieRef} />
-      <button onClick={handleCrop} disabled={!croppieInstance}>
-        Crop
-      </button>
-      {result && <img src={result} alt="Cropped" />}
+      <div class="UploadPhoto large">
+        <Icon name="cameraAdd" />
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          id="uploadPhotoInput"
+          onChange={(e) => {
+            const file = e.currentTarget.files?.[0]
+            if (file) {
+              e.currentTarget.value = ''
+              // inputRef.current.value=""
+              setSelectedImage(file)
+            }
+          }}
+        />
+        {previewUrl.value && (
+          <img src={previewUrl} width={150} height={150} alt="User profile avatar" />
+        )}
+      </div>
+      {/* <CommonModal isOpen={!!selectedImage} /> */}
+      <CropPhotoModal
+        onSubmit={handleSubmit}
+        isOpen={isModalOpen}
+        onClose={() => {
+          closeModal()
+          setSelectedImage(null)
+        }}
+        selectedFile={selectedImage}
+      />
     </div>
   )
 }

@@ -10,7 +10,8 @@ import type {
 } from 'api/types/chats'
 import type {ApiUser} from 'api/types/users'
 
-import {FRAGMENT_MESSAGE, FRAGMENT_PHOTO} from './messages'
+import {FRAGMENT_PHOTO} from './media'
+import {FRAGMENT_MESSAGE} from './messages'
 import {FRAGMENT_USER} from './users'
 
 export const FRAGMENT_CHAT: DocumentNode = gql`

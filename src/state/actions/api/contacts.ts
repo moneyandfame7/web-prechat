@@ -2,7 +2,8 @@ import {getApiError} from 'api/helpers/getApiError'
 import {Api} from 'api/manager'
 
 import {createAction} from 'state/action'
-import {updateUsers} from 'state/updates'
+import {selectUser} from 'state/selectors/users'
+import {updateUser, updateUsers} from 'state/updates'
 
 import {logger} from 'utilities/logger'
 import {buildRecord} from 'utilities/object/buildRecord'
@@ -12,6 +13,8 @@ createAction('getContactList', async (state) => {
   state.isContactsFetching = true
   const users = await Api.contacts.getContacts()
   if (!users) {
+    state.isContactsFetching = false
+
     return
   }
 
@@ -65,5 +68,39 @@ createAction('addContact', async (state, actions, payload) => {
       case 'PHONE_NUMBER_NOT_FOUND':
         actions.showNotification({title: 'The provided phone not registered.'})
     }
+  }
+})
+
+createAction('updateContact', async (state, _, payload) => {
+  const user = selectUser(state, payload.userId)
+  if (!user) {
+    return
+  }
+  if (!payload.firstName && !payload.lastName) {
+    return
+  }
+
+  const result = await Api.contacts.updateContact(payload)
+
+  if (result) {
+    updateUser(state, payload.userId, {
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+    })
+  }
+})
+
+createAction('deleteContact', async (state, _, payload) => {
+  const user = selectUser(state, payload.userId)
+  if (!user) {
+    return
+  }
+
+  const result = await Api.contacts.deleteContact(payload.userId)
+
+  if (result) {
+    updateUsers(state, {
+      [result.id]: result,
+    })
   }
 })

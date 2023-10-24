@@ -21,7 +21,7 @@ import {TRANSITION_DURATION_MENU} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
 import {SingleTransition, type TransitionEasing} from 'components/transitions'
-import {Icon, type IconName} from 'components/ui'
+import {Divider, Icon, type IconName} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
 
 import {MenuProvider, useMenuContext} from './context'
@@ -269,3 +269,7 @@ export const MenuItem: FC<MenuItemProps> = memo(
     )
   }
 )
+
+export const MenuDivider: FC = () => {
+  return <Divider className="menu-divider" />
+}

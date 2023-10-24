@@ -3,7 +3,6 @@ import {getApiError} from 'api/helpers/getApiError'
 import {Api} from 'api/manager'
 
 import {createAction} from 'state/action'
-import {getChatUsername} from 'state/helpers/chats'
 import {isUserId} from 'state/helpers/users'
 import {selectChat, selectChatByUsername, selectChatFull} from 'state/selectors/chats'
 import {selectUser} from 'state/selectors/users'
@@ -54,6 +53,8 @@ createAction('getChats', async (state, actions) => {
   state.isChatsFetching = true
   const chats = await Api.chats.getChats()
   if (!chats) {
+    state.isChatsFetching = false
+
     return
   }
 
@@ -119,7 +120,12 @@ createAction('openChat', async (state, actions, payload) => {
       chatId: undefined,
       username: undefined,
     })
-    updateOpenedChats(state, undefined, undefined, shouldReplaceHistory)
+    // undefined, undefined, shouldReplaceHistory
+    updateOpenedChats(state, {
+      chatId: undefined,
+      username: undefined,
+      replaceHistory: shouldReplaceHistory,
+    })
 
     return
   }
@@ -156,7 +162,28 @@ createAction('openChat', async (state, actions, payload) => {
     chatId: id,
     username,
   })
-  updateOpenedChats(state, id, username, shouldReplaceHistory) // for test false
+  updateOpenedChats(state, {chatId: id, username, replaceHistory: shouldReplaceHistory}) // for test false
+})
+
+createAction('openPinnedMessages', async (state, actions, payload) => {
+  const {id} = payload
+  /* Call api for get all pinned messages? */
+  // id, undefined, false, true
+  if (id) {
+    updateOpenedChats(state, {
+      chatId: id,
+      username: undefined,
+      replaceHistory: false,
+      isPinnedList: true,
+    })
+  } else {
+    updateOpenedChats(state, {
+      chatId: id,
+      username: undefined,
+      replaceHistory: true,
+      isPinnedList: false,
+    })
+  }
 })
 
 createAction('openChatByUsername', async (state, actions, payload) => {
@@ -194,4 +221,15 @@ createAction('openChatByUsername', async (state, actions, payload) => {
         changeHash({hash: undefined})
     }
   }
+})
+
+createAction('updateChat', async (state, actions, payload) => {
+  const {chatId} = payload
+  const chat = selectChat(state, chatId)
+
+  if (!chat) {
+    return
+  }
+
+  const result = await Api.chats.updateChat(payload)
 })

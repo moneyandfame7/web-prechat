@@ -21,9 +21,13 @@ export interface ApiChat {
   isSavedMessages?: boolean
   isOwner: boolean
   isPinned?: boolean
+  isMuted?: boolean
   photo?: ApiPhoto
   // color:
   // lastMessage?: any
+  /**
+   * @todo rewrite on string
+   */
   createdAt: Date
   _id: string
 }
@@ -58,6 +62,7 @@ export interface ApiChatFull {
   permissions: ApiChatPermissions
   currentUserPermissions?: ApiChatPermissions
   currentAdminPermissions?: ApiChatAdminPermissions
+  additionalLinks?: ApiInviteLink[]
 }
 
 export interface ApiChatMember {
@@ -74,7 +79,17 @@ export interface ApiChatMember {
   userPermissions?: ApiChatPermissions
   adminPermissions?: ApiChatAdminPermissions
 }
-
+export interface ApiInviteLink {
+  name?: string
+  usageLimit?: number
+  createdAt?: string
+  expiredDate?: string
+  ownerId: string
+  usage?: number
+  link: string
+  isRevoked?: boolean
+  isPermanent?: boolean
+}
 export interface ApiChatPermissions {
   canSendMessages?: boolean
   canSendMedia?: boolean
@@ -110,4 +125,8 @@ export interface CreateChannelInput {
 export interface CreateGroupInput {
   users?: string[]
   title: string
+}
+export interface UpdateChatInput extends ChatInput {
+  description?: string
+  title?: string
 }

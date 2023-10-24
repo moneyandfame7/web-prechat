@@ -1,0 +1,24 @@
+.media-photo-container {
+  position: relative;
+  // border-radius: 50%;
+  // overflow: hidden;
+  &.is-load {
+    > .media-blurhash {
+      // opacity: 0 !important;
+      // display: none !important;
+    }
+  }
+  > .media-blurhash {
+    border-radius: 50%;
+  }
+
+  > .media-photo {
+    object-fit: cover;
+    pointer-events: none;
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    // z-index: -1
+    transition: opacity 0.2s ease;
+  }
+}

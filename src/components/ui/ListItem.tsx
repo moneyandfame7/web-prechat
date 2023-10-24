@@ -23,6 +23,7 @@ export interface MenuContextActions {
   danger?: boolean
 }
 interface ListItemProps {
+  wrap?: boolean
   withRipple?: boolean
   withCheckbox?: boolean
   withRadio?: boolean
@@ -53,18 +54,19 @@ export const ListItem: FC<ListItemProps> = memo(
     icon,
     title,
     subtitle,
-    withRipple = !IS_SENSOR,
     additional,
     className,
     badge,
     children,
     right,
     href,
+    wrap = false,
+    onClick,
     withCheckbox = false,
+    withRipple = !IS_SENSOR,
     isChecked = false,
     contextActions,
     withContextMenuPortal = true,
-    onClick,
     onToggleCheckbox,
     childrenPosition = 'start',
     disabled,
@@ -107,6 +109,7 @@ export const ListItem: FC<ListItemProps> = memo(
       focused: isContextMenuOpen,
       disabled,
       danger,
+      wrap,
     })
 
     const hasInfo =

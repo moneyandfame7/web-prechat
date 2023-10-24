@@ -25,8 +25,9 @@
     @include withAnimations {
       animation: modal-open 0.15s ease;
     }
-    @include responsive(tablet) {
-      width: 80%;
+    @include withSmallScreen {
+      width: 95%;
+      min-width: unset !important;
     }
   }
   &-content {

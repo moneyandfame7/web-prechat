@@ -10,6 +10,7 @@ import {TEST_translate} from 'lib/i18n'
 import {ColumnSection} from 'containers/left/ColumnSection'
 
 import {UserItem} from 'components/UserItem'
+import {ContactsList} from 'components/common/ContactsList'
 import {Transition} from 'components/transitions'
 
 import {ChatItem} from './ChatItem'
@@ -37,6 +38,9 @@ const Skeleton = () => {
   )
 }
 
+/**
+ * @todo refactor
+ */
 const EmptyChats = () => {
   const global = getGlobalState()
 
@@ -51,13 +55,13 @@ const EmptyChats = () => {
           {TEST_translate('ChatList.EmptyChatsSubtitle', {count: contacts.length})}
         </p>
       </ColumnSection>
-      <ColumnSection className="contacts-list" title="Contacts">
-        {/* <ChatListTest> */}
-        {contacts.map((c) => {
-          return <UserItem key={c} userId={c} />
-        })}
-        {/* </ChatListTest> */}
-      </ColumnSection>
+      {contacts.length > 0 && (
+        <ColumnSection className="contacts-list" title="Contacts">
+          {/* <ChatListTest> */}
+          <ContactsList withUrl />
+          {/* </ChatListTest> */}
+        </ColumnSection>
+      )}
     </>
   )
 }
@@ -77,6 +81,7 @@ const List = () => {
 enum TestKey {
   Skeleton,
   List,
+  EmptyChats,
 }
 
 export const ChatList: FC = () => {
@@ -84,10 +89,18 @@ export const ChatList: FC = () => {
   const isChatsFetching = selectIsChatsFetching(global)
 
   let activeScreen: TestKey = TestKey.Skeleton
-  activeScreen = isChatsFetching ? TestKey.Skeleton : TestKey.List
+  if (isChatsFetching) {
+    activeScreen = TestKey.Skeleton
+  } else if (!global.chats.ids.length) {
+    activeScreen = TestKey.EmptyChats
+  } else {
+    activeScreen = TestKey.List
+  }
   const render = () => {
     switch (activeScreen) {
       case TestKey.List:
+        return <List />
+      case TestKey.EmptyChats:
         return <EmptyChats />
       default:
         return <Skeleton />

@@ -7,7 +7,7 @@ import {
   QUERY_RESOLVE_USERNAME,
 } from 'api/graphql'
 import {cleanTypename} from 'api/helpers/cleanupTypename'
-import type {CreateChannelInput, CreateGroupInput} from 'api/types'
+import type {CreateChannelInput, CreateGroupInput, UpdateChatInput} from 'api/types'
 
 import {ApiBaseMethod} from '../base'
 
@@ -41,6 +41,8 @@ export class ApiChats extends ApiBaseMethod {
 
     return cleanTypename(data.createGroup)
   }
+
+  public async updateChat(input: UpdateChatInput) {}
 
   public async getChats() {
     const {data} = await this.client.query({

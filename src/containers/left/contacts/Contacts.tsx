@@ -2,7 +2,11 @@ import {type FC, memo, useCallback} from 'preact/compat'
 
 import {getActions} from 'state/action'
 
-import {Button, FloatButton, Icon} from 'components/ui'
+import {TEST_translate} from 'lib/i18n'
+
+import {ColumnWrapper} from 'components/ColumnWrapper'
+import {ContactsList} from 'components/common/ContactsList'
+import {FloatButton, Icon} from 'components/ui'
 
 import {useLeftColumn} from '../context'
 
@@ -17,9 +21,9 @@ const Contacts: FC = () => {
   }, [openCreateContactModal])
 
   return (
-    <>
-      Contacts
-      <Button onClick={() => resetScreen()}>Reset</Button>
+    <ColumnWrapper onGoBack={resetScreen} title={TEST_translate('Contacts')}>
+      {/* Contacts */}
+      <ContactsList withUrl />
       <FloatButton
         shown
         onClick={handleClickButton}
@@ -27,7 +31,7 @@ const Contacts: FC = () => {
         aria-label="Create new Contact"
         icon={<Icon name="plus" />}
       />
-    </>
+    </ColumnWrapper>
   )
 }
 

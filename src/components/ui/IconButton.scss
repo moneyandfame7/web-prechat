@@ -18,9 +18,21 @@
   .Icon path {
     transition: fill 0.3s ease;
   }
-  &:hover {
-    .Icon path {
-      fill: var(--c-white);
+
+  .transition-item {
+    background-color: unset !important;
+  }
+  &.without-animate {
+    .transition-item {
+      animation-duration: 0ms !important;
+      transition: none !important;
+    }
+  }
+  &.Button-primary {
+    &:hover {
+      .Icon path {
+        fill: var(--c-white);
+      }
     }
   }
 }

@@ -1,6 +1,12 @@
-import {MUTATION_ADD_CONTACT, QUERY_GET_CONTACTS} from 'api/graphql'
+import {
+  MUTATION_ADD_CONTACT,
+  MUTATION_DELETE_CONTACT,
+  MUTATION_UPDATE_CONTACT,
+  QUERY_GET_CONTACTS,
+} from 'api/graphql'
+import {cleanupResponse} from 'api/helpers/cleanupResponse'
 import {cleanTypename} from 'api/helpers/cleanupTypename'
-import type {AddContactInput, ApiUser} from 'api/types'
+import type {AddContactInput, ApiUser, UpdateContactInput} from 'api/types'
 
 import {ApiBaseMethod} from '../base'
 
@@ -31,11 +37,28 @@ export class ApiContacts extends ApiBaseMethod {
     return cleanTypename(data.addContact)
   }
 
-  public async deleteContact() {
+  public async deleteContact(userId: string) {
+    const {data} = await this.client.mutate({
+      mutation: MUTATION_DELETE_CONTACT,
+      variables: {
+        userId,
+      },
+    })
+    if (!data?.deleteContact) {
+      return undefined
+    }
+    return cleanupResponse(data.deleteContact)
     /*  */
   }
 
-  public async updateContact() {
+  public async updateContact(input: UpdateContactInput) {
+    const {data} = await this.client.mutate({
+      mutation: MUTATION_UPDATE_CONTACT,
+      variables: {
+        input,
+      },
+    })
+    return Boolean(data?.updateContact)
     /*  */
   }
 }

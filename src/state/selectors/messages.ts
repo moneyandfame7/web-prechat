@@ -38,6 +38,13 @@ export function selectChatMessageIds(
   return global.messages.idsByChatId[chatId]
 }
 
+export function selectPinnedMessageIds(
+  global: SignalGlobalState,
+  chatId: string
+): string[] | undefined {
+  return global.messages.pinnedIdsByChatId?.[chatId]
+}
+
 export function selectMessageSender(
   global: SignalGlobalState,
   chatId: string,

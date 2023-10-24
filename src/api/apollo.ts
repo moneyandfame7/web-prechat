@@ -68,18 +68,19 @@ export class ApolloClientWrapper {
    * {@link https://www.apollographql.com/docs/react/api/link/introduction/ Apollo Link}
    */
   private getHttpLink(uri: string) {
-    // return createHttpLink({
-    //   uri,
-    //   fetch: customFetch2 as any,
-    //   /* headers?? */
-    // })
     return createUploadLink({
       uri,
-      fetch: customFetch2 as any,
       headers: {
         'apollo-require-preflight': 'true',
       },
+      // fetch: customFetch2 as any,
+      /* headers?? */
     })
+    // return createUploadLink({
+    //   uri,
+    //   fetch: customFetch2 as any,
+
+    // })
   }
 
   /**

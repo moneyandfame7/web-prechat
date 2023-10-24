@@ -7,6 +7,7 @@ import {cleanupUnusedAuthState} from 'state/updates'
 import {AuthScreens} from 'types/screens'
 
 import {Transition} from 'components/transitions'
+import {Button} from 'components/ui'
 
 import AuthCode from './AuthCode.async'
 import AuthPassword from './AuthPassword.async'
@@ -44,6 +45,13 @@ const Auth: FC = () => {
   return (
     <div class="scrollable scrollable-y scrollable-hidden" id="auth-scroll">
       <div class="auth-page">
+        <Button
+          onClick={() => {
+            global.auth.screen = AuthScreens.SignUp
+          }}
+        >
+          Sign up
+        </Button>
         <Transition
           // innerClassnames={classNames}
           name="zoomFade"

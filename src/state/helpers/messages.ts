@@ -9,12 +9,14 @@ import {getUserName} from './users'
 
 /* тут ми просто створюємо повідомлення наперед, щоб не чікати відповіді з бекенду */
 export function buildLocalMessage({
+  orderedId,
   text,
   entities,
   senderId,
   chatId,
   isChannel,
 }: {
+  orderedId: number
   text: string
   entities?: ApiMessageEntity[]
   senderId: string
@@ -24,6 +26,7 @@ export function buildLocalMessage({
   // const isChannel = chat.type === 'chatTypeChannel'
   return {
     id: crypto.randomUUID(),
+    orderedId,
     chatId,
     content: {
       formattedText: {

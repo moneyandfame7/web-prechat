@@ -15,13 +15,14 @@ import {getInitials} from 'utilities/string/getInitials'
 
 import type {SignalOr} from 'types/ui'
 
+import {Photo} from 'components/common/Photo'
 import {SingleTransition} from 'components/transitions'
 
 import {Icon} from '.'
 
 import './AvatarTest.scss'
 
-export type AvatarSize = 'xl' | 'l' | 'm' | 's' | 'xs'
+export type AvatarSize = 'xxl' | 'xl' | 'l' | 'm' | 's' | 'xs'
 export type AvatarShape = 'rounded' | 'circular'
 
 interface AvatarTestProps {
@@ -38,6 +39,7 @@ interface AvatarTestProps {
   withOnlineStatus?: boolean
   onClick?: VoidFunction
   className?: string
+  lazy?: boolean
 }
 
 // передавати просто тут одразу peer.
@@ -52,9 +54,12 @@ export const AvatarTest: FC<AvatarTestProps> = ({
   withOnlineStatus,
   text,
   onClick,
+  lazy = true,
   className,
 }) => {
   const isUser = peer && isUserId(peer.id)
+  // const test=isUser?'title' in peer?peer
+  // const shouldSelectPartner = peer && isUserId(peer?.id) && 'title'
   const user = isUser ? peer && (peer as ApiUser) : undefined
   const chat = !isUser && peer ? (peer as ApiChat) : undefined
   const userStatus = withOnlineStatus && user ? isUserOnline(user) : undefined
@@ -64,6 +69,17 @@ export const AvatarTest: FC<AvatarTestProps> = ({
 
     if (isSavedMessages) {
       return <Icon name="savedMessages" />
+    } else if (peer?.photo) {
+      return (
+        <Photo
+          alt="Avatar"
+          lazy={lazy}
+          url={peer.photo.url}
+          blurHash={peer.photo.blurHash}
+          width="100%"
+          height="100%"
+        />
+      )
     } else if (chat) {
       textAvatar = getChatName(chat)
 
@@ -82,6 +98,7 @@ export const AvatarTest: FC<AvatarTestProps> = ({
     `Avatar Avatar-${size} Avatar-${shape} Avatar-c-${avatarVariant}`,
     {
       'saved-messages': isSavedMessages,
+      'with-photo': !!peer?.photo,
     }
   )
 

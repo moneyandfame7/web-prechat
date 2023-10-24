@@ -12,6 +12,7 @@ interface NoMessagesProps {
   isSavedMessages: boolean
   type: ApiChatType | undefined
   lastMessage?: ApiMessage
+  isPinnedList: boolean | undefined
   isChannel: boolean | undefined
   isGroup: boolean | undefined
   isPrivate: boolean | undefined
@@ -22,6 +23,7 @@ const NoMessages: FC<NoMessagesProps> = ({
   isChannel,
   isGroup,
   isPrivate,
+  isPinnedList,
 }) => {
   function renderSavedMessagesText() {
     return (
@@ -33,6 +35,20 @@ const NoMessages: FC<NoMessagesProps> = ({
           <li>{TEST_translate('SavedMessagesDescription2')}</li>
           <li>{TEST_translate('SavedMessagesDescription3')}</li>
           <li>{TEST_translate('SavedMessagesDescription4')}</li>
+        </ul>
+      </div>
+    )
+  }
+
+  function renderPinnedMessages() {
+    return (
+      <div class="no-messages__pinned-messages">
+        <Icon className="icon" name="pinlist" />
+        <h4 class="title">{TEST_translate('PinnedMessagesTitle')}</h4>
+        <ul class="list">
+          <li>{TEST_translate('PinnedMessagesDescription1')}</li>
+          <li>{TEST_translate('PinnedMessagesDescription2')}</li>
+          <li>{TEST_translate('PinnedMessagesDescription3')}</li>
         </ul>
       </div>
     )
@@ -64,6 +80,9 @@ const NoMessages: FC<NoMessagesProps> = ({
   function renderContent() {
     if (isSavedMessages) {
       return renderSavedMessagesText()
+    }
+    if (isPinnedList) {
+      return renderPinnedMessages()
     }
     if (isChannel) return renderChannelText()
     if (isGroup) return renderGroupText()

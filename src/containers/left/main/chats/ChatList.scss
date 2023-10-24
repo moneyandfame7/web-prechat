@@ -1,11 +1,17 @@
 .chats-list {
+  // padding-top: 15px;
+  // padding-inline: 20px;
   // &.fetching {
   //   overflow: hidden;
   // }
   > .transition-item {
     background-color: transparent;
+    // background-color: red;
+
     // padding-block: 10px 20px;
-    // padding-inline: 5px;
+    // padding-inline: 10px;
+    padding: 10px;
+    height: max-content;
   }
 }
 .empty-chats {

@@ -1,4 +1,8 @@
+import {batch} from '@preact/signals'
+
 import {createAction} from 'state/action'
+import {selectCurrentChat} from 'state/selectors/chats'
+import {selectMessage} from 'state/selectors/messages'
 
 import {MODAL_TRANSITION_MS, NOTIFICATION_TRANSITION} from 'common/environment'
 import {updateByKey} from 'utilities/object/updateByKey'
@@ -66,4 +70,67 @@ createAction('openRightColumn', (state, _, payload) => {
 
 createAction('closeRightColumn', (state) => {
   state.rightColumn.isOpen = false
+})
+
+createAction('toggleMessageSelection', (state, _, payload) => {
+  const {active, id} = payload
+  const selected = state.selection.messageIds
+
+  if (typeof active === 'boolean') {
+    state.selection.hasSelection = active
+  }
+  if (!id) {
+    if (state.selection.hasSelection === false) {
+      console.log('CLEAR SELECTION!!!')
+      state.selection.messageIds = []
+    }
+    return
+  }
+  // if (selected.includes(id)) {
+  //   console.log('SHOULD REMOVE!!!!')
+  //   state.selection.messageIds.filter
+  // } else {
+  //   selected.push(id)
+  //   state.selection.hasSelection = true
+  // }
+  if (selected.includes(id)) {
+    if (selected.length === 1) {
+      state.selection.messageIds = []
+      state.selection.hasSelection = false
+    } else {
+      state.selection.messageIds = state.selection.messageIds.filter(
+        (existingId) => existingId !== id
+      )
+    }
+  } else {
+    selected.push(id)
+    state.selection.hasSelection = true
+  }
+})
+
+createAction('toggleMessageEditing', (state, _, payload) => {
+  const {id, active} = payload
+  const currentChat = selectCurrentChat(state)
+  if (!currentChat?.chatId) {
+    return
+  }
+  if (!active) {
+    batch(() => {
+      updateByKey(state.messageEditing, {
+        isActive: false,
+        messageId: undefined,
+      })
+    })
+  } else if (id) {
+    const message = selectMessage(state, currentChat.chatId, id)
+    if (!message) {
+      return
+    }
+    batch(() => {
+      updateByKey(state.messageEditing, {
+        isActive: true,
+        messageId: id,
+      })
+    })
+  }
 })

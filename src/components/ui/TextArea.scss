@@ -3,7 +3,7 @@
   max-width: 80%;
 
   @include withAnimations {
-    transition: height 100ms linear;
+    transition: height 200ms ease;
   }
   overflow: hidden;
 }
@@ -35,7 +35,7 @@
   //   width: 0;
   // }
   @include withAnimations {
-    transition: height 100ms linear;
+    transition: height 200ms ease;
   }
 
   &::after {

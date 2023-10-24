@@ -27,8 +27,12 @@
   .Lottie-fallback {
     margin: 0px auto;
   }
+  .Auth_signup > .subtitle {
+    max-width: 50%;
+  }
   /* * - because we have inner div "transition" */
   > * .title {
+    line-height: 1;
     text-align: center;
     font-weight: 500;
     font-size: 34px;

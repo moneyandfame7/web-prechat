@@ -48,3 +48,21 @@ export function updateSession(
 
   updateByKey(session, sessionToUpd)
 }
+
+export function updateMessageSelection(global: SignalGlobalState, id: string) {
+  const selected = global.selection.messageIds
+
+  if (selected.includes(id)) {
+    if (selected.length === 1) {
+      global.selection.messageIds = []
+      global.selection.hasSelection = false
+    } else {
+      selected.filter((existingId) => existingId !== id)
+    }
+  } else {
+    selected.push(id)
+    global.selection.hasSelection = true
+  }
+}
+
+// export function toggleMessageSelection(global:Si)

@@ -1,6 +1,6 @@
 import lang from 'lib/i18n/lang'
 
-import {IS_MOBILE} from 'common/environment'
+import {IS_SMALL_SCREEN} from 'common/environment'
 
 import {AuthScreens, RightColumnScreens} from 'types/screens'
 import type {GlobalState} from 'types/state'
@@ -45,7 +45,7 @@ export const INITIAL_STATE: GlobalState = {
       timeFormat: '24h',
       animationsEnabled: true,
       animations: {
-        page: IS_MOBILE ? 'slideDark' : 'zoomSlide',
+        page: IS_SMALL_SCREEN ? 'slideDark' : 'zoomSlide',
         chatFolders: 'slide',
       },
       blur: true,
@@ -96,8 +96,24 @@ export const INITIAL_STATE: GlobalState = {
   messages: {
     byChatId: {},
     idsByChatId: {},
+    pinnedIdsByChatId: {},
   },
-
+  selection: {
+    selectedText: '',
+    messageIds: [],
+    hasSelection: false,
+    chat: {
+      active: false,
+      messageIds: [],
+    },
+    sharedMedia: {
+      messageIds: [],
+    },
+  },
+  messageEditing: {
+    messageId: undefined,
+    isActive: false,
+  },
   currentChat: {
     chatId: undefined,
     username: undefined,

@@ -1,11 +1,12 @@
 import {type FC, memo, useEffect, useLayoutEffect, useMemo, useRef} from 'preact/compat'
 
-import type {ApiChat} from 'api/types'
-import {type ApiMessage, HistoryDirection} from 'api/types/messages'
+import clsx from 'clsx'
+
+import type {ApiChat, ApiLangCode} from 'api/types'
+import {type ApiMessage} from 'api/types/messages'
 
 import {getActions} from 'state/action'
 import {type MapState, connect} from 'state/connect'
-import {isPrivateChat2} from 'state/helpers/chats'
 import {isUserId} from 'state/helpers/users'
 import {
   isChatChannel,
@@ -14,7 +15,12 @@ import {
   selectIsChatWithSelf,
   selectIsMessagesLoading,
 } from 'state/selectors/chats'
-import {selectChatMessageIds, selectMessages} from 'state/selectors/messages'
+import {selectHasMessageSelection} from 'state/selectors/diff'
+import {
+  selectChatMessageIds,
+  selectMessages,
+  selectPinnedMessageIds,
+} from 'state/selectors/messages'
 
 import {useIsFirstRender} from 'hooks/useIsFirstRender'
 
@@ -30,6 +36,7 @@ import './MessagesList.scss'
 
 type OwnProps = {
   chatId: string
+  isPinnedList?: boolean
 }
 
 type StateProps = {
@@ -41,6 +48,8 @@ type StateProps = {
   isPrivateChat?: boolean
   isChannel?: boolean
   isGroup?: boolean
+  hasMessageSelection: boolean
+  language: ApiLangCode
 }
 interface MessageGroup {
   date: string
@@ -67,14 +76,20 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   isChannel,
   isGroup,
   isPrivateChat,
+  isPinnedList,
+  hasMessageSelection,
+  language,
 }) => {
-  const {getHistory} = getActions()
-  const isFirstRender = useIsFirstRender()
+  const {getHistory, getPinnedMessages} = getActions()
   const listRef = useRef<HTMLDivElement>(null)
   /* Initial scroll in bottom of the list. */
   useEffect(() => {
-    getHistory({chatId, limit: 100 /* direction: HistoryDirection.Around */})
-  }, [chatId])
+    if (isPinnedList) {
+      getPinnedMessages({chatId})
+    } else {
+      getHistory({chatId, limit: 100 /* direction: HistoryDirection.Around */})
+    }
+  }, [chatId, isPinnedList])
 
   /**
    * If has unread messages, scroll to first unread message.
@@ -104,6 +119,10 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
     let currentDate = ''
     messageIds?.forEach((id) => {
       const message = messagesById?.[id]
+      if (message?.deleteLocal) {
+        console.log('IT DELETED LOCAL AUU!!!', message)
+        return
+      }
       const date = message?.createdAt && new Date(message.createdAt).toDateString()
 
       /* так ми робимо action окремо від звичайних повідомлень
@@ -120,7 +139,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
       }
     })
 
-    return groups
+    return groups.filter((group) => group.ids.length > 0)
   }, [messageIds, chatId])
 
   // const groups = useMemo(() => {
@@ -213,15 +232,22 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   }, [dateGroup])
 
   useEffect(() => {
-    console.log({combined})
-  }, [combined])
+    console.log('NEW MESSAGE IDS STATE')
+  }, [messageIds])
+
   const emptyList = messageIds?.length === 0
   const shouldRenderNoMessage =
     messageIds?.length === 0 ||
     (messageIds?.length === 1 && chat?.lastMessage?.action?.type === 'chatCreate')
   // console.log({})
+
+  const buildedClass = clsx('messages-list scrollable', {
+    'is-selecting': hasMessageSelection,
+    'is-pinned': isPinnedList,
+  })
+
   return (
-    <div class="messages-list scrollable" ref={listRef}>
+    <div class={buildedClass} ref={listRef}>
       {/* <Spinner absoluted zoom size="medium" color="white" /> */}
       <Loader isVisible={!messageIds} isLoading />
       {/* {chatId} */}
@@ -234,6 +260,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
         <div class={`messages-container ${emptyList ? 'empty' : ''}`}>
           {shouldRenderNoMessage && (
             <NoMessages
+              isPinnedList={isPinnedList}
               isChannel={isChannel}
               isPrivate={isPrivateChat}
               isGroup={isGroup}
@@ -260,7 +287,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
           })} */}
 
           {combined.map((group) => {
-            const groupDate = formatMessageGroupDate(new Date(group.date))
+            const groupDate = formatMessageGroupDate(new Date(group.date), language)
 
             return (
               <div key={`${groupDate}${chatId}`} class="message-date-group">
@@ -311,13 +338,17 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
 const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
   const {chatId} = ownProps
   const messagesById = selectMessages(state, chatId)
-  const messageIds = selectChatMessageIds(state, chatId)
+  const messageIds = ownProps.isPinnedList
+    ? selectPinnedMessageIds(state, chatId)
+    : selectChatMessageIds(state, chatId)
   const isMessagesLoading = selectIsMessagesLoading(state)
   const isSavedMessages = selectIsChatWithSelf(state, chatId)
   const chat = selectChat(state, chatId)
   const isPrivateChat = isUserId(chatId)
   const isChannel = chat && isChatChannel(chat)
   const isGroup = chat && isChatGroup(chat)
+  const hasMessageSelection = selectHasMessageSelection(state)
+  const language = state.settings.language
   return {
     messagesById,
     messageIds,
@@ -327,6 +358,8 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
     isPrivateChat,
     isChannel,
     isGroup,
+    hasMessageSelection,
+    language,
   }
 }
 

@@ -14,11 +14,14 @@ export interface ApiUser {
   lastName?: string
   username?: string
   phoneNumber: string
+  bio?: string
   status?: ApiUserStatus
   color: ApiColorVariant
   isSelf?: boolean
   isContact?: boolean
   isMutualContact?: boolean
+  isCloseFriend?: boolean
+  isBlocked?: boolean
   photo?: ApiPhoto
 }
 export interface ApiUsername {

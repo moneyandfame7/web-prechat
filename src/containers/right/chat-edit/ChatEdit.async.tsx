@@ -1,19 +1,15 @@
-import {type FC, Suspense, lazy, memo} from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
-// import {ScreenLoader} from 'components/ScreenLoader'
+import {useLazyComponent} from 'hooks/useLazy'
+
+import {ScreenLoader} from 'components/ScreenLoader'
+
 import type {ChatEditProps} from './ChatEdit'
 
-// import {useForceUpdate} from 'hooks/useForceUpdate'
-
 const ChatEditAsync: FC<ChatEditProps> = (props) => {
-  const ChatEdit = lazy(() => import('./ChatEdit'))
+  const ChatEdit = useLazyComponent('ChatEdit')
 
-  // console.log('RERENDER :)))))')
-  return (
-    <Suspense fallback={undefined}>
-      <ChatEdit {...props} />
-    </Suspense>
-  )
+  return ChatEdit ? <ChatEdit {...props} /> : <ScreenLoader />
 }
 
 export default memo(ChatEditAsync)

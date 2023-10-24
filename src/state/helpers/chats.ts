@@ -30,7 +30,7 @@ export function getPeerName(peer: ApiUser | ApiChat) {
     return peer.title
   }
 
-  return /*  peer.isSelf ? 'Saved Messages' : */ peer.firstName + ' ' + peer.lastName
+  return /*  peer.isSelf ? 'Saved Messages' : */ getUserName(peer)
 }
 
 export function getChatName_deprecated(global: SignalGlobalState, chat: ApiChat) {
@@ -63,7 +63,8 @@ export function getChatUsername(global: SignalGlobalState, chat: ApiChat) {
     return user?.username ? `@${user.username}` : undefined
   }
 
-  return chat.inviteLink ? chat.inviteLink?.split('p.me/')?.[1] : undefined
+  const splitted = chat.inviteLink?.split('p.me/')?.[1]
+  return splitted ? `@${splitted}` : undefined
 }
 
 export function getChatUsername_deprecated(peer?: ApiChat | ApiUser) {
@@ -79,7 +80,7 @@ export function getChatUsername_deprecated(peer?: ApiChat | ApiUser) {
   }
 }
 
-export function getChatRoute(peer?: ApiChat | ApiUser) {
+export function getPeerRoute(peer?: ApiChat | ApiUser) {
   if (!peer) {
     return undefined
   }

@@ -1,3 +1,8 @@
 .root {
-  font-weight: 600;
+  font-weight: 500;
+
+  white-space: nowrap;
+  // max-width: 95%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
