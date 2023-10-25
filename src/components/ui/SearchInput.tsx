@@ -1,6 +1,6 @@
 import {type FC, memo, useLayoutEffect, useRef} from 'preact/compat'
 
-import {t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
 import type {InputHandler} from 'types/ui'
 
@@ -35,11 +35,11 @@ export const SearchInput: FC<SearchInputProps> = memo(
       <div class="SearchInput">
         <InputText
           elRef={inputRef}
-          aria-label={t('Search')}
+          aria-label={TEST_translate('Search')}
           value={value}
           onFocus={onFocus}
           onInput={handleOnInput}
-          placeholder={placeholder || t('Search')}
+          placeholder={placeholder || TEST_translate('Search')}
           startIcon="search"
         />
       </div>

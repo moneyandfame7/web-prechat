@@ -1,7 +1,7 @@
 import {useSignal} from '@preact/signals'
 import type {FC, RefObject, TargetedEvent} from 'preact/compat'
 
-import {t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
 import {formatPhone} from 'utilities/phone/formatPhone'
 
@@ -49,7 +49,7 @@ export const PhoneNumberInput: FC<PhoneNumberInputProps> = ({
       className="PhoneNumberInput"
       autoFocus={autoFocus}
       elRef={elRef}
-      label={t('PhoneNumber')}
+      label={TEST_translate('PhoneNumber')}
       inputMode="tel"
       autoCorrect="off"
       autoComplete="tel"

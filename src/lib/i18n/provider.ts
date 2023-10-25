@@ -13,21 +13,19 @@ import {storages} from 'state/storages'
 import * as cache from 'lib/cache'
 
 import {DEBUG} from 'common/environment'
-import {deepClone} from 'utilities/object/deepClone'
 import {updateByKey} from 'utilities/object/updateByKey'
 
 import type {ApiLangCode, LanguagePackKeys} from 'types/lib'
 
 import {createPluralize, interpolate} from './helpers'
-import lang from './lang'
 import type {Pluralize, TranslateRest} from './types'
 
 const pluralizeFns = new Map<ApiLangCode, Pluralize>()
 
-const _i18n = deepSignal({
-  pack: deepClone(lang),
-  langCode: 'en',
-})
+// const _i18n = deepSignal({
+//   pack: deepClone(lang),
+//   langCode: 'en',
+// })
 export function TEST_translate<K extends ApiLangKey>(key: K, ...rest: TranslateRest<K>) {
   const {
     settings: {i18n},

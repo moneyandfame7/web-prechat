@@ -16,7 +16,7 @@ import {selectSuggestedCountry} from 'state/selectors/auth'
 import {selectLanguage} from 'state/selectors/settings'
 import {getGlobalState} from 'state/signal'
 
-import {changeLanguage, t, useTranslateString} from 'lib/i18n'
+import {TEST_translate, changeLanguage, useTranslateString} from 'lib/i18n'
 
 import {validatePhone} from 'utilities/phone/validatePhone'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
@@ -115,8 +115,8 @@ const AuthPhoneNumber: FC = () => {
   return (
     <div class="Auth_phone">
       <Logo />
-      <h1 class="title">{t('Auth.Signin')}</h1>
-      <p class="subtitle">{t('Auth.ConfirmNumber')}</p>
+      <h1 class="title">{TEST_translate('Auth.Signin')}</h1>
+      <p class="subtitle">{TEST_translate('Auth.ConfirmNumber')}</p>
       <form onSubmit={handleSubmit}>
         <SelectCountryInput
           loading={/* !state.countryList.length || */ !global.auth.connection}
@@ -133,14 +133,14 @@ const AuthPhoneNumber: FC = () => {
         />
         <Checkbox
           id="remember-me"
-          label={t('RememberMe')}
+          label={TEST_translate('RememberMe')}
           onToggle={handleChangeRememberMe}
           disabled={global.auth.isLoading}
           /* якщо тут передати не сигнал, буде ререндер всього компоненту */
           checked={global.auth.$rememberMe!}
         />
         <Button type="submit" isLoading={global.auth.isLoading} isDisabled={isFormDisabled}>
-          {global.auth.error || t('Next')}
+          {global.auth.error || TEST_translate('Next')}
         </Button>
 
         {global.settings.suggestedLanguage !== global.settings.i18n.lang_code && (

@@ -3,7 +3,7 @@ import {type FC, memo} from 'preact/compat'
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
-import {TEST_translate, t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
 import {GITHUB_SOURCE} from 'common/environment'
 

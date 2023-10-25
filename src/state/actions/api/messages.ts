@@ -121,13 +121,13 @@ createAction('editMessage', async (state, actions, payload) => {
 })
 
 createAction('deleteMessages', async (state, _actns, payload) => {
-  const {ids, deleteForAll, chatId} = payload
+  const {ids, chatId} = payload
   /* ???? ahahahah */
   ids.forEach((id) => {
     deleteMessageLocal(state, chatId, id)
   })
 
-  const result = await Api.messages.deleteMessages({ids, deleteForAll})
+  const result = await Api.messages.deleteMessages({ids})
 
   if (result) {
     // batch(() => {

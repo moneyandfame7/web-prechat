@@ -1,8 +1,8 @@
 .messages-list {
   // user-select: none;
-  transform: scale(0.9);
-  opacity: 0.8;
-  animation: msg-appear 0.15s ease forwards;
+  // transform: scale(0.9);
+  // opacity: 0.8;
+  // animation: msg-appear 0.15s ease forwards;
 
   overflow-x: hidden; // ??
   > .messages-loading-transition {

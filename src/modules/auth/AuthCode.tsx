@@ -5,7 +5,7 @@ import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
 import {generateRecaptcha} from 'lib/firebase'
-import {t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
 import {AuthScreens} from 'types/screens'
 
@@ -48,7 +48,7 @@ const AuthCode: FC = () => {
       />
       <h1 class="title">
         {auth.$phoneNumber}
-        <div title={t('WrongNumber?')}>
+        <div title={TEST_translate('WrongNumber?')}>
           <Icon
             name="edit"
             color="secondary"
@@ -58,7 +58,7 @@ const AuthCode: FC = () => {
           />
         </div>
       </h1>
-      <p class="subtitle">{t('Auth.CodeSendOnPhone')}</p>
+      <p class="subtitle">{TEST_translate('Auth.CodeSendOnPhone')}</p>
 
       <CodeInput
         autoFocus

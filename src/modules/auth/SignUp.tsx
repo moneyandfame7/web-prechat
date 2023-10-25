@@ -3,7 +3,7 @@ import {type FC, type TargetedEvent, memo, useCallback, useState} from 'preact/c
 import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
-import {t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
 import {UploadProfilePhoto} from 'components/UploadPhoto'
 import {Button, InputText} from 'components/ui'
@@ -63,22 +63,26 @@ const SignUp: FC = () => {
     <div class="Auth_signup">
       <UploadProfilePhoto size="large" onSubmit={handleSubmitPhoto} />
       <h1 class="title">Sign up</h1>
-      <p class="subtitle">{t('Auth.SignUp')}</p>
+      <p class="subtitle">{TEST_translate('Auth.SignUp')}</p>
       <form onSubmit={handleSubmit}>
-        <InputText label={t('Name')} value={firstName} onInput={handleChangeName} />
         <InputText
-          label={t('LastNameOptional')}
+          label={TEST_translate('Name')}
+          value={firstName}
+          onInput={handleChangeName}
+        />
+        <InputText
+          label={TEST_translate('LastNameOptional')}
           value={lastName}
           onInput={handleChangeLastName}
         />
         <Checkbox
-          label={t('Auth.SilentAuth')}
+          label={TEST_translate('Auth.SilentAuth')}
           onToggle={handleChangeSilentSignUp}
           checked={silentSignUp}
         />
         {firstName.length > 3 && (
           <Button isLoading={auth.isLoading} type="submit">
-            {t('Auth.StartMessaging')}
+            {TEST_translate('Auth.StartMessaging')}
           </Button>
         )}
       </form>
