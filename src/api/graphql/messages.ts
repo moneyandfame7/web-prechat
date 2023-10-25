@@ -32,9 +32,6 @@ export const FRAGMENT_MESSAGE: DocumentNode = gql`
     isOutgoing
     isPost
     editedAt
-    media {
-      __typename
-    }
     action {
       ...AllMessageActionFields
     }
@@ -118,11 +115,6 @@ export const QUERY_GET_PINNED: TypedDocumentNode<
   }
 
   ${FRAGMENT_MESSAGE}
-`
-export const MUTATION_SAVE_DRAFT: DocumentNode = gql`
-  mutation SaveDraft($input: SaveDraftInput!) {
-    saveDraft(input: $input)
-  }
 `
 
 export const SUBSCRIBE_ON_DRAFT_UPDATE: DocumentNode = gql`

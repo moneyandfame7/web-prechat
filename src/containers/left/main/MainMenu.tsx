@@ -7,7 +7,7 @@ import {TEST_translate, t} from 'lib/i18n'
 
 import {GITHUB_SOURCE} from 'common/environment'
 
-import {LeftColumnScreen} from 'types/ui'
+import {LeftColumnScreen} from 'types/screens'
 
 import {MenuItem} from 'components/popups/menu'
 import {Icon, IconButton} from 'components/ui'

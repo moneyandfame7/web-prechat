@@ -18,7 +18,6 @@ export interface ApiMethods {
   users: ApiUsers
   chats: ApiChats
   messages: ApiMessages
-  folders: ApiChatFolders
   media: ApiMedia
 }
 
@@ -39,7 +38,6 @@ class ApiManager implements ApiMethods {
     public readonly users: ApiUsers,
     public readonly chats: ApiChats,
     public readonly messages: ApiMessages,
-    public readonly folders: ApiChatFolders,
     public readonly media: ApiMedia
   ) {}
 }
@@ -55,7 +53,6 @@ function createApiManager(apolloWrapper: ApolloClientWrapper): ApiMethods {
   const users = factory.createUsers()
   const chats = factory.createChats()
   const messages = factory.createMessages()
-  const folders = factory.createChatFolders()
   const media = factory.createMedia()
   const apiClient = new ApiManager(
     auth,
@@ -66,7 +63,6 @@ function createApiManager(apolloWrapper: ApolloClientWrapper): ApiMethods {
     users,
     chats,
     messages,
-    folders,
     media
   )
 

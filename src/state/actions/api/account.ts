@@ -5,8 +5,8 @@ import {createAction} from 'state/action'
 import {selectSelf} from 'state/selectors/users'
 import {updateSessions, updateUser} from 'state/updates'
 
-import {debounce} from 'common/functions'
 import {buildRecord} from 'utilities/object/buildRecord'
+import {debounce} from 'utilities/schedulers/debounce'
 
 createAction('getAuthorizations', async (state) => {
   const result = await Api.account.getAuthorizations()

@@ -114,7 +114,7 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
     // useEffect(() => {
     //   console.log({styles, isContextMenuOpen})
     // }, [isContextMenuOpen])
-
+    console.log('RERENDER')
     const buildedClass = clsx('bubble', sender && `color-${sender.color.toLowerCase()}`, {
       outgoing: isOutgoing,
       incoming: !message?.isOutgoing && !message?.action,

@@ -19,10 +19,10 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
 
-import {debounce} from 'common/functions'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'
 import {insertCursorAtEnd, insertTextAtCursor} from 'utilities/parse/selection'
+import {debounce} from 'utilities/schedulers/debounce'
 
 import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
 import DeleteMessagesModalAsync from 'components/popups/DeleteMessagesModal.async'

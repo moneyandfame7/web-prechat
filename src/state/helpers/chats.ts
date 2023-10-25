@@ -11,10 +11,14 @@ import {getUserName, isUserId} from './users'
 
 const USERNAME_PATTERN = /^[a-zA-Z0-9_]{5,}$/
 
+export function generateChatId() {
+  return 'c_' + crypto.randomUUID()
+}
+
 export function buildLocalPrivateChat({user}: {user: ApiUser}): ApiChat {
   return {
     id: user.id,
-    _id: crypto.randomUUID(),
+    _id: generateChatId(),
     color: user.color,
     createdAt: new Date().toISOString() as any,
     isOwner: false,

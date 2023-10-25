@@ -1,6 +1,6 @@
 import {type FC, type TargetedEvent, memo, useCallback, useMemo, useState} from 'preact/compat'
 
-import {debounce} from 'common/functions'
+import {debounce} from 'utilities/schedulers/debounce'
 
 import './Ripple.scss'
 

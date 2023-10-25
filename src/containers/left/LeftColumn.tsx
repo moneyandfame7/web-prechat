@@ -4,12 +4,9 @@ import {connect} from 'state/connect'
 import {getPreferredAnimations} from 'state/helpers/settings'
 import {getGlobalState} from 'state/signal'
 
-import {APP_TRANSITION_NAME} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
-import {SettingsScreens} from 'types/screens'
-import {PageAnimations} from 'types/state'
-import {LeftColumnGroup, LeftColumnScreen} from 'types/ui'
+import {LeftColumnGroup, LeftColumnScreen, SettingsScreens} from 'types/screens'
 
 import {MyStories} from 'containers/stories'
 
@@ -24,13 +21,6 @@ import Settings from './settings/Settings.async'
 
 import './LeftColumn.scss'
 
-// const classNames: Record<LeftColumnGroup, string> = {
-//   [LeftColumnGroup.Main]: 'LeftColumn-Main',
-//   [LeftColumnGroup.Contacts]: 'LeftColumn-Contacts',
-//   [LeftColumnGroup.Settings]: 'LeftColumn-Settings',
-//   [LeftColumnGroup.NewChannel]: 'LeftColumn-NewChannel',
-//   [LeftColumnGroup.NewGroup]: 'LeftColumn-NewGroup',
-// }
 type StateProps = {
   isChatOpen: boolean
 }

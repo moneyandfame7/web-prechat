@@ -162,7 +162,7 @@ export function selectCanEditChat(global: SignalGlobalState, chatId: string) {
   return (
     (!isSaved && isPrivate) ||
     (!isPrivate &&
-      (member?.isOwner || (member?.isAdmin && member?.adminPermissions?.canChangeInfo)))
+      (member?.isOwner || member?.isAdmin /* && member?.adminPermissions?.canChangeInfo */))
   )
 }
 

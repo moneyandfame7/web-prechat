@@ -1,8 +1,5 @@
-import {batch} from '@preact/signals'
-
 import type {DeepSignal} from 'deepsignal'
 
-import {apiManager} from 'api/api-manager'
 import {Api} from 'api/manager'
 import {type ApiMessage, HistoryDirection} from 'api/types'
 
@@ -37,6 +34,10 @@ createAction('sendMessage', async (state, _, payload) => {
   // if (!chat) {
   //   return
   // }
+
+  // console.log({chatId, chat})
+
+  // return
   const {text, entities, sendAs} = payload
   if (!chat && isUserId(chatId)) {
     chat = buildLocalPrivateChat({user: selectUser(state, chatId)!})
@@ -237,31 +238,4 @@ createAction('getPinnedMessages', async (state, _actions, payload) => {
   }
 
   state.messages.pinnedIdsByChatId[chatId] = [...orderedIds]
-})
-
-createAction('saveDraft', async (state, _actions, payload) => {
-  // const {force, ...input} = payload
-  const chat = selectChat(state, payload.chatId)
-  if (!chat) {
-    return
-  }
-
-  const result = await apiManager.invokeApi({
-    method: 'messages.saveDraft',
-    variables: {
-      input: payload,
-    },
-  })
-  if (!result) {
-    return
-  }
-
-  updateChat(state, payload.chatId, {
-    draft: payload.text,
-  })
-  // if (!input.text) {
-  //   deleteDraft(state, input.chatId)
-  // } else {
-  //   updateDraft(state, input.chatId, draft as ApiDraft)
-  // }
 })

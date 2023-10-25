@@ -2,7 +2,6 @@ import {type DocumentNode, type TypedDocumentNode, gql} from '@apollo/client'
 
 import type {
   ApiChat,
-  ApiChatFolder,
   ApiChatFull,
   ApiPeer,
   CreateChannelInput,
@@ -43,58 +42,22 @@ export const FRAGMENT_CHAT: DocumentNode = gql`
   ${FRAGMENT_PHOTO}
 `
 
-export const FRAGMENT_USER_PERMISSIONS: DocumentNode = gql`
-  fragment AllUserPermissionsFields on ChatPermissions {
-    canSendMessages
-    canSendMedia
-    canInviteUsers
-    canPinMessages
-    canChangeInfo
-  }
-`
-export const FRAGMENT_ADMIN_PERMISSIONS: DocumentNode = gql`
-  fragment AllAdminPermissionsFields on AdminPermissions {
-    canChangeInfo
-    canDeleteMessages
-    canBanUsers
-    canInviteUsers
-    canPinMessages
-    canAddNewAdmins
-  }
-`
 export const FRAGMENT_CHAT_MEMBER: DocumentNode = gql`
   fragment AllChatMemberFields on ChatMember {
     userId
     inviterId
     promotedByUserId
     kickedByUserId
-    userPermissions {
-      ...AllUserPermissionsFields
-    }
-    adminPermissions {
-      ...AllAdminPermissionsFields
-    }
     joinedDate
     customTitle
     isAdmin
     isOwner
   }
-  ${FRAGMENT_USER_PERMISSIONS}
-  ${FRAGMENT_ADMIN_PERMISSIONS}
 `
 export const FRAGMENT_CHAT_FULL: DocumentNode = gql`
   fragment AllChatFullFields on ChatFull {
     members {
       ...AllChatMemberFields
-    }
-    permissions {
-      ...AllUserPermissionsFields
-    }
-    currentUserPermissions {
-      ...AllUserPermissionsFields
-    }
-    currentAdminPermissions {
-      ...AllAdminPermissionsFields
     }
     onlineCount
     description
@@ -102,8 +65,6 @@ export const FRAGMENT_CHAT_FULL: DocumentNode = gql`
     historyForNewMembers
   }
   ${FRAGMENT_CHAT_MEMBER}
-  ${FRAGMENT_ADMIN_PERMISSIONS}
-  ${FRAGMENT_USER_PERMISSIONS}
 `
 
 export const QUERY_GET_CHATS: TypedDocumentNode<{getChats: ApiChat[]}, void> = gql`
@@ -191,30 +152,4 @@ export const SUBSCRIBE_ON_CHAT_CREATED: TypedDocumentNode<{
 
   ${FRAGMENT_CHAT}
   ${FRAGMENT_USER}
-`
-
-export const QUERY_GET_CHAT_FOLDERS: TypedDocumentNode<
-  {getChatFolders: {folders: ApiChatFolder[]; orderedIds: number[]}},
-  void
-> = gql`
-  query GetChatFolders {
-    getChatFolders {
-      folders {
-        orderId
-        icon
-        title
-        contacts
-        nonContacts
-        groups
-        channels
-        excludeMuted
-        excludeReaded
-        excludeArchived
-        pinnedChats
-        includedChats
-        excludedChats
-      }
-      orderedIds
-    }
-  }
 `

@@ -97,7 +97,6 @@ interface ActionPayloads {
   getChatFull: {id: string}
 
   /* ChatFolders */
-  getChatFolders: void
 
   /* Messages */
   sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}
@@ -115,10 +114,6 @@ interface ActionPayloads {
     chatId: string
     offsetId?: string
     // direction?:Hist
-  }
-  saveDraft: {
-    text: string | undefined
-    chatId: string
   }
 
   /* Account */

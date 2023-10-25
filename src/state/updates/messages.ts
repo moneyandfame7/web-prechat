@@ -5,7 +5,6 @@ import type {ApiMessage} from 'api/types/messages'
 import {selectChatMessageIds, selectMessage, selectMessages} from 'state/selectors/messages'
 import {storages} from 'state/storages'
 
-import {isDeepEqual} from 'utilities/object/isDeepEqual'
 import {updateByKey} from 'utilities/object/updateByKey'
 
 import type {SignalGlobalState} from 'types/state'

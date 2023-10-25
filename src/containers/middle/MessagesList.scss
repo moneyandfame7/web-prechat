@@ -1,5 +1,9 @@
 .messages-list {
   // user-select: none;
+  transform: scale(0.9);
+  opacity: 0.8;
+  animation: msg-appear 0.15s ease forwards;
+
   overflow-x: hidden; // ??
   > .messages-loading-transition {
     bottom: 0;
@@ -210,12 +214,10 @@
   }
 
   // --bubble-arrow-width: 1rem;
-  @include withAnimations {
-    transform: scale(0.8);
-    opacity: 0.8;
-    // box-shadow: 0 1px 2px var(--c-shadow-default);
-    animation: msg-appear 0.2s ease forwards;
-  }
+  // @include withAnimations {
+
+  //   // box-shadow: 0 1px 2px var(--c-shadow-default);
+  // }
 
   &.delete-local {
     display: none;
@@ -423,26 +425,6 @@
   }
 }
 
-@keyframes msg-appear {
-  0% {
-    transform: scale(0.8);
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@keyframes msg-deleting {
-  0% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-}
 /* Groups ( by sender and time ~10 minutes) */
 .bubbles-group {
   position: relative;
@@ -468,3 +450,24 @@
 
   @include defaultTransition(transform);
 }
+
+@keyframes msg-appear {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+// @keyframes msg-deleting {
+//   0% {
+//     opacity: 1;
+//     transform: scale(1);
+//   }
+//   100% {
+//     opacity: 0;
+//     transform: scale(0.8);
+//   }
+// }

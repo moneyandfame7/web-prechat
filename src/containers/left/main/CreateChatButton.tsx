@@ -8,7 +8,7 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {t} from 'lib/i18n'
 
-import {LeftColumnScreen} from 'types/ui'
+import {LeftColumnScreen} from 'types/screens'
 
 import {Menu, MenuItem} from 'components/popups/menu'
 import {FloatButton, Icon} from 'components/ui'

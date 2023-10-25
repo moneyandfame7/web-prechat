@@ -60,19 +60,21 @@ const DeleteMessagesModalImpl: FC<OwnProps & StateProps> = ({
     toggleMessageSelection({active: false})
   }
 
-  const selectedCount = selectedMessageIds.length
   return (
     <ConfirmModalAsync
       chat={chat}
       user={partner}
-      title={TEST_translate('DeleteMessages', {count: message ? 1 : selectedCount})}
+      title={TEST_translate('DeleteMessages', {count: idsToDelete.length})}
       action="Delete"
       content={
         <>
           {TEST_translate('AreYouSureDeleteMessages', {
-            count: message ? 1 : selectedCount,
+            count: idsToDelete.length,
           })}
-          {partner && (
+          {/* <p class="text-small text-secondary text-end mt-10">
+            *It will be deleted for everyone
+          </p> */}
+          {/* {partner && (
             <Checkbox
               onToggle={toggleDeleteForAll}
               checked={shouldDeleteForAll}
@@ -81,7 +83,7 @@ const DeleteMessagesModalImpl: FC<OwnProps & StateProps> = ({
                 ['markdown']
               )}
             />
-          )}
+          )} */}
         </>
       }
       callback={handleDeleteMessages}

@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect} from 'preact/compat'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
@@ -17,7 +17,6 @@ import {connectStateToNavigation} from 'utilities/routing'
 import type {OpenedChat} from 'types/state'
 
 import {Transition} from 'components/transitions'
-import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -132,18 +131,8 @@ const MiddleColumn: FC<InjectedProps> = ({
   // const cleanupExceptionKey = (
   //   prevTransitionKey !== undefined && prevTransitionKey < currentTransitionKey ? prevTransitionKey : undefined
   // );
-  const render = useRef(0)
-  render.current += 1
   return (
     <div class="MiddleColumn" id="middle-column">
-      <Button
-        onClick={() => {
-          global.stories.isOpen = !global.stories.isOpen
-        }}
-      >
-        Toggle stories
-        {render.current}
-      </Button>
       {/* <Transition3d /> */}
       {isChatOpen && (
         <>

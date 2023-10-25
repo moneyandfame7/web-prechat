@@ -1,3 +1,25 @@
+export enum LeftColumnScreen {
+  Chats,
+  Search,
+  Settings,
+  Archived,
+  NewChannelStep1,
+  NewChannelStep2,
+  NewGroupStep1,
+  NewGroupStep2,
+  Contacts,
+  MyStories,
+}
+export enum LeftColumnGroup {
+  Main,
+  Settings,
+  Contacts,
+  Archived,
+  NewChannel,
+  NewGroup,
+  MyStories,
+}
+
 export enum AuthScreens {
   PhoneNumber,
   Password,
@@ -127,15 +149,3 @@ export const SETTINGS_SCREENS: Record<SettingsGroup, SettingsScreens[]> = {
     SettingsScreens.TwoFaPasswordSet,
   ],
 }
-
-export const getSettingsActiveGroup = (screen: SettingsScreens): SettingsGroup => {
-  for (const [group, screens] of Object.entries(SETTINGS_SCREENS)) {
-    if (screens.includes(screen)) {
-      return Number(group) as SettingsGroup
-    }
-  }
-  return SettingsGroup.Main
-}
-
-export const isTwoFaScreen = (screen: SettingsScreens) =>
-  SETTINGS_SCREENS[SettingsGroup.TwoFa].includes(screen)

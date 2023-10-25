@@ -1,4 +1,3 @@
-import {apiManager} from 'api/api-manager'
 import {getApiError} from 'api/helpers/getApiError'
 import {Api} from 'api/manager'
 
@@ -93,13 +92,7 @@ createAction('getChat', async (state, _, payload) => {
 
 createAction('getChatFull', async (state, _, payload) => {
   const {id} = payload
-
-  const result = await apiManager.invokeApi({
-    method: 'chats.getChatFull',
-    variables: {
-      chatId: id,
-    },
-  })
+  const result = await Api.chats.getChatFull(id)
 
   if (!result) {
     return

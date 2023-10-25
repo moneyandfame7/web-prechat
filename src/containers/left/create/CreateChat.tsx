@@ -2,7 +2,7 @@ import {type FC, memo, useCallback, useEffect, useState} from 'preact/compat'
 
 import {APP_TRANSITION_NAME} from 'common/environment'
 
-import {LeftColumnScreen} from 'types/ui'
+import {LeftColumnScreen} from 'types/screens'
 
 import {Transition} from 'components/transitions'
 

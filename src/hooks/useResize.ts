@@ -1,6 +1,6 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'preact/hooks'
 
-import {debounce} from 'common/functions'
+import {debounce} from 'utilities/schedulers/debounce'
 
 interface UseResizeProps {
   initialWidth?: number
@@ -13,7 +13,7 @@ export function useResize<T extends HTMLElement>({
   initialWidth,
   debounceCb,
   minWidth,
-  maxWidth
+  maxWidth,
 }: UseResizeProps) {
   const [isResizing, setIsResizing] = useState(false)
   const [width, setWidth] = useState(initialWidth)
@@ -54,6 +54,6 @@ export function useResize<T extends HTMLElement>({
   return {
     resize,
     width,
-    ref
+    ref,
   }
 }
