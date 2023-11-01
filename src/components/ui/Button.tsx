@@ -4,7 +4,7 @@ import clsx from 'clsx'
 
 import {useFastClick} from 'hooks/useFastClick'
 
-import type {SignalOr, SignalOrString} from 'types/ui'
+import type {PreactNode, SignalOr, SignalOrString} from 'types/ui'
 
 import {Ripple} from '../Ripple'
 import {Icon, type IconName} from './Icon'
@@ -17,7 +17,7 @@ export interface ButtonProps {
   loadingText?: string
   isDisabled?: SignalOr<boolean | undefined>
   type?: 'button' | 'submit'
-  shape?: 'rounded' | 'default'
+  shape?: 'rounded' | 'default' | 'circle'
   variant?: 'contained' | 'transparent'
   color?: 'primary' | 'red' | 'green' | 'gray'
   withFastClick?: boolean
@@ -36,6 +36,7 @@ export interface ButtonProps {
   iconPosition?: 'start' | 'end'
   contentPosition?: 'start' | 'center' | 'end'
   bold?: boolean
+  badge?: PreactNode
 }
 
 /**
@@ -61,18 +62,18 @@ export const Button: FC<ButtonProps> = ({
   iconPosition = 'end',
   bold = true,
   contentPosition = 'center',
+  badge,
 }) => {
   const buildClass = clsx(
     'Button',
     `Button-${variant}`,
     `Button-${color}`,
     `content-${contentPosition}`,
-
+    shape !== 'default' && `Button-${shape}`,
     {
       'Button-loading': isLoading,
       'Button-fullwidth': fullWidth,
       'Button-noTransform': !uppercase,
-      'Button-rounded': shape === 'rounded',
       'no-bold': !bold,
     },
     className
@@ -101,6 +102,7 @@ export const Button: FC<ButtonProps> = ({
           </span>
         </>
       )}
+      {badge && <span class="badge">{badge}</span>}
 
       {!isLoading && ripple && <Ripple />}
     </button>

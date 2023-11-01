@@ -18,8 +18,17 @@ export interface ApiEditMessageSub {
   message: ApiMessage
 }
 export interface ApiDeleteMessagesSub {
-  chatId: string
+  chat: ApiChat
   ids: string[]
+}
+export interface ApiReadHistoryInboxSub {
+  newUnreadCount: number
+  chatId: string
+  maxId: number
+}
+export interface ApiReadHistoryOutboxSub {
+  chatId: string
+  maxId: number
 }
 
 export interface ApiDraftUpdateSub {

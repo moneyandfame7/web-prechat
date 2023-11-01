@@ -6,6 +6,8 @@ export type ApiChatType = 'chatTypePrivate' | 'chatTypeGroup' | 'chatTypeChannel
 
 export interface ApiChat {
   id: string
+  lastReadIncomingMessageId?: number
+  lastReadOutgoingMessageId?: number
   userId?: string
   type: ApiChatType
   title: string

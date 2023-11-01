@@ -1,9 +1,9 @@
-import type {ApiUser} from 'api/types'
+import type {ApiChat, ApiUser} from 'api/types'
 import type {ApiMessage, ApiMessageAction, ApiMessageEntity} from 'api/types/messages'
 
 import {TEST_translate} from 'lib/i18n'
 
-import {renderText} from 'utilities/parse/render'
+import {logger} from 'utilities/logger'
 
 import {getUserName} from './users'
 
@@ -41,14 +41,43 @@ export function buildLocalMessage({
     isOutgoing: !isChannel,
   }
 }
-
+export function getFirstUnreadMessage({
+  messagesById,
+  lastRead,
+}: {
+  messagesById: Record<string, ApiMessage>
+  lastRead: number
+}) {
+  return Object.values(messagesById)
+    .sort((a, b) => a.orderedId - b.orderedId)
+    .find((m) => {
+      return !m.isOutgoing && m.orderedId > lastRead
+    })
+}
 export function orderHistory(messages: ApiMessage[]) {
   return messages.sort((a, b) => {
-    const aDate = new Date(a.createdAt).getTime()
-    const bDate = new Date(b.createdAt).getTime()
+    return a.orderedId - b.orderedId
+    // const aDate = new Date(a.createdAt).getTime()
+    // const bDate = new Date(b.createdAt).getTime()
 
-    return aDate - bDate
+    // return aDate - bDate
   })
+}
+
+export function countUnreadMessages(ids: number[], firstUnread: number, maxUnread: number) {
+  let count = 0
+  for (let i = 0, l = ids.length; i < l; i++) {
+    if (ids[i] >= firstUnread && ids[i] <= maxUnread) {
+      count++
+    }
+
+    if (ids[i] >= maxUnread) {
+      break
+    }
+  }
+  logger.info('IDS:', ids, {firstUnread, maxUnread, count})
+
+  return count
 }
 
 export function getMessageActionText(action: ApiMessageAction, sender?: ApiUser) {

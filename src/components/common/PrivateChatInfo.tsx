@@ -37,16 +37,20 @@ const PrivateChatInfoImpl: FC<OwnProps & StateProps> = ({
         title={<FullNameTitle peer={user!} isSavedMessages={isSavedMessages} />}
         subtitle={userStatus}
       > */}
-      <AvatarTest
-        variant={user?.color}
-        isSavedMessages={isSavedMessages}
-        size={avatarSize}
-        peer={user}
-      />
-      <div class="chat-info__container">
-        {user && <FullNameTitle peer={user} isSavedMessages={isSavedMessages} />}
-        <p class="list-item__subtitle">{userStatus}</p>
-      </div>
+      {user && (
+        <AvatarTest
+          variant={user?.color}
+          isSavedMessages={isSavedMessages}
+          size={avatarSize}
+          peer={user}
+        />
+      )}
+      {user && (
+        <div class="chat-info__container">
+          <FullNameTitle peer={user} isSavedMessages={isSavedMessages} />
+          <p class="list-item__subtitle">{userStatus}</p>
+        </div>
+      )}
       {/* </ListItem> */}
     </div>
   )

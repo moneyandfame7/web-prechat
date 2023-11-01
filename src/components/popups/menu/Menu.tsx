@@ -105,7 +105,6 @@ export const Menu: FC<MenuProps> = memo(
       // stopEvent(e)
       onClose()
     }, [])
-
     useClickAway(
       containerRef || menuRef,
       (e, clicked) => {

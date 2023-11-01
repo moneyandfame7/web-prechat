@@ -14,6 +14,7 @@ import {
   updateOpenedChats,
 } from 'state/updates/chats'
 
+import {logger} from 'utilities/logger'
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
 import {changeHash} from 'utilities/routing'
@@ -132,7 +133,7 @@ createAction('openChat', async (state, actions, payload) => {
       actions.getChat({id})
     }
   }
-
+  logger.info('OPENED CHAT - ', chat)
   document.title = chat?.title || ''
 
   if (shouldChangeHash) {

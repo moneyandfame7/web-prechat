@@ -2,9 +2,11 @@ import {useSignal} from '@preact/signals'
 import {
   type FC,
   forwardRef,
+  memo,
   startTransition,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'preact/compat'
@@ -16,7 +18,14 @@ import {
   type VListHandle,
 } from 'virtua'
 
+import {getActions} from 'state/action'
+import {selectChat} from 'state/selectors/chats'
+import {selectMessage} from 'state/selectors/messages'
+import {getGlobalState} from 'state/signal'
+
 import {timeout} from 'utilities/schedulers/timeout'
+
+import {VirtualScrollItem} from 'containers/middle/message/MessageBubble'
 
 import {Button} from './ui'
 import {Loader} from './ui/Loader'
@@ -45,55 +54,53 @@ interface InfiniteScrollProps {
   messageIds: string[]
 }
 const InfiniteScroll: FC<InfiniteScrollProps> = ({messageIds}) => {
-  const id = useRef(0)
-  const createRows = (num: number) => {
-    // const heights = [20, 40, 80, 77]
-    return Array.from({length: num}).map(() => Number(Math.random() * new Date().getTime()))
-  }
-  useEffect(() => {
-    console.log(ref.current?.cache)
-  }, [])
+  // useEffect(() => {
+  //   console.log(ref.current?.cache)
+  // }, [])
   const [shifting, setShifting] = useState(false)
-  const [startFetching, setStartFetching] = useState(false)
-  const [endFetching, setEndFetching] = useState(false)
   const fetchItems = async (isStart = false) => {
     setShifting(isStart)
-    const setFetching = isStart ? setStartFetching : setEndFetching
-    setFetching(true)
     await timeout(1000)('123123')
-    setFetching(false)
   }
   const ref = useRef<VListHandle>(null)
-  const ITEM_BATCH_COUNT = 100
-  // const [items, setItems] = useState(() => createRows(ITEM_BATCH_COUNT * 2))
 
   const [items, setItems] = useState<string[]>(messageIds)
-  const THRESHOLD = 1
+
+  useEffect(() => {
+    setItems(messageIds)
+  }, [messageIds])
+  const THRESHOLD = 10
   const count = items.length
   const startFetchedCountRef = useRef(-1)
   const endFetchedCountRef = useRef(-1)
   const ready = useRef(false)
 
-  const shouldAnimate = useSignal(false)
-  useEffect(() => {
-    ref.current?.scrollToIndex(items.length / 2 + 1)
+  useLayoutEffect(() => {
+    // ref.current?.scrollToIndex(items.length)
     ready.current = true
-  }, [])
+  }, [items])
+  const global = getGlobalState()
+  const actions = getActions()
+  const chat = selectChat(global, global.chats.ids[0])
   return (
-    /* @ts-expect-error preact types are confused */
     <div
       style={{
         border: '3px solid green',
-        height: '50%',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
       }}
     >
+      <h4>LAST READ BY ME: {chat?.lastReadIncomingMessageId}</h4>
+      <h4>LAST READ BY OTHER: {chat?.lastReadOutgoingMessageId}</h4>
       <Button
         fullWidth={false}
         onClick={() => {
-          ref.current?.scrollToIndex(0, 'end')
+          ref.current?.scrollToIndex(0, {
+            align: 'end',
+            smooth: true,
+          })
         }}
       >
         Scroll to 0
@@ -101,34 +108,50 @@ const InfiniteScroll: FC<InfiniteScrollProps> = ({messageIds}) => {
       <Button
         fullWidth={false}
         onClick={() => {
-          ref.current?.scrollToIndex(80, 'end')
-          shouldAnimate.value = true
-          setTimeout(() => {
-            ref.current?.scrollToIndex(99, 'end')
-
-            shouldAnimate.value = false
-          }, 100)
+          ref.current?.scrollToIndex(99, {
+            align: 'end',
+            smooth: true,
+          })
         }}
       >
         Scroll to 99
       </Button>
+      {/*  @ts-expect-error preact types are confused  */}
       <VList
         ref={ref}
         style={{
           flex: 1,
-          scrollBehavior: shouldAnimate.value ? 'smooth' : undefined,
+          // scrollBehavior: shouldAnimate.value ? 'smooth' : undefined,
         }}
+        components={{Item: VirtualScrollItem}}
         shift={shifting}
         onRangeChange={async (start, end) => {
           if (!ready.current) return
+
           // @todo threshhold не значить шо одразу з апішки, треба спочатку якось локально перевіряти?
           // або забити хуй і не паритись, бо це для мене ще дуже важко навчитись і кешувати і так далі. просто хуярити initial query і потім пагінацією.
           // але як придумати jumpToDate? не дарма ж я календар робив...
           startTransition(() => {
-            console.error('ALL ITEMS: FIRST', items[0], 'LAST:', items[items.length - 1])
+            console.error(
+              'ALL ITEMS: FIRST',
+              items.indexOf(items[start]),
+              'LAST:',
+              items.indexOf(items[end])
+            )
+            const msg = selectMessage(global, global.chats.ids[0], items[end])
+            if (
+              msg &&
+              chat &&
+              !msg.isOutgoing &&
+              msg.orderedId > chat.lastReadIncomingMessageId!
+            ) {
+              console.log('SHOULD MARK AS READ ', msg.orderedId)
+
+              // actions.readHistory({chatId: global.chats.ids[0], maxId: msg.orderedId})
+            }
           })
           if (end + THRESHOLD > count && endFetchedCountRef.current < count) {
-            console.log('SHOULD LOAD FOR BOTTOm', 'last cursor id:', items[end - 1])
+            console.log('SHOULD LOAD FOR BOTTOm', 'last cursor id:', items[end])
             // endFetchedCountRef.current = count // think need change only after success operations?
             await fetchItems()
             // setItems((prev) => [...prev, ...createRows(20)])
@@ -144,19 +167,32 @@ const InfiniteScroll: FC<InfiniteScrollProps> = ({messageIds}) => {
         {/* <div style={startFetching ? undefined : {visibility: 'hidden', position: 'relative'}}>
         <Loader key="header" isLoading isVisible />
       </div> */}
-        {items.map((val, idx) => (
-          <div key={val} style={{backgroundColor: idx % 2 === 0 ? 'red' : 'green'}}>
-            <h4>{val}</h4>
-            <span>{idx}</span>
-          </div>
-        ))}
-        <div style={endFetching ? undefined : {visibility: 'hidden', position: 'relative'}}>
-          <Loader key="foot" isLoading isVisible />
-        </div>
+        {items.map((val, idx) => {
+          return <TestComponent key={val} msgId={val} idx={idx} />
+        })}
       </VList>
     </div>
   )
 }
+
+const TestComponent: FC<{msgId: string; idx: number}> = memo((props) => {
+  const global = getGlobalState()
+  const message = useMemo(() => selectMessage(global, global.chats.ids[0], props.msgId), [])
+  const chat = useMemo(() => selectChat(global, global.chats.ids[0]), [])
+
+  console.log('ITEM RERENDER >>>')
+  return (
+    <div key={props.msgId} style={{backgroundColor: props.idx % 2 === 0 ? 'pink' : 'yellow'}}>
+      <h4>{props.msgId}</h4>
+      <span>{message?.orderedId}</span>
+      {message?.text}
+      {message && !message.isOutgoing && chat && (
+        <b>{chat.lastReadIncomingMessageId! < message.orderedId ? 'UNREAD' : 'READ'}</b>
+      )}
+      {!message?.isOutgoing && '****************'}
+    </div>
+  )
+})
 
 export {InfiniteScroll}
 

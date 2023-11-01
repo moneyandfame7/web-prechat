@@ -44,6 +44,7 @@
     }
     .chat-input-container {
       gap: 5px !important;
+      z-index: 1;
     }
   }
   display: flex;
@@ -74,6 +75,23 @@
     border-radius: 50%;
     height: 56px;
     width: 56px;
+  }
+
+  .btn-go-down {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    // visibility: hidden;
+
+    box-shadow: 0 1px 8px 1px #0000001f !important;
+    opacity: 0;
+    transform: translateY(30px);
+    pointer-events: none;
+    @include withAnimations {
+      transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.1s ease,
+        background-color 0.2s ease;
+    }
+    // @include defaultTransition(opacity);
   }
 
   &.is-helper-active {

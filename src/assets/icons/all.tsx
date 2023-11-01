@@ -89,6 +89,7 @@ export {ReactComponent as addUser} from './adduser.svg'
 export {ReactComponent as pin} from './pin.svg'
 export {ReactComponent as unpin} from './unpin.svg'
 export {ReactComponent as pinnedChat} from './pinnedchat.svg'
+export {ReactComponent as arrowDown} from './arrow_down.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

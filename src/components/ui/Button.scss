@@ -94,6 +94,11 @@
     height: max-content;
     padding-block: 8px;
   }
+  &-circle {
+    border-radius: 50%;
+    height: 56px;
+    width: 56px;
+  }
 
   &-loading {
     justify-content: center;
@@ -106,6 +111,17 @@
   &-loading.Button-transparent {
     // color: #fff;
     background-color: var(--c-primary-transparent);
+  }
+
+  > .badge {
+    background-color: var(--c-primary);
+    color: var(--c-white);
+    border-radius: 10px;
+    padding-inline: 5px;
+    font-size: 14px;
+    font-weight: 700;
+    position: absolute;
+    top: 0;
   }
 
   &:disabled {
@@ -127,8 +143,15 @@
   }
 
   &-gray {
-    background-color: transparent;
+    --c-ripple: unset;
 
+    background-color: var(--c-surface);
+    &:hover {
+      background-color: var(--c-surface-2);
+      .Icon path {
+        // fill: var(--c-white);
+      }
+    }
     // &:hover {
     //   // &:hover,
     //   // :focus {
@@ -157,5 +180,6 @@
   > .transition-zoomIconBackwards {
     height: 24px;
     width: 24px;
+    flex-shrink: 0;
   }
 }

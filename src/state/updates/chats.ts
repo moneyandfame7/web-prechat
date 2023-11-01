@@ -18,11 +18,11 @@ export function updateChats(global: SignalGlobalState, chatsById: Record<string,
   updateByKey(global.chats.byId, chatsById)
 
   const list = Object.values(global.chats.byId as Record<string, ApiChat>)
-  list.forEach((c) => {
-    if (c.lastMessage) {
-      updateMessages(global, c.id, {[c.lastMessage.id]: c.lastMessage}, true)
-    }
-  })
+  // list.forEach((c) => {
+  //   if (c.lastMessage) {
+  //     updateMessages(global, c.id, {[c.lastMessage.id]: c.lastMessage}, true)
+  //   }
+  // })
   const orderedIds = list
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .map((s) => s.id)

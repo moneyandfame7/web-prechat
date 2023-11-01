@@ -7,7 +7,11 @@ import {
   SUBSCRIBE_ON_CHAT_CREATED,
   SUBSCRIBE_ON_USER_STATUS_UPDATED,
 } from 'api/graphql'
-import {SUBSCRIBE_ON_DRAFT_UPDATE} from 'api/graphql/messages'
+import {
+  SUBSCRIBE_ON_DRAFT_UPDATE,
+  SUBSCRIBE_ON_READ_HISTORY_INBOX,
+  SUBSCRIBE_ON_READ_HISTORY_OUTBOX,
+} from 'api/graphql/messages'
 import {
   SUBSCRIBE_ON_DELETE_MESSAGES,
   SUBSCRIBE_ON_EDIT_MESSAGE,
@@ -20,6 +24,8 @@ import type {
   ApiDraftUpdateSub,
   ApiEditMessageSub,
   ApiNewMessageSub,
+  ApiReadHistoryInboxSub,
+  ApiReadHistoryOutboxSub,
   ApiSession,
   ApiUserStatusSub,
 } from 'api/types'
@@ -42,6 +48,9 @@ interface SubscribeResult {
   onNewMessage: ApiNewMessageSub
   onDeleteMessages: ApiDeleteMessagesSub
   onEditMessage: ApiEditMessageSub
+  onReadHistoryInbox: ApiReadHistoryInboxSub
+  onReadHistoryOutbox: ApiReadHistoryOutboxSub
+
   onDraftUpdate: ApiDraftUpdateSub
 }
 type SubscribeName = keyof SubscribeResult
@@ -59,6 +68,8 @@ const SUBSCRIBE_QUERY: Record<SubscribeName, DocumentNode> = {
   onDeleteMessages: SUBSCRIBE_ON_DELETE_MESSAGES,
   onEditMessage: SUBSCRIBE_ON_EDIT_MESSAGE,
   onDraftUpdate: SUBSCRIBE_ON_DRAFT_UPDATE,
+  onReadHistoryInbox: SUBSCRIBE_ON_READ_HISTORY_INBOX,
+  onReadHistoryOutbox: SUBSCRIBE_ON_READ_HISTORY_OUTBOX,
 }
 export type Subscribes = {
   [key in SubscribeName]: () => void
@@ -72,7 +83,17 @@ const subscribeHandler = <N extends SubscribeName, TData extends SubscribeResult
   name: N,
   handler: (data: TData) => void
 ) => {
-  const subscription = ApolloClient.client.subscribe({query: SUBSCRIBE_QUERY[name]})
+  const global = getGlobalState()
+
+  const subscription = ApolloClient.client.subscribe({
+    query: SUBSCRIBE_QUERY[name],
+    variables: {
+      requesterId: global.auth.userId,
+    },
+    context: {
+      requesterId: global.auth.userId,
+    },
+  })
 
   return subscription.subscribe({
     next({data}) {
@@ -103,8 +124,9 @@ export function createSubscribe<N extends SubscribeName>(
 
   subscriptions[name] = () => {
     const sub = subscribeHandler(name, (data) => {
-      const global = getGlobalState()
       const actions = getActions()
+      const global = getGlobalState()
+
       handler(global, actions, data)
     })
     destroyers[name] = sub
@@ -143,3 +165,5 @@ export function destroySubscribeAll() {
   //   }
   // }
 }
+
+// 285050 - 284443

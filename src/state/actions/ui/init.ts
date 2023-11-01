@@ -38,6 +38,9 @@ createAction('init', async (state, actions): Promise<void> => {
   if (IS_APPLE) {
     document.documentElement.classList.add('is-apple')
   }
+  if (USER_BROWSER.includes('Firefox')) {
+    document.documentElement.classList.add('is-firefox')
+  }
   if (USER_BROWSER.startsWith('Safari')) {
     document.documentElement.classList.add('is-safari')
   }

@@ -25,6 +25,8 @@ export const FRAGMENT_CHAT: DocumentNode = gql`
     isNotJoined
     isForbidden
     isSupport
+    lastReadIncomingMessageId
+    lastReadOutgoingMessageId
     lastMessage {
       ...AllMessageFields
     }

@@ -4,7 +4,7 @@ import type {ApiLangKey} from 'api/types/langPack'
 
 import {DEBUG} from 'common/environment'
 
-import type {SignInPayload, SignUpPayload} from 'types/action'
+import type {GetHistoryPayload, SignInPayload, SignUpPayload} from 'types/action'
 import type {DeepPartial} from 'types/common'
 import type {ApiLangCode} from 'types/lib'
 import type {RightColumnScreens, SettingsScreens} from 'types/screens'
@@ -102,13 +102,10 @@ interface ActionPayloads {
   sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}
   editMessage: {text: string; chatId: string; messageId: string}
   deleteMessages: {ids: string[]; chatId: string}
-  getHistory: {
+  getHistory: GetHistoryPayload
+  readHistory: {
     chatId: string
-    limit?: number
-    offsetId?: string
-    direction?: HistoryDirection
-    maxDate?: Date
-    includeOffset?: boolean
+    maxId: number
   }
   getPinnedMessages: {
     chatId: string

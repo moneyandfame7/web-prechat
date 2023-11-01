@@ -3,6 +3,7 @@ import type {ApiMessage} from 'api/types/messages'
 
 import type {SignalGlobalState} from 'types/state'
 
+import {selectChat} from './chats'
 import {selectUser} from './users'
 
 export function selectMessage(global: SignalGlobalState, chatId: string, messageId: string) {
@@ -36,6 +37,33 @@ export function selectChatMessageIds(
   chatId: string
 ): string[] | undefined {
   return global.messages.idsByChatId[chatId]
+}
+
+export function selectChatMessageOrderIds(global: SignalGlobalState, chatId: string) {
+  const messages = selectMessages(global, chatId)
+
+  if (!messages) {
+    return
+  }
+
+  return Object.values(messages)
+    .map((m) => m.orderedId)
+    .sort((a, b) => a - b)
+}
+
+export function selectFirstUnreadMessage(global: SignalGlobalState, chatId: string) {
+  const chat = selectChat(global, chatId)
+  const messagesById = selectMessages(global, chatId)
+  const lastRead = chat?.lastReadIncomingMessageId
+  if (!messagesById || !chat || lastRead === undefined) {
+    return
+  }
+
+  return Object.values(messagesById)
+    .sort((a, b) => a.orderedId - b.orderedId)
+    .find((m) => {
+      return !m.isOutgoing && m.orderedId > lastRead
+    })
 }
 
 export function selectPinnedMessageIds(

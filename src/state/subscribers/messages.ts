@@ -30,18 +30,21 @@ createSubscribe('onNewMessage', (state, _, data) => {
 })
 
 createSubscribe('onDeleteMessages', (state, _, data) => {
-  const {chatId, ids} = data
-  const chat = selectChat(state, chatId)
+  const {chat: affectedChat, ids} = data
+  const chat = selectChat(state, affectedChat.id)
   if (!chat) {
     return
   }
 
-  console.log('DELETED MESSAGES:', {chatId, ids})
+  console.log('DELETED MESSAGES:', {chatId: chat.id, ids})
 
   batch(() => {
     ids.forEach((id) => {
-      deleteMessage(state, chatId, id)
-      console.log('message deleted:', id)
+      deleteMessage(state, chat.id, id)
+    })
+    updateChat(state, chat.id, {
+      // maybe повністю оновити чат? та хз зайві ререндери
+      lastMessage: affectedChat.lastMessage,
     })
   })
 })
@@ -73,6 +76,30 @@ createSubscribe('onEditMessage', (state, _, data) => {
     },
     false
   )
+})
+
+// це коли МОЇ повідомлення прочитав хтось інший...
+createSubscribe('onReadHistoryOutbox', (state, _, data) => {
+  console.error('ХТОСЬ ПРОЧИТАВ ТВОЇ ПОВІДОМЛЕННЯ:', data)
+  updateChat(state, data.chatId, {
+    lastReadOutgoingMessageId: data.maxId,
+  })
+})
+
+// це коли Я прочитав чиїсь повідомлення.... ???
+createSubscribe('onReadHistoryInbox', (state, _, data) => {
+  console.error('ТИ ПРОЧИТАВ ЧИЇСЬ ПОВІДОМЛЕННЯ:', data)
+
+  const chat = selectChat(state, data.chatId)
+  if (!chat) {
+    return
+  }
+  // if (chat.lastReadIncomingMessageId! < data.maxId) {
+  updateChat(state, data.chatId, {
+    lastReadIncomingMessageId: data.maxId,
+    unreadCount: data.newUnreadCount,
+  })
+  // }
 })
 
 createSubscribe('onDraftUpdate', (state, _, data) => {
