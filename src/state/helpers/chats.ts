@@ -91,10 +91,10 @@ export function getPeerRoute(peer?: ApiChat | ApiUser) {
   const chatUsername = getChatUsername_deprecated(peer)
 
   if (chatUsername && USE_USERNAMES) {
-    return `http://localhost:8000/#@${chatUsername.toLowerCase()}`
+    return `${import.meta.env.VITE_APP_URL}/#@${chatUsername.toLowerCase()}`
   }
 
-  return `http://localhost:8000/#${peer.id}`
+  return `${import.meta.env.VITE_APP_URL}/#${peer.id}`
 }
 
 export function isPrivateChat2(chat: ApiChat): chat is MakeRequired<ApiChat, 'userId'> {

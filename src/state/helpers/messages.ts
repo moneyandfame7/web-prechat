@@ -54,6 +54,16 @@ export function getFirstUnreadMessage({
       return !m.isOutgoing && m.orderedId > lastRead
     })
 }
+
+export function getLastOutgoingMessage({
+  messagesById,
+}: {
+  messagesById: Record<string, ApiMessage>
+}) {
+  return Object.values(messagesById)
+    .sort((a, b) => b.orderedId - a.orderedId)
+    .find((m) => m.isOutgoing /* &&date ~<48hours? */)
+}
 export function orderHistory(messages: ApiMessage[]) {
   return messages.sort((a, b) => {
     return a.orderedId - b.orderedId

@@ -207,31 +207,33 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
               <IconButton icon="close" onClick={handleCloseSelection} />
               {TEST_translate('MessagesCount', {count: selectedMessagesCount})}
             </div>
-            <div class="selection-container-right">
-              <Button
-                uppercase={false}
-                shape="rounded"
-                fullWidth={false}
-                color="gray"
-                variant="transparent"
-                iconPosition="start"
-                icon="forward"
-              >
-                {TEST_translate('Forward')}
-              </Button>
-              <Button
-                onClick={openDeleteModal}
-                uppercase={false}
-                shape="rounded"
-                fullWidth={false}
-                color="red"
-                variant="transparent"
-                iconPosition="start"
-                icon="delete"
-              >
-                {TEST_translate('Delete')}
-              </Button>
-            </div>
+            {Boolean(selectedMessagesCount) && (
+              <div class="selection-container-right">
+                <Button
+                  uppercase={false}
+                  shape="rounded"
+                  fullWidth={false}
+                  color="gray"
+                  variant="transparent"
+                  iconPosition="start"
+                  icon="forward"
+                >
+                  {TEST_translate('Forward')}
+                </Button>
+                <Button
+                  onClick={openDeleteModal}
+                  uppercase={false}
+                  shape="rounded"
+                  fullWidth={false}
+                  color="red"
+                  variant="transparent"
+                  iconPosition="start"
+                  icon="delete"
+                >
+                  {TEST_translate('Delete')}
+                </Button>
+              </div>
+            )}
           </div>
         )
     }
