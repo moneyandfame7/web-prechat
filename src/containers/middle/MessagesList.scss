@@ -425,8 +425,8 @@
   justify-content: center;
 
   > .Icon-check {
-    width: 14px;
-    height: 14px;
+    width: 14px !important;
+    height: 14px !important;
     // path {}
     @include withAnimations {
       animation: hide-icon 0.3s forwards ease;
