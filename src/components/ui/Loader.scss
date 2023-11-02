@@ -3,8 +3,8 @@
   position: absolute;
   inset: 0;
   margin: auto;
-  width: 54px;
-  height: 54px;
+  width: 54px !important; // confused in production
+  height: 54px !important;
   display: flex;
   align-items: center;
   justify-content: center;
