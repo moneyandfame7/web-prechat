@@ -135,25 +135,6 @@ const MiddleColumn: FC<InjectedProps> = ({
     [isChatOpen, hasMessageSelection, hasMessageEditing]
   )
 
-  const handlePressArrowUp = () => {
-    if (!messagesById) {
-      return
-    }
-
-    const lastEditableMessage = getLastOutgoingMessage({messagesById})
-
-    console.log('SHOULD EDIT LAST MESSAGE', lastEditableMessage)
-
-    actions.toggleMessageEditing({id: lastEditableMessage?.id, active: true})
-  }
-  useEffect(
-    () =>
-      isChatOpen && !hasMessageEditing
-        ? addKeyboardListeners({onUp: handlePressArrowUp})
-        : undefined,
-    [isChatOpen, hasMessageEditing, handlePressArrowUp]
-  )
-
   useEffect(() => {
     // if(has)
     actions.toggleMessageSelection({active: false})

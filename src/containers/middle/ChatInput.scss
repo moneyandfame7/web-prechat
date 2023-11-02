@@ -178,9 +178,9 @@
 }
 .input-message {
   z-index: 2;
-  position: relative;
+  position: relative !important;
   // width: 85%;
-  width: 100%;
+  width: 100% !important;
   background-color: var(--c-surface);
 
   @include bgAndColorTransition();

@@ -142,11 +142,10 @@ const SettingsGeneralImpl: FC<StateProps> = ({generalSettings}) => {
         </div>
 
         <ListItem icon="image" title="Chat Wallpaper" />
-        <ListItem
-          onClick={handleToggleAnimations}
-          withCheckbox
-          title="Enable Animations"
-          isChecked={generalSettings.animationsEnabled}
+        <Checkbox
+          onToggle={handleToggleAnimations}
+          label="Enable Animations"
+          checked={generalSettings.animationsEnabled}
         />
 
         <Checkbox
