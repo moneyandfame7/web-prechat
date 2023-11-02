@@ -71,8 +71,8 @@
   }
 
   &.small {
-    width: 27px;
-    height: 27px;
+    width: 27px !important;
+    height: 27px !important;
     > .loader-circular,
     > .loader-download,
     > .loader-cancel {
