@@ -2,6 +2,8 @@ import {type CSSProperties, type FC} from 'preact/compat'
 
 import clsx from 'clsx'
 
+import {Size} from 'types/ui'
+
 import {SingleTransition} from 'components/transitions'
 
 import {Icon} from '.'
@@ -15,6 +17,7 @@ interface LoaderProps {
   isLoading?: boolean
   isPending?: boolean
   styles?: CSSProperties
+  size?: Size
 }
 
 const Loader: FC<LoaderProps> = ({
@@ -23,8 +26,9 @@ const Loader: FC<LoaderProps> = ({
   isLoading = true,
   isPending = false,
   styles,
+  size = 'medium',
 }) => {
-  const buildedClass = clsx('loader-container', {
+  const buildedClass = clsx(`loader-container ${size}`, {
     loading: isLoading && !isPending,
     cancelable: isCancelable,
     pending: isPending,

@@ -85,6 +85,10 @@ const debounceGetHistory = debounce((cb) => cb(), 250, true)
 /**
  @todo fix: sending message status
  @todo refactor: remove unused, divide  in hook
+ @todo можливо прибрати uniqueId і використовувати тільки той orderId всюди?
+ думаю чому б ні???
+ лише для редагування можна передавати рідний id, наприклад, і то хз
+ зробити _id або uniqueId, а той шо order — або orderId або просто id
  */
 const MessagesListImpl: FC<OwnProps & StateProps> = ({
   messageIds,
@@ -107,6 +111,8 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   const isFirstRender = useRef(true)
   const isFetching = useRef(false)
   const [shifting, setShifting] = useState(false)
+  const [startFetching, setStartFetching] = useState(false)
+  const [endFetching, setEndFetching] = useState(false)
   const [firstUnreadMessage2, setFirstUnreadMessage2] = useState(
     messagesById && chat?.lastReadIncomingMessageId !== undefined
       ? getFirstUnreadMessage({messagesById, lastRead: chat?.lastReadIncomingMessageId})
@@ -124,8 +130,9 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
           includeOffset: true,
           limit: 40,
         })
-
-        console.log(chat?.lastReadIncomingMessageId, 'SHOULD FETCH AROUND FROM')
+        if (chat?.unreadCount) {
+          console.log(chat?.lastReadIncomingMessageId, 'SHOULD FETCH AROUND FROM')
+        }
       }
 
       isReady.current = true
@@ -283,10 +290,13 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
    */
   const handleFetchHistory2 = async (payload: GetHistoryPayload, isStart = false) => {
     isFetching.current = true
+    const setFetching = isStart ? setStartFetching : setEndFetching
+    setFetching(true)
     setShifting(isStart)
 
     await getHistory(payload)
 
+    setFetching(false)
     isFetching.current = false
   }
   const handleRangeChange = async (start: number, end: number) => {
@@ -409,16 +419,30 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
             ref={infiniteScrollRef}
             onScroll={handleScroll}
             onRangeChange={handleRangeChange}
-            // components={{Item: VirtualScrollItem}}
+            components={{Item: VirtualScrollItem}}
             className="scrollable scrollable-hidden"
-            // overscan={20}
+            overscan={30}
             style={{
               flex: 1,
               paddingBlock: '5px',
               overflowX: 'hidden' /* overflowAnchor: 'none' */,
             }}
           >
+            <Loader
+              size="small"
+              styles={{marginTop: 10, position: 'relative'}}
+              isVisible={startFetching}
+              isLoading
+            />
+
             {renderedItems}
+
+            <Loader
+              size="small"
+              styles={{marginTop: 10, position: 'relative'}}
+              isVisible={endFetching}
+              isLoading
+            />
           </VList>
         </div>
       </SingleTransition>

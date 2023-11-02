@@ -60,7 +60,7 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
     isSelected,
     isFirstUnread,
   }) => {
-    const {getUser} = getActions()
+    const {getUser, openChat} = getActions()
 
     // useEffect(() => {
     //   if (!sender && message.senderId) {
@@ -143,6 +143,19 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
       }
     }
     const handleCopyMessageMedia = () => {}
+
+    const handleClickAvatar = () => {
+      if (!sender) {
+        return
+      }
+      openChat({
+        id: sender.id,
+        username: sender.username,
+        shouldChangeHash: true,
+        shouldReplaceHistory: false,
+      })
+    }
+
     const hasCopyMessageGroup =
       !!selectedText || !!message.content.photo || !!message.content.formattedText?.text
     const isOutgoingNotRead =
@@ -189,7 +202,9 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
         // }
       >
         {isFirstUnread && (
-          <p class="bubble-unread-divider">{TEST_translate('Message.UnreadMessages')}</p>
+          <div class="bubble action is-unread-divider">
+            <div class="bubble-content">{TEST_translate('Message.UnreadMessages')}</div>
+          </div>
         )}
 
         {hasMessageSelection && (
@@ -204,7 +219,9 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
             /> */}
           </div>
         )}
-        {withAvatar && isLastInGroup && <AvatarTest size="xs" peer={sender} />}
+        {withAvatar && isLastInGroup && (
+          <AvatarTest onClick={handleClickAvatar} size="xs" peer={sender} />
+        )}
         <div class="bubble-content">
           {showSenderName && (
             <p class="bubble-content__sender">{senderName || 'USER NAME_UNDF'}</p>
