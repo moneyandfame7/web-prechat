@@ -35,4 +35,11 @@
       }
     }
   }
+  &.Button-gray {
+    &:hover {
+      .Icon path {
+        fill: var(--c-icon);
+      }
+    }
+  }
 }

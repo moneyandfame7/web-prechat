@@ -2,6 +2,7 @@ import {ApiBaseMethod} from 'api/base'
 import {
   MUTATION_DELETE_MESSAGES,
   MUTATION_EDIT_MESSAGE,
+  MUTATION_READ_HISTORY,
   MUTATION_SEND_MESSAGE,
   QUERY_GET_HISTORY,
   QUERY_GET_PINNED,
@@ -13,6 +14,7 @@ import type {
   EditMessageInput,
   GetHistoryInput,
   GetPinnedMessagesInput,
+  ReadHistoryInput,
   SendMessageInput,
 } from 'api/types/messages'
 
@@ -69,6 +71,17 @@ export class ApiMessages extends ApiBaseMethod {
     })
 
     return cleanTypename(data.getHistory)
+  }
+
+  public async readHistory(input: ReadHistoryInput) {
+    const {data} = await this.client.mutate({
+      mutation: MUTATION_READ_HISTORY,
+      variables: {
+        input,
+      },
+    })
+
+    return cleanTypename(data?.readHistory.newUnreadCount)
   }
 
   public async getPinnedMessages(input: GetPinnedMessagesInput) {

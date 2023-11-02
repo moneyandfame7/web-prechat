@@ -59,7 +59,13 @@ const ConfirmModal: FC<ConfirmModalProps> = ({
   )
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} closeOnEsc className="ConfirmModal">
+    <Modal
+      shouldCloseOnBackdrop
+      isOpen={isOpen}
+      onClose={onClose}
+      closeOnEsc
+      className="ConfirmModal"
+    >
       <ModalHeader>
         {renderHeaderAvatar()}
         <ModalTitle>{title || 'Prechat'}</ModalTitle>

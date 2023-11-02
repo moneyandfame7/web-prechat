@@ -69,6 +69,15 @@
   > .Icon path {
     fill: var(--c-white);
   }
+
+  &.small {
+    width: 27px;
+    height: 27px;
+    > .loader-circular,
+    > .loader-download,
+    > .loader-cancel {
+    }
+  }
 }
 
 @keyframes rotation {

@@ -11,7 +11,7 @@ import {
 
 import type {ApiCountry} from 'api/types/langPack'
 
-import {t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
 import {TRANSITION_DURATION_ZOOM_FADE} from 'common/environment'
 
@@ -106,7 +106,7 @@ export const SelectCountryInput: FC<SelectCountryInputProps> = memo(
             onFocus={handleOnFocus}
             onInput={handleChange}
             value={stringName}
-            label={t('Country')}
+            label={TEST_translate('Country')}
             loading={loading}
             endIcon={<Icon name="chevronDown" color="secondary" />}
           />

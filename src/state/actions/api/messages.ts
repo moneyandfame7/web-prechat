@@ -1,9 +1,6 @@
-import {batch} from '@preact/signals'
-
 import type {DeepSignal} from 'deepsignal'
 
-import {apiManager} from 'api/api-manager'
-import {Api} from 'api/manager'
+import {Api, PENDING_REQUESTS} from 'api/manager'
 import {type ApiMessage, HistoryDirection} from 'api/types'
 
 import {createAction} from 'state/action'
@@ -11,7 +8,7 @@ import {buildLocalPrivateChat} from 'state/helpers/chats'
 import {buildLocalMessage, orderHistory} from 'state/helpers/messages'
 import {isUserId} from 'state/helpers/users'
 import {selectChat} from 'state/selectors/chats'
-import {selectMessage, selectMessages} from 'state/selectors/messages'
+import {selectMessage, selectMessageSender, selectMessages} from 'state/selectors/messages'
 import {selectUser} from 'state/selectors/users'
 import {updateChat, updateChats} from 'state/updates'
 import {
@@ -22,10 +19,14 @@ import {
   updateMessages,
 } from 'state/updates/messages'
 
+import {FIRST_MSG_ID} from 'common/app'
 import {filterUnique} from 'utilities/array/filterUnique'
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
+import {debounce} from 'utilities/schedulers/debounce'
 import {timeout} from 'utilities/schedulers/timeout'
+
+const debouncedReadHistory = debounce((cb) => cb(), 600, false)
 
 createAction('sendMessage', async (state, _, payload) => {
   const {currentChat} = state
@@ -37,6 +38,10 @@ createAction('sendMessage', async (state, _, payload) => {
   // if (!chat) {
   //   return
   // }
+
+  // console.log({chatId, chat})
+
+  // return
   const {text, entities, sendAs} = payload
   if (!chat && isUserId(chatId)) {
     chat = buildLocalPrivateChat({user: selectUser(state, chatId)!})
@@ -47,7 +52,7 @@ createAction('sendMessage', async (state, _, payload) => {
     return
   }
   const localMessage = buildLocalMessage({
-    orderedId: chat.lastMessage ? chat.lastMessage.orderedId + 1 : 1,
+    orderedId: chat.lastMessage ? chat.lastMessage.orderedId + 1 : FIRST_MSG_ID,
     chatId,
     text,
     entities,
@@ -120,13 +125,13 @@ createAction('editMessage', async (state, actions, payload) => {
 })
 
 createAction('deleteMessages', async (state, _actns, payload) => {
-  const {ids, deleteForAll, chatId} = payload
+  const {ids, chatId} = payload
   /* ???? ahahahah */
   ids.forEach((id) => {
     deleteMessageLocal(state, chatId, id)
   })
 
-  const result = await Api.messages.deleteMessages({ids, deleteForAll})
+  const result = await Api.messages.deleteMessages({ids})
 
   if (result) {
     // batch(() => {
@@ -141,7 +146,7 @@ createAction('deleteMessages', async (state, _actns, payload) => {
   }
 })
 
-createAction('getHistory', async (state, _actions, payload) => {
+createAction('getHistory', async (state, actions, payload) => {
   const {
     chatId,
     direction = HistoryDirection.Backwards,
@@ -166,12 +171,17 @@ createAction('getHistory', async (state, _actions, payload) => {
     maxDate,
     includeOffset,
   })
-  console.log({HISTORY: result})
   const oldMessages = selectMessages(state, chatId)
 
   const merged = [...Object.values(oldMessages || []), ...Object.values(result)]
-
+  // merged.sort((a, b) => a.orderedId - b.orderedId)
   const orderedHistory = orderHistory(merged)
+
+  // const orderedIds2 = filterUnique(
+  //   merged.sort((a, b) => a.orderedId - b.orderedId).map((message) => message.orderedId)
+  // )
+
+  console.log(orderedHistory.map((m) => m.orderedId))
   // const merged=[oldMessages?(...Object.values(oldMessages))]
   // console.log(Object.values(oldMessages))
   // const newMessages = result.map((m) => m.id)
@@ -180,6 +190,17 @@ createAction('getHistory', async (state, _actions, payload) => {
   //   ids: orderedHistory.map((m) => m.id),
   // })
   const orderedIds = filterUnique(orderedHistory.map((m) => m.id))
+
+  result.map(async (message) => {
+    if (!message.senderId) {
+      return
+    }
+    const sender = selectUser(state, message.senderId)
+
+    if (!sender && !PENDING_REQUESTS.USERS.has(message.senderId)) {
+      await actions.getUser(message.senderId)
+    }
+  })
 
   /* Avoid to recreate???? */
   if (
@@ -197,8 +218,41 @@ createAction('getHistory', async (state, _actions, payload) => {
     updateByKey(oldMessages, record)
   }
   state.messages.idsByChatId[chatId] = [...orderedIds]
+})
 
-  console.log({orderedIds})
+createAction('readHistory', async (state, _actions, payload) => {
+  debouncedReadHistory(() => {
+    void Api.messages.readHistory(payload)
+
+    // const chat = selectChat(state, payload.chatId)
+
+    // if (chat?.unreadCount !== newUnreadCount) {
+    //   updateChat(state, payload.chatId, {
+    //     unreadCount: newUnreadCount,
+    //   })
+    // }
+  })
+
+  // how to calculate count of unread????
+
+  const messagesById = selectMessages(state, payload.chatId)
+  if (!messagesById) {
+    return
+  }
+  const testNewCount = Object.values(messagesById).filter((message) => {
+    return !message.isOutgoing && message.orderedId > payload.maxId
+  }).length
+
+  // console.log({testNewCount})
+  // const messagesOrderIds = selectChatMessageOrderIds(state, payload.chatId)
+  // if (!messagesOrderIds) {
+  //   return
+  // }
+  // console.log({newCountOfUnread})
+  updateChat(state, payload.chatId, {
+    lastReadIncomingMessageId: payload.maxId,
+    unreadCount: testNewCount,
+  })
 })
 
 createAction('getPinnedMessages', async (state, _actions, payload) => {
@@ -237,31 +291,4 @@ createAction('getPinnedMessages', async (state, _actions, payload) => {
   }
 
   state.messages.pinnedIdsByChatId[chatId] = [...orderedIds]
-})
-
-createAction('saveDraft', async (state, _actions, payload) => {
-  // const {force, ...input} = payload
-  const chat = selectChat(state, payload.chatId)
-  if (!chat) {
-    return
-  }
-
-  const result = await apiManager.invokeApi({
-    method: 'messages.saveDraft',
-    variables: {
-      input: payload,
-    },
-  })
-  if (!result) {
-    return
-  }
-
-  updateChat(state, payload.chatId, {
-    draft: payload.text,
-  })
-  // if (!input.text) {
-  //   deleteDraft(state, input.chatId)
-  // } else {
-  //   updateDraft(state, input.chatId, draft as ApiDraft)
-  // }
 })

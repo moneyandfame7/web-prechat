@@ -20,6 +20,9 @@ export type Prettify<T> = {
 export type Include<T, U> = T extends U ? U : never
 export type IsNever<T> = [T] extends [never] ? true : false
 
+export type Nillable<T> = T | undefined | null
+export type UndoNillable<T> = T extends Partial<infer R> ? R : T
+
 // Exclude
 
 // type Split2<S extends string> = S extends `${string}{{${infer U}}}` ? U : S

@@ -53,8 +53,6 @@ export const Icon: FC<IconProps> = memo(
         e.preventDefault()
 
         if (e.button === 0) {
-          logDebugWarn('[UI]: Button click')
-
           onClick?.(e)
         }
       },

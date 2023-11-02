@@ -181,19 +181,20 @@ const NewContactModal: FC<NewContactModalProps & StateProps> = ({
             value={contactPhone}
           />
         )}
-        <ListItem
-          wrap
-          icon="phone"
-          title={TEST_translate('NewContact.MobileHidden')}
-          subtitle={renderText(
-            TEST_translate('NewContact.MobileHiddenInfo', {
-              fullName: fullName.value,
-            }),
-            ['markdown']
-          )}
-        />
+
         {user && (
           <>
+            <ListItem
+              wrap
+              icon="phone"
+              title={TEST_translate('NewContact.MobileHidden')}
+              subtitle={renderText(
+                TEST_translate('NewContact.MobileHiddenInfo', {
+                  fullName: fullName.value,
+                }),
+                ['markdown']
+              )}
+            />
             <ListItem
               className="share-phone-btn"
               withCheckbox
@@ -220,7 +221,6 @@ const NewContactModal: FC<NewContactModalProps & StateProps> = ({
 export default memo(
   connect<NewContactModalProps, StateProps>((state, ownProps) => {
     const user = ownProps.userId ? selectUser(state, ownProps.userId) : undefined
-
     return {
       user,
       userStatus: user ? getUserStatus(user) : undefined,

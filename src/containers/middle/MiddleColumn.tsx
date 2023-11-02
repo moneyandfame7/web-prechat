@@ -1,10 +1,14 @@
-import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useMemo, useRef} from 'preact/compat'
+
+import {VList, VListHandle, WVList} from 'virtua'
+
+import {HistoryDirection} from 'api/types'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {selectOpenedChats} from 'state/selectors/chats'
 import {selectHasMessageEditing, selectHasMessageSelection} from 'state/selectors/diff'
-import {selectPinnedMessageIds} from 'state/selectors/messages'
+import {selectChatMessageIds, selectPinnedMessageIds} from 'state/selectors/messages'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
@@ -12,12 +16,14 @@ import {useBoolean} from 'hooks/useFlag'
 import {useLayout} from 'hooks/useLayout'
 
 import {addEscapeListener} from 'utilities/keyboardListener'
+import {deepClone} from 'utilities/object/deepClone'
 import {connectStateToNavigation} from 'utilities/routing'
 
 import type {OpenedChat} from 'types/state'
 
+import {InfiniteScroll} from 'components/InfiniteScroll'
+import {InfiniteScrollTest} from 'components/test/InfiniteScrollTest'
 import {Transition} from 'components/transitions'
-import {Button} from 'components/ui'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -49,6 +55,8 @@ const MiddleColumn: FC<InjectedProps> = ({
   hasMessageSelection,
   hasMessageEditing,
 }) => {
+  const infiniteScrollRef = useRef<VListHandle>(null)
+
   const global = getGlobalState()
   const actions = getActions()
   const {isSmall, isLaptop} = useLayout()
@@ -132,19 +140,10 @@ const MiddleColumn: FC<InjectedProps> = ({
   // const cleanupExceptionKey = (
   //   prevTransitionKey !== undefined && prevTransitionKey < currentTransitionKey ? prevTransitionKey : undefined
   // );
-  const render = useRef(0)
-  render.current += 1
+
   return (
     <div class="MiddleColumn" id="middle-column">
-      <Button
-        onClick={() => {
-          global.stories.isOpen = !global.stories.isOpen
-        }}
-      >
-        Toggle stories
-        {render.current}
-      </Button>
-      {/* <Transition3d /> */}
+      {/* <InfiniteScrollTest /> */}
       {isChatOpen && (
         <>
           <ChatHeader
@@ -163,7 +162,11 @@ const MiddleColumn: FC<InjectedProps> = ({
             shouldCleanup
           >
             <div class="future-transition-container">
-              <MessagesList chatId={chatId} isPinnedList={isPinnedList} />
+              <MessagesList
+                chatId={chatId}
+                isPinnedList={isPinnedList}
+                infiniteScrollRef={infiniteScrollRef}
+              />
               <ChatInput
                 hasPinnedMessages={!!pinnedMessagesCount}
                 isPinnedList={isPinnedList}
@@ -171,6 +174,7 @@ const MiddleColumn: FC<InjectedProps> = ({
                 onToggleEmojiMenu={toggleEmojiMenu}
                 onCloseEmojiMenu={closeEmojiMenu}
                 chatId={chatId}
+                infiniteScrollRef={infiniteScrollRef}
               />
             </div>
           </Transition>

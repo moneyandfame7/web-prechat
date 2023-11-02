@@ -9,7 +9,7 @@ import {useInputValue} from 'hooks'
 
 import {fromRecord} from 'utilities/array/fromRecord'
 
-import {LeftColumnScreen} from 'types/ui'
+import {LeftColumnScreen} from 'types/screens'
 
 import {ColumnHeader} from 'components/ColumnHeader'
 import {Divider, FloatButton, Icon, IconButton, InputText} from 'components/ui'

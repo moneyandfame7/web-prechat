@@ -227,6 +227,7 @@ const lang = {
   'Message.CopySelectedText': 'Copy Selected Text',
   'Message.CopyText': 'Copy Text',
   'Message.Edited': 'edited',
+  'Message.UnreadMessages': 'Unread messages',
 } as const satisfies Keyset
 
 export default lang

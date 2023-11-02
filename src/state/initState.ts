@@ -158,6 +158,7 @@ export const INITIAL_STATE: GlobalState = {
   newContact: {
     userId: undefined,
     isByPhoneNumber: false,
+    isOpen: false,
   },
 
   commonModal: {

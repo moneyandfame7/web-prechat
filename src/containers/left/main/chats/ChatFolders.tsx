@@ -1,6 +1,5 @@
-import {type FC, memo, useCallback, useEffect, useState} from 'preact/compat'
+import {type FC, memo, useCallback, useState} from 'preact/compat'
 
-import {getActions} from 'state/action'
 import {getPreferredAnimations} from 'state/helpers/settings'
 
 import {type TabItem, TabList} from 'components/common/tabs/TabList'
@@ -66,12 +65,7 @@ const TAB_BTNS = [
 ] as TabItem[]
 
 const ChatFolders: FC = memo(() => {
-  const {getChatFolders} = getActions()
   const [chatFolder, setCurrentChatFolder] = useState(0)
-
-  useEffect(() => {
-    getChatFolders()
-  }, [])
 
   const handleChangeFolder = useCallback((idx: number) => {
     setCurrentChatFolder(idx)

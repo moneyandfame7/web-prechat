@@ -6,6 +6,8 @@ export type ApiChatType = 'chatTypePrivate' | 'chatTypeGroup' | 'chatTypeChannel
 
 export interface ApiChat {
   id: string
+  lastReadIncomingMessageId?: number
+  lastReadOutgoingMessageId?: number
   userId?: string
   type: ApiChatType
   title: string
@@ -59,9 +61,9 @@ export interface ApiChatFull {
   description?: string
   areMembersHidden?: boolean
   historyForNewMembers?: boolean
-  permissions: ApiChatPermissions
-  currentUserPermissions?: ApiChatPermissions
-  currentAdminPermissions?: ApiChatAdminPermissions
+  // permissions: ApiChatPermissions
+  // currentUserPermissions?: ApiChatPermissions
+  // currentAdminPermissions?: ApiChatAdminPermissions
   additionalLinks?: ApiInviteLink[]
 }
 
@@ -76,8 +78,8 @@ export interface ApiChatMember {
   isAdmin?: boolean
   isOwner?: boolean
   /* IF ADMIN - only ADMIN PERMISSIONS, else - only user permissions. */
-  userPermissions?: ApiChatPermissions
-  adminPermissions?: ApiChatAdminPermissions
+  // userPermissions?: ApiChatPermissions
+  // adminPermissions?: ApiChatAdminPermissions
 }
 export interface ApiInviteLink {
   name?: string
@@ -90,21 +92,21 @@ export interface ApiInviteLink {
   isRevoked?: boolean
   isPermanent?: boolean
 }
-export interface ApiChatPermissions {
-  canSendMessages?: boolean
-  canSendMedia?: boolean
-  canInviteUsers?: boolean
-  canPinMessages?: boolean
-  canChangeInfo?: boolean
-}
-export interface ApiChatAdminPermissions {
-  canChangeInfo?: boolean
-  canDeleteMessages?: boolean
-  canBanUsers?: boolean
-  canInviteUsers?: boolean
-  canPinMessages?: boolean
-  canAddNewAdmins?: boolean
-}
+// export interface ApiChatPermissions {
+//   canSendMessages?: boolean
+//   canSendMedia?: boolean
+//   canInviteUsers?: boolean
+//   canPinMessages?: boolean
+//   canChangeInfo?: boolean
+// }
+// export interface ApiChatAdminPermissions {
+//   canChangeInfo?: boolean
+//   canDeleteMessages?: boolean
+//   canBanUsers?: boolean
+//   canInviteUsers?: boolean
+//   canPinMessages?: boolean
+//   canAddNewAdmins?: boolean
+// }
 export interface ApiChatSettings {
   canAddContact?: boolean
   canReportSpam?: boolean

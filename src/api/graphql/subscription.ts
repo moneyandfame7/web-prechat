@@ -32,10 +32,13 @@ export const SUBSCRIBE_ON_DELETE_MESSAGES: TypedDocumentNode<
 > = gql`
   subscription OnDeleteMessages {
     onDeleteMessages {
-      chatId
+      chat {
+        ...AllChatFields
+      }
       ids
     }
   }
+  ${FRAGMENT_CHAT}
 `
 export const SUBSCRIBE_ON_EDIT_MESSAGE: TypedDocumentNode<
   {onEditMessage: ApiEditMessageSub},

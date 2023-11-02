@@ -1,6 +1,6 @@
 import {type FC, type RefObject, type TargetedEvent, useRef} from 'preact/compat'
 
-import {TEST_translate, t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
 import type {SignalOr} from 'types/ui'
 

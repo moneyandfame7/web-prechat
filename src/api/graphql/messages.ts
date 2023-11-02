@@ -6,6 +6,7 @@ import type {
   EditMessageInput,
   GetHistoryInput,
   GetPinnedMessagesInput,
+  ReadHistoryInput,
   SendMessageInput,
 } from 'api/types/messages'
 
@@ -32,9 +33,6 @@ export const FRAGMENT_MESSAGE: DocumentNode = gql`
     isOutgoing
     isPost
     editedAt
-    media {
-      __typename
-    }
     action {
       ...AllMessageActionFields
     }
@@ -107,6 +105,16 @@ export const QUERY_GET_HISTORY: TypedDocumentNode<
 
   ${FRAGMENT_MESSAGE}
 `
+export const MUTATION_READ_HISTORY: TypedDocumentNode<
+  {readHistory: {newUnreadCount: number}},
+  {input: ReadHistoryInput}
+> = gql`
+  mutation ReadHistory($input: ReadHistoryInput!) {
+    readHistory(input: $input) {
+      newUnreadCount
+    }
+  }
+`
 export const QUERY_GET_PINNED: TypedDocumentNode<
   {getPinnedMessages: ApiMessage[]},
   {input: GetPinnedMessagesInput}
@@ -119,9 +127,22 @@ export const QUERY_GET_PINNED: TypedDocumentNode<
 
   ${FRAGMENT_MESSAGE}
 `
-export const MUTATION_SAVE_DRAFT: DocumentNode = gql`
-  mutation SaveDraft($input: SaveDraftInput!) {
-    saveDraft(input: $input)
+
+export const SUBSCRIBE_ON_READ_HISTORY_OUTBOX: DocumentNode = gql`
+  subscription OnReadHistoryOutbox {
+    onReadHistoryOutbox {
+      maxId
+      chatId
+    }
+  }
+`
+export const SUBSCRIBE_ON_READ_HISTORY_INBOX: DocumentNode = gql`
+  subscription OnReadHistoryInbox {
+    onReadHistoryInbox {
+      maxId
+      chatId
+      newUnreadCount
+    }
   }
 `
 

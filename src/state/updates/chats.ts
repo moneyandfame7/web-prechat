@@ -1,7 +1,7 @@
 import type {ApiChat, ApiChatFull, ApiPeer} from 'api/types'
 
 import {getChatUsername_deprecated, isPeerChat} from 'state/helpers/chats'
-import {selectChat, selectCurrentChat, selectOpenedChats} from 'state/selectors/chats'
+import {selectChat, selectOpenedChats} from 'state/selectors/chats'
 import {storages} from 'state/storages'
 
 import {DEBUG} from 'common/environment'
@@ -9,27 +9,20 @@ import {deepCopy} from 'utilities/object/deepCopy'
 import {isDeepEqual} from 'utilities/object/isDeepEqual'
 import {updateByKey} from 'utilities/object/updateByKey'
 
-import type {GlobalState, MessageEditing, OpenedChat, SignalGlobalState} from 'types/state'
+import type {GlobalState, MessageEditing, SignalGlobalState} from 'types/state'
 
 import {updateUsers} from '.'
 import {updateMessages} from './messages'
 
 export function updateChats(global: SignalGlobalState, chatsById: Record<string, ApiChat>) {
   updateByKey(global.chats.byId, chatsById)
-  // Object.keys(global.chats.byId).forEach(c=>{
-  //   updateLastMessage(global,c)
-  // })
-  // Object.values(chatsById)
+
   const list = Object.values(global.chats.byId as Record<string, ApiChat>)
-  list.forEach((c) => {
-    if (c.lastMessage) {
-      // console.log('CHAT MESSAGE', c.lastMessage)
-      updateMessages(global, c.id, {[c.lastMessage.id]: c.lastMessage}, true)
-      // updateMessages(global, c.id, {
-      //   [c.lastMessage.id]: c.lastMessage,
-      // })
-    }
-  })
+  // list.forEach((c) => {
+  //   if (c.lastMessage) {
+  //     updateMessages(global, c.id, {[c.lastMessage.id]: c.lastMessage}, true)
+  //   }
+  // })
   const orderedIds = list
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .map((s) => s.id)
@@ -112,52 +105,6 @@ export function updateCurrentChat(
   updateByKey(global.currentChat, toUpd)
 }
 
-// export function updateOpenedChats_DEPRECATED(
-//   global: SignalGlobalState,
-//   chatId?: string,
-//   username?: string,
-//   replaceHistory?: boolean,
-//   isPinnedList?: boolean
-// ) {
-//   const openedChats = selectOpenedChats(global)
-
-//   let newOpenedChats = openedChats
-//   if (replaceHistory) {
-//     newOpenedChats = chatId
-//       ? [
-//           {
-//             chatId,
-//             username,
-//             isPinnedList: Boolean(isPinnedList),
-//             isMessagesLoading: false,
-//           },
-//         ]
-//       : []
-//   } else if (chatId) {
-//     const currentOpened = openedChats[openedChats.length - 1]
-//     if (
-//       !currentOpened ||
-//       currentOpened.chatId !== chatId ||
-//       currentOpened.username !== username ||
-//       currentOpened.isPinnedList !== isPinnedList
-//     ) {
-//       console.log({currentOpened}, 'LIST PINNED?')
-//       newOpenedChats = [
-//         ...newOpenedChats,
-//         {
-//           chatId,
-//           username,
-//           isPinnedList: Boolean(isPinnedList),
-//           isMessagesLoading: false,
-//         },
-//       ]
-//     }
-//   } else {
-//     newOpenedChats = openedChats.slice(0, -1)
-//   }
-//   console.log({newOpenedChats})
-//   global.openedChats = newOpenedChats
-// }
 export function updateOpenedChats(
   global: SignalGlobalState,
   {
@@ -195,7 +142,6 @@ export function updateOpenedChats(
       currentOpened.username !== username ||
       currentOpened.isPinnedList !== isPinnedList
     ) {
-      console.log({currentOpened}, 'LIST PINNED?')
       newOpenedChats = [
         ...newOpenedChats,
         {
@@ -209,7 +155,6 @@ export function updateOpenedChats(
   } else {
     newOpenedChats = openedChats.slice(0, -1)
   }
-  console.log({newOpenedChats})
   global.openedChats = newOpenedChats
 }
 

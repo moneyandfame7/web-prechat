@@ -1,6 +1,7 @@
-import {type FC, memo, useCallback, useEffect, useRef, useState} from 'preact/compat'
+import {type FC, forwardRef, memo, useEffect, useRef, useState} from 'preact/compat'
 
 import clsx from 'clsx'
+import type {CustomItemComponentProps} from 'virtua'
 
 import type {ApiChat, ApiMessage, ApiUser} from 'api/types'
 
@@ -20,6 +21,7 @@ import DeleteMessagesModal from 'components/popups/DeleteMessagesModal.async'
 import {Menu, MenuItem} from 'components/popups/menu'
 import {MenuDivider} from 'components/popups/menu/Menu'
 import {Icon} from 'components/ui'
+import {AvatarTest} from 'components/ui/AvatarTest'
 
 import {MessageMeta} from './MessageMeta'
 
@@ -28,8 +30,10 @@ import './MessageBubble.scss'
 interface MessageBubbleProps {
   message: ApiMessage
   withAvatar?: boolean
+  isLastInList: boolean
   isLastInGroup: boolean
   isFirstInGroup: boolean
+  isFirstUnread: boolean
 }
 interface StateProps {
   chat: ApiChat | undefined
@@ -50,10 +54,20 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
     showSenderName,
     withAvatar,
     isLastInGroup,
+    isFirstInGroup,
+    isLastInList,
     hasMessageSelection,
-    // isFirstInGroup,
     isSelected,
+    isFirstUnread,
   }) => {
+    const {getUser, openChat} = getActions()
+
+    // useEffect(() => {
+    //   if (!sender && message.senderId) {
+    //     getUser(message.senderId)
+    //     console.error('SHOULD FETCH SENDER')
+    //   }
+    // }, [])
     const messageRef = useRef<HTMLDivElement>(null)
     const menuRef = useRef<HTMLDivElement>(null)
 
@@ -93,27 +107,6 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
         document.removeEventListener('selectionchange', handleSelectionChange)
       }
     }, [])
-    // useEffect(() => {
-    //   const handleSelectionChange = () => {
-    //     const selectedText = window.getSelection()?.toString()
-    //     const elementText = messageRef.current?.innerText
-
-    //     setIsTextSelected(
-    //       selectedText && selectedText.length > 0 && selectedText === elementText
-    //     )
-    //   }
-
-    //   elementRef.current.addEventListener('mouseup', handleSelectionChange)
-
-    //   return () => {
-    //     elementRef.current.removeEventListener('mouseup', handleSelectionChange)
-    //   }
-    // }, [])
-    // const {value}=useBoolean()
-    // const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-    // useEffect(() => {
-    //   console.log({styles, isContextMenuOpen})
-    // }, [isContextMenuOpen])
 
     const buildedClass = clsx('bubble', sender && `color-${sender.color.toLowerCase()}`, {
       outgoing: isOutgoing,
@@ -121,12 +114,13 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
       action: message?.action,
       'has-avatar': withAvatar,
       'last-in': isLastInGroup,
+      'first-in': isFirstInGroup,
+      'last-in-list': isLastInList,
       'has-menu-open': isContextMenuOpen,
       'delete-local': message.deleteLocal,
       'is-selected': isSelected,
     })
 
-    const imageRef = useRef<HTMLImageElement>(null)
     // imageRef.current
 
     const handleToggleSelection = () => {
@@ -150,8 +144,30 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
     }
     const handleCopyMessageMedia = () => {}
 
+    const handleClickAvatar = () => {
+      if (!sender) {
+        return
+      }
+      openChat({
+        id: sender.id,
+        username: sender.username,
+        shouldChangeHash: true,
+        shouldReplaceHistory: false,
+      })
+    }
+
     const hasCopyMessageGroup =
       !!selectedText || !!message.content.photo || !!message.content.formattedText?.text
+    const isOutgoingNotRead =
+      chat?.lastReadOutgoingMessageId !== undefined &&
+      chat?.lastReadOutgoingMessageId < message.orderedId
+    const messageSendingStatus =
+      message.sendingStatus || isOutgoingNotRead ? 'unread' : 'success'
+
+    // useEffect(() => {
+    //   // хз в чому трабл, тут статус фейлед показується, але messageSendingStatus - unread ))))))
+    //   // console.log({messageSendingStatus, text: message.text, status: message.sendingStatus})
+    // }, [])
 
     if (message.action) {
       return (
@@ -160,6 +176,7 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
         </div>
       )
     }
+
     return (
       <div
         ref={messageRef}
@@ -184,6 +201,12 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
         //     : undefined
         // }
       >
+        {isFirstUnread && (
+          <div class="bubble action is-unread-divider">
+            <div class="bubble-content">{TEST_translate('Message.UnreadMessages')}</div>
+          </div>
+        )}
+
         {hasMessageSelection && (
           <div class="bubble-select-checkbox">
             <Icon name="check" color="white" />
@@ -196,17 +219,21 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
             /> */}
           </div>
         )}
+        {withAvatar && isLastInGroup && (
+          <AvatarTest onClick={handleClickAvatar} size="xs" peer={sender} />
+        )}
         <div class="bubble-content">
           {showSenderName && (
             <p class="bubble-content__sender">{senderName || 'USER NAME_UNDF'}</p>
           )}
           <p class="bubble-content__text">
             {messageText}
+            <h6>{message.orderedId}</h6>
             {message && (
               <MessageMeta
                 hasMessageSelection={hasMessageSelection}
                 message={message}
-                sendingStatus={message.sendingStatus || 'unread'}
+                sendingStatus={messageSendingStatus}
               />
             )}
           </p>
@@ -269,28 +296,28 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
           onClose={closeDeleteModal}
           message={message}
         />
-        {/* <ConfirmModalAsync
-          chat={chat}
-          title={TEST_translate('DeleteMessages', {count: 2})}
-          action="Delete"
-          content={
-            <>
-              {TEST_translate('AreYouSureDeleteMessages', {count: 2})}
-
-              <Checkbox label={TEST_translate('AlsoDeleteFor', {name: 'павапепе гемабоді'})} />
-            </>
-          }
-          callback={() => {}}
-          isOpen={isDeleteModalOpen}
-          onClose={() => {
-            closeDeleteModal()
-          }}
-        /> */}
       </div>
     )
   }
 )
-
+export const VirtualScrollItem = forwardRef<HTMLLIElement, CustomItemComponentProps>(
+  ({children, style}, ref) => {
+    return (
+      <li
+        ref={ref}
+        style={{
+          ...style,
+          listStyle: 'none',
+          overflow: 'hidden',
+          borderRadius: '12px',
+          paddingInline: '5px',
+        }}
+      >
+        {children}
+      </li>
+    )
+  }
+)
 export const MessageBubble = memo(
   connect<MessageBubbleProps, StateProps>((state, ownProps) => {
     const sender = ownProps.message.senderId

@@ -1,7 +1,8 @@
-import {useComputed, useSignal} from '@preact/signals'
-import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
+import {useSignal} from '@preact/signals'
+import {type FC, type RefObject, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
 import clsx from 'clsx'
+import type {VListHandle} from 'virtua'
 
 import type {ApiChat, ApiMessage} from 'api/types'
 
@@ -19,7 +20,6 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
 
-import {debounce} from 'common/functions'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'
 import {insertCursorAtEnd, insertTextAtCursor} from 'utilities/parse/selection'
@@ -43,6 +43,7 @@ interface OwnProps {
   onCloseEmojiMenu: VoidFunction
   isPinnedList: boolean | undefined
   hasPinnedMessages: boolean | undefined
+  infiniteScrollRef: RefObject<VListHandle>
 }
 
 interface StateProps {
@@ -53,7 +54,6 @@ interface StateProps {
   hasMessageSelection: boolean
   selectedMessagesCount: number
 }
-const debouncedSaveDraft = debounce((cb) => cb(), 5000, false)
 enum InputContent {
   Main,
   Selection,
@@ -72,6 +72,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
   hasMessageSelection,
   selectedMessagesCount,
   isChannel,
+  infiniteScrollRef,
 }) => {
   const {sendMessage, editMessage, toggleMessageSelection} = getActions()
   const inputRef = useRef<HTMLDivElement>(null)
@@ -129,6 +130,13 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
       inputHtml.value = ''
     }
   }, [hasMessageEditing, editableMessage])
+
+  const handleGoDown = useCallback(() => {
+    if (!infiniteScrollRef.current) {
+      return
+    }
+    infiniteScrollRef.current.scrollBy(infiniteScrollRef.current.scrollSize)
+  }, [])
 
   const transitionKey = hasMessageSelection ? 1 : 0
   const sendButtonTransitionKey = hasMessageEditing ? 1 : 0
@@ -279,6 +287,16 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
           </Button>
         )
       )}
+      {/* {!m} */}
+      <Button
+        onClick={handleGoDown}
+        badge={chat?.unreadCount || undefined}
+        className="btn-go-down"
+        shape="circle"
+        icon="arrowDown"
+        color="gray"
+      />
+
       <DeleteMessagesModalAsync
         chat={chat}
         onClose={closeDeleteModal}
@@ -292,7 +310,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
 export const ChatInput = memo(
   connect<OwnProps, StateProps>((state, ownProps) => {
     const chat = selectChat(state, ownProps.chatId)
-
+    // const isChatEmpty
     const messageEditing = state.messageEditing
     const editableMessage = messageEditing.messageId
       ? selectMessage(state, ownProps.chatId, messageEditing.messageId)

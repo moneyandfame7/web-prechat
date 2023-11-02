@@ -1,7 +1,7 @@
 import {type RefObject} from 'preact'
 import {useEffect, useRef, useState} from 'preact/hooks'
 
-import {debounce} from 'common/functions'
+import {debounce} from 'utilities/schedulers/debounce'
 import {throttle} from 'utilities/schedulers/throttle'
 
 interface Args {

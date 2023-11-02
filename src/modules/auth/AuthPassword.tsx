@@ -3,7 +3,7 @@ import {type FC, memo, useCallback} from 'preact/compat'
 
 import {getGlobalState} from 'state/signal'
 
-import {t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
 import {MonkeyPassword} from 'components/monkeys'
 import {Button, PasswordInput} from 'components/ui'
@@ -30,7 +30,7 @@ const AuthPassword: FC = () => {
         label="Password"
         showPassword={showPassword}
       />
-      <Button isLoading={auth.isLoading}>{t('Next')}</Button>
+      <Button isLoading={auth.isLoading}>{TEST_translate('Next')}</Button>
     </div>
   )
 }

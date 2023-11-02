@@ -5,17 +5,12 @@ import {updateByKey} from 'utilities/object/updateByKey'
 import type {DeepPartial} from 'types/common'
 import type {SettingsState, SignalGlobalState} from 'types/state'
 
-// export function updateSettings(global:SignalGlobalState,){}
-
 export function updateSettingsState(
   global: SignalGlobalState,
   settings: DeepPartial<SettingsState>
 ) {
   const {general, passcode, i18n, ...justToUpdate} = settings
 
-  /* DOM helpers */
-
-  /* UPDATES  */
   if (general) {
     updateByKey(global.settings.general, {
       ...general,

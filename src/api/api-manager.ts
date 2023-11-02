@@ -16,7 +16,6 @@ import {
   QUERY_GET_CHAT_FULL,
   QUERY_GET_USERS,
 } from './graphql'
-import {MUTATION_SAVE_DRAFT} from './graphql/messages'
 import {cleanTypename} from './helpers/cleanupTypename'
 import {removeNull} from './helpers/removeNull'
 import {ApolloClient as ApolloManager} from './manager'
@@ -40,9 +39,6 @@ export interface MethodsMap {
 
   /* USERS */
   'users.getUsers': {variables: {input: ApiInputGetUsers}; res: ApiUser[]}
-
-  /* MESSAGES */
-  'messages.saveDraft': {variables: {input: ApiInputSaveDraft}; res?: true}
 
   /* FOLDERS */
 }
@@ -88,12 +84,6 @@ const INVOKE_API_OPTIONS: InvokeApiOptions = {
   'users.getUsers': {
     operation: 'query',
     gql: QUERY_GET_USERS,
-  },
-
-  /* Messages */
-  'messages.saveDraft': {
-    operation: 'mutate',
-    gql: MUTATION_SAVE_DRAFT,
   },
 }
 

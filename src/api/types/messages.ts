@@ -74,9 +74,13 @@ export interface GetHistoryInput {
   limit?: number
   direction: HistoryDirection
   /**
-   * Message cursor ID.
+   * Message cursor ordered ID.
    */
-  offsetId?: string
+  offsetId?: number
+  /**
+   * Message unique ID.
+   */
+  offsetNativeId?: string
   /**
    * Whether need include to response message with offset id
    */
@@ -84,6 +88,12 @@ export interface GetHistoryInput {
 
   maxDate?: Date
 }
+
+export interface ReadHistoryInput {
+  maxId: number
+  chatId: string
+}
+
 export interface GetPinnedMessagesInput {
   chatId: string
   limit?: number

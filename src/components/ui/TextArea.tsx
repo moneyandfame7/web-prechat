@@ -120,7 +120,7 @@ const TextArea: FC<TextAreaProps> = ({
     if (autoFocus) {
       setTimeout(() => {
         inputRef.current?.focus()
-      }, 200)
+      }, 400)
     }
   }, [])
 

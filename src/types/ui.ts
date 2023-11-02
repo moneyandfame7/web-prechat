@@ -2,29 +2,8 @@ import type {Signal} from '@preact/signals'
 import type {VNode} from 'preact'
 import type {StateUpdater, TargetedEvent} from 'preact/compat'
 
-/* LEFT */
-/* мейбі прибрати назви і використовувати для першого ключа === 0??? */
-export enum LeftColumnScreen {
-  Chats,
-  Search,
-  Settings,
-  Archived,
-  NewChannelStep1,
-  NewChannelStep2,
-  NewGroupStep1,
-  NewGroupStep2,
-  Contacts,
-  MyStories,
-}
-export enum LeftColumnGroup {
-  Main,
-  Settings,
-  Contacts,
-  Archived,
-  NewChannel,
-  NewGroup,
-  MyStories,
-}
+import type {LeftColumnScreen} from './screens'
+
 export interface LeftColumnStore {
   resetScreen: (force?: boolean) => void
   activeScreen: LeftColumnScreen

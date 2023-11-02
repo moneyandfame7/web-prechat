@@ -15,8 +15,6 @@ import {useClickAway} from 'hooks/useClickAway'
 import {useFastClick} from 'hooks/useFastClick'
 import {useLayout} from 'hooks/useLayout'
 
-import {logDebugWarn} from 'lib/logger'
-
 import {TRANSITION_DURATION_MENU} from 'common/environment'
 import {addEscapeListener} from 'utilities/keyboardListener'
 
@@ -106,9 +104,7 @@ export const Menu: FC<MenuProps> = memo(
 
       // stopEvent(e)
       onClose()
-      logDebugWarn('[UI]: Menu backdrop click')
     }, [])
-
     useClickAway(
       containerRef || menuRef,
       (e, clicked) => {
@@ -117,7 +113,6 @@ export const Menu: FC<MenuProps> = memo(
           // e.stopImmediatePropagation()
           // stopEvent(e)
           onClose()
-          logDebugWarn('[UI]: Menu away click')
         }
       },
       !shouldHandleAwayClick || !isOpen

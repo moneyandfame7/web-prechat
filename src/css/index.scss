@@ -35,6 +35,9 @@ body {
     --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', 'Apple Color Emoji',
       'Helvetica Neue', sans-serif;
   }
+  html.is-firefox & {
+    letter-spacing: -0.3px;
+  }
   line-height: 1.5;
   background-color: var(--c-bg-body);
   color: var(--c-font-primary);

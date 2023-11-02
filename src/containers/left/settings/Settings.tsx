@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback, useState} from 'preact/compat'
+import {type FC, memo, useState} from 'preact/compat'
 
 import {SettingsContext} from 'context/settings'
 
@@ -9,7 +9,7 @@ import {usePrevious} from 'hooks'
 
 import {MOCK_TWO_FA} from 'common/app'
 
-import {SettingsScreens, getSettingsActiveGroup} from 'types/screens'
+import {SettingsScreens} from 'types/screens'
 import type {TwoFaState} from 'types/state'
 
 import {Transition} from 'components/transitions'
@@ -42,7 +42,7 @@ export interface SettingsProps {
 interface StateProps {
   twoFaState: TwoFaState
 }
-const Settings: FC<SettingsProps & StateProps> = ({currentScreen, twoFaState}) => {
+const Settings: FC<SettingsProps & StateProps> = ({currentScreen}) => {
   const [activeScreen, setActiveScreen] = useState(currentScreen)
 
   // const activeGroup = getSettingsActiveGroup(activeScreen)

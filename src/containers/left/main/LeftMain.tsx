@@ -1,7 +1,7 @@
 import {type FC, Fragment, memo} from 'preact/compat'
 import {useCallback, useEffect, useState} from 'preact/hooks'
 
-import {LeftColumnScreen} from 'types/ui'
+import {LeftColumnScreen} from 'types/screens'
 
 import {StoriesList} from 'containers/stories/list'
 

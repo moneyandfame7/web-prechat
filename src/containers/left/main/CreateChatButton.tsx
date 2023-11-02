@@ -6,9 +6,9 @@ import {getGlobalState} from 'state/signal'
 
 import {useBoolean} from 'hooks/useFlag'
 
-import {t} from 'lib/i18n'
+import {TEST_translate} from 'lib/i18n'
 
-import {LeftColumnScreen} from 'types/ui'
+import {LeftColumnScreen} from 'types/screens'
 
 import {Menu, MenuItem} from 'components/popups/menu'
 import {FloatButton, Icon} from 'components/ui'
@@ -37,15 +37,15 @@ export const CreateChatButton: FC = () => {
       <>
         <MenuItem onClick={handleNewChannel}>
           <Icon name="channel" />
-          {t('NewChannel')}
+          {TEST_translate('NewChannel')}
         </MenuItem>
         <MenuItem onClick={handleNewGroup}>
           <Icon name="users" />
-          {t('NewGroup')}
+          {TEST_translate('NewGroup')}
         </MenuItem>
         <MenuItem onClick={handleNewPrivateChat}>
           <Icon name="user" />
-          {t('NewPrivateChat')}
+          {TEST_translate('NewPrivateChat')}
         </MenuItem>
       </>
     ),
@@ -65,7 +65,12 @@ export const CreateChatButton: FC = () => {
   })
   return (
     <div class={buildedClass}>
-      <FloatButton shown aria-label={t('CreateChat')} icon={renderIcon} onClick={setTrue} />
+      <FloatButton
+        shown
+        aria-label={TEST_translate('CreateChat')}
+        icon={renderIcon}
+        onClick={setTrue}
+      />
       <Menu
         transform="bottom right"
         placement={{

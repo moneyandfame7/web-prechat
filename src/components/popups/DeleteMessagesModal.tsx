@@ -1,22 +1,16 @@
-import {useSignal} from '@preact/signals'
 import {type FC, memo, useMemo} from 'preact/compat'
 
 import type {ApiChat, ApiMessage, ApiUser} from 'api/types'
 
 import {getActions} from 'state/action'
 import {type MapState, connect} from 'state/connect'
-import {getUserName, isUserId} from 'state/helpers/users'
+import {isUserId} from 'state/helpers/users'
 import {selectSelectedMessageIds} from 'state/selectors/diff'
 import {selectUser} from 'state/selectors/users'
-
-import {useScreenManager} from 'hooks'
 
 import {TEST_translate} from 'lib/i18n'
 
 import {filterUnique} from 'utilities/array/filterUnique'
-import {renderText} from 'utilities/parse/render'
-
-import {Checkbox} from 'components/ui'
 
 import ConfirmModalAsync from './ConfirmModal.async'
 
@@ -41,10 +35,6 @@ const DeleteMessagesModalImpl: FC<OwnProps & StateProps> = ({
 }) => {
   const {deleteMessages, toggleMessageSelection} = getActions()
 
-  const shouldDeleteForAll = useSignal(false)
-  const toggleDeleteForAll = () => {
-    shouldDeleteForAll.value = !shouldDeleteForAll.peek()
-  }
   /**
    * Selected messages, sort, якщо є моє повідомлення і я можу його видалити для всіх - показувати повідомлення і ляля тополя
    */
@@ -56,23 +46,25 @@ const DeleteMessagesModalImpl: FC<OwnProps & StateProps> = ({
     if (!chat) {
       return
     }
-    deleteMessages({ids: idsToDelete, chatId: chat.id, deleteForAll: shouldDeleteForAll.value})
+    deleteMessages({ids: idsToDelete, chatId: chat.id})
     toggleMessageSelection({active: false})
   }
 
-  const selectedCount = selectedMessageIds.length
   return (
     <ConfirmModalAsync
       chat={chat}
       user={partner}
-      title={TEST_translate('DeleteMessages', {count: message ? 1 : selectedCount})}
+      title={TEST_translate('DeleteMessages', {count: idsToDelete.length})}
       action="Delete"
       content={
         <>
           {TEST_translate('AreYouSureDeleteMessages', {
-            count: message ? 1 : selectedCount,
+            count: idsToDelete.length,
           })}
-          {partner && (
+          {/* <p class="text-small text-secondary text-end mt-10">
+            *It will be deleted for everyone
+          </p> */}
+          {/* {partner && (
             <Checkbox
               onToggle={toggleDeleteForAll}
               checked={shouldDeleteForAll}
@@ -81,7 +73,7 @@ const DeleteMessagesModalImpl: FC<OwnProps & StateProps> = ({
                 ['markdown']
               )}
             />
-          )}
+          )} */}
         </>
       }
       callback={handleDeleteMessages}

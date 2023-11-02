@@ -1,4 +1,4 @@
-import {type FC, memo, useCallback} from 'preact/compat'
+import {type FC, memo} from 'preact/compat'
 
 import type {ApiChat, ApiChatMember, ApiUser} from 'api/types'
 
@@ -42,7 +42,7 @@ const ChatUtilsImpl: FC<OwnProps & StateProps> = ({
   chat,
   chatMember,
   isChannel,
-  isGroup,
+  // isGroup,
   isPrivateChat,
   canEditChat,
   chatId,
@@ -74,7 +74,7 @@ const ChatUtilsImpl: FC<OwnProps & StateProps> = ({
     toggleMessageSelection({active: !hasMessageSelection})
   }
   const canJoinChat = chat?.isForbidden !== true && chat?.isNotJoined
-  const canDeleteChat = chat && chat.lastMessage // ????
+  // const canDeleteChat = chat && chat.lastMessage // ????
   return (
     <div class="chat-utils">
       {canJoinChat && (
@@ -134,8 +134,7 @@ const ChatUtilsImpl: FC<OwnProps & StateProps> = ({
         )} */}
 
         {renderLeaveBtn()}
-        {/* 
-        <MenuItem icon="delete" danger title="Delete Group" />
+        {/* <MenuItem icon="delete" danger title="Delete Group" />
         <MenuItem icon="delete" danger title="Delete Channel" />
         <MenuItem icon="delete" danger title="Leave Group" />
         <MenuItem icon="delete" danger title="Leave Channel" /> */}
@@ -156,7 +155,7 @@ const mapStateToProps: MapState<OwnProps, StateProps> = (state, ownProps) => {
   const canEditChat =
     (user && user.isContact) ||
     chatMember?.isOwner ||
-    (chatMember?.isAdmin && chatMember?.adminPermissions?.canChangeInfo)
+    chatMember?.isAdmin /* && chatMember?.adminPermissions?.canChangeInfo */
   const hasMessageSelection = selectHasMessageSelection(state)
   return {
     chat,
