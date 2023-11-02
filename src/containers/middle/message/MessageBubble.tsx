@@ -311,6 +311,7 @@ export const VirtualScrollItem = forwardRef<HTMLLIElement, CustomItemComponentPr
           overflow: 'hidden',
           borderRadius: '12px',
           paddingInline: '5px',
+          userSelect: 'none',
         }}
       >
         {children}

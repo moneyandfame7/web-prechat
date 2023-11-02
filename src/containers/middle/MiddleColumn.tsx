@@ -2,20 +2,25 @@ import {type FC, memo, useCallback, useEffect, useMemo, useRef} from 'preact/com
 
 import {VList, VListHandle, WVList} from 'virtua'
 
-import {HistoryDirection} from 'api/types'
+import {ApiMessage, HistoryDirection} from 'api/types'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
+import {getLastOutgoingMessage} from 'state/helpers/messages'
 import {selectOpenedChats} from 'state/selectors/chats'
 import {selectHasMessageEditing, selectHasMessageSelection} from 'state/selectors/diff'
-import {selectChatMessageIds, selectPinnedMessageIds} from 'state/selectors/messages'
+import {
+  selectChatMessageIds,
+  selectMessages,
+  selectPinnedMessageIds,
+} from 'state/selectors/messages'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
 import {useBoolean} from 'hooks/useFlag'
 import {useLayout} from 'hooks/useLayout'
 
-import {addEscapeListener} from 'utilities/keyboardListener'
+import {addEscapeListener, addKeyboardListeners} from 'utilities/keyboardListener'
 import {deepClone} from 'utilities/object/deepClone'
 import {connectStateToNavigation} from 'utilities/routing'
 
@@ -36,6 +41,7 @@ interface OwnProps {}
 interface StateProps {
   // currentChat?: ApiChat
   chatId?: string
+  messagesById?: Record<string, ApiMessage>
   activeTransitionKey: number
   animationsEnabled: boolean
   isPinnedList: boolean | undefined
@@ -48,6 +54,7 @@ type InjectedProps = OwnProps & StateProps
 
 const MiddleColumn: FC<InjectedProps> = ({
   chatId,
+  messagesById,
   activeTransitionKey,
   animationsEnabled,
   isPinnedList,
@@ -128,6 +135,25 @@ const MiddleColumn: FC<InjectedProps> = ({
     [isChatOpen, hasMessageSelection, hasMessageEditing]
   )
 
+  const handlePressArrowUp = () => {
+    if (!messagesById) {
+      return
+    }
+
+    const lastEditableMessage = getLastOutgoingMessage({messagesById})
+
+    console.log('SHOULD EDIT LAST MESSAGE', lastEditableMessage)
+
+    actions.toggleMessageEditing({id: lastEditableMessage?.id, active: true})
+  }
+  useEffect(
+    () =>
+      isChatOpen && !hasMessageEditing
+        ? addKeyboardListeners({onUp: handlePressArrowUp})
+        : undefined,
+    [isChatOpen, hasMessageEditing, handlePressArrowUp]
+  )
+
   useEffect(() => {
     // if(has)
     actions.toggleMessageSelection({active: false})
@@ -187,14 +213,19 @@ const MiddleColumn: FC<InjectedProps> = ({
 export default memo(
   connect<OwnProps, StateProps>((state) => {
     const openedChats = selectOpenedChats(state)
-
     const openedChat = openedChats[openedChats.length - 1] as OpenedChat | undefined
+
+    const messagesById = openedChat?.chatId
+      ? selectMessages(state, openedChat?.chatId)
+      : undefined
+
     const animationsEnabled = state.settings.general.animationsEnabled
     const pinnedMessagesCount = openedChat?.chatId
       ? selectPinnedMessageIds(state, openedChat?.chatId)?.length
       : undefined
     return {
       chatId: openedChat?.chatId,
+      messagesById,
       activeTransitionKey: Math.max(0, openedChats.length - 1),
       animationsEnabled,
       isPinnedList: openedChat?.isPinnedList,

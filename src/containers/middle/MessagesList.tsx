@@ -255,6 +255,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
           const message = messagesById?.[id]
           const nextMessage = messagesById?.[group.ids[idx + 1]]
           const prevMessage = messagesById?.[group.ids[idx - 1]]
+
           const isLastInGroup =
             (!message?.deleteLocal && nextMessage?.senderId !== message?.senderId) ||
             Boolean(nextMessage?.deleteLocal) /* @todo add group by date ~10min difference */
