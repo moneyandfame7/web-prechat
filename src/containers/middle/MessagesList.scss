@@ -138,10 +138,11 @@
   }
   &__icon {
     path {
-      fill: var(--c-message-meta);
+      // <important> because the override in production
+      fill: var(--c-message-meta) !important;
     }
-    width: 18px;
-    height: 18px;
+    width: 18px !important;
+    height: 18px !important;
     &.Icon-sendingError {
       path {
         fill: var(--c-danger);
@@ -177,8 +178,8 @@
   height: 100%;
   .transition-item,
   .transition {
-    width: 18px;
-    height: 18px;
+    width: 18px !important;
+    height: 18px !important;
   }
 }
 .bubble {
