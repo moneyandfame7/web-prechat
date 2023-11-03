@@ -177,11 +177,11 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
         infiniteScrollRef.current.scrollToIndex(index, {align: 'start'})
       } else {
         logger.info('SCROLL TO BOTTOM')
-        infiniteScrollRef.current.scrollToIndex(messageIds.length, {align: 'end'})
+        infiniteScrollRef.current.scrollToIndex(messageIds.length)
       }
     } else if (!isFetching.current) {
       logger.info('SCROLL TO BOTTOM')
-      infiniteScrollRef.current.scrollToIndex(messageIds.length, {align: 'end'})
+      infiniteScrollRef.current.scrollToIndex(messageIds.length)
     }
     // isReady.current = true
 
@@ -415,7 +415,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
 
           {/* @ts-expect-error Preact types are confused */}
           <VList
-            shift={shifting}
+            shift={isFetching.current}
             reverse
             ref={infiniteScrollRef}
             onScroll={handleScroll}
@@ -429,21 +429,25 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
               overflowX: 'hidden' /* overflowAnchor: 'none' */,
             }}
           >
-            <Loader
-              size="small"
-              styles={{marginTop: 10, position: 'relative'}}
-              isVisible={startFetching}
-              isLoading
-            />
+            {startFetching && (
+              <Loader
+                size="small"
+                styles={{marginTop: 10, position: 'relative', marginRight: 'calc(50% - 20px)'}}
+                isVisible
+                isLoading
+              />
+            )}
 
             {renderedItems}
 
-            <Loader
-              size="small"
-              styles={{marginTop: 10, position: 'relative'}}
-              isVisible={endFetching}
-              isLoading
-            />
+            {endFetching && (
+              <Loader
+                size="small"
+                styles={{marginTop: 10, position: 'relative', marginRight: 'calc(50% - 20px)'}}
+                isVisible
+                isLoading
+              />
+            )}
           </VList>
         </div>
       </SingleTransition>

@@ -145,7 +145,7 @@
     height: 18px !important;
     &.Icon-sendingError {
       path {
-        fill: var(--c-danger);
+        fill: var(--c-danger) !important;
       }
     }
   }
@@ -319,7 +319,7 @@
         border-top-left-radius: 0.975rem;
       }
     }
-    &.last-in {
+    &.last-in:not(.action) {
       .bubble-content {
         // border-top-left-radius: 0.975rem;
         border-bottom-left-radius: 0;

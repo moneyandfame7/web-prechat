@@ -162,7 +162,7 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
       chat?.lastReadOutgoingMessageId !== undefined &&
       chat?.lastReadOutgoingMessageId < message.orderedId
     const messageSendingStatus =
-      message.sendingStatus || isOutgoingNotRead ? 'unread' : 'success'
+      message.sendingStatus || (isOutgoingNotRead ? 'unread' : 'success')
 
     // useEffect(() => {
     //   // хз в чому трабл, тут статус фейлед показується, але messageSendingStatus - unread ))))))
@@ -248,13 +248,6 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
             </g>
           </svg>
         </div>
-        {/* <MessageContextMenu
-          styles={styles}
-          isOpen={isContextMenuOpen}
-          onClose={handleContextMenuClose}
-          menuRef={menuRef}
-        /> */}
-
         <Menu
           // easing={'cubic-bezier(0.2, 0, 0.2, 1)' as any}
           // timeout={250}
