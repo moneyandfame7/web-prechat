@@ -10,7 +10,11 @@
 
     // .messages-container {
     // 30px - for paddings around ( arrow and for comfortable )
-    max-width: calc(100% - var(--right-column-width) - 30px);
+    width: calc(100% - var(--right-column-width) - 30px);
+
+    // @include responsive(desktop) {
+    max-width: var(--messages-container-width);
+    // }
     // }
   }
 

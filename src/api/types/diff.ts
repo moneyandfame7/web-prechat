@@ -32,11 +32,12 @@ export interface ApiError {
 
 export interface ApiPhoto {
   id: string
-  date: Date
-  blurHash: string
+  date: string
+  blurHash?: string
   url: string
-  width: number
-  height: number
+  width?: number
+  height?: number
+  withSpoiler?: boolean
 }
 
 export type ResolvedPeer =

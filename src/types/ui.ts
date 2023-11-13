@@ -19,6 +19,10 @@ export type MouseClickHandler<T extends HTMLElement> = (
 
 export type MouseHandler = (e: MouseEvent) => void
 export type Size = 'small' | 'medium' | 'large'
+export interface Dimension {
+  width: number
+  height: number
+}
 export type Orientation = 'vertical' | 'horizontal'
 export type SignalOrString = string | Signal<string> | undefined
 

@@ -9,11 +9,12 @@ import type {ApiLangPack} from './methods/langPack'
 import type {ApiSettings} from './methods/settings'
 import type {ApiUsers} from './methods/users'
 
-export const PENDING_REQUESTS = {
+export const PENDING_MAIN_REQUESTS = {
   USERS: new Set<string>(),
   CHATS: new Set<string>(),
   MESSAGES: new Set<string>(),
 }
+export const PENDING_QUERIES: Record<string, any> = {}
 export interface ApiMethods {
   auth: ApiAuth
   langPack: ApiLangPack

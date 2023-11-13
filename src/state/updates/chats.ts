@@ -155,7 +155,7 @@ export function updateOpenedChats(
   } else {
     newOpenedChats = openedChats.slice(0, -1)
   }
-  global.openedChats = newOpenedChats
+  global.openChats = newOpenedChats
 }
 
 export function updateUsernamesFromPeers(global: SignalGlobalState, peers: ApiPeer[]) {

@@ -1,3 +1,5 @@
+import type {AnyFunction} from 'types/common'
+
 const parseHeaders = (rawHeaders: any) => {
   const headers = new Headers()
   // Replace instances of \r\n and \n followed by at least one space or horizontal tab with a space
@@ -14,7 +16,7 @@ const parseHeaders = (rawHeaders: any) => {
   return headers
 }
 
-export const uploadFetch = (url: string, options: any) =>
+export const uploadFetch = (url: string, options: CustomFetchOptions) =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.onload = () => {
@@ -38,23 +40,35 @@ export const uploadFetch = (url: string, options: any) =>
     Object.keys(options.headers).forEach((key) => {
       xhr.setRequestHeader(key, options.headers[key])
     })
-
-    if (xhr.upload) {
-      xhr.upload.onprogress = options.onProgress
-    }
-
-    options.onAbortPossible(() => {
+    options?.onAbort?.(() => {
       xhr.abort()
     })
+    // if (xhr.upload) { ????
+    //   xhr.upload.onprogress = options.onProgress
+    // }
+    if (options.onProgress) {
+      xhr.onprogress = (e) => {
+        options.onProgress!(e)
+      }
+    }
+    if (options.onAbort) {
+      options.onAbort(() => {
+        xhr.abort()
+      })
+    }
 
     xhr.send(options.body)
   })
 
-export const customFetch = (uri: any, options: any) => {
-  if (options.useUpload) {
+type CustomFetchOptions = {
+  onProgress?: (e: ProgressEvent<EventTarget>) => void
+  onAbort?: (abortHandler: AnyFunction) => void
+} & {[key in any]: any}
+export const customFetch = (uri: any, options: CustomFetchOptions) => {
+  if (options.onProgress) {
     return uploadFetch(uri, options)
   }
-  return fetch(uri, options)
+  return fetch(uri, options as any)
 }
 
 export function customFetch2(url: string, opts: any = {}) {
@@ -75,9 +89,9 @@ export function customFetch2(url: string, opts: any = {}) {
 
     xhr.onerror = reject
 
-    if (xhr.upload)
-      xhr.upload.onprogress = (event) =>
-        console.log(`${(event.loaded / event.total) * 100}% uploaded`)
+    // if (xhr.upload)
+    //   xhr.upload.onprogress = (event) =>
+    //     console.log(`${(event.loaded / event.total) * 100}% uploaded`)
 
     xhr.send(opts.body)
   })

@@ -10,6 +10,20 @@ export const FRAGMENT_PHOTO: DocumentNode = gql`
     url
     width
     height
+    withSpoiler
+  }
+`
+
+export const FRAGMENT_DOCUMENT: DocumentNode = gql`
+  fragment AllDocumentFields on Document {
+    id
+    isMedia
+    date
+    blurHash
+    fileName
+    url
+    size
+    mimeType
   }
 `
 

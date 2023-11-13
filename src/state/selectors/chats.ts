@@ -1,15 +1,30 @@
-import type {ApiChat, ApiChatFull} from 'api/types'
+import {user} from 'assets/icons/all'
+
+import type {ApiChat, ApiChatFull, ApiChatMember} from 'api/types'
 import type {ApiChatId} from 'api/types/diff'
 
 import {getChatUsername_deprecated, isPrivateChat2} from 'state/helpers/chats'
 import {isUserId} from 'state/helpers/users'
 
-import type {OpenedChat, SignalGlobalState} from 'types/state'
+import type {OpenChats, SignalGlobalState} from 'types/state'
 
 import {isUserOnline, selectUser} from './users'
 
 export function selectChat(global: SignalGlobalState, chatId: string): ApiChat | undefined {
   return global.chats.byId[chatId]
+}
+
+export function selectChatMember(
+  global: SignalGlobalState,
+  chatId: string,
+  userId: string
+): ApiChatMember | undefined {
+  const chatFull = selectChatFull(global, chatId)
+  if (!chatFull) {
+    return
+  }
+
+  return chatFull.members?.find((member) => member.userId === userId)
 }
 
 // export function select
@@ -103,11 +118,11 @@ export function selectCurrentChat_deprecated(global: SignalGlobalState): ApiChat
   return currentChatId ? global.chats.byId[currentChatId] : undefined
 }
 
-export function selectOpenedChats(global: SignalGlobalState): OpenedChat[] {
-  return global.openedChats
+export function selectOpenedChats(global: SignalGlobalState): OpenChats[] {
+  return global.openChats
 }
-export function selectCurrentChat(global: SignalGlobalState): OpenedChat | undefined {
-  return global.openedChats[global.openedChats.length - 1]
+export function selectCurrentChat(global: SignalGlobalState): OpenChats | undefined {
+  return global.openChats[global.openChats.length - 1]
 }
 
 export function isSavedMessages(global: SignalGlobalState, chatId: string) {
@@ -162,7 +177,7 @@ export function selectCanEditChat(global: SignalGlobalState, chatId: string) {
   return (
     (!isSaved && isPrivate) ||
     (!isPrivate &&
-      (member?.isOwner || member?.isAdmin /* && member?.adminPermissions?.canChangeInfo */))
+      (member?.isOwner || member?.isAdmin)) /* && member?.adminPermissions?.canChangeInfo */
   )
 }
 

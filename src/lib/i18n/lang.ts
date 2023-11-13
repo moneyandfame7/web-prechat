@@ -26,6 +26,8 @@ const lang = {
   ArchivedChats: 'Archived Chats',
   ArchiveSettings: 'Archive Settings',
   Contacts: 'Contacts',
+  Contact: 'Contact',
+  Poll: 'Poll',
   Settings: 'Settings',
   General: 'General',
   BlockedUsers: 'Blocked Users',
@@ -226,8 +228,23 @@ const lang = {
 
   'Message.CopySelectedText': 'Copy Selected Text',
   'Message.CopyText': 'Copy Text',
+  'Message.CopyImage': 'Copy image',
   'Message.Edited': 'edited',
+  'Message.ClearSelection': 'Clear selection',
+  'Message.Select': 'Select',
+  'Message.DownloadSelected': 'Download selected',
+  'Message.CopySelected': 'Copy selected',
+  'Message.ForwardSelected': 'Forward selected',
+  'Message.DeleteSelected': 'Delete selected',
   'Message.UnreadMessages': 'Unread messages',
+
+  'Chat.Attach.PhotoOrVideo': 'Photo or Video',
+  'Chat.Attach.Document': 'Document',
+  'Chat.Attach.Contact': 'Contact',
+  'Chat.Attach.Poll': 'Poll',
+
+  'Chat.Subscribe': 'Subsribe',
+  'Chat.Join': 'Join',
 } as const satisfies Keyset
 
 export default lang

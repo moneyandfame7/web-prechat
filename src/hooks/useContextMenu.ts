@@ -1,8 +1,6 @@
 import type {RefObject} from 'preact'
 import {type CSSProperties, type TargetedEvent} from 'preact/compat'
-import {useCallback, useEffect, useLayoutEffect, useState} from 'preact/hooks'
-
-import {TRANSITION_DURATION_MENU} from 'common/environment'
+import {useCallback, useLayoutEffect, useState} from 'preact/hooks'
 
 import {useBoolean} from './useFlag'
 
@@ -41,11 +39,13 @@ export function useContextMenu(
   getLimiterElement?: () => HTMLElement | null,
   withPortal = true,
   dynamicTransformOrigin?: boolean,
-  disabled?: boolean
+  disabled?: boolean,
+  onContextMenuClose?: () => void
   // limiter?: 'trigger' | 'window' | 'custom' = 'trigger'
 ) {
   const {value, setFalse, setTrue} = useBoolean(false)
   const [position, setPosition] = useState<{x: number; y: number} | undefined>(undefined)
+
   const [styles, setStyles] = useState<CSSProperties>()
   const handleContextMenu = (e: TargetedEvent<Element, MouseEvent>) => {
     if (disabled) {
@@ -63,7 +63,6 @@ export function useContextMenu(
       return
     }
     e.preventDefault()
-
     setTrue()
 
     if (withPortal) {
@@ -102,7 +101,7 @@ export function useContextMenu(
     }
     let {x, y} = position
 
-    console.log(limiterEl)
+    // console.log(limiterEl)
     // console.log({y}, triggerRect.height, triggerRect.top)
     const additionalXForPortal = withPortal ? container.left : 0
 
@@ -176,9 +175,10 @@ export function useContextMenu(
   }, [position, getMenuElement, withPortal, disabled])
 
   const handleContextMenuClose = useCallback(() => {
+    onContextMenuClose?.()
     setFalse()
     setPosition(undefined)
-  }, [])
+  }, [onContextMenuClose])
   return {
     styles,
     handleContextMenu,

@@ -1,4 +1,4 @@
-import {type ApiMessageEntity, type HistoryDirection} from 'api/types'
+import {type ApiMessageEntity} from 'api/types'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiLangKey} from 'api/types/langPack'
 
@@ -9,6 +9,8 @@ import type {DeepPartial} from 'types/common'
 import type {ApiLangCode} from 'types/lib'
 import type {RightColumnScreens, SettingsScreens} from 'types/screens'
 import type {SettingsState, SignalGlobalState, Theme} from 'types/state'
+
+import type {MediaItem} from 'components/popups/SendMediaModal'
 
 import {getGlobalState} from './signal'
 
@@ -99,7 +101,14 @@ interface ActionPayloads {
   /* ChatFolders */
 
   /* Messages */
-  sendMessage: {text: string; entities?: ApiMessageEntity[]; chatId: string; sendAs?: string}
+  sendMessage: {
+    text: string
+    entities?: ApiMessageEntity[]
+    // chatId: string
+    sendAs?: string
+    mediaItems?: MediaItem[]
+  }
+  // sendMedia: {text?: string; items: MediaItem[]}
   editMessage: {text: string; chatId: string; messageId: string}
   deleteMessages: {ids: string[]; chatId: string}
   getHistory: GetHistoryPayload

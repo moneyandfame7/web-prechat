@@ -1,6 +1,8 @@
 import {type FC, Fragment, memo} from 'preact/compat'
 import {useCallback, useEffect, useState} from 'preact/hooks'
 
+import {useIsOnline} from 'hooks/useIsOnline'
+
 import {LeftColumnScreen} from 'types/screens'
 
 import {StoriesList} from 'containers/stories/list'
@@ -66,7 +68,7 @@ const LeftMain: FC = (props) => {
   }, [activeGroup])
 
   const isSearchInputFocused = activeGroup === LeftMainGroup.Search
-
+  const isOnline = useIsOnline()
   return (
     <Fragment {...props}>
       <ColumnHeader className="LeftColumn-Header">
@@ -84,6 +86,7 @@ const LeftMain: FC = (props) => {
           value={search}
           onInput={handleSearch}
           onFocus={handleFocusInput}
+          isOnline={isOnline}
         />
         {/* <InputText
           value={search}

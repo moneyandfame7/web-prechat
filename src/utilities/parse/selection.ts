@@ -1,7 +1,7 @@
 import type {RefObject} from 'preact'
 
 export function insertTextAtCursor(text: string, inputRef: RefObject<HTMLDivElement>) {
-  if (!isSelectionInElement(inputRef.current!.id)) {
+  if (!isSelectionInElement(inputRef)) {
     console.log('NY TI EBLAN?')
     return
   }
@@ -17,11 +17,11 @@ export function insertTextAtCursor(text: string, inputRef: RefObject<HTMLDivElem
   range.setStartAfter(textNode)
   sel?.removeAllRanges()
   sel?.addRange(range)
-  inputRef.current?.dispatchEvent(new Event('input', {bubbles: true}))
+  inputRef.current?.dispatchEvent(new Event('input', {bubbles: true})) // щоб відбувся евент і пропав placeholder, змінилась висота і т.д
 }
 
 export function insertCursorAtEnd(inputRef: RefObject<HTMLDivElement>) {
-  if (!isSelectionInElement(inputRef.current!.id) || !inputRef.current) {
+  if (!isSelectionInElement(inputRef) || !inputRef.current) {
     console.log('NY TI EBLAN? 222')
     return
   }
@@ -34,15 +34,14 @@ export function insertCursorAtEnd(inputRef: RefObject<HTMLDivElement>) {
   selection?.addRange(range)
 }
 
-export function isSelectionInElement(elementId: string) {
+export function isSelectionInElement(inputRef: RefObject<HTMLDivElement>) {
   const selection = window.getSelection()
   if (!selection || !selection.rangeCount) {
     return false
   }
 
   const range = selection.getRangeAt(0)
-  const element = document.getElementById(elementId)
-
+  const element = inputRef.current
   if (!element) {
     return false
   }

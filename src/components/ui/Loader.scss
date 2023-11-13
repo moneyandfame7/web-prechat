@@ -1,5 +1,4 @@
 .loader-container {
-  background-color: #0000004d;
   position: absolute;
   inset: 0;
   margin: auto;
@@ -16,16 +15,19 @@
     > .loader-circular,
     > .loader-download,
     > .loader-cancel {
-      transition: opacity 0.2s ease-in-out;
+      transition: opacity 0.2s ease;
     }
+  }
+  &.with-bg {
+    background-color: #0000004d;
   }
 
   > .loader-circular {
     border: 2.5px solid #fff;
     border-bottom-color: transparent !important;
     border-radius: 50%;
-    height: 80%;
-    width: 80% !important;
+    height: 95%;
+    width: 95% !important;
     // display: inline-block;
     box-sizing: border-box;
 
@@ -71,11 +73,13 @@
   }
 
   &.small {
-    width: 27px !important;
-    height: 27px !important;
+    width: 32px !important;
+    height: 32px !important;
     > .loader-circular,
     > .loader-download,
     > .loader-cancel {
+      width: 20px;
+      height: 20px;
     }
   }
 }

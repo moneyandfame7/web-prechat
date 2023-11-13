@@ -26,6 +26,20 @@ export const selectHasMessageSelection = (state: SignalGlobalState): boolean =>
   // state.selection.messageIds.length > 0
   state.selection.hasSelection
 
+export const selectSelectedMessages = (state: SignalGlobalState, chatId: string) => {
+  const ids = state.selection.messageIds
+
+  const messages = ids.reduce((acc, id) => {
+    const message = selectMessage(state, chatId, id)
+    if (message) {
+      acc.push(message)
+    }
+    return acc
+  }, [] as ApiMessage[])
+
+  return messages
+}
+
 export const selectEditableMessage = (state: SignalGlobalState): ApiMessage | undefined => {
   const messageId = state.messageEditing.messageId
   const currentChat = selectCurrentChat(state)

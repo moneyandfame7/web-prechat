@@ -9,16 +9,28 @@ export interface ApiMessage {
   forwardTo?: string
   isOutgoing?: boolean
   text?: string
-  createdAt: Date
+  createdAt: string
   sendingStatus?: ApiMessageSendingStatus // only on Client
   deleteLocal?: true
   content: {
     formattedText?: ApiFormattedText
-    photo?: ApiPhoto
+    photos?: ApiPhoto[] // if length > 1 - is album
+    documents?: ApiDocument[]
     contact?: ApiContact
   }
   editedAt?: string
   action?: ApiMessageAction
+}
+export interface ApiDocument {
+  id: string
+  date: string
+  fileName: string
+  size?: number
+  url: string
+  extension?: string
+  blurHash?: string
+  isMedia?: boolean
+  mimeType?: string
 }
 export interface ApiContact {
   userId: string
@@ -54,6 +66,8 @@ export interface SendMessageInput {
   text: string
   entities?: ApiMessageEntity[]
   sendAs?: ApiInputPeer
+  fileOptions?: {[key: string]: {withSpoiler: boolean; mimeType?: string}}
+  shouldSendMediaAsDocument?: boolean
 }
 export interface EditMessageInput {
   chatId: string
@@ -98,6 +112,18 @@ export interface GetPinnedMessagesInput {
   chatId: string
   limit?: number
   offsetId?: string
+}
+/**
+ * @todo rewrite on contact?: ApiContact ... document?: ... image?.... ?
+ */
+
+export interface SendMediaInput {
+  id: string
+  orderedId: number
+  chatId: string
+  silent?: boolean
+  text?: string
+  fileOptions: {[key: string]: {withSpoiler: boolean; mimeType?: string}}
 }
 export enum ApiMessageEntityType {
   Italic = 'italic',

@@ -47,9 +47,6 @@ interface MenuProps {
   children: ComponentChildren
   isOpen: boolean
   withMount?: boolean
-  /**
-   * @default true
-   */
   autoClose?: boolean
   onClose: () => void
   withBackdrop?: boolean
@@ -61,6 +58,9 @@ interface MenuProps {
   withPortal?: boolean
   shouldHandleAwayClick?: boolean
   withLeave?: boolean
+  /**
+   * @default 200
+   */
   timeout?: number
   easing?: TransitionEasing
 }
@@ -194,7 +194,7 @@ export const Menu: FC<MenuProps> = memo(
   }
 )
 
-interface MenuItemProps {
+export interface MenuItemProps {
   children?: ComponentChildren
   className?: string
   onClick?: (e: MouseEvent) => void | Promise<void>
@@ -255,7 +255,7 @@ export const MenuItem: FC<MenuItemProps> = memo(
           href={to}
           {...(to && {target: '_blank', rel: 'noreferrer'})}
         >
-          {icon && <Icon name={icon} />}
+          {icon && <Icon color="default" /* color="secondary"  */ name={icon} />}
           {title && <span class="menu-title">{title}</span>}
           {children}
           {badge && <span class="menu-badge">{badge}</span>}

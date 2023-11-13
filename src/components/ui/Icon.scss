@@ -34,7 +34,8 @@
       fill: var(--c-icon);
     }
 
-    &.Icon-key {
+    &.Icon-key,
+    &.Icon-plus {
       stroke: var(--c-icon);
       path {
         fill: unset;

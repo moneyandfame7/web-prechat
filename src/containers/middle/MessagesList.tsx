@@ -35,17 +35,11 @@ import {
   selectPinnedMessageIds,
 } from 'state/selectors/messages'
 
-import {useIsFirstRender} from 'hooks/useIsFirstRender'
-
 import {formatMessageGroupDate} from 'utilities/date/convert'
-import {isInRange} from 'utilities/isInRange'
-import {isNotNill} from 'utilities/isNill'
 import {logger} from 'utilities/logger'
 import {debounce} from 'utilities/schedulers/debounce'
-import {throttle} from 'utilities/schedulers/throttle'
-import {timeout} from 'utilities/schedulers/timeout'
 
-import {GetHistoryPayload} from 'types/action'
+import type {GetHistoryPayload} from 'types/action'
 
 import {SingleTransition} from 'components/transitions'
 import {Loader} from 'components/ui/Loader'
@@ -55,7 +49,6 @@ import {MessageBubble, VirtualScrollItem} from './message/MessageBubble'
 
 import './MessagesList.scss'
 
-const RANGE_BOTTOM_COUNT = 1
 type OwnProps = {
   chatId: string
   isPinnedList?: boolean
@@ -94,7 +87,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   messageIds,
   messagesById,
   chatId,
-  isMessagesLoading,
+  // isMessagesLoading,
   chat,
   isSavedMessages,
   isChannel,
@@ -110,7 +103,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   const isReady = useRef(false)
   const isFirstRender = useRef(true)
   const isFetching = useRef(false)
-  const [shifting, setShifting] = useState(false)
+  // const [shifting, setShifting] = useState(false)
   const [startFetching, setStartFetching] = useState(false)
   const [endFetching, setEndFetching] = useState(false)
   const [firstUnreadMessage2, setFirstUnreadMessage2] = useState(
@@ -282,18 +275,18 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   }, [dateGroup, firstUnreadMessage2])
 
   /**
-   * @todo fix: sending status messages ( 155 line on MessageBuble.tsx )
+   * @todo fix: sending status messages ( 155 line on MessageBuble.tsx ) +
    *
-   * @todo continue infinite scrolling ( 246 line )
+   * @todo continue infinite scrolling ( 246 line ) +
    *
    *
-   * @todo спочатку треба getHistory({offsetId: firstUnreadMessage.orderedId ...?, Around ?}) for Around required offsetId
+   * @todo спочатку треба getHistory({offsetId: firstUnreadMessage.orderedId ...?, Around ?}) for Around required offsetId +
    */
   const handleFetchHistory2 = async (payload: GetHistoryPayload, isStart = false) => {
     isFetching.current = true
     const setFetching = isStart ? setStartFetching : setEndFetching
     setFetching(true)
-    setShifting(isStart)
+    // setShifting(isStart)
 
     await getHistory(payload)
 

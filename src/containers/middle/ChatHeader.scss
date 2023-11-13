@@ -23,6 +23,18 @@
       .list-item__title {
         font-weight: 500;
       }
+      .list-item__subtitle {
+        .transition,
+        .transition-item {
+          height: 24px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .animated-ellipsis {
+          font-size: inherit;
+          font-weight: inherit;
+        }
+      }
     }
   }
   .chat-info-wrapper {

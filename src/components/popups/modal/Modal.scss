@@ -18,21 +18,26 @@
     min-height: 200px;
     min-width: 300px;
     max-width: 500px;
-
     background-color: var(--c-surface);
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 
+    display: flex;
+    flex-direction: column;
     @include withAnimations {
       animation: modal-open 0.15s ease;
     }
-    @include withSmallScreen {
-      width: 95%;
-      min-width: unset !important;
+    &:not(.send-media-modal) {
+      @include withSmallScreen {
+        width: 95%;
+        min-width: unset !important;
+      }
     }
   }
   &-content {
+    flex: 1;
     padding-block: 15px;
     padding-inline: 5px;
+    max-height: calc(100vh - 20rem);
   }
 
   &-title {
@@ -48,10 +53,12 @@
     }
   }
 
-  &-header {
+  &-header,
+  &-footer {
     padding-inline: 5px;
     padding-block: 5px;
     display: flex;
+    width: 100%;
     align-items: center;
 
     .Button {
@@ -61,6 +68,57 @@
       flex-shrink: 0.3;
     }
   }
+
+  &-footer {
+    padding-block-start: 5px;
+    align-items: flex-end;
+  }
+  .modal-input-container {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    padding-block-start: 5px;
+    align-items: flex-end;
+    gap: 10px;
+    justify-content: space-between;
+    &::after {
+      display: block;
+      content: '';
+      position: absolute;
+      inset: 0;
+      top: 0;
+      height: 1px;
+      background-color: var(--c-border);
+      opacity: 0;
+      @include defaultTransition(opacity, background-color);
+    }
+    &.scrolled {
+      &::after {
+        opacity: 1;
+      }
+    }
+    > .text-area-wrapper {
+      width: 235px;
+      // max-width: 235px;
+      padding-top: 8px;
+      flex: 1;
+      // overflow-y: auto;
+      > .text-area {
+        padding-bottom: 0;
+        padding-inline: 0;
+        max-height: 150px; // !IMPORTANT!!!!
+        scrollbar-width: thin;
+      }
+    }
+  }
+
+  // &-footer {
+  //   display: flex;
+  //   align-items: center;
+  //   padding-inline: 5px;
+  //   padding-block: 5px;
+  // }
   .avatar {
     width: 100px;
     height: 100px;

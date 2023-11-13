@@ -26,6 +26,7 @@ interface DropdownMenuProps {
   className?: string
   onOpen?: VoidFunction
   onClose?: VoidFunction
+  timeout?: number
   /* якщо в нас є компонент з модалкою - то потрібно не робити unmount  */
 }
 export const DropdownMenu: FC<DropdownMenuProps> = ({
@@ -37,6 +38,7 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({
   onClose,
   onOpen,
   className,
+  timeout,
 }) => {
   const {value: isMenuOpen, setTrue: openMenu, setFalse: closeMenu} = useBoolean(false)
 
@@ -62,6 +64,7 @@ export const DropdownMenu: FC<DropdownMenuProps> = ({
         isOpen={isMenuOpen}
         onClose={handleClose}
         transform={transform}
+        timeout={timeout}
         withMount={mount}
         placement={placement}
       >

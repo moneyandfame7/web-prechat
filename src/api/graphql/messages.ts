@@ -10,7 +10,7 @@ import type {
   SendMessageInput,
 } from 'api/types/messages'
 
-import {FRAGMENT_PHOTO} from './media'
+import {FRAGMENT_DOCUMENT, FRAGMENT_PHOTO} from './media'
 
 export const FRAGMENT_MESSAGE_ACTION: DocumentNode = gql`
   fragment AllMessageActionFields on MessageAction {
@@ -48,6 +48,12 @@ export const FRAGMENT_MESSAGE: DocumentNode = gql`
       action {
         ...AllMessageActionFields
       }
+      photos {
+        ...AllPhotoFields
+      }
+      documents {
+        ...AllDocumentFields
+      }
     }
     text
     createdAt
@@ -56,14 +62,16 @@ export const FRAGMENT_MESSAGE: DocumentNode = gql`
     views
   }
   ${FRAGMENT_MESSAGE_ACTION}
+  ${FRAGMENT_PHOTO}
+  ${FRAGMENT_DOCUMENT}
 `
 
 export const MUTATION_SEND_MESSAGE: TypedDocumentNode<
   {sendMessage: {message: ApiMessage}},
   {input: SendMessageInput}
 > = gql`
-  mutation SendMessage($input: SendMessageInput!) {
-    sendMessage(input: $input) {
+  mutation SendMessage($input: SendMessageInput!, $files: [Upload!]) {
+    sendMessage(input: $input, files: $files) {
       message {
         ...AllMessageFields
       }
@@ -72,6 +80,7 @@ export const MUTATION_SEND_MESSAGE: TypedDocumentNode<
 
   ${FRAGMENT_MESSAGE}
 `
+
 export const MUTATION_DELETE_MESSAGES: TypedDocumentNode<
   {deleteMessages: boolean},
   {input: DeleteMessagesInput}

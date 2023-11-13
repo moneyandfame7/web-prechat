@@ -4,7 +4,8 @@
   left: 0;
   right: 0;
   height: max-content !important;
-  min-width: 180px;
+  // min-width: 180px;
+  min-width: 13.5rem;
   width: max-content !important;
   padding: 5px;
 
@@ -30,7 +31,7 @@
     font-size: 14px;
     font-weight: 500;
     border-radius: 8px;
-    padding: 4px 12px;
+    padding: 6px 12px;
     white-space: nowrap;
     display: flex;
     align-items: center;
@@ -74,13 +75,14 @@
       color: var(--c-danger);
       > .Icon {
         path {
-          fill: var(--c-danger);
+          fill: var(--c-danger) !important;
         }
       }
     }
 
     > .Icon {
       width: 20px;
+      height: 20px;
       margin-right: 10px; //15px
 
       path {

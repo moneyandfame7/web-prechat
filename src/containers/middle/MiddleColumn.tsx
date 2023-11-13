@@ -24,9 +24,10 @@ import {addEscapeListener, addKeyboardListeners} from 'utilities/keyboardListene
 import {deepClone} from 'utilities/object/deepClone'
 import {connectStateToNavigation} from 'utilities/routing'
 
-import type {OpenedChat} from 'types/state'
+import type {OpenChats} from 'types/state'
 
 import {InfiniteScroll} from 'components/InfiniteScroll'
+import {Photo} from 'components/common/Photo'
 import {InfiniteScrollTest} from 'components/test/InfiniteScrollTest'
 import {Transition} from 'components/transitions'
 
@@ -151,6 +152,16 @@ const MiddleColumn: FC<InjectedProps> = ({
   return (
     <div class="MiddleColumn" id="middle-column">
       {/* <InfiniteScrollTest /> */}
+      {/* <Photo
+        url="https://plus.unsplash.com/premium_photo-1695582867991-e75f29ab5a2a?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        blurHash="U9RfRkbXIV_3LzRjRQsp4TozspMyNGfjR*Rj"
+        alt=""
+        interactive
+        canAutoLoad={false}
+        withSpoiler
+        height={300}
+        width={300}
+      /> */}
       {isChatOpen && (
         <>
           <ChatHeader
@@ -194,7 +205,7 @@ const MiddleColumn: FC<InjectedProps> = ({
 export default memo(
   connect<OwnProps, StateProps>((state) => {
     const openedChats = selectOpenedChats(state)
-    const openedChat = openedChats[openedChats.length - 1] as OpenedChat | undefined
+    const openedChat = openedChats[openedChats.length - 1] as OpenChats | undefined
 
     const messagesById = openedChat?.chatId
       ? selectMessages(state, openedChat?.chatId)

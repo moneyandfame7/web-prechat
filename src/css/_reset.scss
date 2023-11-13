@@ -102,6 +102,10 @@ ul li {
 img {
   vertical-align: top;
 }
+img,
+video {
+  -webkit-user-drag: none;
+}
 
 h1,
 h2,
