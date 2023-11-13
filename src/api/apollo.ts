@@ -74,7 +74,7 @@ export class ApolloClientWrapper {
         'apollo-require-preflight': 'true',
       },
 
-      fetch: customFetch as any,
+      // fetch: customFetch as any,
       /* headers?? */
     }) as unknown as ApolloLink
     // return createUploadLink({

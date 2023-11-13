@@ -19,6 +19,8 @@ const parseHeaders = (rawHeaders: any) => {
 export const uploadFetch = (url: string, options: CustomFetchOptions) =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
+    xhr.withCredentials = true
+
     xhr.onload = () => {
       const opts: any = {
         status: xhr.status,
@@ -65,6 +67,7 @@ type CustomFetchOptions = {
   onAbort?: (abortHandler: AnyFunction) => void
 } & {[key in any]: any}
 export const customFetch = (uri: any, options: CustomFetchOptions) => {
+  console.log({options})
   if (options.onProgress) {
     return uploadFetch(uri, options)
   }
