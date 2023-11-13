@@ -122,7 +122,7 @@ export const INITIAL_STATE: GlobalState = {
   stories: {
     isOpen: false,
   },
-  openedChats: [],
+  openChats: [],
   rightColumn: {
     screen: RightColumnScreens.ChatProfile,
     isOpen: false,

@@ -100,7 +100,7 @@ export interface GlobalSearchState {
   }
   isLoading: boolean
 }
-export interface OpenedChat {
+export interface OpenChats {
   chatId?: string
   username?: string
   isMessagesLoading: boolean
@@ -201,7 +201,7 @@ export interface GlobalState {
     username?: string
     isMessagesLoading: boolean
   }
-  openedChats: OpenedChat[]
+  openChats: OpenChats[]
   globalSettingsScreen?: SettingsScreens
 }
 /**

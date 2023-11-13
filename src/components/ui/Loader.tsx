@@ -2,7 +2,7 @@ import {type CSSProperties, type FC} from 'preact/compat'
 
 import clsx from 'clsx'
 
-import {Size} from 'types/ui'
+import type {Size} from 'types/ui'
 
 import {SingleTransition} from 'components/transitions'
 
@@ -18,6 +18,7 @@ interface LoaderProps {
   isPending?: boolean
   styles?: CSSProperties
   size?: Size
+  withBackground?: boolean
 }
 
 const Loader: FC<LoaderProps> = ({
@@ -27,11 +28,13 @@ const Loader: FC<LoaderProps> = ({
   isPending = false,
   styles,
   size = 'medium',
+  withBackground = true,
 }) => {
   const buildedClass = clsx(`loader-container ${size}`, {
     loading: isLoading && !isPending,
     cancelable: isCancelable,
     pending: isPending,
+    'with-bg': withBackground,
   })
   return (
     <SingleTransition

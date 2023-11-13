@@ -90,6 +90,12 @@ export {ReactComponent as pin} from './pin.svg'
 export {ReactComponent as unpin} from './unpin.svg'
 export {ReactComponent as pinnedChat} from './pinnedchat.svg'
 export {ReactComponent as arrowDown} from './arrow_down.svg'
+export {ReactComponent as poll} from './poll.svg'
+export {ReactComponent as spoiler} from './spoiler.svg'
+export {ReactComponent as mediaSpoiler} from './mediaspoiler.svg'
+export {ReactComponent as mediaSpoilerOff} from './mediaspoileroff.svg'
+export {ReactComponent as groupMedia} from './groupmedia.svg'
+export {ReactComponent as groupMediaOff} from './groupmediaoff.svg'
 // const arrowLeft: FC = lazy(() => import('./arrow-left.svg').then((module) => module.ReactComponent))
 // const menu: FC = lazy(() => import('./menu.svg').then((module) => module.ReactComponent))
 

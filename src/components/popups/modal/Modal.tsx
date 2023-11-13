@@ -1,3 +1,4 @@
+import {useComputed, useSignal} from '@preact/signals'
 import {
   type FC,
   type PropsWithChildren,
@@ -7,11 +8,15 @@ import {
   useRef,
 } from 'preact/compat'
 
+import {useBoolean} from 'hooks/useFlag'
+
 import {addEscapeListener} from 'utilities/keyboardListener'
 
+import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
 import {SingleTransition} from 'components/transitions'
-import {IconButton} from 'components/ui'
+import {Button, IconButton} from 'components/ui'
 import {Portal} from 'components/ui/Portal'
+import {TextArea, type TextAreaProps} from 'components/ui/TextArea'
 
 import {ModalProvider, useModalContext} from './context'
 
@@ -103,9 +108,45 @@ export const ModalActions: FC = ({children}) => {
 }
 
 export const ModalContent: FC = ({children}) => {
-  return <div class="Modal-content">{children}</div>
+  return <div class="Modal-content scrollable scrollable-y">{children}</div>
 }
 
+export const ModalFooter: FC = ({children}) => {
+  return <div class="Modal-footer">{children}</div>
+}
+
+interface ModalInputProps extends TextAreaProps {
+  onSubmit: VoidFunction
+}
+export const ModalInput: FC<ModalInputProps> = (props) => {
+  const isScrolledSignal = useSignal(false)
+  useEffect(() => {
+    const scroll = props.inputRef.current
+
+    if (!scroll) {
+      return
+    }
+    const handleScroll = () => {
+      isScrolledSignal.value = scroll.scrollTop > 0
+    }
+
+    scroll?.addEventListener('scroll', handleScroll)
+
+    return () => scroll?.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const computedClass = useComputed(
+    () => `modal-input-container${isScrolledSignal.value ? ' scrolled' : ''}`
+  )
+
+  return (
+    <div class={computedClass}>
+      <IconButton icon="smile" />
+      <TextArea {...props} />
+      <Button onClick={props.onSubmit}>Send</Button>
+    </div>
+  )
+}
 interface ModalHeaderProps {
   hasCloseButton?: boolean
 }

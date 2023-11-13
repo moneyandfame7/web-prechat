@@ -1,14 +1,14 @@
 import type {DeepSignal} from 'deepsignal'
 
-import {Api, PENDING_REQUESTS} from 'api/manager'
-import {type ApiMessage, HistoryDirection} from 'api/types'
+import {Api, PENDING_MAIN_REQUESTS} from 'api/manager'
+import {type ApiMessage, HistoryDirection, type SendMediaInput} from 'api/types'
 
 import {createAction} from 'state/action'
 import {buildLocalPrivateChat} from 'state/helpers/chats'
 import {buildLocalMessage, orderHistory} from 'state/helpers/messages'
 import {isUserId} from 'state/helpers/users'
 import {selectChat} from 'state/selectors/chats'
-import {selectMessage, selectMessageSender, selectMessages} from 'state/selectors/messages'
+import {selectMessage, selectMessages} from 'state/selectors/messages'
 import {selectUser} from 'state/selectors/users'
 import {updateChat, updateChats} from 'state/updates'
 import {
@@ -58,6 +58,7 @@ createAction('sendMessage', async (state, _, payload) => {
     entities,
     senderId: sendAs || state.auth.userId!,
     isChannel: chat.type === 'chatTypeChannel',
+    mediaItems: payload.mediaItems,
   })
   // updateLastMessage(state, chatId, localMessage, false)
   updateMessages(state, chatId, {[localMessage.id]: localMessage}, false, false)
@@ -67,13 +68,28 @@ createAction('sendMessage', async (state, _, payload) => {
   // after 1s need to set state status on pending?
   /* Catch error there and update message state */
   try {
-    const sended = await Api.messages.sendMessage({
-      id: localMessage.id,
-      orderedId: localMessage.orderedId,
-      chatId,
-      text,
-      entities,
-    })
+    const files = payload.mediaItems ? payload.mediaItems.map((item) => item.file) : undefined
+    const fileOptions = payload.mediaItems
+      ? payload.mediaItems.reduce((acc, item) => {
+          acc[item.id] = {
+            mimeType: item.mimeType,
+            withSpoiler: item.withSpoiler,
+          }
+          return acc
+        }, {} as SendMediaInput['fileOptions'])
+      : undefined
+
+    const sended = await Api.messages.sendMessage(
+      {
+        id: localMessage.id,
+        orderedId: localMessage.orderedId,
+        chatId,
+        text,
+        entities,
+        fileOptions,
+      },
+      files
+    )
     if (!sended) {
       updateMessage(state, chatId, localMessage.id, {sendingStatus: 'failed'}, false)
     } else {
@@ -82,29 +98,6 @@ createAction('sendMessage', async (state, _, payload) => {
   } catch (e) {
     updateMessage(state, chatId, localMessage.id, {sendingStatus: 'failed'}, false)
   }
-
-  // const {message} = sended
-  // updateMessage(state, chatId, builded.id, {
-  //   content: {
-  //     formattedText: {
-  //       text: 'TI EBLAN YA HZ YAK ЦЕ ВИПРАВЛЯТИ!',
-  //     },
-  //   },
-  // })
-  // deleteMessage(state, chatId, builded.id)
-  // replaceLocalMessage(state, chatId, localMessage, sended.message)
-
-  // console.log({builded})
-  // deleteMessage(state, chatId, builded.id)
-
-  // updateMessages(state, chatId, {
-  //   [message.id]: message,
-  // })
-  // updateMessage(state, chatId, builded.id, {
-  //   id: message.id,
-  //   createdAt: message.createdAt,
-  //   sendingState: undefined,
-  // })
 })
 
 createAction('editMessage', async (state, actions, payload) => {
@@ -155,7 +148,7 @@ createAction('getHistory', async (state, actions, payload) => {
     offsetId,
     includeOffset = false,
   } = payload
-  const chat = selectChat(state, chatId)
+  // const chat = selectChat(state, chatId)
   // if (!chat) {
 
   //   return
@@ -181,7 +174,8 @@ createAction('getHistory', async (state, actions, payload) => {
   //   merged.sort((a, b) => a.orderedId - b.orderedId).map((message) => message.orderedId)
   // )
 
-  console.log(orderedHistory.map((m) => m.orderedId))
+  // console.log(orderedHistory.map((m) => m.orderedId))
+
   // const merged=[oldMessages?(...Object.values(oldMessages))]
   // console.log(Object.values(oldMessages))
   // const newMessages = result.map((m) => m.id)
@@ -197,7 +191,7 @@ createAction('getHistory', async (state, actions, payload) => {
     }
     const sender = selectUser(state, message.senderId)
 
-    if (!sender && !PENDING_REQUESTS.USERS.has(message.senderId)) {
+    if (!sender && !PENDING_MAIN_REQUESTS.USERS.has(message.senderId)) {
       await actions.getUser(message.senderId)
     }
   })
@@ -256,7 +250,7 @@ createAction('readHistory', async (state, _actions, payload) => {
 })
 
 createAction('getPinnedMessages', async (state, _actions, payload) => {
-  const {chatId, offsetId} = payload
+  const {chatId /* offsetId */} = payload
 
   const chat = selectChat(state, chatId)
   /**

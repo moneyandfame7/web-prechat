@@ -6,7 +6,11 @@ import {type MapState, connect} from 'state/connect'
 import {getUserStatus} from 'state/helpers/users'
 import {selectUser} from 'state/selectors/users'
 
+import {useIsOnline} from 'hooks/useIsOnline'
+
+import {Transition} from 'components/transitions'
 import {type AvatarSize, AvatarTest} from 'components/ui/AvatarTest'
+import {Dots} from 'components/ui/Dots'
 
 import {FullNameTitle} from './FullNameTitle'
 
@@ -30,6 +34,9 @@ const PrivateChatInfoImpl: FC<OwnProps & StateProps> = ({
   isSavedMessages,
   userStatus,
 }) => {
+  const isOnline = useIsOnline()
+
+  function renderChatStatus() {}
   return (
     <div class="chat-info private">
       {/* <ListItem
@@ -48,7 +55,11 @@ const PrivateChatInfoImpl: FC<OwnProps & StateProps> = ({
       {user && (
         <div class="chat-info__container">
           <FullNameTitle peer={user} isSavedMessages={isSavedMessages} />
-          <p class="list-item__subtitle">{userStatus}</p>
+          <p class="list-item__subtitle">
+            <Transition activeKey={isOnline ? 0 : 1} name="slideFadeY">
+              {!isOnline ? <Dots text="waiting network status" /> : userStatus}
+            </Transition>
+          </p>
         </div>
       )}
       {/* </ListItem> */}

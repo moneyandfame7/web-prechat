@@ -16,7 +16,9 @@ import {getSignalOr} from 'utilities/getSignalOr'
 import {isAnimationDisabled} from 'utilities/isAnimationEnabled'
 
 import type {AnyObject} from 'types/common'
-import type {InputHandler, SignalOr} from 'types/ui'
+import type {InputHandler, PreactNode, SignalOr} from 'types/ui'
+
+import {Transition} from 'components/transitions'
 
 import {Icon, type IconName} from './Icon'
 import {Spinner} from './Spinner'
@@ -42,7 +44,7 @@ interface InputProps {
   loading?: boolean
   tabIndex?: number
   autoFocus?: boolean
-  startIcon?: IconName
+  startIcon?: PreactNode
   endIcon?: VNode
   className?: string
   dataProps?: AnyObject
@@ -172,7 +174,9 @@ export const InputText: FC<InputProps> = ({
         placeholder={placeholder}
       />
       {variant !== 'default' && <div class="input-border" />}
-      {startIcon && <Icon name={startIcon} color="secondary" />}
+      {/* {startIcon && <Icon name={startIcon} color="secondary" />} */}
+      {/* {renderStartIcon()} */}
+      {startIcon}
       {renderEndIcon()}
       {labelText && (
         <label for={id} htmlFor={id}>

@@ -15,7 +15,7 @@ $color-border: #d5d7db;
 $color-error: rgb(237, 24, 24);
 $color-error-secondary: rgba(233, 52, 52, 0.751);
 
-$color-warn: #ffd3009e;
+$color-warn: #fdd764;
 $color-gray: #f4f4f5;
 $color-neutral: #8d969c;
 $color-neutral-secondary: #94989b;
@@ -224,6 +224,7 @@ $theme-map-dark: (
   --c-ripple: rgba(0, 0, 0, 6%);
   --c-error: #{$c-font-red};
   --c-danger: #{$c-danger};
+  --c-warn: #fdd764;
 
   --c-danger-transparent: #{rgba($c-danger, 0.1)};
 

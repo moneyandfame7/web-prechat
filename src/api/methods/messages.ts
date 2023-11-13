@@ -21,7 +21,7 @@ import type {
 // import {timeout} from 'utilities/schedulers/timeout'
 
 export class ApiMessages extends ApiBaseMethod {
-  public async sendMessage(input: SendMessageInput) {
+  public async sendMessage(input: SendMessageInput, fileUploads?: File[]) {
     // return timeout(500)('').then(() => {
     //   return false
     // })
@@ -31,6 +31,13 @@ export class ApiMessages extends ApiBaseMethod {
         input: {
           ...input,
           entities: input.entities?.length ? input.entities : undefined,
+        },
+        files: fileUploads,
+      },
+      context: {
+        fetchOptions: {
+          onProgress: () => {},
+          onAbort: () => {},
         },
       },
     })

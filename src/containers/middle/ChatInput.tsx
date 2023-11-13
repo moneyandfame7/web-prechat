@@ -1,13 +1,25 @@
 import {useSignal} from '@preact/signals'
-import {type FC, type RefObject, memo, useCallback, useEffect, useRef} from 'preact/compat'
+import {
+  ChangeEvent,
+  type FC,
+  type RefObject,
+  TargetedEvent,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'preact/compat'
 
 import clsx from 'clsx'
 import type {VListHandle} from 'virtua'
 
+import {Api} from 'api/manager'
 import type {ApiChat, ApiMessage} from 'api/types'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
+import {isUserId} from 'state/helpers/users'
 import {isChatChannel, selectChat} from 'state/selectors/chats'
 import {
   selectHasMessageEditing,
@@ -20,12 +32,19 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
 
+import {MODAL_TRANSITION_MS} from 'common/environment'
+import {getBlobUrl} from 'utilities/file/getBlobUrl'
+import {getImageDimension} from 'utilities/file/getImageDimension'
+import {MyFileList} from 'utilities/fileList'
+import {getImagePreview} from 'utilities/getImagePreview'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'
 import {insertCursorAtEnd, insertTextAtCursor} from 'utilities/parse/selection'
 
 import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
 import DeleteMessagesModalAsync from 'components/popups/DeleteMessagesModal.async'
+import type {MediaItem, MediaOptions} from 'components/popups/SendMediaModal'
+import SendMediaModal from 'components/popups/SendMediaModal.async'
 import {MenuItem} from 'components/popups/menu'
 import {SingleTransition, Transition} from 'components/transitions'
 import {Button, Icon, IconButton} from 'components/ui'
@@ -76,6 +95,34 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
 }) => {
   const {sendMessage, editMessage, toggleMessageSelection} = getActions()
   const inputRef = useRef<HTMLDivElement>(null)
+  const inputImageRef = useRef<HTMLInputElement>(null)
+  const inputDocumentRef = useRef<HTMLInputElement>(null)
+
+  const {
+    value: sendMediaModalOpen,
+    setFalse: closeSendMediaModal,
+    setTrue: openSendMediaModal,
+  } = useBoolean()
+
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
+  const [mediaOptions, setMediaOptions] = useState<MediaOptions>({
+    groupAllMedia: true,
+    sendAsFiles: false,
+  })
+
+  const handleCloseSendMediaModal = () => {
+    closeSendMediaModal()
+    setTimeout(() => {
+      setMediaItems((prev) => {
+        prev.forEach((item) => {
+          if (item.previewUrl) {
+            URL.revokeObjectURL(item.previewUrl)
+          }
+        })
+        return []
+      })
+    }, MODAL_TRANSITION_MS)
+  }
 
   const inputHtml = useSignal(/* draft || */ '')
   const isSendDisabled =
@@ -86,6 +133,80 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
   const changeInputHtml = (html: string) => {
     inputHtml.value = html
   }
+
+  const triggerAddImage = () => {
+    inputImageRef.current?.click()
+    // openSendMediaModal()
+  }
+  const triggerAddDocument = () => {
+    inputDocumentRef.current?.click()
+  }
+  const handleAddImage = async (e: TargetedEvent<HTMLInputElement, ChangeEvent>) => {
+    const files = e.currentTarget.files
+
+    if (!files) {
+      return
+    }
+
+    const promises: Promise<MediaItem>[] = [...files].map(async (file) => {
+      const isImage = file.type.startsWith('image/')
+      const id = crypto.randomUUID()
+      const blobUrl = getBlobUrl(file)
+      const dimension = await getImageDimension(blobUrl)
+
+      return {
+        id,
+        file: new File([file], `${id}_${file.name}`), // ВАЖЛИВО робити саме таке
+        dimension,
+        isImage,
+        withSpoiler: false,
+        previewUrl: blobUrl,
+        mimeType: file.name.split('.').pop()?.toLowerCase(),
+
+        // ...dimension,
+      } satisfies MediaItem
+    })
+    const newMediaItems = await Promise.all(promises)
+
+    setMediaItems((prev) => [...newMediaItems, ...prev])
+    if (!sendMediaModalOpen) {
+      openSendMediaModal()
+    }
+  }
+
+  const handleAddDocument = (e: TargetedEvent<HTMLInputElement, ChangeEvent>) => {
+    const files = e.currentTarget.files
+    if (!files) {
+      return
+    }
+
+    const newMediaItems: MediaItem[] = []
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+      const mimeType = file.name.split('.').pop()?.toLowerCase()
+      if (!mimeType) {
+        continue
+      }
+      const id = crypto.randomUUID()
+      const isImage = file.type.startsWith('image/')
+
+      newMediaItems.push({
+        id,
+        mimeType,
+        file: new File([file], `${id}_${file.name}`),
+        isImage,
+        withSpoiler: false,
+        previewUrl: isImage ? getImagePreview(file) : undefined,
+      })
+    }
+    console.log({newMediaItems})
+    setMediaItems((prev) => [...newMediaItems, ...prev])
+
+    if (!sendMediaModalOpen) {
+      openSendMediaModal()
+    }
+  }
+
   useEffect(() => {
     if (hasMessageEditing) {
       // inputHtml.value = editableMessage?.text
@@ -97,6 +218,12 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
       changeInputHtml('')
     }
   }, [hasMessageEditing, editableMessage])
+
+  useEffect(() => {
+    if (mediaItems.length === 0 && sendMediaModalOpen) {
+      closeSendMediaModal()
+    }
+  }, [mediaItems, sendMediaModalOpen])
   const insertInCursor = (text: string) => {
     const replaced = renderText([text], ['emoji_html']).join(' ')
 
@@ -126,7 +253,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
     } else {
       const {text, entities} = parseMessageInput(inputHtml.value)
 
-      sendMessage({text, entities, chatId})
+      sendMessage({text, entities /* chatId */})
       inputHtml.value = ''
     }
   }, [hasMessageEditing, editableMessage])
@@ -149,9 +276,11 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
   const handleCloseSelection = useCallback(() => {
     toggleMessageSelection({active: false})
   }, [])
+
   function renderChatInput() {
     switch (transitionKey) {
-      case 0:
+      case 0: {
+        const canSharePoll = chat && !isUserId(chat.id)
         return (
           <>
             <SingleTransition
@@ -185,9 +314,47 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
               transform="bottom right"
               button={<IconButton icon="attach" />}
             >
-              <MenuItem icon="image">Photo or Video</MenuItem>
-              <MenuItem icon="document">Document</MenuItem>
+              <MenuItem
+                onClick={triggerAddImage}
+                icon="image"
+                title={TEST_translate('Chat.Attach.PhotoOrVideo')}
+              />
+              <input
+                onChange={handleAddImage}
+                style={{display: 'none'}}
+                ref={inputImageRef}
+                multiple
+                type="file"
+                accept="image/*, video/*"
+              />
+              <MenuItem
+                icon="document"
+                title={TEST_translate('Chat.Attach.Document')}
+                onClick={triggerAddDocument}
+              />
+              <input
+                onChange={handleAddDocument}
+                style={{display: 'none'}}
+                ref={inputDocumentRef}
+                multiple
+                type="file"
+                // accept="image/*, video/*"
+              />
+              <MenuItem title={TEST_translate('Chat.Attach.Contact')} icon="user" />
+              {canSharePoll && (
+                <MenuItem title={TEST_translate('Chat.Attach.Poll')} icon="poll" />
+              )}
             </DropdownMenu>
+
+            <SendMediaModal
+              isOpen={sendMediaModalOpen}
+              onClose={handleCloseSendMediaModal}
+              items={mediaItems}
+              setItems={setMediaItems}
+              options={mediaOptions}
+              setOptions={setMediaOptions}
+              triggerAddDocument={triggerAddDocument}
+            />
             <svg viewBox="0 0 11 20" width="11" height="20" class="bubble-arrow">
               <g transform="translate(9 -14)" fill="inherit" fill-rule="evenodd">
                 <path
@@ -200,6 +367,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
             </svg>
           </>
         )
+      }
       case 1:
         return (
           <div class="selection-container">

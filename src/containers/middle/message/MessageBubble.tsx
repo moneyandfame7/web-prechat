@@ -3,13 +3,17 @@ import {type FC, forwardRef, memo, useEffect, useRef, useState} from 'preact/com
 import clsx from 'clsx'
 import type {CustomItemComponentProps} from 'virtua'
 
-import type {ApiChat, ApiMessage, ApiUser} from 'api/types'
+import type {ApiChat, ApiChatMember, ApiMessage, ApiUser} from 'api/types'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {getUserName, isUserId} from 'state/helpers/users'
-import {selectChat} from 'state/selectors/chats'
-import {selectHasMessageSelection, selectIsMessageSelected} from 'state/selectors/diff'
+import {getChatMember, selectChat, selectChatMember} from 'state/selectors/chats'
+import {
+  selectHasMessageSelection,
+  selectIsMessageSelected,
+  selectSelectedMessages,
+} from 'state/selectors/diff'
 import {selectUser} from 'state/selectors/users'
 
 import {useContextMenu} from 'hooks/useContextMenu'
@@ -17,6 +21,8 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
 
+import {Document} from 'components/common/Document'
+import {Photo} from 'components/common/Photo'
 import DeleteMessagesModal from 'components/popups/DeleteMessagesModal.async'
 import {Menu, MenuItem} from 'components/popups/menu'
 import {MenuDivider} from 'components/popups/menu/Menu'
@@ -27,7 +33,7 @@ import {MessageMeta} from './MessageMeta'
 
 import './MessageBubble.scss'
 
-interface MessageBubbleProps {
+interface OwnProps {
   message: ApiMessage
   withAvatar?: boolean
   isLastInList: boolean
@@ -37,56 +43,70 @@ interface MessageBubbleProps {
 }
 interface StateProps {
   chat: ApiChat | undefined
+  sender: ApiUser | undefined
+  chatMember: ApiChatMember | undefined
   hasMessageSelection: boolean
   isSelected: boolean
+  selectedMessages: ApiMessage[]
   showSenderName: boolean
-  sender?: ApiUser
 }
 const getMenuElement = () =>
   document
     .querySelector('#portal')!
     .querySelector('.message-context-menu') as HTMLElement | null
-const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
+const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
   ({
+    /* OwnProps */
     message,
-    chat,
-    sender,
-    showSenderName,
     withAvatar,
     isLastInGroup,
     isFirstInGroup,
     isLastInList,
+    isFirstUnread,
+
+    chat,
+    sender,
+    chatMember,
+    showSenderName,
     hasMessageSelection,
     isSelected,
-    isFirstUnread,
+    selectedMessages,
   }) => {
-    const {getUser, openChat} = getActions()
-
-    // useEffect(() => {
-    //   if (!sender && message.senderId) {
-    //     getUser(message.senderId)
-    //     console.error('SHOULD FETCH SENDER')
-    //   }
-    // }, [])
     const messageRef = useRef<HTMLDivElement>(null)
     const menuRef = useRef<HTMLDivElement>(null)
+    const contextMenuImgTarget = useRef<HTMLElement | null>(null)
 
-    const {deleteMessages, toggleMessageSelection, toggleMessageEditing} = getActions()
+    const {deleteMessages, openChat, toggleMessageSelection, toggleMessageEditing} =
+      getActions()
     const isOutgoing = message?.isOutgoing && !message.action
 
     const senderName = sender && getUserName(sender)
-    const messageText = message?.content.formattedText?.text
+    const messageText = message?.content.formattedText?.text || message.text
+
+    const onContextMenuClose = () => {
+      const img = contextMenuImgTarget.current
+      if (!img) {
+        return
+      }
+      img.style.filter = ''
+    }
 
     const {handleContextMenu, handleContextMenuClose, isContextMenuOpen, styles} =
-      useContextMenu(menuRef, messageRef, getMenuElement, undefined, true)
-    // messageRef.current.sele
+      useContextMenu(
+        menuRef,
+        messageRef,
+        getMenuElement,
+        undefined,
+        true,
+        undefined,
+        undefined,
+        onContextMenuClose
+      )
     const {
       value: isDeleteModalOpen,
       setTrue: openDeleteModal,
       setFalse: closeDeleteModal,
     } = useBoolean()
-
-    // const [hasSelectedText, setHasSelectedText] = useState(false)
 
     const [selectedText, setSelectedText] = useState('')
 
@@ -107,6 +127,10 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
         document.removeEventListener('selectionchange', handleSelectionChange)
       }
     }, [])
+    const hasPhoto = message.content.photos && message.content.photos.length > 0
+    const hasDocument = message.content.documents && message.content.documents.length > 0
+    const hasOnePhoto = hasPhoto && message.content.photos!.length === 1
+    const isAlbum = hasPhoto && message.content.photos!.length > 1
 
     const buildedClass = clsx('bubble', sender && `color-${sender.color.toLowerCase()}`, {
       outgoing: isOutgoing,
@@ -119,9 +143,11 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
       'has-menu-open': isContextMenuOpen,
       'delete-local': message.deleteLocal,
       'is-selected': isSelected,
+      'is-album': isAlbum,
+      'has-photo': hasPhoto,
+      'has-document': hasDocument,
+      'is-message-empty': !message.text,
     })
-
-    // imageRef.current
 
     const handleToggleSelection = () => {
       // updateMessageSelection(getGlobalState(), message.id)
@@ -142,7 +168,6 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
         }
       }
     }
-    const handleCopyMessageMedia = () => {}
 
     const handleClickAvatar = () => {
       if (!sender) {
@@ -156,18 +181,15 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
       })
     }
 
-    const hasCopyMessageGroup =
-      !!selectedText || !!message.content.photo || !!message.content.formattedText?.text
+    const isCopyable =
+      !!selectedText || !!message.content.photos || !!message.content.formattedText?.text
     const isOutgoingNotRead =
       chat?.lastReadOutgoingMessageId !== undefined &&
       chat?.lastReadOutgoingMessageId < message.orderedId
     const messageSendingStatus =
-      message.sendingStatus || isOutgoingNotRead ? 'unread' : 'success'
+      message.sendingStatus || (isOutgoingNotRead ? 'unread' : 'success')
 
-    // useEffect(() => {
-    //   // хз в чому трабл, тут статус фейлед показується, але messageSendingStatus - unread ))))))
-    //   // console.log({messageSendingStatus, text: message.text, status: message.sendingStatus})
-    // }, [])
+    const canDelete = message.isOutgoing || chat?.isOwner || chatMember?.isAdmin
 
     if (message.action) {
       return (
@@ -177,12 +199,90 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
       )
     }
 
+    function renderMenuItems() {
+      if (hasMessageSelection) {
+        if (!isSelected) {
+          return <MenuItem title={TEST_translate('Select')} icon="select" />
+        }
+
+        const canCopy = selectedMessages.some((message) => !!message.text)
+        const canDownload = selectedMessages.some((message) => !!message.content.photos)
+        return (
+          <>
+            {canCopy && (
+              <MenuItem title={TEST_translate('Message.CopySelected')} icon="copy" />
+            )}
+            <MenuItem icon="forward" title={TEST_translate('Message.ForwardSelected')} />
+            {canDownload && (
+              <MenuItem title={TEST_translate('Message.DownloadSelected')} icon="download" />
+            )}
+            <MenuItem title={TEST_translate('Message.ClearSelection')} icon="select" />
+            <MenuItem danger title={TEST_translate('Message.DeleteSelected')} icon="delete" />
+          </>
+        )
+      }
+
+      const canCopyImage = message.content.photos?.length === 1
+      return (
+        <>
+          {(selectedText || !!message.content.formattedText?.text) && (
+            <MenuItem
+              onClick={handleCopyMessageText}
+              icon="copy"
+              title={TEST_translate(
+                selectedText ? 'Message.CopySelectedText' : 'Message.CopyText'
+              )}
+            />
+          )}
+          {canCopyImage && (
+            <MenuItem icon="image" title={TEST_translate('Message.CopyImage')} />
+          )}
+
+          {isCopyable && <MenuDivider />}
+
+          <MenuItem icon="reply">{TEST_translate('Reply')}</MenuItem>
+          <MenuItem icon="pin">{TEST_translate('Pin')}</MenuItem>
+          <MenuItem onClick={handleToggleEditing} icon="edit" title={TEST_translate('Edit')} />
+          {/* hasText &&  */}
+
+          <MenuItem icon="forward">{TEST_translate('Forward')}</MenuItem>
+          <MenuItem icon="select" onClick={handleToggleSelection}>
+            {TEST_translate('Select')}
+          </MenuItem>
+          {canDelete && (
+            <MenuItem icon="delete" danger onClick={openDeleteModal}>
+              {TEST_translate('Delete')}
+            </MenuItem>
+          )}
+        </>
+      )
+    }
+
     return (
       <div
         ref={messageRef}
         data-mid={message.id}
         class={buildedClass}
-        onContextMenu={handleContextMenu}
+        onContextMenu={(e) => {
+          handleContextMenu(e)
+
+          const el = e.target as HTMLElement
+
+          const imageLikeTarget = (el.closest('.album-item') ||
+            el.closest('.media-photo-container')) as HTMLElement | null
+          const isImageTarget = Boolean(imageLikeTarget)
+          const isHiddenWithSpoiler = el.className.includes('spoiler shown')
+
+          if (!isImageTarget || isHiddenWithSpoiler) {
+            return
+          }
+
+          imageLikeTarget!.style.filter = 'brightness(0.7)'
+          contextMenuImgTarget.current = imageLikeTarget
+          /**
+           * @todo: переписати щоб знаходити САМЕ img element ???? і в ньому змінювати
+           */
+        }}
         onClick={
           hasMessageSelection
             ? (e) => {
@@ -190,16 +290,6 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
               }
             : undefined
         }
-        // onClick={
-        //   hasMessageSelection
-        //     ? (e) => {
-        //         console.log('CLICK ON DIV')
-        //         // console.log(e.currentTarget.childNodes.)
-        //         // stopEvent(e)
-        //         handleToggleSelection()
-        //       }
-        //     : undefined
-        // }
       >
         {isFirstUnread && (
           <div class="bubble action is-unread-divider">
@@ -222,13 +312,43 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
         {withAvatar && isLastInGroup && (
           <AvatarTest onClick={handleClickAvatar} size="xs" peer={sender} />
         )}
+
         <div class="bubble-content">
+          {isAlbum && (
+            <div class="album">
+              {message.content.photos?.map((photo) => (
+                <div class="album-item" key={photo.id}>
+                  <Photo
+                    lazy
+                    withSpoiler={photo.withSpoiler}
+                    alt=""
+                    url={photo.url}
+                    blurHash={photo.blurHash}
+                    width={photo.width}
+                    height={photo.height}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+          {hasOnePhoto && (
+            <Photo
+              lazy
+              withSpoiler={message.content.photos![0]!.withSpoiler}
+              alt=""
+              url={message.content.photos![0]!.url}
+              width={message.content.photos![0].width}
+              height={message.content.photos![0].height}
+              blurHash={message.content.photos![0].blurHash}
+            />
+          )}
+          {hasDocument && <Document document={message.content.documents![0]!} />}
           {showSenderName && (
             <p class="bubble-content__sender">{senderName || 'USER NAME_UNDF'}</p>
           )}
           <p class="bubble-content__text">
             {messageText}
-            <h6>{message.orderedId}</h6>
+            {/* <h6>{message.orderedId}</h6> */}
             {message && (
               <MessageMeta
                 hasMessageSelection={hasMessageSelection}
@@ -248,13 +368,6 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
             </g>
           </svg>
         </div>
-        {/* <MessageContextMenu
-          styles={styles}
-          isOpen={isContextMenuOpen}
-          onClose={handleContextMenuClose}
-          menuRef={menuRef}
-        /> */}
-
         <Menu
           // easing={'cubic-bezier(0.2, 0, 0.2, 1)' as any}
           // timeout={250}
@@ -266,29 +379,7 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
           style={styles}
           onClose={handleContextMenuClose}
         >
-          {(selectedText || !!message.content.formattedText?.text) && (
-            <MenuItem
-              onClick={handleCopyMessageText}
-              icon="copy"
-              title={TEST_translate(
-                selectedText ? 'Message.CopySelectedText' : 'Message.CopyText'
-              )}
-            />
-          )}
-          {hasCopyMessageGroup && <MenuDivider />}
-
-          <MenuItem icon="reply">{TEST_translate('Reply')}</MenuItem>
-          <MenuItem icon="pin">{TEST_translate('Pin')}</MenuItem>
-          <MenuItem onClick={handleToggleEditing} icon="edit" title={TEST_translate('Edit')} />
-          {/* hasText &&  */}
-
-          <MenuItem icon="forward">{TEST_translate('Forward')}</MenuItem>
-          <MenuItem icon="select" onClick={handleToggleSelection}>
-            {TEST_translate('Select')}
-          </MenuItem>
-          <MenuItem icon="delete" danger onClick={openDeleteModal}>
-            {TEST_translate('Delete')}
-          </MenuItem>
+          {renderMenuItems()}
         </Menu>
         <DeleteMessagesModal
           chat={chat}
@@ -300,8 +391,8 @@ const MessageBubbleImpl: FC<MessageBubbleProps & StateProps> = memo(
     )
   }
 )
-export const VirtualScrollItem = forwardRef<HTMLLIElement, CustomItemComponentProps>(
-  ({children, style}, ref) => {
+export const VirtualScrollItem = memo(
+  forwardRef<HTMLLIElement, CustomItemComponentProps>(({children, style}, ref) => {
     return (
       <li
         ref={ref}
@@ -317,22 +408,27 @@ export const VirtualScrollItem = forwardRef<HTMLLIElement, CustomItemComponentPr
         {children}
       </li>
     )
-  }
+  })
 )
 export const MessageBubble = memo(
-  connect<MessageBubbleProps, StateProps>((state, ownProps) => {
+  connect<OwnProps, StateProps>((state, ownProps) => {
+    const chatId = ownProps.message.chatId
     const sender = ownProps.message.senderId
       ? selectUser(state, ownProps.message.senderId)
       : undefined
 
-    const chat = selectChat(state, ownProps.message.chatId)
-    const isPrivateChat = isUserId(ownProps.message.chatId)
+    const chat = selectChat(state, chatId)
+    const isPrivateChat = isUserId(chatId)
     const showSenderName = Boolean(sender) && !ownProps.message?.isOutgoing && !isPrivateChat
+    const chatMember = sender ? selectChatMember(state, chatId, sender.id) : undefined
+    const selectedMessages = selectSelectedMessages(state, chatId)
     return {
       chat,
       sender,
+      chatMember,
       hasMessageSelection: selectHasMessageSelection(state),
       isSelected: selectIsMessageSelected(state, ownProps.message.id),
+      selectedMessages,
       showSenderName,
     }
   })(MessageBubbleImpl)

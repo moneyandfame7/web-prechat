@@ -1,13 +1,13 @@
-import {Api, PENDING_REQUESTS} from 'api/manager'
+import {Api, PENDING_MAIN_REQUESTS} from 'api/manager'
 
 import {createAction} from 'state/action'
 import {updateUsers} from 'state/updates'
 
 createAction('getUser', async (state, _, payload) => {
-  PENDING_REQUESTS.USERS.add(payload)
+  PENDING_MAIN_REQUESTS.USERS.add(payload)
   const result = await Api.users.getUsers({ids: [payload]})
   if (!result) {
-    PENDING_REQUESTS.USERS.delete(payload)
+    PENDING_MAIN_REQUESTS.USERS.delete(payload)
     return
   }
 
@@ -17,7 +17,7 @@ createAction('getUser', async (state, _, payload) => {
     [user.id]: user,
   })
 
-  PENDING_REQUESTS.USERS.delete(payload)
+  PENDING_MAIN_REQUESTS.USERS.delete(payload)
 })
 
 createAction('getSelf', async (state, actions) => {

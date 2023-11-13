@@ -1,5 +1,9 @@
 .media-photo-container {
   position: relative;
+  cursor: pointer; // ????
+  // img {
+  //   z-index: 1;
+  // }
   // border-radius: 50%;
   // overflow: hidden;
   &.is-load {
@@ -7,6 +11,8 @@
       // opacity: 0 !important;
       // display: none !important;
     }
+  }
+  &.has-spoiler {
   }
   > .media-blurhash {
     border-radius: 50%;
@@ -20,5 +26,22 @@
     left: 0;
     // z-index: -1
     transition: opacity 0.2s ease;
+  }
+
+  > .media-progress {
+    z-index: 1;
+    width: auto;
+    height: auto;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+
+    padding-block: 2px;
+    padding-inline: 8px;
+
+    border-radius: 0.975rem;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: var(--c-white);
+    font-size: 12px;
   }
 }

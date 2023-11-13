@@ -34,9 +34,10 @@
   // &::-webkit-scrollbar {
   //   width: 0;
   // }
-  @include withAnimations {
-    transition: height 200ms ease;
-  }
+  // @include withAnimations {
+  //   transition: height 200ms ease;
+  // }
+  @include defaultTransition(height, border-color);
 
   &::after {
     pointer-events: none;
@@ -64,5 +65,11 @@
         transition: transform 0.35s ease, opacity 0.25s ease;
       }
     }
+  }
+
+  border-top: 1px solid transparent;
+
+  &.scrolled {
+    border-color: var(--c-border);
   }
 }

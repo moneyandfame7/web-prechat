@@ -1,14 +1,14 @@
 import {
   ApolloClient,
+  type ApolloError,
   ApolloLink,
   InMemoryCache,
   type NormalizedCacheObject,
-  createHttpLink,
   split,
 } from '@apollo/client'
 import {setContext} from '@apollo/client/link/context'
 import {onError} from '@apollo/client/link/error'
-// import {RetryLink} from '@apollo/client/link/retry'
+import {RetryLink} from '@apollo/client/link/retry'
 import {GraphQLWsLink} from '@apollo/client/link/subscriptions'
 import {getMainDefinition} from '@apollo/client/utilities'
 
@@ -20,7 +20,7 @@ import {getGlobalState} from 'state/signal'
 
 import {DEBUG} from 'common/environment'
 
-import {customFetch, customFetch2} from './helpers/customFetch'
+import {customFetch} from './helpers/customFetch'
 import type {ApiError} from './types/diff'
 
 export type GqlDoc = {
@@ -40,7 +40,7 @@ export class ApolloClientWrapper {
   private readonly _splittedLinks: ApolloLink
   private readonly _errorLink: ApolloLink = this.getErrorLink()
   private readonly _uploadLink: ApolloLink
-  // private readonly _retryLink: ApolloLink = this.getRetryLink()
+  private readonly _retryLink: ApolloLink = this.getRetryLink()
   public constructor(connection: {httpUrl: string; wsUrl: string}) {
     const {httpUrl, wsUrl} = connection
 
@@ -51,7 +51,7 @@ export class ApolloClientWrapper {
 
     this.client = new ApolloClient({
       link: ApolloLink.from([
-        // this._retryLink,
+        this._retryLink,
         this._errorLink,
         this._headersLink,
         this._splittedLinks,
@@ -73,9 +73,10 @@ export class ApolloClientWrapper {
       headers: {
         'apollo-require-preflight': 'true',
       },
-      // fetch: customFetch2 as any,
+
+      fetch: customFetch as any,
       /* headers?? */
-    })
+    }) as unknown as ApolloLink
     // return createUploadLink({
     //   uri,
     //   fetch: customFetch2 as any,
@@ -166,19 +167,19 @@ export class ApolloClientWrapper {
     )
   }
 
-  // private getRetryLink() {
-  //   return new RetryLink({
-  //     attempts: {
-  //       max: 3,
-  //       retryIf: (error: ApolloError) => {
-  //         return error.message === 'Failed to fetch'
-  //       },
-  //     },
-  //     delay: (count /* operation, error */) => {
-  //       return count * 5000 * Math.random()
-  //     },
-  //   })
-  // }
+  private getRetryLink() {
+    return new RetryLink({
+      attempts: {
+        retryIf: (error: ApolloError) => {
+          return error.message === 'Failed to fetch'
+        },
+        max: Infinity,
+      },
+      delay: (/* operation, error */) => {
+        return 7000
+      },
+    })
+  }
 }
 
 /**

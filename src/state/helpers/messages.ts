@@ -1,11 +1,48 @@
-import type {ApiChat, ApiUser} from 'api/types'
-import type {ApiMessage, ApiMessageAction, ApiMessageEntity} from 'api/types/messages'
+import type {ApiChat, ApiPhoto, ApiUser} from 'api/types'
+import type {
+  ApiDocument,
+  ApiMessage,
+  ApiMessageAction,
+  ApiMessageEntity,
+  SendMediaInput,
+} from 'api/types/messages'
 
 import {TEST_translate} from 'lib/i18n'
 
 import {logger} from 'utilities/logger'
 
+import type {MediaItem} from 'components/popups/SendMediaModal'
+
 import {getUserName} from './users'
+
+export function buildLocalMessageContent(items: MediaItem[]): ApiMessage['content'] {
+  const photos: ApiPhoto[] = items
+    .filter((item) => item.isImage)
+    .map((photo) => ({
+      id: photo.id,
+      date: new Date().toISOString(),
+      url: photo.previewUrl!,
+      withSpoiler: photo.withSpoiler,
+      height: photo.dimension?.height,
+      width: photo.dimension?.width,
+      // height:photo.file.
+    }))
+
+  const documents: ApiDocument[] = items
+    .filter((item) => !item.isImage)
+    .map((document) => ({
+      id: document.id,
+      date: new Date().toISOString(),
+      url: document.previewUrl!,
+      size: document.file.size,
+      fileName: document.file.name,
+    }))
+
+  return {
+    ...(documents.length ? {documents} : {}),
+    ...(photos.length ? {photos} : {}),
+  }
+}
 
 /* тут ми просто створюємо повідомлення наперед, щоб не чікати відповіді з бекенду */
 export function buildLocalMessage({
@@ -15,6 +52,7 @@ export function buildLocalMessage({
   senderId,
   chatId,
   isChannel,
+  mediaItems,
 }: {
   orderedId: number
   text: string
@@ -22,24 +60,21 @@ export function buildLocalMessage({
   senderId: string
   chatId: string
   isChannel?: boolean
+  mediaItems?: MediaItem[]
 }): ApiMessage {
   // const isChannel = chat.type === 'chatTypeChannel'
+  const content = mediaItems ? buildLocalMessageContent(mediaItems) : {}
   return {
     id: crypto.randomUUID(),
     orderedId,
     chatId,
-    content: {
-      formattedText: {
-        text,
-        entities,
-      },
-    },
-    createdAt: new Date().toISOString() as any,
+    content,
+    createdAt: new Date().toISOString(),
     text,
     sendingStatus: 'pending',
     senderId,
     isOutgoing: !isChannel,
-  }
+  } satisfies ApiMessage
 }
 export function getFirstUnreadMessage({
   messagesById,
@@ -103,3 +138,5 @@ export function getMessageActionText(action: ApiMessageAction, sender?: ApiUser)
       return 'Not Supported now'
   }
 }
+
+export function getDocumentPreview() {}

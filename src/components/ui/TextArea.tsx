@@ -5,22 +5,27 @@ import {
   type RefObject,
   type TargetedEvent,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useRef,
+  useState,
 } from 'preact/compat'
 
 import clsx from 'clsx'
 
 import {useLayout} from 'hooks/useLayout'
 
+import {insertTextAtCursor} from 'utilities/parse/selection'
+
 import type {SignalOr} from 'types/ui'
 
 import './TextArea.scss'
 
-interface TextAreaProps {
+export interface TextAreaProps {
   onChange: (html: string) => void
   html: Signal<string>
   inputRef: RefObject<HTMLDivElement>
+  scrollRef?: RefObject<HTMLDivElement>
   placeholder?: SignalOr<string>
   isFocused: Signal<boolean>
   className?: string
@@ -28,11 +33,15 @@ interface TextAreaProps {
   autoFocus?: boolean
   tabIndex?: number
   isInputHelperActive?: boolean
+
+  maxHeight?: number
+  withScrollBorder?: boolean
 }
 const TextArea: FC<TextAreaProps> = ({
   onChange,
   html,
   inputRef,
+  scrollRef,
   placeholder,
   isFocused,
   className,
@@ -40,12 +49,17 @@ const TextArea: FC<TextAreaProps> = ({
   tabIndex = 0,
   wrapperClassName,
   isInputHelperActive,
+  maxHeight,
+  withScrollBorder,
 }) => {
-  const inputScrollRef = useRef<HTMLDivElement>(null)
+  let inputScrollRef = useRef<HTMLDivElement>(null)
+
+  if (scrollRef) {
+    inputScrollRef = scrollRef
+  }
 
   const {isMobile} = useLayout()
-  const maxInputHeight = isMobile ? 215 : 350
-
+  const maxInputHeight = maxHeight || (isMobile ? 215 : 350)
   const updateHeight = () => {
     const textarea = inputRef.current
     const scroller = inputScrollRef.current
@@ -58,9 +72,6 @@ const TextArea: FC<TextAreaProps> = ({
     scroller.style.height = `${newHeight}px`
   }
 
-  // useEffect(() => {
-  //   updateHeight()
-  // }, [isInputHelperActive])
   const htmlRef = useRef(html.value)
   // const focusedRef = useRef(isFocused.value)
   const handleChange = useCallback(
@@ -72,7 +83,6 @@ const TextArea: FC<TextAreaProps> = ({
       }
       e.preventDefault()
       const {innerHTML} = textarea
-      console.log({innerHTML})
       onChange(
         innerHTML === '<br>' || innerHTML === '&nbsp;' || innerHTML === '\n' ? '' : innerHTML
       )
@@ -82,6 +92,24 @@ const TextArea: FC<TextAreaProps> = ({
   useLayoutEffect(() => {
     updateHeight()
   }, [isMobile])
+
+  useEffect(() => {
+    if (!inputRef.current) {
+      return
+    }
+
+    const handlePaste = (e: ClipboardEvent) => {
+      e.preventDefault()
+      const text = e.clipboardData ? e.clipboardData.getData('text/plain') : ''
+      console.log({text})
+
+      insertTextAtCursor(text, inputRef)
+    }
+
+    inputRef.current.addEventListener('paste', handlePaste)
+
+    return () => inputRef.current?.removeEventListener('paste', handlePaste)
+  }, [])
 
   // useLayoutEffect(() => {
   //   inputRef.current?.focus()

@@ -78,6 +78,27 @@
     }
   }
 
+  > .transition-zoomIcon,
+  > .transition-zoomIconBackwards {
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    top: 25%;
+    left: 20px;
+    pointer-events: none;
+    > .transition-item {
+      position: absolute;
+      display: block;
+      width: 24px;
+      background-color: unset;
+      height: 24px;
+
+      > .Icon {
+        position: unset;
+      }
+    }
+  }
+
   &.fixed-label {
     > label {
       transform: scale(0.75) translate(-5px, -35px);

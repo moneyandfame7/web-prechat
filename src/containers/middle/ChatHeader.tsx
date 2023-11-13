@@ -5,6 +5,7 @@ import {isUserId} from 'state/helpers/users'
 
 import {usePrevious} from 'hooks'
 import {useFastClick} from 'hooks/useFastClick'
+import {useIsOnline} from 'hooks/useIsOnline'
 import {useLayout} from 'hooks/useLayout'
 
 import {TEST_translate} from 'lib/i18n'
@@ -37,7 +38,6 @@ export const ChatHeader: FC<OwnProps> = memo(
     const handleClickHeader = useCallback(() => {
       openRightColumn({screen: RightColumnScreens.ChatProfile})
     }, [])
-
     function renderChatInfo() {
       if (isPinnedList) {
         /* залупа, треба переробити */

@@ -4,6 +4,8 @@ import {VList, type VListHandle} from 'virtua'
 
 import {timeout} from 'utilities/schedulers/timeout'
 
+import {VirtualScrollItem} from 'containers/middle/message/MessageBubble'
+
 import {Spinner} from 'components/ui'
 
 export const InfiniteScrollTest: FC = () => {
@@ -55,6 +57,9 @@ export const InfiniteScrollTest: FC = () => {
       ref={ref}
       style={{
         flex: 1,
+      }}
+      components={{
+        Item: VirtualScrollItem,
       }}
       shift={shifting ? true : false}
       onRangeChange={async (start, end) => {

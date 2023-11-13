@@ -38,7 +38,8 @@
   }
   &-yellow {
     > .spinner-inner {
-      border-color: var(--color-warn);
+      // border-color: var(--color-warn);
+      border-color: var(--c-warn);
     }
   }
   &-neutral {

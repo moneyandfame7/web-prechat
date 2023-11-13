@@ -2,10 +2,11 @@
   height: 100%;
   width: var(--right-column-width) !important;
   left: auto !important;
+  right: 0 !important;
+
   animation-timing-function: var(--slide-dark-transition);
   // position: absolute !important;
   // top: 0 !important;
-  // right: 0 !important;
   z-index: var(--z-right-column);
   background-color: var(--c-surface);
   display: flex;
