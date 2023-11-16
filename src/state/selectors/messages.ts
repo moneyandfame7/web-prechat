@@ -1,3 +1,5 @@
+import {Signal, computed} from '@preact/signals'
+
 import type {ApiUser} from 'api/types'
 import type {ApiMessage} from 'api/types/messages'
 
@@ -10,6 +12,13 @@ export function selectMessage(global: SignalGlobalState, chatId: string, message
   const messages = selectMessages(global, chatId)
 
   return messages ? messages[messageId] : undefined
+}
+
+export function selectUploadProgress(
+  global: SignalGlobalState,
+  messageId: string
+): Signal<number> | undefined {
+  return global.uploadProgress.byMessageId[`$${messageId}`]
 }
 
 /**

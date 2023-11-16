@@ -1,9 +1,9 @@
 import {useSignal} from '@preact/signals'
 import {
-  ChangeEvent,
+  type ChangeEvent,
   type FC,
   type RefObject,
-  TargetedEvent,
+  type TargetedEvent,
   memo,
   useCallback,
   useEffect,
@@ -14,7 +14,6 @@ import {
 import clsx from 'clsx'
 import type {VListHandle} from 'virtua'
 
-import {Api} from 'api/manager'
 import type {ApiChat, ApiMessage} from 'api/types'
 
 import {getActions} from 'state/action'
@@ -32,10 +31,10 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
 
+import {MAX_FILE_SIZE} from 'common/app'
 import {MODAL_TRANSITION_MS} from 'common/environment'
 import {getBlobUrl} from 'utilities/file/getBlobUrl'
 import {getImageDimension} from 'utilities/file/getImageDimension'
-import {MyFileList} from 'utilities/fileList'
 import {getImagePreview} from 'utilities/getImagePreview'
 import {parseMessageInput} from 'utilities/parse/parseMessageInput'
 import {renderText} from 'utilities/parse/render'
@@ -93,7 +92,7 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
   isChannel,
   infiniteScrollRef,
 }) => {
-  const {sendMessage, editMessage, toggleMessageSelection} = getActions()
+  const {sendMessage, editMessage, toggleMessageSelection, showNotification} = getActions()
   const inputRef = useRef<HTMLDivElement>(null)
   const inputImageRef = useRef<HTMLInputElement>(null)
   const inputDocumentRef = useRef<HTMLInputElement>(null)
@@ -105,23 +104,23 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
   } = useBoolean()
 
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
-  const [mediaOptions, setMediaOptions] = useState<MediaOptions>({
-    groupAllMedia: true,
-    sendAsFiles: false,
-  })
 
   const handleCloseSendMediaModal = () => {
+    if (inputDocumentRef.current && inputImageRef.current) {
+      inputDocumentRef.current.value = ''
+      inputImageRef.current.value = ''
+    }
     closeSendMediaModal()
-    setTimeout(() => {
-      setMediaItems((prev) => {
-        prev.forEach((item) => {
-          if (item.previewUrl) {
-            URL.revokeObjectURL(item.previewUrl)
-          }
-        })
-        return []
-      })
-    }, MODAL_TRANSITION_MS)
+    // setTimeout(() => {
+    //   setMediaItems((/* prev */) => {
+    //     // prev.forEach((item) => {
+    //     //   if (item.previewUrl) {
+    //     //     URL.revokeObjectURL(item.previewUrl)
+    //     //   }
+    //     // })
+    //     return []
+    //   })
+    // }, MODAL_TRANSITION_MS)
   }
 
   const inputHtml = useSignal(/* draft || */ '')
@@ -143,30 +142,41 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
   }
   const handleAddImage = async (e: TargetedEvent<HTMLInputElement, ChangeEvent>) => {
     const files = e.currentTarget.files
-
     if (!files) {
       return
     }
+    const newMediaItems: MediaItem[] = []
 
-    const promises: Promise<MediaItem>[] = [...files].map(async (file) => {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i]
+
       const isImage = file.type.startsWith('image/')
       const id = crypto.randomUUID()
       const blobUrl = getBlobUrl(file)
       const dimension = await getImageDimension(blobUrl)
+      const isInvalidSize = file.size > MAX_FILE_SIZE
+      if (isInvalidSize) {
+        showNotification({title: TEST_translate('Media.FileExceedsSize', {name: file.name})})
+        continue
+      }
 
-      return {
+      newMediaItems.push({
         id,
         file: new File([file], `${id}_${file.name}`), // ВАЖЛИВО робити саме таке
         dimension,
         isImage,
         withSpoiler: false,
         previewUrl: blobUrl,
+        // blurHash,
         mimeType: file.name.split('.').pop()?.toLowerCase(),
 
         // ...dimension,
-      } satisfies MediaItem
-    })
-    const newMediaItems = await Promise.all(promises)
+      })
+    }
+
+    // if(file.size)
+
+    // const newMediaItems = await Promise.all(promises)
 
     setMediaItems((prev) => [...newMediaItems, ...prev])
     if (!sendMediaModalOpen) {
@@ -179,27 +189,38 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
     if (!files) {
       return
     }
-
     const newMediaItems: MediaItem[] = []
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
+
+      console.log({INVALID_SIZE: file.size > 1 * 1024 * 1024})
+
       const mimeType = file.name.split('.').pop()?.toLowerCase()
       if (!mimeType) {
         continue
       }
+
+      const isInvalidSize = file.size > MAX_FILE_SIZE
+      if (isInvalidSize) {
+        showNotification({
+          title: TEST_translate('Media.FileExceedsSize', {name: file.name}),
+        })
+        continue
+      }
+
       const id = crypto.randomUUID()
       const isImage = file.type.startsWith('image/')
 
+      const previewUrl = isImage ? getImagePreview(file) : undefined
       newMediaItems.push({
         id,
         mimeType,
         file: new File([file], `${id}_${file.name}`),
         isImage,
         withSpoiler: false,
-        previewUrl: isImage ? getImagePreview(file) : undefined,
+        previewUrl,
       })
     }
-    console.log({newMediaItems})
     setMediaItems((prev) => [...newMediaItems, ...prev])
 
     if (!sendMediaModalOpen) {
@@ -347,12 +368,11 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
             </DropdownMenu>
 
             <SendMediaModal
+              inputHtml={inputHtml}
               isOpen={sendMediaModalOpen}
               onClose={handleCloseSendMediaModal}
               items={mediaItems}
               setItems={setMediaItems}
-              options={mediaOptions}
-              setOptions={setMediaOptions}
               triggerAddDocument={triggerAddDocument}
             />
             <svg viewBox="0 0 11 20" width="11" height="20" class="bubble-arrow">

@@ -67,7 +67,7 @@ export interface SendMessageInput {
   entities?: ApiMessageEntity[]
   sendAs?: ApiInputPeer
   fileOptions?: {[key: string]: {withSpoiler: boolean; mimeType?: string}}
-  shouldSendMediaAsDocument?: boolean
+  sendMediaAsDocument?: boolean
 }
 export interface EditMessageInput {
   chatId: string
@@ -117,13 +117,9 @@ export interface GetPinnedMessagesInput {
  * @todo rewrite on contact?: ApiContact ... document?: ... image?.... ?
  */
 
-export interface SendMediaInput {
-  id: string
-  orderedId: number
-  chatId: string
-  silent?: boolean
-  text?: string
-  fileOptions: {[key: string]: {withSpoiler: boolean; mimeType?: string}}
+export interface SendMediaItem {
+  withSpoiler: boolean
+  mimeType?: string
 }
 export enum ApiMessageEntityType {
   Italic = 'italic',

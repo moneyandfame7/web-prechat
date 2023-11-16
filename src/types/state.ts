@@ -203,6 +203,10 @@ export interface GlobalState {
   }
   openChats: OpenChats[]
   globalSettingsScreen?: SettingsScreens
+
+  uploadProgress: {
+    byMessageId: Record<string, number>
+  }
 }
 /**
  * SyncedState is a  shared state between tabs.

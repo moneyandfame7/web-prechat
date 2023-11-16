@@ -220,6 +220,7 @@ const lang = {
     one: 'Are you sure you want to delete this message?',
     other: 'Are you sure you want to delete these messages?',
   },
+  'Media.FileExceedsSize': 'The file **«{{name}}»** exceeds the allowed size **(3 MB)**.',
   'NewContact.MobileHidden': 'Mobile Hidden',
   'NewContact.MobileHiddenInfo':
     'Phone number will be visible once **{{fullName}}** adds you as a contact.',

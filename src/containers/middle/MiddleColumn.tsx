@@ -1,3 +1,4 @@
+import {signal} from '@preact/signals'
 import {type FC, memo, useCallback, useEffect, useMemo, useRef} from 'preact/compat'
 
 import {VList, VListHandle, WVList} from 'virtua'
@@ -20,16 +21,15 @@ import {usePrevious} from 'hooks'
 import {useBoolean} from 'hooks/useFlag'
 import {useLayout} from 'hooks/useLayout'
 
-import {addEscapeListener, addKeyboardListeners} from 'utilities/keyboardListener'
-import {deepClone} from 'utilities/object/deepClone'
+import {addEscapeListener} from 'utilities/keyboardListener'
 import {connectStateToNavigation} from 'utilities/routing'
 
 import type {OpenChats} from 'types/state'
 
-import {InfiniteScroll} from 'components/InfiniteScroll'
 import {Photo} from 'components/common/Photo'
-import {InfiniteScrollTest} from 'components/test/InfiniteScrollTest'
 import {Transition} from 'components/transitions'
+import {Button} from 'components/ui'
+import {Loader} from 'components/ui/Loader'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -148,20 +148,24 @@ const MiddleColumn: FC<InjectedProps> = ({
   // const cleanupExceptionKey = (
   //   prevTransitionKey !== undefined && prevTransitionKey < currentTransitionKey ? prevTransitionKey : undefined
   // );
-
+  const {value, toggle} = useBoolean(false)
   return (
     <div class="MiddleColumn" id="middle-column">
       {/* <InfiniteScrollTest /> */}
       {/* <Photo
+        customProgress={signal(7)}
         url="https://plus.unsplash.com/premium_photo-1695582867991-e75f29ab5a2a?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
         blurHash="U9RfRkbXIV_3LzRjRQsp4TozspMyNGfjR*Rj"
         alt=""
         interactive
-        canAutoLoad={false}
         withSpoiler
+        // withLoader
         height={300}
+        isUploading={value}
         width={300}
       /> */}
+      {/* <Loader isVisible={value} /> */}
+      {/* <Button onClick={toggle}>TOGGLE</Button> */}
       {isChatOpen && (
         <>
           <ChatHeader

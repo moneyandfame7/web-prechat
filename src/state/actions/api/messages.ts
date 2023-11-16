@@ -1,7 +1,7 @@
 import type {DeepSignal} from 'deepsignal'
 
 import {Api, PENDING_MAIN_REQUESTS} from 'api/manager'
-import {type ApiMessage, HistoryDirection, type SendMediaInput} from 'api/types'
+import {type ApiMessage, HistoryDirection, type SendMediaItem} from 'api/types'
 
 import {createAction} from 'state/action'
 import {buildLocalPrivateChat} from 'state/helpers/chats'
@@ -17,10 +17,12 @@ import {
   deleteMessageLocal,
   updateMessage,
   updateMessages,
+  updateUploadProgress,
 } from 'state/updates/messages'
 
 import {FIRST_MSG_ID} from 'common/app'
 import {filterUnique} from 'utilities/array/filterUnique'
+import {logger} from 'utilities/logger'
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
 import {debounce} from 'utilities/schedulers/debounce'
@@ -42,7 +44,7 @@ createAction('sendMessage', async (state, _, payload) => {
   // console.log({chatId, chat})
 
   // return
-  const {text, entities, sendAs} = payload
+  const {text, entities, sendAs, sendMediaAsDocument} = payload
   if (!chat && isUserId(chatId)) {
     chat = buildLocalPrivateChat({user: selectUser(state, chatId)!})
     updateChats(state, {
@@ -59,6 +61,7 @@ createAction('sendMessage', async (state, _, payload) => {
     senderId: sendAs || state.auth.userId!,
     isChannel: chat.type === 'chatTypeChannel',
     mediaItems: payload.mediaItems,
+    sendMediaAsDocument,
   })
   // updateLastMessage(state, chatId, localMessage, false)
   updateMessages(state, chatId, {[localMessage.id]: localMessage}, false, false)
@@ -68,7 +71,9 @@ createAction('sendMessage', async (state, _, payload) => {
   // after 1s need to set state status on pending?
   /* Catch error there and update message state */
   try {
-    const files = payload.mediaItems ? payload.mediaItems.map((item) => item.file) : undefined
+    const fileUploads = payload.mediaItems
+      ? payload.mediaItems.map((item) => item.file)
+      : undefined
     const fileOptions = payload.mediaItems
       ? payload.mediaItems.reduce((acc, item) => {
           acc[item.id] = {
@@ -76,7 +81,7 @@ createAction('sendMessage', async (state, _, payload) => {
             withSpoiler: item.withSpoiler,
           }
           return acc
-        }, {} as SendMediaInput['fileOptions'])
+        }, {} as Record<string, SendMediaItem>)
       : undefined
 
     const sended = await Api.messages.sendMessage(
@@ -87,13 +92,26 @@ createAction('sendMessage', async (state, _, payload) => {
         text,
         entities,
         fileOptions,
+        sendMediaAsDocument,
       },
-      files
+      {
+        fileUploads,
+        onProgress(value) {
+          console.log({value})
+          updateUploadProgress(state, chatId, localMessage.id, value)
+
+          console.log({value})
+        },
+        onReady() {
+          logger.info('IS READY!!!')
+          updateUploadProgress(state, chatId, localMessage.id, undefined)
+        },
+      }
     )
     if (!sended) {
       updateMessage(state, chatId, localMessage.id, {sendingStatus: 'failed'}, false)
     } else {
-      updateMessage(state, chatId, sended.message.id, {sendingStatus: undefined}, false)
+      updateMessage(state, chatId, sended.id, {sendingStatus: undefined}, false)
     }
   } catch (e) {
     updateMessage(state, chatId, localMessage.id, {sendingStatus: 'failed'}, false)

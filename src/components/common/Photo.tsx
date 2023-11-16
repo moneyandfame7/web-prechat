@@ -1,4 +1,4 @@
-import {useSignal} from '@preact/signals'
+import {type Signal, useComputed, useSignal} from '@preact/signals'
 import {
   type FC,
   memo,
@@ -19,7 +19,6 @@ import {Loader} from 'components/ui/Loader'
 
 import {Spoiler} from './Spoiler'
 
-// import {useForceUpdate} from 'hooks/useForceUpdate'
 import './Photo.scss'
 
 interface PhotoProps {
@@ -29,13 +28,18 @@ interface PhotoProps {
   height?: number | string
   alt: string
   lazy?: boolean
-  mountBlurhash?: boolean
+  hideBlurhash?: boolean
   withSpoiler?: boolean
   interactive?: boolean
   canAutoLoad?: boolean
   withLoader?: boolean
+
+  isUploading?: boolean
+
+  customProgress?: Signal<number>
 }
 const photoCache = new Set<string>()
+
 /**
  * @todo cache urls, usestate init true if url in cache?
  */
@@ -49,22 +53,26 @@ const Photo: FC<PhotoProps> = memo(
     lazy = false,
     withSpoiler = false,
     interactive = false,
-    canAutoLoad = false,
+    // canAutoLoad = false,
+    isUploading = false,
     withLoader,
+    customProgress,
+    hideBlurhash: mountBlurhash,
   }) => {
     const imageRef = useRef<HTMLImageElement>(null)
-    const [imgIsLoad, setImgIsLoad] = useState(photoCache.has(url))
-    const [isImgLoading, setIsImgLoading] = useState(canAutoLoad)
-    const spoilerShown = useSignal(withSpoiler)
     const abortRef = useRef<VoidFunction | null>(null)
-
+    const [imgIsLoad, setImgIsLoad] = useState(photoCache.has(url))
+    const [isImgLoading, setIsImgLoading] = useState(/* canAutoLoad || */ isUploading)
+    const [isSpoilerShown, setIsSpoilerShown] = useState(withSpoiler)
     const handleLoadImage = useCallback(() => {
+      if (imgIsLoad) {
+        return
+      }
       fetchWithProgress({
         url,
         onProgress: (e) => {
           if (e.lengthComputable) {
             const percentComplete = Math.round((e.loaded / e.total) * 100)
-            console.log({percentComplete})
             progress.value = percentComplete
           }
         },
@@ -72,18 +80,23 @@ const Photo: FC<PhotoProps> = memo(
           abortRef.current = abortHandler
         },
         onReady: (response) => {
-          if (imageRef.current) {
-            imageRef.current!.src = URL.createObjectURL(response)
-            setImgIsLoad(true)
-            setIsImgLoading(false)
-          }
+          // if (!imageRef.current) {
+          //   return
+          // }
+          // if (imageRef.current) {
+          // const newSrc = URL.createObjectURL(response)
+          // imageRef.current!.src = newSrc
+          // setImgIsLoad(true)
+          setIsImgLoading(isUploading || false)
+          // }
         },
         onStart: () => {
-          setIsImgLoading(true)
+          // setIsImgLoading(true)
         },
       })
-    }, [])
+    }, [isUploading, imgIsLoad])
 
+    // useEffect(()=>)
     const handleAbortLoading = useCallback(() => {
       if (!abortRef.current) {
         return
@@ -93,17 +106,24 @@ const Photo: FC<PhotoProps> = memo(
       setIsImgLoading(false)
       abortRef.current()
     }, [])
-
     useEffect(() => {
       photoCache.add(url)
-    }, [url])
+    }, [])
 
+    useLayoutEffect(() => {
+      setIsImgLoading(isUploading)
+    }, [isUploading])
+    useLayoutEffect(() => {
+      // if (canAutoLoad) {
+      handleLoadImage()
+      // }
+    }, [])
     const handleClick = () => {
-      if (withSpoiler && spoilerShown.value) {
-        spoilerShown.value = false
-        if (canAutoLoad && interactive) {
-          handleLoadImage()
-        }
+      if (withSpoiler && isSpoilerShown) {
+        setIsSpoilerShown(false)
+        // if (canAutoLoad && interactive) {
+        // handleLoadImage()
+        // }
       } else if (!isImgLoading && !imgIsLoad) {
         handleLoadImage()
       } else if (!imgIsLoad && isImgLoading && abortRef.current) {
@@ -114,47 +134,77 @@ const Photo: FC<PhotoProps> = memo(
     const buildedClass = clsx('media-photo-container', {
       'is-load': imgIsLoad,
       'has-spoiler': withSpoiler,
+      blured: !blurHash,
     })
     const progress = useSignal(0)
-    useLayoutEffect(() => {
-      if (!interactive || !canAutoLoad || spoilerShown.value) {
-        return
-      }
-      handleLoadImage()
-    }, [])
 
+    const computedProgress = useComputed(() =>
+      customProgress ? customProgress.value : progress.value
+    )
+    /* mountBlurhash?imgIsLoad?null:blurhash:blurhash */
     return (
       <div class={buildedClass} style={{width, height}} onClick={handleClick}>
-        {blurHash /* && !imgIsLoad */ && (
-          // @ts-expect-error Preact types are confused
-          <Blurhash className="media-blurhash" hash={blurHash} width="100%" height="100%" />
+        {/* {blurHash &&
+          (mountBlurhash ? (
+            imgIsLoad ? null : (
+              // @ts-expect-error Preact types are confused
+              <Blurhash
+                className="media-blurhash"
+                hash={blurHash}
+                width="100%"
+                height="100%"
+              />
+            )
+          ) : (
+            // @ts-expect-error Preact types are confused
+            <Blurhash className="media-blurhash" hash={blurHash} width="100%" height="100%" />
+          ))} */}
+        {withSpoiler && ( // ЗАЛИШИТИ imgIsLoad чи ні ???
+          <Spoiler
+            shown={
+              /* interactive ? isSpoilerShown : */ isSpoilerShown ||
+              !imgIsLoad /* || !imgIsLoad */
+            }
+          />
         )}
-        {(interactive || withLoader) && !spoilerShown.value && (
+        {blurHash && (
+          // @ts-expect-error Preact types are confused
+          <Blurhash
+            className="media-blurhash"
+            hash={blurHash}
+            width="100%"
+            height="100%"
+            style={{
+              visibility: mountBlurhash ? (imgIsLoad ? 'hidden' : 'visible') : 'visible',
+            }}
+          />
+        )}
+        {(interactive || withLoader) /* && !isSpoilerShown */ && (
           <Loader
-            isLoading={interactive || !imgIsLoad}
-            isPending={!canAutoLoad && !isImgLoading && interactive}
-            isVisible
-            size="large"
+            isVisible={(!imgIsLoad && withLoader && !isSpoilerShown) || isUploading}
+            isLoading={isImgLoading}
             isCancelable={interactive}
           />
         )}
         {/* <Loader isLoading isPending={false} isVisible size="large" isCancelable={true} /> */}
         {/* {interactive } */}
+        {(interactive || withLoader) && (
+          <SingleTransition
+            className="media-progress"
+            in={isImgLoading}
+            timeout={150}
+            name="zoomFade"
+          >
+            {computedProgress}%
+          </SingleTransition>
+        )}
 
-        <SingleTransition
-          className="media-progress"
-          in={isImgLoading && !spoilerShown.value}
-          timeout={150}
-          name="zoomFade"
-        >
-          {progress}%
-        </SingleTransition>
-        {withSpoiler && spoilerShown.value ? null : (
-          <img
+        {
+          /* withSpoiler && isSpoilerShown ? null : */ <img
             ref={imageRef}
-            onError={() => {
-              setImgIsLoad(false)
-            }}
+            // onError={() => {
+            //   setImgIsLoad(false)
+            // }}
             loading={lazy ? 'lazy' : 'eager'}
             alt={alt}
             class="media-photo"
@@ -163,22 +213,12 @@ const Photo: FC<PhotoProps> = memo(
             style={{
               opacity: imgIsLoad ? 1 : 0,
             }}
-            src={interactive ? undefined : url}
+            src={url}
             onLoad={() => {
               setImgIsLoad(true)
             }}
           />
-        )}
-
-        {withSpoiler && ( // ЗАЛИШИТИ imgIsLoad чи ні ???
-          <Spoiler
-            shown={
-              interactive
-                ? spoilerShown.value
-                : spoilerShown.value || !imgIsLoad /* || !imgIsLoad */
-            }
-          />
-        )}
+        }
       </div>
     )
   }

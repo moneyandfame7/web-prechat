@@ -15,7 +15,7 @@ export async function fetchWithProgress(options: FetchWithProgressOptions) {
   xhr.addEventListener('progress', onProgress)
   if (onStart) {
     xhr.onloadstart = () => {
-      console.log('LOAD START HAHAH')
+      // console.log('LOAD START HAHAH')
       onStart()
     }
   }

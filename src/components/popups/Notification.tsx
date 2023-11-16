@@ -4,6 +4,7 @@ import {getActions} from 'state/action'
 import {getGlobalState} from 'state/signal'
 
 import {NOTIFICATION_TRANSITION} from 'common/environment'
+import {renderText} from 'utilities/parse/render'
 
 import {SingleTransition} from 'components/transitions'
 import {Icon} from 'components/ui'
@@ -41,7 +42,7 @@ const Notification: FC<NotificationProps> = ({isOpen}) => {
       >
         <div class="notification-container" onMouseDown={handleBackdropClick}>
           <Icon name="info" />
-          {notification.$title}
+          {renderText(notification.title!, ['markdown'])}
         </div>
       </SingleTransition>
     </Portal>

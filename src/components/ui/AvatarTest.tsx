@@ -72,6 +72,7 @@ export const AvatarTest: FC<AvatarTestProps> = ({
     } else if (peer?.photo) {
       return (
         <Photo
+          canAutoLoad
           alt="Avatar"
           lazy={lazy}
           url={peer.photo.url}

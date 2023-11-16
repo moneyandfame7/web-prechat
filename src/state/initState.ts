@@ -171,4 +171,7 @@ export const INITIAL_STATE: GlobalState = {
     title: undefined,
     isOpen: false,
   },
+  uploadProgress: {
+    byMessageId: {},
+  },
 }

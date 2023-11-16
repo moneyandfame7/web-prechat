@@ -9,6 +9,7 @@ import {
 } from 'api/graphql/messages'
 import {cleanupResponse} from 'api/helpers/cleanupResponse'
 import {cleanTypename} from 'api/helpers/cleanupTypename'
+import type {CustomFetchOptions} from 'api/helpers/customFetch'
 import type {
   DeleteMessagesInput,
   EditMessageInput,
@@ -21,11 +22,24 @@ import type {
 // import {timeout} from 'utilities/schedulers/timeout'
 
 export class ApiMessages extends ApiBaseMethod {
-  public async sendMessage(input: SendMessageInput, fileUploads?: File[]) {
+  public async sendMessage(
+    input: SendMessageInput,
+    {
+      fileUploads,
+      onAbort,
+      onProgress,
+      onReady,
+    }: {
+      fileUploads?: File[]
+      onProgress?: (value: number) => void
+      onAbort?: VoidFunction
+      onReady?: (response: any) => void
+    }
+  ) {
     // return timeout(500)('').then(() => {
     //   return false
     // })
-    const {data} = await this.client.mutate({
+    const {data} = await this.client.mutate<any, any, {fetchOptions: CustomFetchOptions}>({
       mutation: MUTATION_SEND_MESSAGE,
       variables: {
         input: {
@@ -36,16 +50,26 @@ export class ApiMessages extends ApiBaseMethod {
       },
       context: {
         fetchOptions: {
-          onProgress: () => {},
-          onAbort: () => {},
+          ...(onProgress
+            ? {
+                onProgress(e) {
+                  const percentComplete = Math.round((e.loaded / e.total) * 100)
+
+                  onProgress(percentComplete)
+                  console.log('ON PROGRESS!!!!!!!!!! ', percentComplete)
+                },
+              }
+            : {}),
+          onAbort,
+          onReady,
         },
       },
     })
-    if (!data?.sendMessage) {
+    if (!data?.sendMessage?.message) {
       return undefined
     }
 
-    return cleanTypename(data.sendMessage)
+    return cleanTypename(data.sendMessage.message)
   }
 
   public async deleteMessages(input: DeleteMessagesInput) {

@@ -127,6 +127,7 @@
   user-select: none;
   float: right;
   font-size: 12px;
+  // font-style: italic;
   color: var(--c-message-meta);
   display: inline-flex;
   align-items: center;
@@ -265,6 +266,7 @@
     position: absolute;
     bottom: 0;
     display: none;
+    fill: var(--c-bubble-bg);
     @include defaultTransition(fill);
   }
 
@@ -346,7 +348,7 @@
         border-top-left-radius: 0.975rem;
       }
     }
-    &.last-in:not(.action) {
+    &.last-in:not(.action):not(.has-photo) {
       .bubble-content {
         // border-top-left-radius: 0.975rem;
         border-bottom-left-radius: 0;
@@ -359,13 +361,11 @@
       }
     }
 
-    .bubble-content {
-      background-color: var(--c-surface);
-    }
-    .message-meta {
-      // color: var(--c-font-secondary);
-      --c-message-meta: var(--c-font-secondary);
-    }
+    // .bubble-content {
+    //   background-color: var(--c-surface);
+    // }
+    --c-message-meta: var(--c-font-secondary);
+    --c-bubble-bg: var(--c-surface);
   }
   &.last-in:not(.last-in-list) {
     padding-bottom: 0.625rem; //margin?
@@ -427,7 +427,7 @@
       padding-inline-start: 10px;
     }
   }
-  :not(.is-message-empty) {
+  &:not(.is-message-empty) {
     .album-item {
       &:last-child:not(:nth-child(2)) {
         border-bottom-left-radius: 0;
@@ -450,7 +450,7 @@
       position: absolute;
       right: 5px;
       bottom: 5px;
-
+      z-index: 3;
       .message-meta__container {
         padding-block: 2px;
         padding-inline: 4px;
@@ -459,7 +459,7 @@
       }
       .message-meta {
         color: var(--c-white);
-
+        font-style: italic;
         &__icon path {
           fill: var(--c-white) !important;
         }
@@ -544,6 +544,8 @@
   margin-inline-start: 12px;
   // box-shadow: 0px 0px 1px 0px rgba(0, 0, 0, 0.1);
   position: relative;
+
+  background-color: var(--c-bubble-bg);
   @include bgAndColorTransition(box-shadow, transform, color);
 
   @include responsive(mobile) {
@@ -579,7 +581,7 @@
     @include defaultTransition(color); // color: var(--c-user-yellow);
   }
 
-  .media-photo-container {
+  > .media-photo-container {
     @include defaultTransition(filter);
     // width: initial !important;
     // max-height: min(200px, 100%);

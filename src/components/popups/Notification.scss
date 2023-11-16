@@ -1,6 +1,6 @@
 .notification {
   // background-color: rgba(0, 0, 0, 0.4);
-  z-index: var(--z-popup);
+  z-index: calc(var(--z-popup) + 1);
   display: flex;
   justify-content: center;
   align-items: flex-start;

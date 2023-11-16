@@ -36,10 +36,10 @@
   }
   &.incoming {
     justify-content: flex-start;
+    --c-message-meta: var(--c-font-secondary);
 
     .message-meta {
       // color: var(--c-font-secondary);
-      --c-message-meta: var(--c-font-secondary);
     }
     .message-content {
       background-color: var(--c-surface);

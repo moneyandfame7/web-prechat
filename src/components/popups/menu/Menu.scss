@@ -128,15 +128,15 @@
         path {
           fill: var(--c-icon);
         }
-        &-story {
-          path:not(.story-play-path) {
-            stroke: var(--c-icon);
-          }
-          circle,
-          .story-play-path {
-            fill: var(--c-icon) !important;
-          }
-        }
+        // &-story {
+        //   path:not(.story-play-path) {
+        //     stroke: var(--c-icon) !important;
+        //   }
+        //   circle,
+        //   .story-play-path {
+        //     fill: var(--c-icon) !important;
+        //   }
+        // }
       }
     }
   }

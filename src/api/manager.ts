@@ -14,7 +14,6 @@ export const PENDING_MAIN_REQUESTS = {
   CHATS: new Set<string>(),
   MESSAGES: new Set<string>(),
 }
-export const PENDING_QUERIES: Record<string, any> = {}
 export interface ApiMethods {
   auth: ApiAuth
   langPack: ApiLangPack

@@ -4,7 +4,6 @@ import type {
   ApiMessage,
   ApiMessageAction,
   ApiMessageEntity,
-  SendMediaInput,
 } from 'api/types/messages'
 
 import {TEST_translate} from 'lib/i18n'
@@ -15,27 +14,35 @@ import type {MediaItem} from 'components/popups/SendMediaModal'
 
 import {getUserName} from './users'
 
-export function buildLocalMessageContent(items: MediaItem[]): ApiMessage['content'] {
-  const photos: ApiPhoto[] = items
-    .filter((item) => item.isImage)
-    .map((photo) => ({
-      id: photo.id,
-      date: new Date().toISOString(),
-      url: photo.previewUrl!,
-      withSpoiler: photo.withSpoiler,
-      height: photo.dimension?.height,
-      width: photo.dimension?.width,
-      // height:photo.file.
-    }))
+export function buildLocalMessageContent(
+  items: MediaItem[],
+  sendMediaAsDocument?: boolean
+): ApiMessage['content'] {
+  const photos: ApiPhoto[] = sendMediaAsDocument
+    ? []
+    : items
+        .filter((item) => item.isImage)
+        .map((photo) => ({
+          id: photo.id,
+          date: new Date().toISOString(),
+          url: photo.previewUrl!,
+          withSpoiler: photo.withSpoiler,
+          height: photo.dimension?.height,
+          width: photo.dimension?.width,
+          blurHash: photo.blurHash,
+        }))
 
   const documents: ApiDocument[] = items
-    .filter((item) => !item.isImage)
+    .filter((item) => sendMediaAsDocument || !item.isImage)
     .map((document) => ({
       id: document.id,
       date: new Date().toISOString(),
       url: document.previewUrl!,
+      isMedia: document.isImage,
+      // extension:document.
       size: document.file.size,
-      fileName: document.file.name,
+      fileName: document.file.name.split(`${document.id}_`).pop() || document.file.name,
+      blurHash: document.blurHash,
     }))
 
   return {
@@ -53,6 +60,7 @@ export function buildLocalMessage({
   chatId,
   isChannel,
   mediaItems,
+  sendMediaAsDocument,
 }: {
   orderedId: number
   text: string
@@ -61,9 +69,10 @@ export function buildLocalMessage({
   chatId: string
   isChannel?: boolean
   mediaItems?: MediaItem[]
+  sendMediaAsDocument?: boolean
 }): ApiMessage {
   // const isChannel = chat.type === 'chatTypeChannel'
-  const content = mediaItems ? buildLocalMessageContent(mediaItems) : {}
+  const content = mediaItems ? buildLocalMessageContent(mediaItems, sendMediaAsDocument) : {}
   return {
     id: crypto.randomUUID(),
     orderedId,

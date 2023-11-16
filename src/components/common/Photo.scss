@@ -1,4 +1,5 @@
 .media-photo-container {
+  overflow: hidden; // ???
   position: relative;
   cursor: pointer; // ????
   // img {
@@ -14,8 +15,14 @@
   }
   &.has-spoiler {
   }
+  &.blured {
+    > .spoiler {
+      backdrop-filter: blur(20px);
+    }
+  }
   > .media-blurhash {
     border-radius: 50%;
+    // z-index: 1;
   }
 
   > .media-photo {
@@ -43,5 +50,23 @@
     background-color: rgba(0, 0, 0, 0.5);
     color: var(--c-white);
     font-size: 12px;
+  }
+
+  .loader-container {
+    z-index: 1;
+  }
+
+  > .spoiler {
+    z-index: 2;
+  }
+
+  > .spoiler.shown {
+    & ~ .media-blurhash {
+      z-index: 1;
+    }
+    & ~ .loader-container,
+    & ~ .media-progress {
+      z-index: 2;
+    }
   }
 }

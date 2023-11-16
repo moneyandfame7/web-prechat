@@ -5,6 +5,7 @@ import type {ApiMessage} from 'api/types/messages'
 import {selectChatMessageIds, selectMessage, selectMessages} from 'state/selectors/messages'
 import {storages} from 'state/storages'
 
+import {isNill} from 'utilities/isNill'
 import {updateByKey} from 'utilities/object/updateByKey'
 
 import type {SignalGlobalState} from 'types/state'
@@ -170,5 +171,25 @@ export function deleteMessage(global: SignalGlobalState, chatId: string, message
   const lastMessage = selectMessage(global, chatId, lastMessageId)
   if (lastMessage) {
     updateLastMessage(global, chatId, lastMessage)
+  }
+}
+
+export function updateUploadProgress(
+  global: SignalGlobalState,
+  chatId: string,
+  messageId: string,
+  progressToUpd: number | undefined
+) {
+  console.log({progressToUpd})
+  const message = selectMessage(global, chatId, messageId)
+  if (!message) {
+    return
+  }
+  const shouldToRemoveProgress = isNill(progressToUpd)
+
+  if (shouldToRemoveProgress) {
+    delete global.uploadProgress.byMessageId[messageId]
+  } else {
+    global.uploadProgress.byMessageId[messageId] = progressToUpd
   }
 }

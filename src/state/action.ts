@@ -1,3 +1,5 @@
+import {VNode} from 'preact'
+
 import {type ApiMessageEntity} from 'api/types'
 import type {CreateChannelInput, CreateGroupInput} from 'api/types/chats'
 import type {ApiLangKey} from 'api/types/langPack'
@@ -50,7 +52,7 @@ interface ActionPayloads {
   toggleMessageSelection: {id?: string; active?: boolean}
   toggleMessageEditing: {id?: string; active?: boolean}
 
-  showNotification: {title: string}
+  showNotification: {title: string; testTitle?: VNode}
   closeNotification: void
 
   changeSettingsScreen: SettingsScreens
@@ -106,6 +108,7 @@ interface ActionPayloads {
     entities?: ApiMessageEntity[]
     // chatId: string
     sendAs?: string
+    sendMediaAsDocument?: boolean
     mediaItems?: MediaItem[]
   }
   // sendMedia: {text?: string; items: MediaItem[]}

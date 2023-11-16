@@ -1,5 +1,13 @@
-import {useSignal} from '@preact/signals'
-import {type FC, Fragment, type StateUpdater, memo, useRef} from 'preact/compat'
+import {Signal, useSignal} from '@preact/signals'
+import {
+  type FC,
+  Fragment,
+  type StateUpdater,
+  memo,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'preact/compat'
 
 import clsx from 'clsx'
 
@@ -38,6 +46,7 @@ export interface MediaItem {
   file: File
   mimeType?: string
   dimension?: Dimension
+  blurHash?: string
 }
 export interface MediaOptions {
   sendAsFiles: boolean
@@ -45,11 +54,10 @@ export interface MediaOptions {
 }
 export interface SendMediaModalProps {
   isOpen: boolean
+  inputHtml: Signal<string>
   onClose: VoidFunction
   items: MediaItem[]
   setItems: StateUpdater<MediaItem[]>
-  options: MediaOptions
-  setOptions: StateUpdater<MediaOptions>
   triggerAddDocument: VoidFunction
 }
 
@@ -64,15 +72,22 @@ const SendMediaModal: FC<SendMediaModalProps> = ({
   onClose,
   items,
   setItems,
-  options,
-  setOptions,
   triggerAddDocument,
+  inputHtml,
 }) => {
+  const [options, setOptions] = useState<MediaOptions>({
+    groupAllMedia: true,
+    sendAsFiles: false,
+  })
   const {sendMessage} = getActions()
   const inputRef = useRef<HTMLDivElement>(null)
   const isFocused = useSignal(false)
   const html = useSignal('')
 
+  useLayoutEffect(() => {
+    html.value = inputHtml.value
+    inputHtml.value = ''
+  }, [])
   const handleChangeHtml = (newHtml: string) => {
     html.value = newHtml
   }
@@ -127,14 +142,22 @@ const SendMediaModal: FC<SendMediaModalProps> = ({
     setItems(newItems)
   }
 
+  const handleCloseModal = () => {
+    onClose()
+    setTimeout(() => {
+      setItems([])
+      setOptions({
+        groupAllMedia: true,
+        sendAsFiles: false,
+      })
+    }, MODAL_TRANSITION_MS)
+  }
+
   const handleDelete = (item: MediaItem) => {
     const newItems = items.filter((i) => i.id !== item.id)
 
     if (newItems.length === 0) {
-      onClose()
-      setTimeout(() => {
-        setItems(newItems)
-      }, MODAL_TRANSITION_MS)
+      handleCloseModal()
     } else {
       setItems(newItems)
     }
@@ -162,6 +185,7 @@ const SendMediaModal: FC<SendMediaModalProps> = ({
      * @todo rewrite spoiler, винести окремо і в SingleTransition
      * бо зараз мерехтіння є
      */
+
     return (
       <div key={item.id} class="modal-item-media is-media">
         <img src={item.previewUrl} />
@@ -180,7 +204,7 @@ const SendMediaModal: FC<SendMediaModalProps> = ({
   }
   const renderTitle = () => {
     const areSomeFiles = items.some((item) => !item.isImage)
-    return areSomeFiles ? 'Send files' : 'Send media'
+    return areSomeFiles || options.sendAsFiles ? 'Send files' : 'Send media'
   }
 
   const handleSubmit = async () => {
@@ -189,16 +213,18 @@ const SendMediaModal: FC<SendMediaModalProps> = ({
     sendMessage({
       text: parseMessageInput(html.value).text,
       mediaItems: items,
+      sendMediaAsDocument: options.sendAsFiles,
     })
-    onClose()
+    html.value = ''
+    handleCloseModal()
   }
 
   const buildedClass = clsx('send-media-modal', {
     grouped: options.groupAllMedia,
-    'has-documents': items.some((item) => !item.isImage),
+    'has-documents': items.some((item) => !item.isImage) || options.sendAsFiles,
   })
   return (
-    <Modal className={buildedClass} isOpen={isOpen} onClose={onClose} closeOnEsc>
+    <Modal className={buildedClass} isOpen={isOpen} onClose={handleCloseModal} closeOnEsc>
       <ModalHeader hasCloseButton>
         <ModalTitle>{renderTitle()}</ModalTitle>
 

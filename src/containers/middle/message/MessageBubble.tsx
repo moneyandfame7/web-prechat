@@ -1,3 +1,4 @@
+import {Signal, signal} from '@preact/signals'
 import {type FC, forwardRef, memo, useEffect, useRef, useState} from 'preact/compat'
 
 import clsx from 'clsx'
@@ -14,6 +15,7 @@ import {
   selectIsMessageSelected,
   selectSelectedMessages,
 } from 'state/selectors/diff'
+import {selectUploadProgress} from 'state/selectors/messages'
 import {selectUser} from 'state/selectors/users'
 
 import {useContextMenu} from 'hooks/useContextMenu'
@@ -49,6 +51,7 @@ interface StateProps {
   isSelected: boolean
   selectedMessages: ApiMessage[]
   showSenderName: boolean
+  uploadProgress: Signal<number> | undefined
 }
 const getMenuElement = () =>
   document
@@ -71,6 +74,7 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
     hasMessageSelection,
     isSelected,
     selectedMessages,
+    uploadProgress,
   }) => {
     const messageRef = useRef<HTMLDivElement>(null)
     const menuRef = useRef<HTMLDivElement>(null)
@@ -257,7 +261,6 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
         </>
       )
     }
-
     return (
       <div
         ref={messageRef}
@@ -334,6 +337,9 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
           {hasOnePhoto && (
             <Photo
               lazy
+              customProgress={uploadProgress}
+              interactive={message.isOutgoing}
+              isUploading={messageSendingStatus === 'pending'}
               withSpoiler={message.content.photos![0]!.withSpoiler}
               alt=""
               url={message.content.photos![0]!.url}
@@ -342,7 +348,12 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
               blurHash={message.content.photos![0].blurHash}
             />
           )}
-          {hasDocument && <Document document={message.content.documents![0]!} />}
+          {hasDocument && (
+            <Document
+              isUploading={messageSendingStatus === 'pending'}
+              document={message.content.documents![0]!}
+            />
+          )}
           {showSenderName && (
             <p class="bubble-content__sender">{senderName || 'USER NAME_UNDF'}</p>
           )}
@@ -392,9 +403,10 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
   }
 )
 export const VirtualScrollItem = memo(
-  forwardRef<HTMLLIElement, CustomItemComponentProps>(({children, style}, ref) => {
+  forwardRef<HTMLLIElement, CustomItemComponentProps>(({children, style, ...props}, ref) => {
     return (
       <li
+        {...props}
         ref={ref}
         style={{
           ...style,
@@ -419,9 +431,14 @@ export const MessageBubble = memo(
 
     const chat = selectChat(state, chatId)
     const isPrivateChat = isUserId(chatId)
-    const showSenderName = Boolean(sender) && !ownProps.message?.isOutgoing && !isPrivateChat
+    const showSenderName =
+      Boolean(sender) &&
+      !ownProps.message?.isOutgoing &&
+      !isPrivateChat &&
+      !ownProps.message.content.photos
     const chatMember = sender ? selectChatMember(state, chatId, sender.id) : undefined
     const selectedMessages = selectSelectedMessages(state, chatId)
+    const uploadProgress = selectUploadProgress(state, ownProps.message.id)
     return {
       chat,
       sender,
@@ -430,6 +447,7 @@ export const MessageBubble = memo(
       isSelected: selectIsMessageSelected(state, ownProps.message.id),
       selectedMessages,
       showSenderName,
+      uploadProgress,
     }
   })(MessageBubbleImpl)
 )

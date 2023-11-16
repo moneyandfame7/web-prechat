@@ -1,5 +1,6 @@
 import {
   type FC,
+  Fragment,
   type RefObject,
   memo,
   startTransition,
@@ -36,6 +37,7 @@ import {
 } from 'state/selectors/messages'
 
 import {formatMessageGroupDate} from 'utilities/date/convert'
+import {isNill} from 'utilities/isNill'
 import {logger} from 'utilities/logger'
 import {debounce} from 'utilities/schedulers/debounce'
 
@@ -111,75 +113,6 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
       ? getFirstUnreadMessage({messagesById, lastRead: chat?.lastReadIncomingMessageId})
       : undefined
   )
-  useEffect(() => {
-    ;(async () => {
-      if (isPinnedList) {
-        await getPinnedMessages({chatId})
-      } else {
-        await handleFetchHistory2({
-          chatId,
-          offsetId: chat?.unreadCount ? chat?.lastReadIncomingMessageId : undefined,
-          direction: chat?.unreadCount ? HistoryDirection.Around : HistoryDirection.Backwards,
-          includeOffset: true,
-          limit: 40,
-        })
-        if (chat?.unreadCount) {
-          console.log(chat?.lastReadIncomingMessageId, 'SHOULD FETCH AROUND FROM')
-        }
-      }
-
-      isReady.current = true
-      // handleScroll()
-    })()
-
-    // getHistory({
-    //   chatId,
-    //   limit: 100,
-    // })
-  }, [chatId, isPinnedList])
-
-  useLayoutEffect(() => {
-    if (!infiniteScrollRef.current || !messageIds || !messagesById || !chat) {
-      return
-    }
-
-    // if (isFirstRender.current) {
-    //   infiniteScrollRef.current.scrollToIndex(messageIds.length - 1)
-    // }
-    console.error(
-      'IS FIRST RENDER:',
-      isFirstRender.current,
-      'IS FETCHING:',
-      isFetching.current
-    )
-    if (
-      isFirstRender.current &&
-      chat.lastReadIncomingMessageId !== undefined /* &&
-      chat.unreadCount */
-    ) {
-      const test = getFirstUnreadMessage({
-        messagesById,
-        lastRead: chat.lastReadIncomingMessageId,
-      })
-      if (test) {
-        setFirstUnreadMessage2(test)
-        const index = messageIds.findIndex((id) => test?.id === id)
-
-        logger.info('SCROLL TO FIRST UNREAD MESSAGE', test, index)
-
-        infiniteScrollRef.current.scrollToIndex(index, {align: 'start'})
-      } else {
-        logger.info('SCROLL TO BOTTOM')
-        infiniteScrollRef.current.scrollToIndex(messageIds.length)
-      }
-    } else if (!isFetching.current) {
-      logger.info('SCROLL TO BOTTOM')
-      infiniteScrollRef.current.scrollToIndex(messageIds.length)
-    }
-    // isReady.current = true
-
-    isFirstRender.current = false
-  }, [chatId, messageIds, messagesById])
 
   const dateGroup = useMemo(() => {
     const groups: MessageGroup[] = []
@@ -208,33 +141,6 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
 
     return groups.filter((group) => group.ids.length > 0)
   }, [messageIds, chatId])
-
-  const count = messageIds?.length || 0
-  const startFetchedCountRef = useRef(-1)
-  const endFetchedCountRef = useRef(-1)
-  const emptyList = count === 0
-
-  const shouldRenderNoMessage =
-    messageIds?.length === 0 ||
-    (messageIds?.length === 1 && chat?.lastMessage?.action?.type === 'chatCreate')
-  const [isScrolledDown, setIsScrolledDown] = useState(false)
-  const buildedClass = clsx('messages-list', {
-    'is-selecting': hasMessageSelection,
-    'is-pinned': isPinnedList,
-    'is-scrolled-down': isScrolledDown,
-    'is-empty': emptyList || !messageIds,
-  })
-
-  // const firstUnreadMessage = useMemo(() => {
-  //   if (!messagesById || chat?.lastReadIncomingMessageId === undefined) {
-  //     return
-  //   }
-  //   return getFirstUnreadMessage({
-  //     messagesById,
-  //     lastRead: chat!.lastReadIncomingMessageId,
-  //   })
-  // }, [])
-
   const renderedItems = useMemo(() => {
     return dateGroup
       .map((group) => {
@@ -274,14 +180,96 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
       .flat()
   }, [dateGroup, firstUnreadMessage2])
 
-  /**
-   * @todo fix: sending status messages ( 155 line on MessageBuble.tsx ) +
-   *
-   * @todo continue infinite scrolling ( 246 line ) +
-   *
-   *
-   * @todo спочатку треба getHistory({offsetId: firstUnreadMessage.orderedId ...?, Around ?}) for Around required offsetId +
-   */
+  useEffect(() => {
+    ;(async () => {
+      if (isPinnedList) {
+        await getPinnedMessages({chatId})
+      } else {
+        const fetchStrategy =
+          chat?.unreadCount && !isNill(chat.lastReadIncomingMessageId)
+            ? {
+                offsetId: chat.lastReadIncomingMessageId,
+                direction: HistoryDirection.Around,
+              }
+            : {
+                direction: HistoryDirection.Backwards,
+              }
+        // const offsetId = chat?.unreadCount && !isNill( chat.lastReadIncomingMessageId)?chat.lastReadIncomingMessageId
+        await handleFetchHistory2({
+          chatId,
+          ...fetchStrategy,
+          // offsetId: chat?.unreadCount ? chat?.lastReadIncomingMessageId : undefined,
+          // direction: chat?.unreadCount ? HistoryDirection.Around : HistoryDirection.Backwards,
+          includeOffset: true,
+          limit: 40,
+        })
+        if (chat?.unreadCount) {
+          console.log(chat?.lastReadIncomingMessageId, 'SHOULD FETCH AROUND FROM')
+        }
+      }
+
+      isReady.current = true
+      // handleScroll()
+    })()
+
+    // getHistory({
+    //   chatId,
+    //   limit: 100,
+    // })
+  }, [chatId, isPinnedList])
+
+  useLayoutEffect(() => {
+    if (!infiniteScrollRef.current || !messageIds || !messagesById || !chat) {
+      return
+    }
+
+    if (
+      isFirstRender.current &&
+      chat.lastReadIncomingMessageId !== undefined /* &&
+      chat.unreadCount */
+    ) {
+      const firstUnreadMessage = getFirstUnreadMessage({
+        messagesById,
+        lastRead: chat.lastReadIncomingMessageId,
+      })
+      if (firstUnreadMessage) {
+        setFirstUnreadMessage2(firstUnreadMessage)
+        const index = messageIds.findIndex((id) => firstUnreadMessage?.id === id)
+
+        logger.info('SCROLL TO FIRST UNREAD MESSAGE', firstUnreadMessage, index)
+
+        infiniteScrollRef.current.scrollToIndex(index, {align: 'start'})
+      } else {
+        logger.info('SCROLL TO BOTTOM', renderedItems.length - 1)
+        infiniteScrollRef.current.scrollToIndex(renderedItems.length - 1)
+      }
+    } else if (!isFetching.current) {
+      logger.info('SCROLL TO BOTTOM', renderedItems.length - 1)
+
+      infiniteScrollRef.current.scrollToIndex(renderedItems.length - 1)
+    }
+    // isReady.current = true
+
+    isFirstRender.current = false
+  }, [chatId, renderedItems, messageIds, messagesById])
+
+  const count = messageIds?.length || 0
+  const startFetchedCountRef = useRef(-1)
+  const endFetchedCountRef = useRef(-1)
+  const emptyList = count === 0
+
+  const shouldRenderNoMessage =
+    messageIds?.length === 0 ||
+    (messageIds?.length === 1 && chat?.lastMessage?.action?.type === 'chatCreate')
+  const [isScrolledDown, setIsScrolledDown] = useState(false)
+
+  const buildedClass = clsx('messages-list', {
+    'is-selecting': hasMessageSelection,
+    'is-pinned': isPinnedList,
+    'is-scrolled-down': isScrolledDown,
+    'is-empty': emptyList || !messageIds,
+  })
+
   const handleFetchHistory2 = async (payload: GetHistoryPayload, isStart = false) => {
     isFetching.current = true
     const setFetching = isStart ? setStartFetching : setEndFetching
@@ -302,7 +290,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
     ) {
       return
     }
-
+    console.log({start, end})
     if (end + THRESHOLD > count && endFetchedCountRef.current < count) {
       endFetchedCountRef.current = count
 
@@ -370,7 +358,6 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
       if (!infiniteScrollRef.current || !isReady.current) {
         return
       }
-
       setIsScrolledDown(
         infiniteScrollRef.current.scrollOffset -
           infiniteScrollRef.current.scrollSize +
@@ -382,11 +369,11 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
   return (
     <div class={buildedClass}>
       <Loader isVisible={!messageIds} isLoading />
-      <div style={{zIndex: 999, position: 'absolute'}}>
+      {/* <div style={{zIndex: 999, position: 'absolute'}}>
         <h4>LAST READ BY ME: {chat?.lastReadIncomingMessageId}</h4>
         <h4>LAST READ BY OTHER: {chat?.lastReadOutgoingMessageId}</h4>
         <h1>UNREAD: {chat?.unreadCount}</h1>
-      </div>
+      </div> */}
       <SingleTransition
         className="messages-loading-transition"
         in={!!messageIds}
@@ -425,7 +412,11 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
             {startFetching && (
               <Loader
                 size="small"
-                styles={{marginTop: 10, position: 'relative', marginRight: 'calc(50% - 20px)'}}
+                styles={{
+                  marginTop: 10,
+                  position: 'relative',
+                  marginRight: 'calc(50% - 20px)',
+                }}
                 isVisible
                 isLoading
               />
@@ -436,7 +427,11 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
             {endFetching && (
               <Loader
                 size="small"
-                styles={{marginTop: 10, position: 'relative', marginRight: 'calc(50% - 20px)'}}
+                styles={{
+                  marginTop: 10,
+                  position: 'relative',
+                  marginRight: 'calc(50% - 20px)',
+                }}
                 isVisible
                 isLoading
               />

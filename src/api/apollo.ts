@@ -20,7 +20,7 @@ import {getGlobalState} from 'state/signal'
 
 import {DEBUG} from 'common/environment'
 
-import {customFetch} from './helpers/customFetch'
+import {customFetch, customFetch2} from './helpers/customFetch'
 import type {ApiError} from './types/diff'
 
 export type GqlDoc = {
@@ -74,7 +74,7 @@ export class ApolloClientWrapper {
         'apollo-require-preflight': 'true',
       },
 
-      // fetch: customFetch as any,
+      fetch: customFetch as any,
       /* headers?? */
     }) as unknown as ApolloLink
     // return createUploadLink({

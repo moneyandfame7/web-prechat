@@ -67,7 +67,10 @@ const MessageItemImpl: FC<OwnProps & StateProps> = ({
     }
   )
   const showSender =
-    sender && !message?.isOutgoing && !isPrivateChat /* if not bubble - show avatars */
+    sender &&
+    !message?.isOutgoing &&
+    !isPrivateChat &&
+    !message?.content.photos /* if not bubble - show avatars */
 
   // console.log('ITEM_RERENDER????????', message.id)
 

@@ -18,6 +18,8 @@ const parseHeaders = (rawHeaders: any) => {
 
 export const uploadFetch = (url: string, options: CustomFetchOptions) =>
   new Promise((resolve, reject) => {
+    console.log({options})
+
     const xhr = new XMLHttpRequest()
     xhr.withCredentials = true
 
@@ -37,22 +39,34 @@ export const uploadFetch = (url: string, options: CustomFetchOptions) =>
     xhr.ontimeout = () => {
       reject(new TypeError('Network request failed'))
     }
+
     xhr.open(options.method, url, true)
 
     Object.keys(options.headers).forEach((key) => {
       xhr.setRequestHeader(key, options.headers[key])
     })
-    options?.onAbort?.(() => {
-      xhr.abort()
-    })
-    // if (xhr.upload) { ????
-    //   xhr.upload.onprogress = options.onProgress
-    // }
+    // options?.onAbort?.(() => {
+    // xhr.abort()
+    // })
+    if (options.onAbort) {
+      options.onAbort(() => {
+        xhr.abort()
+      })
+    }
     if (options.onProgress) {
-      xhr.onprogress = (e) => {
+      xhr.upload.onprogress = (e) => {
         options.onProgress!(e)
       }
     }
+
+    if (options.onReady) {
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          options.onReady(xhr.response)
+        }
+      }
+    }
+
     if (options.onAbort) {
       options.onAbort(() => {
         xhr.abort()
@@ -62,12 +76,13 @@ export const uploadFetch = (url: string, options: CustomFetchOptions) =>
     xhr.send(options.body)
   })
 
-type CustomFetchOptions = {
+export type CustomFetchOptions = {
   onProgress?: (e: ProgressEvent<EventTarget>) => void
   onAbort?: (abortHandler: AnyFunction) => void
+  onReady?: (response: any) => void
 } & {[key in any]: any}
+
 export const customFetch = (uri: any, options: CustomFetchOptions) => {
-  console.log({options})
   if (options.onProgress) {
     return uploadFetch(uri, options)
   }
@@ -75,7 +90,6 @@ export const customFetch = (uri: any, options: CustomFetchOptions) => {
 }
 
 export function customFetch2(url: string, opts: any = {}) {
-  console.log({opts})
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
 
@@ -93,8 +107,8 @@ export function customFetch2(url: string, opts: any = {}) {
     xhr.onerror = reject
 
     // if (xhr.upload)
-    //   xhr.upload.onprogress = (event) =>
-    //     console.log(`${(event.loaded / event.total) * 100}% uploaded`)
+    xhr.upload.onprogress = (event) =>
+      console.log(`${(event.loaded / event.total) * 100}% uploaded`)
 
     xhr.send(opts.body)
   })
