@@ -50,12 +50,11 @@ const Application: FC = () => {
     initialScreen = AppScreens.Error
   } else if (global.initialization) {
     initialScreen = AppScreens.Loading
-  } else if (global.auth.session /* && hasActiveSession() */) {
+  } else if (global.auth.session && !global.auth.isLogout /* && hasActiveSession() */) {
     initialScreen = AppScreens.Main
   } else {
     initialScreen = AppScreens.Auth
   }
-
   const renderScreen = () => {
     switch (initialScreen) {
       case AppScreens.Auth:

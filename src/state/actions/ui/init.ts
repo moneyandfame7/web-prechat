@@ -24,6 +24,8 @@ createAction('reset', async (_state) => {
   cache.clear('prechat-assets')
 
   setGlobalState(deepCopy(INITIAL_STATE))
+  window.location.reload()
+
   // _state.auth.session = undefined
   // await actions.init() // ????
 })

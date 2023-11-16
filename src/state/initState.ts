@@ -8,6 +8,7 @@ import type {GlobalState} from 'types/state'
 export const INITIAL_STATE: GlobalState = {
   auth: {
     isLoading: false,
+    isLogout: false,
     rememberMe: true,
     screen: AuthScreens.PhoneNumber,
     captcha: undefined,

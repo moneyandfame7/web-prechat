@@ -250,12 +250,22 @@ createAction('signUp', async (state, _, payload) => {
 /**
  * Sign out
  */
-createAction('signOut', async (_, actions) => {
+createAction('signOut', async (state, actions) => {
   /** @todo прибирати СЕСІЮ В САМУ ОСТАННЮ ЧЕРГУ, ЩОБ НЕ ЛОМАТИ ЮАЙКУ. ( тобто спочатку якось просто викинути на початковий екран....) */
-  removeSession()
-  actions.updateUserStatus({isOnline: false, noDebounce: true})
-  // треба ще на бекенд робити запит і видаляти сесію
-  console.log(getActiveSubscriptions(), 'ACTIVE SUBSCRIBPTIONS')
-  /* unsubscribe from subscribers if exist??? */
-  await actions.reset()
+  state.auth.isLogout = true
+  state.auth.screen = AuthScreens.PhoneNumber
+
+  await actions.updateUserStatus({isOnline: false, noDebounce: true})
+  // // треба ще на бекенд робити запит і видаляти сесію
+  // console.log(getActiveSubscriptions(), 'ACTIVE SUBSCRIBPTIONS')
+  // /* unsubscribe from subscribers if exist??? */
+
+  setTimeout(() => {
+    actions.reset()
+  }, 100)
+  // removeSession()
+  // state.auth.session = undefined
+  // setTimeout(() => {
+  //   state.auth.isLogout = false
+  // }, 500)
 })

@@ -81,6 +81,7 @@ export interface AuthState {
   confirmResult: ConfirmationResult | undefined
   error: string | undefined
   isLoading: boolean
+  isLogout: boolean
   userId: string | undefined
   screen: AuthScreens
   firebase_token: string | undefined
