@@ -32,7 +32,7 @@ export class ApiMessages extends ApiBaseMethod {
     }: {
       fileUploads?: File[]
       onProgress?: (value: number) => void
-      onAbort?: VoidFunction
+      onAbort?: (abortHandler: VoidFunction) => void
       onReady?: (response: any) => void
     }
   ) {
@@ -54,12 +54,11 @@ export class ApiMessages extends ApiBaseMethod {
             ? {
                 onProgress(e) {
                   const percentComplete = Math.round((e.loaded / e.total) * 100)
-
                   onProgress(percentComplete)
-                  console.log('ON PROGRESS!!!!!!!!!! ', percentComplete)
                 },
               }
             : {}),
+          // signal: abortController.signal,
           onAbort,
           onReady,
         },

@@ -20,7 +20,7 @@ import {getGlobalState} from 'state/signal'
 
 import {DEBUG} from 'common/environment'
 
-import {customFetch, customFetch2} from './helpers/customFetch'
+import {customFetch} from './helpers/customFetch'
 import type {ApiError} from './types/diff'
 
 export type GqlDoc = {
@@ -39,7 +39,6 @@ export class ApolloClientWrapper {
   private readonly _headersLink: ApolloLink
   private readonly _splittedLinks: ApolloLink
   private readonly _errorLink: ApolloLink = this.getErrorLink()
-  private readonly _uploadLink: ApolloLink
   private readonly _retryLink: ApolloLink = this.getRetryLink()
   public constructor(connection: {httpUrl: string; wsUrl: string}) {
     const {httpUrl, wsUrl} = connection

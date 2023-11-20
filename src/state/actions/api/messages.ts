@@ -1,6 +1,6 @@
 import type {DeepSignal} from 'deepsignal'
 
-import {Api, PENDING_MAIN_REQUESTS} from 'api/manager'
+import {ABORT_CALLBACKS, Api, PENDING_MAIN_REQUESTS} from 'api/manager'
 import {type ApiMessage, HistoryDirection, type SendMediaItem} from 'api/types'
 
 import {createAction} from 'state/action'
@@ -22,7 +22,6 @@ import {
 
 import {FIRST_MSG_ID} from 'common/app'
 import {filterUnique} from 'utilities/array/filterUnique'
-import {logger} from 'utilities/logger'
 import {buildRecord} from 'utilities/object/buildRecord'
 import {updateByKey} from 'utilities/object/updateByKey'
 import {debounce} from 'utilities/schedulers/debounce'
@@ -53,6 +52,7 @@ createAction('sendMessage', async (state, _, payload) => {
   } else if (!chat) {
     return
   }
+
   const localMessage = buildLocalMessage({
     orderedId: chat.lastMessage ? chat.lastMessage.orderedId + 1 : FIRST_MSG_ID,
     chatId,
@@ -63,27 +63,28 @@ createAction('sendMessage', async (state, _, payload) => {
     mediaItems: payload.mediaItems,
     sendMediaAsDocument,
   })
+
   // updateLastMessage(state, chatId, localMessage, false)
   updateMessages(state, chatId, {[localMessage.id]: localMessage}, false, false)
   updateChat(state, chatId, {
     lastMessage: localMessage,
   })
+  const fileUploads = payload.mediaItems
+    ? payload.mediaItems.map((item) => item.file)
+    : undefined
+  const fileOptions = payload.mediaItems
+    ? payload.mediaItems.reduce((acc, item) => {
+        acc[item.id] = {
+          mimeType: item.mimeType,
+          withSpoiler: item.withSpoiler,
+        }
+        return acc
+      }, {} as Record<string, SendMediaItem>)
+    : undefined
+
   // after 1s need to set state status on pending?
   /* Catch error there and update message state */
   try {
-    const fileUploads = payload.mediaItems
-      ? payload.mediaItems.map((item) => item.file)
-      : undefined
-    const fileOptions = payload.mediaItems
-      ? payload.mediaItems.reduce((acc, item) => {
-          acc[item.id] = {
-            mimeType: item.mimeType,
-            withSpoiler: item.withSpoiler,
-          }
-          return acc
-        }, {} as Record<string, SendMediaItem>)
-      : undefined
-
     const sended = await Api.messages.sendMessage(
       {
         id: localMessage.id,
@@ -97,15 +98,15 @@ createAction('sendMessage', async (state, _, payload) => {
       {
         fileUploads,
         onProgress(value) {
-          console.log({value})
           updateUploadProgress(state, chatId, localMessage.id, value)
-
-          console.log({value})
         },
         onReady() {
-          logger.info('IS READY!!!')
           updateUploadProgress(state, chatId, localMessage.id, undefined)
+          // ABORT_CALLBACKS.MESSAGES.delete(localMessage.id)
         },
+        // onAbort(abort) {
+        //   ABORT_CALLBACKS.MESSAGES.set(localMessage.id, abort)
+        // },
       }
     )
     if (!sended) {
@@ -133,6 +134,14 @@ createAction('editMessage', async (state, actions, payload) => {
     return
   }
   updateMessage(state, payload.chatId, payload.messageId, edited, false)
+})
+
+createAction('cancelMessageSending', async (state, actions, payload) => {
+  const {chatId, id} = payload
+
+  ABORT_CALLBACKS.MESSAGES.get(id)?.()
+  actions.deleteMessages({ids: [id], chatId})
+  ABORT_CALLBACKS.MESSAGES.delete(id)
 })
 
 createAction('deleteMessages', async (state, _actns, payload) => {

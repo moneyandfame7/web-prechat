@@ -1,4 +1,4 @@
-import {Signal, signal} from '@preact/signals'
+import type {Signal} from '@preact/signals'
 import {type FC, forwardRef, memo, useEffect, useRef, useState} from 'preact/compat'
 
 import clsx from 'clsx'
@@ -9,7 +9,7 @@ import type {ApiChat, ApiChatMember, ApiMessage, ApiUser} from 'api/types'
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
 import {getUserName, isUserId} from 'state/helpers/users'
-import {getChatMember, selectChat, selectChatMember} from 'state/selectors/chats'
+import {selectChat, selectChatMember} from 'state/selectors/chats'
 import {
   selectHasMessageSelection,
   selectIsMessageSelected,
@@ -22,6 +22,8 @@ import {useContextMenu} from 'hooks/useContextMenu'
 import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
+
+import {logger} from 'utilities/logger'
 
 import {Document} from 'components/common/Document'
 import {Photo} from 'components/common/Photo'
@@ -45,6 +47,7 @@ interface OwnProps {
 }
 interface StateProps {
   chat: ApiChat | undefined
+  chatId: string
   sender: ApiUser | undefined
   chatMember: ApiChatMember | undefined
   hasMessageSelection: boolean
@@ -68,6 +71,7 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
     isFirstUnread,
 
     chat,
+    chatId,
     sender,
     chatMember,
     showSenderName,
@@ -80,7 +84,7 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
     const menuRef = useRef<HTMLDivElement>(null)
     const contextMenuImgTarget = useRef<HTMLElement | null>(null)
 
-    const {deleteMessages, openChat, toggleMessageSelection, toggleMessageEditing} =
+    const {openChat, toggleMessageSelection, toggleMessageEditing, cancelMessageSending} =
       getActions()
     const isOutgoing = message?.isOutgoing && !message.action
 
@@ -171,6 +175,10 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
           navigator.clipboard.writeText(content.formattedText.text)
         }
       }
+    }
+
+    const handleCancelSending = () => {
+      // cancelMessageSending({id: message.id, chatId})
     }
 
     const handleClickAvatar = () => {
@@ -270,7 +278,9 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
           handleContextMenu(e)
 
           const el = e.target as HTMLElement
-
+          if (!el) {
+            return
+          }
           const imageLikeTarget = (el.closest('.album-item') ||
             el.closest('.media-photo-container')) as HTMLElement | null
           const isImageTarget = Boolean(imageLikeTarget)
@@ -338,6 +348,7 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
             <Photo
               lazy
               customProgress={uploadProgress}
+              // onCancelUpload={handleCancelSending}
               interactive={message.isOutgoing}
               isUploading={messageSendingStatus === 'pending'}
               withSpoiler={message.content.photos![0]!.withSpoiler}
@@ -441,6 +452,7 @@ export const MessageBubble = memo(
     const uploadProgress = selectUploadProgress(state, ownProps.message.id)
     return {
       chat,
+      chatId,
       sender,
       chatMember,
       hasMessageSelection: selectHasMessageSelection(state),

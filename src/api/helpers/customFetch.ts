@@ -54,23 +54,15 @@ export const uploadFetch = (url: string, options: CustomFetchOptions) =>
       })
     }
     if (options.onProgress) {
-      xhr.upload.onprogress = (e) => {
-        options.onProgress!(e)
-      }
+      xhr.upload.onprogress = options.onProgress
     }
 
     if (options.onReady) {
       xhr.onreadystatechange = () => {
         if (xhr.readyState === 4 && xhr.status === 200) {
-          options.onReady(xhr.response)
+          options.onReady!(xhr.response)
         }
       }
-    }
-
-    if (options.onAbort) {
-      options.onAbort(() => {
-        xhr.abort()
-      })
     }
 
     xhr.send(options.body)

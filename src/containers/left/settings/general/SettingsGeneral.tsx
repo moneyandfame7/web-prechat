@@ -28,7 +28,6 @@ import {Checkbox, Divider, Icon} from 'components/ui'
 import {ListItem} from 'components/ui/ListItem'
 import {RadioGroup, type RadioGroupItem} from 'components/ui/RadioGroup'
 import {Slider} from 'components/ui/Slider'
-import {SwitchInput} from 'components/ui/SwitchInput'
 
 import './SettingsGeneral.scss'
 

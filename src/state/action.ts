@@ -114,6 +114,7 @@ interface ActionPayloads {
   // sendMedia: {text?: string; items: MediaItem[]}
   editMessage: {text: string; chatId: string; messageId: string}
   deleteMessages: {ids: string[]; chatId: string}
+  cancelMessageSending: {id: string; chatId: string}
   getHistory: GetHistoryPayload
   readHistory: {
     chatId: string

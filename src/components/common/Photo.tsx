@@ -37,6 +37,7 @@ interface PhotoProps {
   isUploading?: boolean
 
   customProgress?: Signal<number>
+  onCancelUpload?: VoidFunction
 }
 const photoCache = new Set<string>()
 
@@ -58,6 +59,8 @@ const Photo: FC<PhotoProps> = memo(
     withLoader,
     customProgress,
     hideBlurhash: mountBlurhash,
+
+    onCancelUpload,
   }) => {
     const imageRef = useRef<HTMLImageElement>(null)
     const abortRef = useRef<VoidFunction | null>(null)
@@ -119,7 +122,10 @@ const Photo: FC<PhotoProps> = memo(
       // }
     }, [])
     const handleClick = () => {
-      if (withSpoiler && isSpoilerShown) {
+      if (isUploading) {
+        /* Do nothing??? */
+        /* onCancelUpload?.() */
+      } else if (withSpoiler && isSpoilerShown) {
         setIsSpoilerShown(false)
         // if (canAutoLoad && interactive) {
         // handleLoadImage()

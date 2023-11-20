@@ -81,7 +81,6 @@ createAction('toggleMessageSelection', (state, _, payload) => {
   }
   if (!id) {
     if (state.selection.hasSelection === false) {
-      console.log('CLEAR SELECTION!!!')
       state.selection.messageIds = []
     }
     return

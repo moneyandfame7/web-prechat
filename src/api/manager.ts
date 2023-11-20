@@ -14,6 +14,10 @@ export const PENDING_MAIN_REQUESTS = {
   CHATS: new Set<string>(),
   MESSAGES: new Set<string>(),
 }
+
+export const ABORT_CALLBACKS = {
+  MESSAGES: new Map<string, VoidFunction>(),
+}
 export interface ApiMethods {
   auth: ApiAuth
   langPack: ApiLangPack
