@@ -5,14 +5,3 @@ export const selectSuggestedCountry = (state: SignalGlobalState) => {
   if (!code) return
   return state.countryList.find((country) => country.code === code)
 }
-
-export const selectCountryByPhone = (state: SignalGlobalState) => {
-  const {
-    auth: {phoneNumber},
-    countryList,
-  } = state
-
-  if (!phoneNumber) return
-
-  return countryList.find((country) => phoneNumber.includes(country.dial_code))
-}

@@ -1,20 +1,14 @@
-import {signal} from '@preact/signals'
-import {type FC, memo, useCallback, useEffect, useMemo, useRef} from 'preact/compat'
+import {type FC, memo, useCallback, useEffect, useRef} from 'preact/compat'
 
-import {VList, VListHandle, WVList} from 'virtua'
+import type {VListHandle} from 'virtua'
 
-import {ApiMessage, HistoryDirection} from 'api/types'
+import type {ApiMessage} from 'api/types'
 
 import {getActions} from 'state/action'
 import {connect} from 'state/connect'
-import {getLastOutgoingMessage} from 'state/helpers/messages'
 import {selectOpenedChats} from 'state/selectors/chats'
 import {selectHasMessageEditing, selectHasMessageSelection} from 'state/selectors/diff'
-import {
-  selectChatMessageIds,
-  selectMessages,
-  selectPinnedMessageIds,
-} from 'state/selectors/messages'
+import {selectMessages, selectPinnedMessageIds} from 'state/selectors/messages'
 import {getGlobalState} from 'state/signal'
 
 import {usePrevious} from 'hooks'
@@ -26,10 +20,8 @@ import {connectStateToNavigation} from 'utilities/routing'
 
 import type {OpenChats} from 'types/state'
 
-import {Photo} from 'components/common/Photo'
 import {Transition} from 'components/transitions'
 import {Button} from 'components/ui'
-import {Loader} from 'components/ui/Loader'
 
 import {ChatHeader} from './ChatHeader'
 import {ChatInput} from './ChatInput'
@@ -55,7 +47,6 @@ type InjectedProps = OwnProps & StateProps
 
 const MiddleColumn: FC<InjectedProps> = ({
   chatId,
-  messagesById,
   activeTransitionKey,
   animationsEnabled,
   isPinnedList,
@@ -69,11 +60,18 @@ const MiddleColumn: FC<InjectedProps> = ({
   const actions = getActions()
   const {isSmall, isLaptop} = useLayout()
 
+  const isChatOpen = !!chatId
+  const isChatCollapsed = isLaptop && isChatOpen
+
+  const prevTransitionKey = usePrevious(activeTransitionKey)
+  const cleanupExceptionKey = getCleanupExceptionKey(activeTransitionKey, prevTransitionKey)
+
   const {
     value: isEmojiMenuOpen,
     toggle: toggleEmojiMenu,
     setFalse: closeEmojiMenu,
   } = useBoolean()
+
   const closeChat = useCallback(() => {
     document.body.classList.toggle('has-chat', false)
     document.body.classList.toggle('left-column-shown', true)
@@ -91,6 +89,7 @@ const MiddleColumn: FC<InjectedProps> = ({
       actions.toggleMessageEditing({active: false})
     }
   }, [isSmall, animationsEnabled])
+
   useEffect(() => {
     // handleHashChangeTEST()
     const handleNavigation = connectStateToNavigation(global, actions /* closeChat */)
@@ -102,14 +101,8 @@ const MiddleColumn: FC<InjectedProps> = ({
       window.removeEventListener('hashchange', handleNavigation)
     }
   }, [closeChat, isSmall])
-  const isChatOpen = !!chatId
-  const isChatCollapsed = isLaptop && isChatOpen
-  useEffect(() => {
-    // if (!isMobile) {
-    //   document.body.classList.remove('left-column-shown')
 
-    //   // return
-    // }
+  useEffect(() => {
     if (isSmall) {
       document.body.classList.toggle('left-column-shown', !isChatOpen)
     }
@@ -117,10 +110,6 @@ const MiddleColumn: FC<InjectedProps> = ({
     document.body.classList.toggle('has-chat', isChatOpen)
   }, [isChatOpen, isChatCollapsed, isSmall])
 
-  /**
-   * @todo подивитись завтра анімації, швидко поклацати і схуялі воно не працює так як мені треба.... можливт треба transform десь прописати?
-   * @todo Reconnect in 3, 2, 1 seconds - for apollo
-   */
   useEffect(
     () =>
       isChatOpen
@@ -142,30 +131,8 @@ const MiddleColumn: FC<InjectedProps> = ({
     actions.toggleMessageEditing({active: false})
   }, [chatId])
 
-  // const isNext = useRef(false)
-  const prevTransitionKey = usePrevious(activeTransitionKey)
-  const cleanupExceptionKey = getCleanupExceptionKey(activeTransitionKey, prevTransitionKey)
-  // const cleanupExceptionKey = (
-  //   prevTransitionKey !== undefined && prevTransitionKey < currentTransitionKey ? prevTransitionKey : undefined
-  // );
-  const {value, toggle} = useBoolean(false)
   return (
     <div class="MiddleColumn" id="middle-column">
-      {/* <InfiniteScrollTest /> */}
-      {/* <Photo
-        customProgress={signal(7)}
-        url="https://plus.unsplash.com/premium_photo-1695582867991-e75f29ab5a2a?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        blurHash="U9RfRkbXIV_3LzRjRQsp4TozspMyNGfjR*Rj"
-        alt=""
-        interactive
-        withSpoiler
-        // withLoader
-        height={300}
-        isUploading={value}
-        width={300}
-      /> */}
-      {/* <Loader isVisible={value} /> */}
-      {/* <Button onClick={toggle}>TOGGLE</Button> */}
       {isChatOpen && (
         <>
           <ChatHeader
@@ -183,7 +150,7 @@ const MiddleColumn: FC<InjectedProps> = ({
             name="slide"
             shouldCleanup
           >
-            <div class="future-transition-container">
+            <div class="messages-transition-container">
               <MessagesList
                 chatId={chatId}
                 isPinnedList={isPinnedList}

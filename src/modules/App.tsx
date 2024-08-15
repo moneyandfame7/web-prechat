@@ -1,13 +1,17 @@
-import {type FC, useLayoutEffect} from 'preact/compat'
+import {type FC, memo, useLayoutEffect} from 'preact/compat'
 
 import Auth from 'modules/auth'
 import Lock from 'modules/lockscreen'
 import Main from 'modules/main'
 
+import {type MapState, connect} from 'state/connect'
 import {changeTheme} from 'state/helpers/settings'
-import {getGlobalState} from 'state/signal'
+import {selectGeneralSettings} from 'state/selectors/settings'
 
 import {ClientError} from 'lib/error/error'
+
+import type {EmptyObject} from 'types/common'
+import type {Theme} from 'types/state'
 
 import {ErrorCatcher} from 'components/ErrorCatcher'
 import {ScreenLoader} from 'components/ScreenLoader'
@@ -25,10 +29,15 @@ enum AppScreens {
   Error,
 }
 
-const Application: FC = () => {
-  const global = getGlobalState()
+interface StateProps {
+  theme: Theme // спробувати з SIGNAL THEME
+  isLogout: boolean
+  session: string | undefined
+  initialization: boolean
+}
+const ApplicationImpl: FC<StateProps> = ({theme, initialization, session, isLogout}) => {
   useLayoutEffect(() => {
-    const prefersSystemTheme = global.settings.general.theme === 'system'
+    const prefersSystemTheme = theme === 'system'
     if (!prefersSystemTheme) {
       return
     }
@@ -43,14 +52,14 @@ const Application: FC = () => {
     return () => {
       prefersDarkMode.removeEventListener('change', handleChangeTheme)
     }
-  }, [global.settings.general.theme])
+  }, [theme])
 
   let initialScreen: AppScreens
   if (ClientError.getError().value.length) {
     initialScreen = AppScreens.Error
-  } else if (global.initialization) {
+  } else if (initialization) {
     initialScreen = AppScreens.Loading
-  } else if (global.auth.session && !global.auth.isLogout /* && hasActiveSession() */) {
+  } else if (session && !isLogout /* && hasActiveSession() */) {
     initialScreen = AppScreens.Main
   } else {
     initialScreen = AppScreens.Auth
@@ -69,6 +78,7 @@ const Application: FC = () => {
         return <Main key={AppScreens.Main} />
     }
   }
+
   return (
     <ErrorCatcher>
       <ServiceWorker />
@@ -78,5 +88,13 @@ const Application: FC = () => {
     </ErrorCatcher>
   )
 }
+const mapStateToProps: MapState<EmptyObject, StateProps> = (state) => {
+  return {
+    theme: selectGeneralSettings(state, 'theme'),
+    isLogout: state.auth.isLogout,
+    session: state.auth.session,
+    initialization: state.initialization,
+  }
+}
 
-export {Application}
+export const Application = memo(connect(mapStateToProps)(ApplicationImpl))

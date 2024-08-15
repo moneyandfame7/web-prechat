@@ -22,6 +22,9 @@ export type IsNever<T> = [T] extends [never] ? true : false
 
 export type Nillable<T> = T | undefined | null
 export type UndoNillable<T> = T extends Partial<infer R> ? R : T
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type EmptyObject = {}
+export type MakeRequired<T, K extends keyof T> = T & Required<Pick<T, K>>
 
 // Exclude
 

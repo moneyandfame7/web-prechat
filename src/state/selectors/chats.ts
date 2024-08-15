@@ -1,5 +1,3 @@
-import {user} from 'assets/icons/all'
-
 import type {ApiChat, ApiChatFull, ApiChatMember} from 'api/types'
 import type {ApiChatId} from 'api/types/diff'
 
@@ -32,8 +30,6 @@ export function selectChatMember(
 export function selectChatsIds(global: SignalGlobalState) {
   return global.chats.ids
 }
-
-export type MakeRequired<T, K extends keyof T> = T & Required<Pick<T, K>>
 
 /**
  *  *chat._id - its prisma generated uuid, chat.id - its peer id (user, or chat)
@@ -113,11 +109,6 @@ export function selectUsernameByChatId(global: SignalGlobalState, chatId: string
   return getChatUsername_deprecated(chat)
 }
 
-export function selectCurrentChat_deprecated(global: SignalGlobalState): ApiChat | undefined {
-  const currentChatId = global.currentChat.chatId
-  return currentChatId ? global.chats.byId[currentChatId] : undefined
-}
-
 export function selectOpenedChats(global: SignalGlobalState): OpenChats[] {
   return global.openChats
 }
@@ -148,10 +139,6 @@ export function selectIsChatsFetching(global: SignalGlobalState) {
 
 export function selectIsMessagesLoading(global: SignalGlobalState) {
   return selectCurrentChat(global)?.isMessagesLoading
-}
-
-export function selectAllChats(global: SignalGlobalState) {
-  return global.chats.ids.map((id) => selectChat(global, id))
 }
 
 export function selectIsChatWithSelf(global: SignalGlobalState, chatId: string) {
@@ -197,10 +184,6 @@ export function getChatMember(chatFull: ApiChatFull, userId: string) {
 export function getChatMemberIds(chatFull: ApiChatFull) {
   return chatFull.members?.map((m) => m.userId)
 }
-// export function getChatMembers(chatFull:ApiChatFull){
-//   return chatFull.members
-// }
-// export function selectChatMember(global: SignalGlobalState, chatId: string, userId: string) {}
 
 export function selectOnlineCount(global: SignalGlobalState, chatFull: ApiChatFull) {
   if (!chatFull.members || chatFull.members.length === 0) {

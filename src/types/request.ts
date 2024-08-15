@@ -5,10 +5,20 @@ export interface UserConnection {
   longitude: number
   countryName: string
   countryCode: string
-  continentCode: string
-  continent: string
   timeZone: string
   zipCode: string
   cityName: string
   regionName: string
+  isProxy: boolean
+  continent: string
+  continentCode: string
+  currency: UserCurrency
+  language: string
+  timeZones: string[]
+  tlds: string[]
+}
+
+export interface UserCurrency {
+  code: string
+  name: string
 }

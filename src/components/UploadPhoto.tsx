@@ -15,7 +15,7 @@ interface UploadProfilePhotoProps {
   onSubmit: (file: File) => void
 }
 
-export const UploadProfilePhoto: FC<UploadProfilePhotoProps> = ({size, onSubmit}) => {
+export const UploadProfilePhoto: FC<UploadProfilePhotoProps> = ({onSubmit}) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const inputRef = useRef<HTMLInputElement | null>(null)
   useEffect(() => {

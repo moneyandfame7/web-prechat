@@ -15,6 +15,8 @@ import {Icon} from 'components/ui'
 
 import {MessageSendingStatus} from './MessageSendingStatus'
 
+import './MessageMeta.scss'
+
 interface MessageMetaProps {
   message: ApiMessage
   sendingStatus: ApiMessageSendingStatus

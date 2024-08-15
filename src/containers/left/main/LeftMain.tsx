@@ -5,9 +5,8 @@ import {useIsOnline} from 'hooks/useIsOnline'
 
 import {LeftColumnScreen} from 'types/screens'
 
-import {StoriesList} from 'containers/stories/list'
-
 import {ColumnHeader} from 'components/ColumnHeader'
+import {StoriesList} from 'components/stories/list'
 import {Transition} from 'components/transitions'
 import {SearchInput} from 'components/ui'
 

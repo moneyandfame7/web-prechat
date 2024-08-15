@@ -33,11 +33,6 @@ export function getTransitionTimeout(name: TransitionName, timeout?: number) {
       return FALLBACK_TIMEOUT
   }
 }
-export function getTransitionName(name: TransitionName, timeout?: number) {
-  // if (document.documentElement.classList.contains('animation-none')) {
-  //  if(name==='')
-  // }
-}
 
 /**
  *  Single transition helpers.

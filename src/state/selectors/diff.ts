@@ -1,4 +1,3 @@
-import {ApiMedia} from 'api/methods'
 import type {ApiMessage, ApiSession} from 'api/types'
 
 import type {SignalGlobalState} from 'types/state'

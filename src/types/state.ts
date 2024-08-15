@@ -28,7 +28,6 @@ export type SendShortcut = 'enter' | 'ctrl-enter'
 export type PageAnimations = Include<TransitionName, 'slideDark' | 'zoomSlide'>
 export type ChatFoldersAnimations = 'fade' | 'slide'
 export interface SettingsState {
-  theme: Theme
   /**
    * @deprecated
    */

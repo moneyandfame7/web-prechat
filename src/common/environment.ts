@@ -14,7 +14,7 @@ export const API_AVATAR_VARIANTS = [
   'ORANGE',
 ] as const
 
-export const USE_USERNAMES = true
+export const USE_USERNAMES = false
 
 /* UI  */
 const {userAgent, platform} = window.navigator
@@ -85,7 +85,7 @@ export const AUTH_CAPTCHA_EL = 'auth_captcha_el'
 export const AUTH_CAPTCHA_CONTAINER = 'auth_captcha_container'
 export const DEBUG = import.meta.env.DEV || import.meta.env.NODE_ENV === 'staging'
 /* || ?debug=1 */
-export const USE_APPLE_EMOJI = true
+export const USE_APPLE_EMOJI = false
 
 export const IS_EMOJI_SUPPORTED = IS_APPLE && USE_APPLE_EMOJI
 export const GITHUB_SOURCE = 'https://github.com/moneyandfame7/web-prechat#readme'

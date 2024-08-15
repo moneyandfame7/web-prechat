@@ -5,6 +5,8 @@ import {type ApiMessageSendingStatus} from 'api/types'
 import {Transition} from 'components/transitions'
 import {Icon} from 'components/ui'
 
+import './MessageSendingStatus.scss'
+
 interface MessageOutgoingStatusProps {
   status: ApiMessageSendingStatus
 }

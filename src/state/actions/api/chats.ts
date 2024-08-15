@@ -159,7 +159,7 @@ createAction('openChat', async (state, actions, payload) => {
   updateOpenedChats(state, {chatId: id, username, replaceHistory: shouldReplaceHistory}) // for test false
 })
 
-createAction('openPinnedMessages', async (state, actions, payload) => {
+createAction('openPinnedMessages', async (state, _, payload) => {
   const {id} = payload
   /* Call api for get all pinned messages? */
   // id, undefined, false, true
@@ -217,7 +217,7 @@ createAction('openChatByUsername', async (state, actions, payload) => {
   }
 })
 
-createAction('updateChat', async (state, actions, payload) => {
+createAction('updateChat', async (state, _, payload) => {
   const {chatId} = payload
   const chat = selectChat(state, chatId)
 

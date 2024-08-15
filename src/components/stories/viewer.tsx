@@ -26,8 +26,8 @@ import {DropdownMenu} from 'components/ui/DropdownMenu'
 import {Portal} from 'components/ui/Portal'
 import {TextArea} from 'components/ui/TextArea'
 
-import {StoryLike} from './components/like'
-import {StoryProgressList} from './components/progressList'
+import {StoryLike} from './like'
+import {StoryProgressList} from './progressList'
 import {Story} from './story'
 
 import './viewer.scss'

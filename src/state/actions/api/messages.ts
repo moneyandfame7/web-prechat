@@ -136,7 +136,7 @@ createAction('editMessage', async (state, actions, payload) => {
   updateMessage(state, payload.chatId, payload.messageId, edited, false)
 })
 
-createAction('cancelMessageSending', async (state, actions, payload) => {
+createAction('cancelMessageSending', async (_, actions, payload) => {
   const {chatId, id} = payload
 
   ABORT_CALLBACKS.MESSAGES.get(id)?.()
