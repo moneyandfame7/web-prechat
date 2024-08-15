@@ -17,22 +17,19 @@ import {isUserId} from 'state/helpers/users'
 import {
   getChatMemberIds,
   isChatChannel,
-  selectCanAddToContact,
   selectCanEditChat,
   selectChat,
   selectChatFull,
 } from 'state/selectors/chats'
 import {selectUser} from 'state/selectors/users'
 
-// import {getGlobalState} from 'state/signal'
 import {TEST_translate} from 'lib/i18n'
 
 import {throttle} from 'utilities/schedulers/throttle'
-import {stopEvent} from 'utilities/stopEvent'
 
 import type {LanguagePackKeys} from 'types/lib'
 import {ChatProfileScreens, RightColumnScreens} from 'types/screens'
-import {PreactNode} from 'types/ui'
+import type {PreactNode} from 'types/ui'
 
 import {ColumnWrapper} from 'components/ColumnWrapper'
 import {ScreenLoader} from 'components/ScreenLoader'
@@ -62,14 +59,11 @@ const handleScrollThrottled = throttle((cb) => cb(), 250, false)
 // hardcode...
 const SCROLL_ANIMATION_MS = 470
 const ChatProfile: FC<ChatProfileProps & StateProps> = ({
-  // chatId,
   chatFull,
   canEdit,
   canAddToContact,
   onCloseScreen,
   user,
-  // memberIds,
-  // members,
   isChannel,
   chat,
   chatId,
@@ -89,8 +83,7 @@ const ChatProfile: FC<ChatProfileProps & StateProps> = ({
 
   const handleEditChat = useCallback(() => {
     openRightColumn({
-      screen:
-        /* user && user.isContact ? RightColumnScreens.EditContact : */ RightColumnScreens.ChatEdit,
+      screen: RightColumnScreens.ChatEdit,
     })
   }, [user])
   const handleAddContact = useCallback(() => {
@@ -136,9 +129,7 @@ const ChatProfile: FC<ChatProfileProps & StateProps> = ({
       </>
     )
   }, [activeTransitionKey, user, isChannel])
-  // const [isScrolling, setIsScrolling] = useState(false)
 
-  // const contentScrollTop = testRef.current?.scrollTop
   const handleChangeTab = (idx: number) => {
     setActiveTransitionKey(ChatProfileScreens.SharedMedia)
     setActiveTab(idx)
@@ -151,18 +142,13 @@ const ChatProfile: FC<ChatProfileProps & StateProps> = ({
 
     void handleScrollThrottled(() => {
       if (!testRef.current || !tabListRef.current) {
-        console.log('NOT REFS')
-
         return
       }
       const contentScrollTop = Math.ceil(testRef.current.scrollTop)
       const tabListOffsetTop = tabListRef.current.offsetTop
       if (contentScrollTop < tabListOffsetTop) {
-        console.log('IS PROFILE??? WHY', {contentScrollTop, tabListOffsetTop})
-
         setActiveTransitionKey(ChatProfileScreens.Profile)
       } else {
-        /* if active tab members - set members, else shared media */
         setActiveTransitionKey(ChatProfileScreens.SharedMedia)
       }
     })
@@ -177,36 +163,27 @@ const ChatProfile: FC<ChatProfileProps & StateProps> = ({
       case ChatProfileScreens.Members:
       case ChatProfileScreens.SharedMedia:
         if (contentScrollTop < tabListOffsetTop) {
-          // setIsScrolling(true)
           isScrollingRef.current = true
           testRef.current?.scrollTo({
             top: tabListRef.current?.offsetTop,
-            // behavior: 'smooth',
           })
           setTimeout(() => {
-            // setIsScrolling(false)
             isScrollingRef.current = false
           }, SCROLL_ANIMATION_MS)
         }
         break
       case ChatProfileScreens.Profile:
         if (contentScrollTop >= tabListOffsetTop) {
-          // setIsScrolling(true)
           isScrollingRef.current = true
 
           testRef.current?.scrollTo({
             top: 0,
-            // behavior: 'smooth',
           })
           setTimeout(() => {
             isScrollingRef.current = false
-
-            // setIsScrolling(false)
           }, SCROLL_ANIMATION_MS)
         }
     }
-
-    // setLastScrollTop(contentScrollTop)
   }, [activeTransitionKey])
   useLayoutEffect(() => {
     testRef.current?.scrollTo({top: 0 /* , behavior: 'instant' */})
@@ -216,12 +193,6 @@ const ChatProfile: FC<ChatProfileProps & StateProps> = ({
   }
 
   const renderColumnIcon = () => {
-    // ;<Transition
-    //   timeout={500}
-    //   activeKey={activeTransitionKey}
-    //   name="rotate"
-    //   shouldCleanup={false}
-    // >
     return (
       <IconButton
         ripple={false}
@@ -231,10 +202,8 @@ const ChatProfile: FC<ChatProfileProps & StateProps> = ({
         animation="rotate"
       />
     )
-    // </Transition>
   }
 
-  // const canEdit = (!!user && !user.isSelf) || isChannel || isGro
   const renderColumnHeader = () => {
     return (
       <>
@@ -245,16 +214,7 @@ const ChatProfile: FC<ChatProfileProps & StateProps> = ({
           name="slideFade"
           shouldCleanup={false}
         >
-          {/* <IconButton
-            onClick={
-              activeTransitionKey === ChatProfileScreens.Profile ? onGoBack : jumpToProfile
-            }
-            icon={activeTransitionKey === ChatProfileScreens.Profile ? 'close' : 'arrowLeft'}
-          /> */}
           {renderHeader}
-          {/* <p class="column-header__title">{renderHeader}</p>
-          {canEdit && !canAddToContact && <IconButton icon="edit" onClick={handleEditChat} />}
-          {canAddToContact && <IconButton icon="addUser" onClick={handleAddContact} />} */}
         </Transition>
       </>
     )
@@ -295,33 +255,7 @@ const ChatProfile: FC<ChatProfileProps & StateProps> = ({
         activeKey={activeTab}
       >
         <ScreenLoader fullHeight={false} />
-
-        {/* <ScreenLoader fullHeight={false} />
-       
-        <ScreenLoader fullHeight={false} /> */}
       </Transition>
-      {/* Chat profile */}
-      {/* {chatFull ? (
-        members?.map((m) => {
-          // const member=selectChatMemb
-          const user = selectUser(global, m.userId)
-          const title = m.customTitle || m.isOwner ? 'owner' : m.isAdmin ? 'admin' : undefined
-
-          const fullname = user ? getUserName(user) : undefined
-          const subtitle = user ? getUserStatus(user) : undefined
-          return (
-            <ListItem title={fullname} subtitle={subtitle} additional={title} key={m.userId}>
-              <AvatarTest
-                size="s"
-                fullName={user ? getUserName(user) : undefined}
-                variant={user?.color}
-              />
-            </ListItem>
-          )
-        })
-      ) : (
-        <ScreenLoader fullHeight={false} />
-      )} */}
     </ColumnWrapper>
   )
 }

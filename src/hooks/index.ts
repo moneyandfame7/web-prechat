@@ -1,5 +1,3 @@
 export {usePrevious} from './usePrevious'
-export {useResize} from './useResize'
-export {usePageBlur as useInactivePage} from './useInactivePage'
+export {useInactivePage} from './useInactivePage'
 export {useInputValue} from './useInputValue'
-export {useScreenManager} from './useScreenManager'

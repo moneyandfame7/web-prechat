@@ -30,7 +30,7 @@ export interface ApiChat {
   /**
    * @todo rewrite on string
    */
-  createdAt: Date
+  createdAt: string
   _id: string
 }
 

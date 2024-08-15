@@ -2,14 +2,15 @@ import {type FC, memo, useEffect, useState} from 'preact/compat'
 
 import {connect} from 'state/connect'
 import {getPreferredAnimations} from 'state/helpers/settings'
+import {selectGeneralSettings} from 'state/selectors/settings'
 import {getGlobalState} from 'state/signal'
 
 import {addEscapeListener} from 'utilities/keyboardListener'
 
 import {LeftColumnGroup, LeftColumnScreen, SettingsScreens} from 'types/screens'
+import type {PageAnimations} from 'types/state'
 
-import {MyStories} from 'containers/stories'
-
+import {MyStories} from 'components/stories'
 import {Transition} from 'components/transitions'
 
 import {Archived} from './archived'
@@ -23,9 +24,15 @@ import './LeftColumn.scss'
 
 type StateProps = {
   isChatOpen: boolean
+  globalSettingsScreen: SettingsScreens | undefined
+  isStoriesViewerOpen: boolean
+  preferredAnimations: PageAnimations
 }
-const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
-  const {globalSettingsScreen} = getGlobalState()
+const LeftColumn: FC<StateProps> = ({
+  globalSettingsScreen,
+  isStoriesViewerOpen,
+  preferredAnimations,
+}) => {
   const [activeScreen, setActiveScreen] = useState(LeftColumnScreen.Chats)
   const [settingsScreen, setSettingsScreen] = useState(SettingsScreens.Main)
   let activeGroup: LeftColumnGroup = LeftColumnGroup.Main
@@ -87,10 +94,10 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
 
     setActiveScreen(LeftColumnScreen.Chats)
   }
-  const global = getGlobalState()
+
   useEffect(
     () =>
-      !global.stories.isOpen
+      !isStoriesViewerOpen
         ? addEscapeListener(() => {
             handleReset(false)
           })
@@ -133,24 +140,16 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
       }}
     >
       <div class="LeftColumn" id="left-column">
-        {/* <SingleTransition
-          unmount={false}
-          in={isChatOpen}
-          shouldSkip={isMobile}
-          name="slideDark"
-          direction={isChatOpen ? -1 : 1}
-        > */}
         <Transition
           innerAttributes={{
             [LeftColumnGroup.Contacts]: {id: 'contacts-container'},
           }}
           cleanupException={LeftColumnGroup.Main}
           activeKey={activeGroup}
-          name={getPreferredAnimations().page}
+          name={preferredAnimations}
         >
           {renderScreen()}
         </Transition>
-        {/* </SingleTransition> */}
       </div>
     </LeftColumnProvider>
   )
@@ -158,8 +157,11 @@ const LeftColumn: FC<StateProps> = (/* {isChatOpen} */) => {
 
 export default memo(
   connect(
-    ({currentChat, settings}): StateProps => ({
-      isChatOpen: Boolean(currentChat.chatId),
+    (state): StateProps => ({
+      isChatOpen: Boolean(state.currentChat.chatId),
+      globalSettingsScreen: state.globalSettingsScreen,
+      isStoriesViewerOpen: state.stories.isOpen,
+      preferredAnimations: selectGeneralSettings(state, 'animations').page,
       // pageAnimations: settings.general.pageAnimations,
     })
   )(LeftColumn)

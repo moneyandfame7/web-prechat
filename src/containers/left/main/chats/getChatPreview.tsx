@@ -2,8 +2,6 @@ import type {ApiChat, ApiUser} from 'api/types'
 
 import {getMessageActionText} from 'state/helpers/messages'
 
-import {renderText} from 'utilities/parse/render'
-
 export function getChatPreview(chat: ApiChat, sender?: ApiUser) {
   const {lastMessage} = chat
   let text: string
@@ -21,6 +19,5 @@ export function getChatPreview(chat: ApiChat, sender?: ApiUser) {
   } else {
     text = lastMessage?.text || 'EMPTY_MESSAGE'
   }
-
-  return renderText(text, ['emoji', 'markdown'])
+  return text /* renderText(text, ['markdown', 'emoji']) */
 }

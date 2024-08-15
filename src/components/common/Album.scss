@@ -1,0 +1,25 @@
+.album {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  gap: 2px;
+  width: 100%;
+
+  .album-item {
+    width: calc(50% - 2px);
+    flex: 1;
+    height: 200px;
+    display: flex;
+    @include defaultTransition(filter);
+
+    .media-photo-container {
+      flex: 1;
+      height: inherit !important;
+      width: inherit;
+    }
+
+    @include responsive(mobile) {
+      width: calc(100% - 2px);
+    }
+  }
+}

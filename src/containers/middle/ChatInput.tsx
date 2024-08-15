@@ -32,7 +32,6 @@ import {useBoolean} from 'hooks/useFlag'
 import {TEST_translate} from 'lib/i18n'
 
 import {MAX_FILE_SIZE} from 'common/app'
-import {MODAL_TRANSITION_MS} from 'common/environment'
 import {getBlobUrl} from 'utilities/file/getBlobUrl'
 import {getImageDimension} from 'utilities/file/getImageDimension'
 import {getImagePreview} from 'utilities/getImagePreview'
@@ -42,7 +41,7 @@ import {insertCursorAtEnd, insertTextAtCursor} from 'utilities/parse/selection'
 
 import EmojiPicker from 'components/common/emoji-picker/EmojiPicker.async'
 import DeleteMessagesModalAsync from 'components/popups/DeleteMessagesModal.async'
-import type {MediaItem, MediaOptions} from 'components/popups/SendMediaModal'
+import type {MediaItem} from 'components/popups/SendMediaModal'
 import SendMediaModal from 'components/popups/SendMediaModal.async'
 import {MenuItem} from 'components/popups/menu'
 import {SingleTransition, Transition} from 'components/transitions'
@@ -72,11 +71,7 @@ interface StateProps {
   hasMessageSelection: boolean
   selectedMessagesCount: number
 }
-enum InputContent {
-  Main,
-  Selection,
-  Editing,
-}
+
 const ChatInputImpl: FC<OwnProps & StateProps> = ({
   chatId,
   chat,
@@ -192,8 +187,6 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
     const newMediaItems: MediaItem[] = []
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-
-      console.log({INVALID_SIZE: file.size > 1 * 1024 * 1024})
 
       const mimeType = file.name.split('.').pop()?.toLowerCase()
       if (!mimeType) {
@@ -465,8 +458,8 @@ const ChatInputImpl: FC<OwnProps & StateProps> = ({
             onSelectEmoji={(e) => {
               insertInCursor(e.native)
             }}
-            onChangeSkin={(skin) => {
-              console.log({skin})
+            onChangeSkin={() => {
+              // console.log({skin})
             }}
           />
         </>
@@ -505,7 +498,6 @@ export const ChatInput = memo(
     const editableMessage = messageEditing.messageId
       ? selectMessage(state, ownProps.chatId, messageEditing.messageId)
       : undefined
-    // const openedChat = openedChats[openedChats.length - 1] as OpenedChat | undefined
     return {
       chat,
       editableMessage,

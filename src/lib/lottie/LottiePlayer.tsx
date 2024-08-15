@@ -48,7 +48,6 @@ export const LottiePlayer: FC<LottiePlayerProps> = ({
 
   const pauseOnClick = (e: TargetedEvent<HTMLDivElement, MouseEvent>) => {
     e.preventDefault()
-    console.log('PAUSE???', isPaused)
     if (isPaused) {
       _lottieRef.current?.play()
       setIsPaused(false)

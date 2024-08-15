@@ -6,7 +6,7 @@ import type {ApiStory} from 'api/types/stories'
 
 import {useBoolean} from 'hooks/useFlag'
 
-import {StoryLike} from './components/like'
+import {StoryLike} from './like'
 
 import './story.scss'
 

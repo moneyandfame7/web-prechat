@@ -7,7 +7,7 @@ interface UseInactiveInput {
   onFocus: FocusHandler
 }
 
-export const usePageBlur = (input: UseInactiveInput) => {
+export const useInactivePage = (input: UseInactiveInput) => {
   useEffect(() => {
     const {onBlur, onFocus} = input
 

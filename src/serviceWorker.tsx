@@ -31,6 +31,7 @@ const ServiceWorker: FC = memo(() => {
       logDebugInfo('[🇺🇦 APP] - A new update is available!')
     }
   }, [close, needRefresh, offlineReady, updateServiceWorker])
+
   return (
     <>
       {needRefresh && (

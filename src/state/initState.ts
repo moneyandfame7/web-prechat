@@ -24,7 +24,6 @@ export const INITIAL_STATE: GlobalState = {
     sessionLastActivity: undefined,
   },
   settings: {
-    theme: 'light',
     i18n: {
       lang_code: 'en',
       pack: lang,
@@ -40,7 +39,7 @@ export const INITIAL_STATE: GlobalState = {
     },
     general: {
       distanceUnit: 'kilometers',
-      theme: 'light',
+      theme: 'system',
       messageSendByKey: 'enter',
       messageTextSize: 16,
       timeFormat: '24h',

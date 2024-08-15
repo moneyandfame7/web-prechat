@@ -2,7 +2,6 @@ import {
   type FC,
   type TargetedEvent,
   memo,
-  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -80,7 +79,6 @@ const EmojiPickerImpl: FC<EmojiPickerProps & StateProps> = ({
   isOpen,
   skinEmoji,
   onSelectEmoji,
-  onChangeSkin,
   onClose,
 }) => {
   const {isSmall, isAnimationOff} = useLayout()

@@ -6,7 +6,6 @@ import type {ApiSession, AuthSignUpInput} from 'api/types/auth'
 import {createAction} from 'state/action'
 import {LANGUAGES_CODE_ARRAY} from 'state/helpers/settings'
 import {startPersist} from 'state/storages'
-import {getActiveSubscriptions} from 'state/subscribe'
 import {updateAuthState} from 'state/updates/auth'
 import {updateSettingsState} from 'state/updates/settings'
 
@@ -17,7 +16,7 @@ import {logDebugWarn} from 'lib/logger'
 import {USER_BROWSER, USER_PLATFORM} from 'common/environment'
 import {logger} from 'utilities/logger'
 import {makeRequest} from 'utilities/makeRequest'
-import {removeSession, saveSession} from 'utilities/session'
+import {saveSession} from 'utilities/session'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
 
 import type {ApiLangCode} from 'types/lib'
@@ -181,6 +180,7 @@ createAction('signIn', async (state, _, payload) => {
   } catch (e) {
     if (e instanceof ApolloError) {
       console.log(e, 'SIGN IN ERRROR!!!!')
+      console.log({e})
     }
     return
   }
@@ -251,8 +251,6 @@ createAction('signUp', async (state, _, payload) => {
  * Sign out
  */
 createAction('signOut', async (state, actions) => {
-  /** @todo прибирати СЕСІЮ В САМУ ОСТАННЮ ЧЕРГУ, ЩОБ НЕ ЛОМАТИ ЮАЙКУ. ( тобто спочатку якось просто викинути на початковий екран....) */
-  state.auth.isLogout = true
   state.auth.screen = AuthScreens.PhoneNumber
 
   await actions.updateUserStatus({isOnline: false, noDebounce: true})
@@ -263,9 +261,4 @@ createAction('signOut', async (state, actions) => {
   setTimeout(() => {
     actions.reset()
   }, 100)
-  // removeSession()
-  // state.auth.session = undefined
-  // setTimeout(() => {
-  //   state.auth.isLogout = false
-  // }, 500)
 })

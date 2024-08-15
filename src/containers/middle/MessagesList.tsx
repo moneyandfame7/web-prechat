@@ -1,6 +1,5 @@
 import {
   type FC,
-  Fragment,
   type RefObject,
   memo,
   startTransition,
@@ -409,6 +408,7 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
               overflowX: 'hidden' /* overflowAnchor: 'none' */,
             }}
           >
+            {/* @ts-expect-error Preact types are confused */}
             {startFetching && (
               <Loader
                 size="small"
@@ -421,7 +421,6 @@ const MessagesListImpl: FC<OwnProps & StateProps> = ({
                 isLoading
               />
             )}
-
             {renderedItems}
 
             {endFetching && (

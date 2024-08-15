@@ -23,8 +23,7 @@ import {useBoolean} from 'hooks/useFlag'
 
 import {TEST_translate} from 'lib/i18n'
 
-import {logger} from 'utilities/logger'
-
+import {Album} from 'components/common/Album'
 import {Document} from 'components/common/Document'
 import {Photo} from 'components/common/Photo'
 import DeleteMessagesModal from 'components/popups/DeleteMessagesModal.async'
@@ -327,28 +326,11 @@ const MessageBubbleImpl: FC<OwnProps & StateProps> = memo(
         )}
 
         <div class="bubble-content">
-          {isAlbum && (
-            <div class="album">
-              {message.content.photos?.map((photo) => (
-                <div class="album-item" key={photo.id}>
-                  <Photo
-                    lazy
-                    withSpoiler={photo.withSpoiler}
-                    alt=""
-                    url={photo.url}
-                    blurHash={photo.blurHash}
-                    width={photo.width}
-                    height={photo.height}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          {isAlbum && <Album message={message} />}
           {hasOnePhoto && (
             <Photo
               lazy
               customProgress={uploadProgress}
-              // onCancelUpload={handleCancelSending}
               interactive={message.isOutgoing}
               isUploading={messageSendingStatus === 'pending'}
               withSpoiler={message.content.photos![0]!.withSpoiler}

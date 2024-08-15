@@ -12,7 +12,6 @@ createAction('getUser', async (state, _, payload) => {
   }
 
   const user = result[0]
-  console.log({user})
   updateUsers(state, {
     [user.id]: user,
   })

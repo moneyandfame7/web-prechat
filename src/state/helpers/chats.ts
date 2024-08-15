@@ -1,10 +1,11 @@
 import type {ApiChat, ApiPeer, ApiUser} from 'api/types'
 
-import {type MakeRequired, isSavedMessages} from 'state/selectors/chats'
+import {isSavedMessages} from 'state/selectors/chats'
 import {selectUser} from 'state/selectors/users'
 
 import {USE_USERNAMES} from 'common/environment'
 
+import type {MakeRequired} from 'types/common'
 import type {SignalGlobalState} from 'types/state'
 
 import {getUserName, isUserId} from './users'
@@ -20,7 +21,7 @@ export function buildLocalPrivateChat({user}: {user: ApiUser}): ApiChat {
     id: user.id,
     _id: generateChatId(),
     color: user.color,
-    createdAt: new Date().toISOString() as any,
+    createdAt: new Date().toISOString(),
     isOwner: false,
     title: getUserName(user),
     type: 'chatTypePrivate',
@@ -88,11 +89,11 @@ export function getPeerRoute(peer?: ApiChat | ApiUser) {
   if (!peer) {
     return undefined
   }
-  const chatUsername = getChatUsername_deprecated(peer)
+  // const chatUsername = getChatUsername_deprecated(peer)
 
-  if (chatUsername && USE_USERNAMES) {
-    return `${import.meta.env.VITE_APP_URL}/#@${chatUsername.toLowerCase()}`
-  }
+  // if (chatUsername && USE_USERNAMES) {
+  //   return `${import.meta.env.VITE_APP_URL}/#@${chatUsername.toLowerCase()}`
+  // }
 
   return `${import.meta.env.VITE_APP_URL}/#${peer.id}`
 }

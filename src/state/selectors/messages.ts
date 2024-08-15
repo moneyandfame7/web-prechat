@@ -1,4 +1,4 @@
-import {Signal, computed} from '@preact/signals'
+import type {Signal} from '@preact/signals'
 
 import type {ApiUser} from 'api/types'
 import type {ApiMessage} from 'api/types/messages'

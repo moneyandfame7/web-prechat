@@ -16,7 +16,12 @@ import {selectSuggestedCountry} from 'state/selectors/auth'
 import {selectLanguage} from 'state/selectors/settings'
 import {getGlobalState} from 'state/signal'
 
-import {TEST_translate, changeLanguage, useTranslateString} from 'lib/i18n'
+import {
+  TEST_changeLanguage,
+  TEST_translate,
+  changeLanguage,
+  useTranslateString,
+} from 'lib/i18n'
 
 import {validatePhone} from 'utilities/phone/validatePhone'
 import {unformatStr} from 'utilities/string/stringRemoveSpacing'
@@ -90,7 +95,7 @@ const AuthPhoneNumber: FC = () => {
     const suggestedLng = global.settings.suggestedLanguage
     if (suggestedLng) {
       // setTimeout(async () => {
-      await changeLanguage(suggestedLng)
+      await TEST_changeLanguage(suggestedLng)
       // }, 5000)
     }
 
@@ -143,7 +148,7 @@ const AuthPhoneNumber: FC = () => {
           {global.auth.error || TEST_translate('Next')}
         </Button>
 
-        {global.settings.suggestedLanguage !== global.settings.i18n.lang_code && (
+        {global.settings.suggestedLanguage !== global.settings.language && (
           <Button
             variant="transparent"
             onClick={handleChangeLanguage}
